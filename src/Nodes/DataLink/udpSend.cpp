@@ -7,13 +7,13 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "udpSend.hpp"
-#include "UdpUtil.hpp"
 
 #include "NodeRegistry.hpp"
 #include <cstring>
 #include <string>
 #include <vector>
 #include "NodeData/GNSS/GnssObs.hpp"
+#include "Nodes/DataLink/UdpUtil.hpp"
 #include "internal/Node/Pin.hpp"
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -33,6 +33,8 @@ namespace NAV
 /// List of supported data identifiers
 const std::vector<std::string> supportedDataIdentifier{
     PosVelAtt::type(),
+    PosVel::type(),
+    Pos::type(),
     GnssObs::type()
 };
 
@@ -142,61 +144,90 @@ void NAV::UdpSend::receiveData(NAV::InputPin::NodeDataQueue& queue, size_t /* pi
 {
     auto data = queue.extract_front();
 
-    if (!NAV::NodeRegistry::NodeDataTypeAnyIsChildOf({ data->getType() }, { GnssObs::type(), PosVelAtt::type() }))
+    if (!NAV::NodeRegistry::NodeDataTypeAnyIsChildOf({ data->getType() }, { PosVelAtt::type(), PosVel::type(), Pos::type(), GnssObs::type() }))
     {
         LOG_ERROR("{}: Data type {} not sendable, yet.", nameId(), data->getType());
         return;
     }
 
-    auto gpsCycle = data->insTime.toGPSweekTow().gpsCycle;
-    auto gpsWeek = data->insTime.toGPSweekTow().gpsWeek;
-    auto gpsTow = static_cast<double>(data->insTime.toGPSweekTow().tow);
-
     std::vector<char> data2send{};
 
+    // Identify message type
     if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf({ data->getType() }, { PosVelAtt::type() }))
     {
-        _msgType = 0;
-
-        auto posVelAtt = std::static_pointer_cast<const PosVelAtt>(data);
-
-        data2send.resize(UdpUtil::SIZE_TOTAL);
-
-        std::memcpy(data2send.data(), &_msgType, UdpUtil::SIZE_MSGTYPE);
-
-        std::memcpy(data2send.data() + UdpUtil::OFFSET_GPSCYCLE, &gpsCycle, UdpUtil::SIZE_GPSCYCLE);
-        std::memcpy(data2send.data() + UdpUtil::OFFSET_GPSWEEK, &gpsWeek, UdpUtil::SIZE_GPSWEEK);
-        std::memcpy(data2send.data() + UdpUtil::OFFSET_GPSTOW, &gpsTow, UdpUtil::SIZE_GPSTOW);
-
-        std::memcpy(data2send.data() + UdpUtil::OFFSET_POS, posVelAtt->lla_position().data(), UdpUtil::SIZE_POS);
-        std::memcpy(data2send.data() + UdpUtil::OFFSET_VEL, posVelAtt->n_velocity().data(), UdpUtil::SIZE_VEL);
-        std::memcpy(data2send.data() + UdpUtil::OFFSET_QUAT, &posVelAtt->n_Quat_b().x(), UdpUtil::SIZE_QUAT);
-        std::memcpy(data2send.data() + UdpUtil::OFFSET_QUAT + UdpUtil::SIZE_QUAT, &posVelAtt->n_Quat_b().y(), UdpUtil::SIZE_QUAT);
-        std::memcpy(data2send.data() + UdpUtil::OFFSET_QUAT + 2 * UdpUtil::SIZE_QUAT, &posVelAtt->n_Quat_b().z(), UdpUtil::SIZE_QUAT);
-        std::memcpy(data2send.data() + UdpUtil::OFFSET_QUAT + 3 * UdpUtil::SIZE_QUAT, &posVelAtt->n_Quat_b().w(), UdpUtil::SIZE_QUAT);
+        _msgType = UdpUtil::MessageType::PosVelAtt;
+        data2send.resize(UdpUtil::Size::TOTAL_POSVELATT);
+        setMsgTypeAndTime(data2send, data->insTime);
+    }
+    else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf({ data->getType() }, { PosVel::type() }))
+    {
+        _msgType = UdpUtil::MessageType::PosVel;
+        data2send.resize(UdpUtil::Size::TOTAL_POSVEL);
+        setMsgTypeAndTime(data2send, data->insTime);
+    }
+    else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf({ data->getType() }, { Pos::type() }))
+    {
+        _msgType = UdpUtil::MessageType::Pos;
+        data2send.resize(UdpUtil::Size::TOTAL_POS);
+        setMsgTypeAndTime(data2send, data->insTime);
     }
     else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf({ data->getType() }, { GnssObs::type() }))
     {
-        _msgType = 1;
+        _msgType = UdpUtil::MessageType::GnssObs;
+    }
 
+    // Copy data
+    if (_msgType == UdpUtil::MessageType::Pos)
+    {
+        auto pos = std::static_pointer_cast<const Pos>(data);
+        std::memcpy(data2send.data() + UdpUtil::Offset::POS, pos->lla_position().data(), UdpUtil::Size::POS);
+    }
+    else if (_msgType == UdpUtil::MessageType::PosVel)
+    {
+        auto posVel = std::static_pointer_cast<const PosVel>(data);
+        std::memcpy(data2send.data() + UdpUtil::Offset::POS, posVel->lla_position().data(), UdpUtil::Size::POS);
+        std::memcpy(data2send.data() + UdpUtil::Offset::VEL, posVel->n_velocity().data(), UdpUtil::Size::VEL);
+    }
+    else if (_msgType == UdpUtil::MessageType::PosVelAtt)
+    {
+        auto posVelAtt = std::static_pointer_cast<const PosVelAtt>(data);
+        std::memcpy(data2send.data() + UdpUtil::Offset::POS, posVelAtt->lla_position().data(), UdpUtil::Size::POS);
+        std::memcpy(data2send.data() + UdpUtil::Offset::VEL, posVelAtt->n_velocity().data(), UdpUtil::Size::VEL);
+        std::memcpy(data2send.data() + UdpUtil::Offset::QUAT, &posVelAtt->n_Quat_b().x(), UdpUtil::Size::QUAT);
+        std::memcpy(data2send.data() + UdpUtil::Offset::QUAT + UdpUtil::Size::QUAT, &posVelAtt->n_Quat_b().y(), UdpUtil::Size::QUAT);
+        std::memcpy(data2send.data() + UdpUtil::Offset::QUAT + 2 * UdpUtil::Size::QUAT, &posVelAtt->n_Quat_b().z(), UdpUtil::Size::QUAT);
+        std::memcpy(data2send.data() + UdpUtil::Offset::QUAT + 3 * UdpUtil::Size::QUAT, &posVelAtt->n_Quat_b().w(), UdpUtil::Size::QUAT);
+    }
+    else if (_msgType == UdpUtil::MessageType::GnssObs)
+    {
         auto gnssObs = std::static_pointer_cast<const GnssObs>(data);
-        const size_t sizeGnssData = UdpUtil::SIZE_SINGLE_OBSERVATION_DATA * gnssObs->data.size();
+        const size_t sizeGnssData = UdpUtil::Size::SINGLE_OBSERVATION_DATA * gnssObs->data.size();
 
-        auto sizeTotal = sizeGnssData + UdpUtil::SIZE_MSGTYPE + UdpUtil::SIZE_GPSCYCLE + UdpUtil::SIZE_GPSWEEK + UdpUtil::SIZE_GPSTOW + UdpUtil::SIZE_SIZE;
+        auto sizeTotal = sizeGnssData + UdpUtil::Size::MSGTYPE + UdpUtil::Size::GPSCYCLE + UdpUtil::Size::GPSWEEK + UdpUtil::Size::GPSTOW + UdpUtil::Size::SIZE;
         if (sizeTotal > UdpUtil::MAXIMUM_BYTES)
         {
             LOG_ERROR("{}: gnssObs msg is bigger than the maximum size of a single UDP package: {} bytes.", nameId(), sizeTotal);
         }
 
         data2send.resize(sizeTotal);
-        std::memcpy(data2send.data(), &_msgType, UdpUtil::SIZE_MSGTYPE);
 
-        std::memcpy(data2send.data() + UdpUtil::OFFSET_GPSCYCLE, &gpsCycle, UdpUtil::SIZE_GPSCYCLE);
-        std::memcpy(data2send.data() + UdpUtil::OFFSET_GPSWEEK, &gpsWeek, UdpUtil::SIZE_GPSWEEK);
-        std::memcpy(data2send.data() + UdpUtil::OFFSET_GPSTOW, &gpsTow, UdpUtil::SIZE_GPSTOW);
+        setMsgTypeAndTime(data2send, data->insTime);
 
-        std::memcpy(data2send.data() + UdpUtil::OFFSET_SIZE, &sizeGnssData, UdpUtil::SIZE_SIZE);
-        std::memcpy(data2send.data() + UdpUtil::OFFSET_GNSSDATA, gnssObs->data.data(), sizeGnssData);
+        std::memcpy(data2send.data() + UdpUtil::Offset::SIZE, &sizeGnssData, UdpUtil::Size::SIZE);
+        std::memcpy(data2send.data() + UdpUtil::Offset::GNSSDATA, gnssObs->data.data(), sizeGnssData);
     }
     _socket.send_to(boost::asio::buffer(data2send), *_endpoints.begin());
+}
+
+void NAV::UdpSend::setMsgTypeAndTime(std::vector<char>& data2send, const InsTime& insTime)
+{
+    auto gpsCycle = insTime.toGPSweekTow().gpsCycle;
+    auto gpsWeek = insTime.toGPSweekTow().gpsWeek;
+    auto gpsTow = static_cast<double>(insTime.toGPSweekTow().tow);
+
+    std::memcpy(data2send.data(), &_msgType, UdpUtil::Size::MSGTYPE);
+
+    std::memcpy(data2send.data() + UdpUtil::Offset::GPSCYCLE, &gpsCycle, UdpUtil::Size::GPSCYCLE);
+    std::memcpy(data2send.data() + UdpUtil::Offset::GPSWEEK, &gpsWeek, UdpUtil::Size::GPSWEEK);
+    std::memcpy(data2send.data() + UdpUtil::Offset::GPSTOW, &gpsTow, UdpUtil::Size::GPSTOW);
 }

@@ -70,14 +70,6 @@ class UdpRecv : public Node
     /// @brief Resets the node. Moves the read cursor to the start
     bool resetNode() override;
 
-    /// Enum specifying the type of the output message
-    enum class OutputType : uint8_t
-    {
-        PosVelAtt, ///< Extract PosVelAtt data
-        GnssObs,   ///< Extract GnssObs data
-        COUNT,     ///< Number of items in the enum
-    };
-
   private:
     constexpr static size_t OUTPUT_PORT_INDEX_NODE_DATA = 0; ///< @brief Object (NodeData)
 
@@ -94,7 +86,7 @@ class UdpRecv : public Node
     int _port = 4567;
 
     /// The selected output type in the GUI
-    OutputType _outputType = OutputType::PosVelAtt;
+    UdpUtil::MessageType _outputType = UdpUtil::MessageType::PosVelAtt;
 
     /// Asynchronous receive fct
     boost::asio::io_context _io_context;
@@ -118,12 +110,12 @@ class UdpRecv : public Node
     std::array<char, UdpUtil::MAXIMUM_BYTES> _charArray{};
 
     /// Message Type: 0 = posVelAtt, 1 = gnssObs
-    int _msgType = 0;
+    UdpUtil::MessageType _msgType = UdpUtil::MessageType::PosVelAtt;
 };
 
 /// @brief Converts the enum to a string
 /// @param[in] value Enum value to convert into text
 /// @return String representation of the enum
-const char* to_string(NAV::UdpRecv::OutputType value);
+const char* to_string(NAV::UdpUtil::MessageType value);
 
 } // namespace NAV

@@ -14,6 +14,9 @@
 #pragma once
 
 #include <cstddef>
+#include <vector>
+#include "Navigation/Time/InsTime.hpp"
+#include "Nodes/DataLink/UdpUtil.hpp"
 #ifdef _WIN32
     // Set the proper SDK version before including boost/Asio
     #include <SDKDDKVer.h>
@@ -83,6 +86,11 @@ class UdpSend : public Node
     /// @param[in] pinIdx Index of the pin the data is received on
     void receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
+    /// @brief Set the Msg Type And Time object
+    /// @param[in] data2send Reference to the data that is to be sent
+    /// @param[in] insTime InsTime of the nodeData
+    void setMsgTypeAndTime(std::vector<char>& data2send, const InsTime& insTime);
+
     /// IPv4 address
     std::array<int, 4> _ip{};
 
@@ -90,7 +98,7 @@ class UdpSend : public Node
     int _port = 4567;
 
     /// Message Type: 0 = posVelAtt, 1 = gnssObs
-    int _msgType = 0;
+    UdpUtil::MessageType _msgType = UdpUtil::MessageType::PosVelAtt;
 
     /// Range an IPv4 address can be in [0, 2^8-1]
     static constexpr std::array<int, 2> IP_LIMITS = { 0, 255 };
