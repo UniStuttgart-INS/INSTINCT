@@ -213,47 +213,55 @@ void NAV::UartPacketConverter::receiveObs(NAV::InputPin::NodeDataQueue& queue, s
             LOG_WARN("{}: Decoding WiFi Obs failed", nameId());
             return;
         };
-        if (_syncInPin && inputPins.at(INPUT_PORT_INDEX_SYNC_IN).isPinLinked())
+        // TODO: This code does not work currently. Needs debugging
+        // if (_syncInPin && inputPins.at(INPUT_PORT_INDEX_SYNC_IN).isPinLinked())
+        // {
+        //     if (auto timeSyncMaster = getInputValue<const NAV::VectorNavSensor::TimeSync>(INPUT_PORT_INDEX_SYNC_IN);
+        //         timeSyncMaster && !timeSyncMaster->v->ppsTime.empty())
+        //     {
+        //         if (_lastSyncInCnt > obs->timeOutputs.syncInCnt) // reset of the slave
+        //         {
+        //             LOG_DEBUG("{}: Slave reset during time sync", nameId());
+        //             _syncOutCntCorr = 0;
+        //             _syncInCntCorr = timeSyncMaster->v->syncOutCnt;
+        //         }
+        //         else if (_lastSyncOutCnt > timeSyncMaster->v->syncOutCnt) // reset of the master
+        //         {
+        //             LOG_DEBUG("{}: Master reset during time sync", nameId());
+        //             _syncInCntCorr = 0;
+        //             _syncOutCntCorr = obs->timeOutputs.syncInCnt;
+        //         }
+        //         else if (_lastSyncOutCnt == 0 && timeSyncMaster->v->syncOutCnt > 1) // slave counter started later
+        //         {
+        //             LOG_DEBUG("{}: Slave counter started later", nameId());
+        //             _syncInCntCorr = timeSyncMaster->v->syncOutCnt;
+        //         }
+        //         else if (_lastSyncOutCnt == 0 && obs->timeOutputs.syncInCnt > 1) // master counter started later
+        //         {
+        //             LOG_DEBUG("{}: Master counter started later", nameId());
+        //             _syncOutCntCorr = obs->timeOutputs.syncInCnt;
+        //         }
+        //         _lastSyncOutCnt = timeSyncMaster->v->syncOutCnt;
+        //         _lastSyncInCnt = obs->timeOutputs.syncInCnt;
+        //         int64_t syncCntDiff = obs->timeOutputs.syncInCnt + _syncInCntCorr - timeSyncMaster->v->syncOutCnt - _syncOutCntCorr;
+        //         obs->insTime = timeSyncMaster->v->ppsTime + std::chrono::microseconds(obs->timeOutputs.timeSyncIn)
+        //                        + std::chrono::seconds(syncCntDiff);
+        //         // LOG_DATA("{}: Syncing time {}, pps {}, syncOutCnt {}, syncInCnt {}, syncCntDiff {}, syncInCntCorr {}, syncOutCntCorr {}",
+        //         //          nameId(), obs->insTime.toGPSweekTow(), timeSyncMaster->ppsTime.toGPSweekTow(),
+        //         //          timeSyncMaster->syncOutCnt, obs->timeOutputs.syncInCnt, syncCntDiff, _syncInCntCorr, _syncOutCntCorr);
+        //     }
+        //     else
+        //     {
+        //         return;
+        //     }
+        // }
+        if (auto currentTime = util::time::GetCurrentInsTime(); // HACK Use computer time instead of hardware sync
+            !currentTime.empty())
         {
-            if (auto timeSyncMaster = getInputValue<const NAV::VectorNavSensor::TimeSync>(INPUT_PORT_INDEX_SYNC_IN);
-                timeSyncMaster && !timeSyncMaster->v->ppsTime.empty())
-            {
-                if (_lastSyncInCnt > obs->timeOutputs.syncInCnt) // reset of the slave
-                {
-                    LOG_DEBUG("{}: Slave reset during time sync", nameId());
-                    _syncOutCntCorr = 0;
-                    _syncInCntCorr = timeSyncMaster->v->syncOutCnt;
-                }
-                else if (_lastSyncOutCnt > timeSyncMaster->v->syncOutCnt) // reset of the master
-                {
-                    LOG_DEBUG("{}: Master reset during time sync", nameId());
-                    _syncInCntCorr = 0;
-                    _syncOutCntCorr = obs->timeOutputs.syncInCnt;
-                }
-                else if (_lastSyncOutCnt == 0 && timeSyncMaster->v->syncOutCnt > 1) // slave counter started later
-                {
-                    LOG_DEBUG("{}: Slave counter started later", nameId());
-                    _syncInCntCorr = timeSyncMaster->v->syncOutCnt;
-                }
-                else if (_lastSyncOutCnt == 0 && obs->timeOutputs.syncInCnt > 1) // master counter started later
-                {
-                    LOG_DEBUG("{}: Master counter started later", nameId());
-                    _syncOutCntCorr = obs->timeOutputs.syncInCnt;
-                }
-                _lastSyncOutCnt = timeSyncMaster->v->syncOutCnt;
-                _lastSyncInCnt = obs->timeOutputs.syncInCnt;
-                int64_t syncCntDiff = obs->timeOutputs.syncInCnt + _syncInCntCorr - timeSyncMaster->v->syncOutCnt - _syncOutCntCorr;
-                obs->insTime = timeSyncMaster->v->ppsTime + std::chrono::microseconds(obs->timeOutputs.timeSyncIn)
-                               + std::chrono::seconds(syncCntDiff);
-                // LOG_DATA("{}: Syncing time {}, pps {}, syncOutCnt {}, syncInCnt {}, syncCntDiff {}, syncInCntCorr {}, syncOutCntCorr {}",
-                //          nameId(), obs->insTime.toGPSweekTow(), timeSyncMaster->ppsTime.toGPSweekTow(),
-                //          timeSyncMaster->syncOutCnt, obs->timeOutputs.syncInCnt, syncCntDiff, _syncInCntCorr, _syncOutCntCorr);
-            }
-            else
-            {
-                return;
-            }
+            LOG_DATA("{}: Setting current computer time as insTime [{}]", nameId(), currentTime.toYMDHMS(GPST));
+            convertedData->insTime = currentTime;
         }
+
         convertedData = obs;
     }
     else /* if (_outputType == OutputType_EmlidObs) */
@@ -264,14 +272,7 @@ void NAV::UartPacketConverter::receiveObs(NAV::InputPin::NodeDataQueue& queue, s
         convertedData = obs;
     }
 
-    if (auto currentTime = util::time::GetCurrentInsTime();
-        !currentTime.empty())
-    {
-        convertedData->insTime = currentTime;
-    }
+    if (!convertedData || convertedData->insTime.empty()) { return; }
 
-    if (convertedData)
-    {
-        invokeCallbacks(OUTPUT_PORT_INDEX_CONVERTED, convertedData);
-    }
+    invokeCallbacks(OUTPUT_PORT_INDEX_CONVERTED, convertedData);
 }
