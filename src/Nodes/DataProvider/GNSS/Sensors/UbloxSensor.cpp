@@ -117,6 +117,7 @@ bool NAV::UbloxSensor::initialize()
     }
 
     _sensor->registerAsyncPacketReceivedHandler(this, asciiOrBinaryAsyncMessageReceived);
+    _connected = true;
 
     return true;
 }
@@ -125,22 +126,26 @@ void NAV::UbloxSensor::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    if (!isInitialized())
+    if (!_connected) { return; }
+
+    try
     {
-        return;
+        _sensor->unregisterAsyncPacketReceivedHandler();
+        LOG_TRACE("{}: Async packet receive handler unregistered", nameId());
     }
+    catch (...) // NOLINT(bugprone-empty-catch)
+    {}
 
-    if (_sensor->isConnected())
+    try
     {
-        try
-        {
-            _sensor->unregisterAsyncPacketReceivedHandler();
-        }
-        catch (...) // NOLINT(bugprone-empty-catch)
-        {}
-
+        LOG_TRACE("{}: Disconnecting...", nameId());
         _sensor->disconnect();
+        LOG_TRACE("{}: Disconnected", nameId());
     }
+    catch (...) // NOLINT(bugprone-empty-catch)
+    {}
+
+    _connected = false;
 }
 
 void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::protocol::Packet& p, [[maybe_unused]] size_t index)

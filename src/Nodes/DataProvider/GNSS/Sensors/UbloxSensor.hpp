@@ -76,6 +76,9 @@ class UbloxSensor : public Node, public UartSensor
 
     /// Sensor Object
     vendor::ublox::UbloxUartSensor _sensor;
+
+    /// Boolean tracking if the sensor is connected
+    bool _connected = false;
 };
 
 } // namespace NAV
