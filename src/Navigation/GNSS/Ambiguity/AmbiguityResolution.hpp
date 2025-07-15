@@ -121,7 +121,7 @@ struct AmbiguityResolutionParameters
     /// @brief Failure rate for the ratio test (used to calculate µ)
     double validationRatioTestFailureRate = 0.001;
     /// @brief Attempt partial fixing of ambiguities
-    bool partialFixing = true;
+    bool partialFixing = false;
 
     /// Possible failure rates for the look-up tables
     static constexpr std::array<double, 2> allowedFailureRateValues = { { 0.001, 0.01 } };

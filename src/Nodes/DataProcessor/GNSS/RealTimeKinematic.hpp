@@ -129,13 +129,13 @@ class RealTimeKinematic : public Node
     /// Observation Estimator
     ObservationEstimator _obsEstimator{ ReceiverType::ReceiverType_COUNT };
     /// Maximum amount of outliers to remove per epoch
-    size_t _maxRemoveOutlier = 0;
+    size_t _maxRemoveOutlier = 4;
     /// Amount of epochs to remove an outlier after being found (1 = only current)
     size_t _outlierRemoveEpochs = 1;
     /// Minumum amount of satellites for doing a NIS check
-    size_t _outlierMinSat = 0;
+    size_t _outlierMinSat = 4;
     /// Minumum amount of pseudorange observables to leave when doing a NIS check
-    size_t _outlierMinPsrObsKeep = 0;
+    size_t _outlierMinPsrObsKeep = 4;
 
     /// Do not attempt to remove outlier if the position variance is above the threshold in the startup phase [m^2]
     double _outlierMaxPosVarStartup = 0.1;
@@ -149,14 +149,14 @@ class RealTimeKinematic : public Node
     AmbiguityResolutionParameters _ambiguityResolutionParameters;
 
     /// Ambiguity resolution strategy
-    AmbiguityResolutionStrategy _ambiguityResolutionStrategy = AmbiguityResolutionStrategy::FixAndHold;
+    AmbiguityResolutionStrategy _ambiguityResolutionStrategy = AmbiguityResolutionStrategy::Continuous;
 
     /// Minimum amount of satellites with carrier observations to try fixing the solution
     size_t _nMinSatForAmbFix = 4;
     /// Minimum amount of satellites with carrier observations for holding the ambiguities
     size_t _nMinSatForAmbHold = 5;
     /// Do not attempt to fix if the position variance is above the threshold
-    double _maxPosVar = 0.2;
+    double _maxPosVar = 0.4;
 
     /// Make an update with the fixed ambiguities when true.
     /// Otherwise apply via $$a = a_fix$$ and $$b = b_float - Q_ba * Q_aa^-1 (a_fix - a_float)$$
@@ -191,7 +191,7 @@ class RealTimeKinematic : public Node
     /// Gui selection for the Unit of the input for the StDev of the ambiguities (while float solution)
     StdevAmbiguityUnits _gui_stdevAmbiguityFloatUnits = StdevAmbiguityUnits::Cycle;
     /// Process noise (standard deviation) for the ambiguities (while float solution) (Selection in GUI)
-    double _gui_ambiguityFloatProcessNoiseStDev = 1e1;
+    double _gui_ambiguityFloatProcessNoiseStDev = 0.5;
     /// Process noise (variance) for the ambiguities (while float solution) in [cycles^2] (Value used for calculation)
     double _ambiguityFloatProcessNoiseVariance = _gui_ambiguityFloatProcessNoiseStDev * _gui_ambiguityFloatProcessNoiseStDev;
 
