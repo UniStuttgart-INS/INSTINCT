@@ -8,12 +8,17 @@
 
 #include "UbloxGnssOrbitCollector.hpp"
 
+#include <algorithm>
 #include <chrono>
+#include <cstddef>
+#include <imgui.h>
+#include <imgui_internal.h>
 
 #include "util/Logger.hpp"
 #include "util/Container/STL.hpp"
 
 #include "internal/NodeManager.hpp"
+#include <fmt/format.h>
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
@@ -28,7 +33,7 @@ NAV::UbloxGnssOrbitCollector::UbloxGnssOrbitCollector()
     : Node(typeStatic())
 {
     LOG_TRACE("{}: called", name);
-    _hasConfig = false;
+    _hasConfig = true;
 
     nm::CreateInputPin(this, "UbloxObs", Pin::Type::Flow, { NAV::UbloxObs::type() }, &UbloxGnssOrbitCollector::receiveObs);
 
@@ -55,6 +60,77 @@ std::string NAV::UbloxGnssOrbitCollector::category()
     return "Converter";
 }
 
+void NAV::UbloxGnssOrbitCollector::guiConfig()
+{
+    bool isDisabled = ImGui::GetCurrentContext()->CurrentItemFlags & ImGuiItemFlags_Disabled;
+
+    if (isDisabled) { ImGui::EndDisabled(); }
+    if (ImGui::BeginTable(fmt::format("{} UbloxGnssOrbitCollector", size_t(id)).c_str(), 3,
+                          ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX))
+    {
+        ImGui::TableSetupColumn("");
+        ImGui::TableSetupColumn("Received");
+        ImGui::TableSetupColumn("Building");
+        ImGui::TableHeadersRow();
+
+        for (uint64_t sys = 0xFF; sys < static_cast<uint64_t>(0xFF) << (7 * 8); sys = sys << 8UL)
+        {
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImGuiCol_TableHeaderBg));
+            SatelliteSystem satSys{ SatelliteSystem_(sys) };
+            ImGui::TextUnformatted(fmt::format("{}", satSys).c_str());
+
+            ImGui::TableNextColumn();
+            size_t i = 0;
+            constexpr size_t ITEMS_PER_ROW = 4;
+            for (const auto& [satId, sat] : _gnssNavInfo.satellites())
+            {
+                if (satId.satSys != satSys) { continue; }
+                if (i % ITEMS_PER_ROW != 0)
+                {
+                    ImGui::SameLine();
+                    ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x);
+                    ImGui::TextUnformatted(", ");
+                    ImGui::SameLine();
+                }
+                ImGui::TextUnformatted(fmt::format("{}", satId).c_str());
+                if (ImGui::IsItemHovered())
+                {
+                    ImGui::BeginTooltip();
+                    for (const auto& satNavData : sat.getNavigationData())
+                    {
+                        ImGui::TextUnformatted(fmt::format("{}", satNavData->refTime.toYMDHMS(GPST)).c_str());
+                    }
+                    ImGui::EndTooltip();
+                }
+                i++;
+            }
+
+            ImGui::TableNextColumn();
+            for (const auto& builder : _ephemerisBuilder)
+            {
+                if (builder.satId.satSys != satSys
+                    || std::ranges::any_of(_gnssNavInfo.satellites(), [&](const auto& sat) {
+                           if (builder.satId != sat.first) { return false; }
+                           return std::ranges::any_of(sat.second.getNavigationData(), [&](const std::shared_ptr<NAV::SatNavData>& satNavData) {
+                               return satNavData->refTime == builder.navData->refTime;
+                           });
+                       }))
+                {
+                    continue;
+                }
+
+                ImGui::TextUnformatted(fmt::format("{} ({}) frames: {}", builder.satId, builder.navData->refTime.toYMDHMS(GPST), builder.subframes).c_str());
+            }
+        }
+
+        ImGui::EndTable();
+    }
+    if (isDisabled) { ImGui::BeginDisabled(); }
+}
+
 bool NAV::UbloxGnssOrbitCollector::initialize()
 {
     LOG_TRACE("{}: called", nameId());
@@ -72,9 +148,10 @@ bool NAV::UbloxGnssOrbitCollector::initialize()
     _warningsNotImplemented.clear();
 
     if (inputPins.at(INPUT_PORT_INDEX_UBLOX_OBS).isPinLinked()
-        && !inputPins.at(INPUT_PORT_INDEX_UBLOX_OBS).link.connectedNode->isOnlyRealtime()
+        && getMode() == Mode::POST_PROCESSING
         && !_postProcessingLock.has_value())
     {
+        LOG_TRACE("{}: Setting post-processing lock", nameId());
         _postProcessingLock.emplace(outputPins.at(OUTPUT_PORT_INDEX_GNSS_NAV_INFO).dataAccessMutex);
     }
 
@@ -93,7 +170,7 @@ void NAV::UbloxGnssOrbitCollector::onDeleteLink([[maybe_unused]] OutputPin& star
 
 NAV::UbloxGnssOrbitCollector::EphemerisBuilder& NAV::UbloxGnssOrbitCollector::getEphemerisBuilder(const SatId& satId, const InsTime& insTime, size_t IOD)
 {
-    LOG_DEBUG("{}: Searching for [{}] at [{}]", nameId(), satId, insTime.toYMDHMS(GPST));
+    LOG_DATA("{}: Searching for [{}] at [{}]", nameId(), satId, insTime.toYMDHMS(GPST));
     if (IOD != 0)
     {
         _lastAccessedBuilder[satId] = IOD;
@@ -104,7 +181,7 @@ NAV::UbloxGnssOrbitCollector::EphemerisBuilder& NAV::UbloxGnssOrbitCollector::ge
     });
     if (iter == _ephemerisBuilder.end())
     {
-        LOG_DEBUG("{}:   Constructing new builder", nameId());
+        LOG_DATA("{}:   Constructing new builder", nameId());
 
         std::shared_ptr<SatNavData> satNavData = nullptr;
         switch (SatelliteSystem_(satId.satSys))
@@ -139,14 +216,14 @@ NAV::UbloxGnssOrbitCollector::EphemerisBuilder& NAV::UbloxGnssOrbitCollector::ge
         return _ephemerisBuilder.emplace_back(satId, satNavData);
     }
 
-    LOG_DEBUG("{}:   Found builder", nameId());
+    LOG_DATA("{}:   Found builder", nameId());
     return *iter;
 }
 
 std::optional<std::reference_wrapper<NAV::UbloxGnssOrbitCollector::EphemerisBuilder>>
     NAV::UbloxGnssOrbitCollector::getEphemerisBuilder(const SatId& satId, size_t IOD)
 {
-    LOG_DEBUG("{}: Searching for [{}] at Issue of Data [{}]", nameId(), satId, IOD);
+    LOG_DATA("{}: Searching for [{}] at Issue of Data [{}]", nameId(), satId, IOD);
     _lastAccessedBuilder[satId] = IOD;
 
     auto iter = std::ranges::find_if(_ephemerisBuilder, [&](const auto& builder) {
@@ -167,28 +244,31 @@ std::optional<std::reference_wrapper<NAV::UbloxGnssOrbitCollector::EphemerisBuil
     });
     if (iter != _ephemerisBuilder.end())
     {
-        LOG_DEBUG("{}:   Found builder", nameId());
+        LOG_DATA("{}:   Found builder", nameId());
         return *iter;
     }
-    LOG_DEBUG("{}:   Could not find builder. Ignoring subframe.", nameId());
+    LOG_DATA("{}:   Could not find builder. Ignoring subframe.", nameId());
     return std::nullopt;
 }
 
 std::optional<std::reference_wrapper<NAV::UbloxGnssOrbitCollector::EphemerisBuilder>>
     NAV::UbloxGnssOrbitCollector::getLastEphemerisBuilder(const SatId& satId)
 {
-    LOG_DEBUG("{}: Searching the last builder for [{}]", nameId(), satId);
+    LOG_DATA("{}: Searching the last builder for [{}]", nameId(), satId);
     if (_lastAccessedBuilder.contains(satId))
     {
         return getEphemerisBuilder(satId, _lastAccessedBuilder.at(satId));
     }
-    LOG_DEBUG("{}:   Could not find last accessed builder. Ignoring subframe.", nameId());
+    LOG_DATA("{}:   Could not find last accessed builder. Ignoring subframe.", nameId());
     return std::nullopt;
 }
 
 void NAV::UbloxGnssOrbitCollector::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     [[maybe_unused]] auto ubloxObs = std::static_pointer_cast<const UbloxObs>(queue.extract_front());
+    LOG_DATA("{}: [{}] Received UbloxObs {}-{}", nameId(), ubloxObs->insTime.toYMDHMS(GPST),
+             vendor::ublox::getStringFromMsgClass(ubloxObs->msgClass),
+             vendor::ublox::getStringFromMsgId(ubloxObs->msgClass, ubloxObs->msgId));
 
     if (ubloxObs->msgClass == ubx::UBX_CLASS_RXM)
     {
@@ -198,7 +278,7 @@ void NAV::UbloxGnssOrbitCollector::receiveObs(NAV::InputPin::NodeDataQueue& queu
 
             SatelliteSystem satSys = ubx::getSatSys(sfrbx.gnssId);
             SatId satId(satSys, sfrbx.svId);
-            LOG_DEBUG("{}: [{}] Converting message at [{}][{}]", nameId(), satId, ubloxObs->insTime.toYMDHMS(GPST), ubloxObs->insTime.toGPSweekTow(GPST));
+            LOG_DATA("{}: [{}][{}] Converting message", nameId(), ubloxObs->insTime.toYMDHMS(GPST), satId);
 
             switch (SatelliteSystem_(satSys))
             {
@@ -234,6 +314,7 @@ void NAV::UbloxGnssOrbitCollector::receiveObs(NAV::InputPin::NodeDataQueue& queu
         && inputPins.at(INPUT_PORT_INDEX_UBLOX_OBS).isPinLinked()
         && inputPins.at(INPUT_PORT_INDEX_UBLOX_OBS).link.getConnectedPin()->noMoreDataAvailable)
     {
+        LOG_TRACE("{}: Post-processing lock cleared as all data read.", nameId());
         _postProcessingLock.reset();
     }
 }
@@ -269,7 +350,7 @@ void NAV::UbloxGnssOrbitCollector::decryptGPS(const SatId& satId, const ubx::Ubx
     constexpr uint8_t TLM_PREAMBLE = 0b10001011;
     if (static_cast<uint8_t>((sfrbx.dwrd.at(w) >> 22) & 0b11111111) != TLM_PREAMBLE) // Preamble found after the 2 padding bits
     {
-        LOG_DEBUG("{}: [{}] Wrong telemetry word preamble. Ignoring SFRBX message.", nameId(), satId);
+        LOG_DATA("{}: [{}] Wrong telemetry word preamble. Ignoring SFRBX message.", nameId(), satId);
         return;
     }
 
@@ -724,12 +805,12 @@ void NAV::UbloxGnssOrbitCollector::decryptGalileo(const SatId& satId, const ubx:
     auto odd = static_cast<uint8_t>((sfrbx.dwrd.at(4) >> 31) & 0b1);
     auto pageTypeOdd = static_cast<uint8_t>((sfrbx.dwrd.at(4) >> 30) & 0b1);
     auto wordType = static_cast<uint8_t>((sfrbx.dwrd.at(w) >> 24) & 0b111111);
-    LOG_DEBUG("{}: [{}]   wordType: {:2}, even {} ({} pageType), odd {} ({} pageType)", nameId(), satId, wordType, even, pageTypeEven, odd, pageTypeOdd);
+    LOG_DATA("{}: [{}]   wordType: {:2}, even {} ({} pageType), odd {} ({} pageType)", nameId(), satId, wordType, even, pageTypeEven, odd, pageTypeOdd);
 
     if (even != 0 || pageTypeEven == 1
         || odd != 1 || pageTypeOdd == 1)
     {
-        LOG_DEBUG("{}: [{}]     Ignoring message, because one of the page types is alert page", nameId(), satId);
+        LOG_DATA("{}: [{}]     Ignoring message, because one of the page types is alert page", nameId(), satId);
         return;
     }
 
@@ -767,30 +848,30 @@ void NAV::UbloxGnssOrbitCollector::decryptGalileo(const SatId& satId, const ubx:
         // Galileo-OS-SIS-ICD-v2.0: ch. 5.1.1, Table 60 Ephemeris Parameters, p. 43f
         // > M_0 shall be two's complement, with the sign bit (+ or -) occupying the MSB
 
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 1 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 1 */, std::bitset<32>(sfrbx.dwrd.at(w)));
         auto IODnav = static_cast<uint16_t>((sfrbx.dwrd.at(w) >> 14) & 0b1111111111);
         auto toe = static_cast<uint16_t>(sfrbx.dwrd.at(w) & 0b11111111111111);
-        LOG_DEBUG("{}: [{}]       IODnav {}, toe {}", nameId(), satId, IODnav, toe);
+        LOG_DATA("{}: [{}]       IODnav {}, toe {}", nameId(), satId, IODnav, toe);
 
         w++;
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 2 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 2 */, std::bitset<32>(sfrbx.dwrd.at(w)));
         auto M_0 = static_cast<int32_t>(sfrbx.dwrd.at(w));
-        LOG_DEBUG("{}: [{}]       M_0 {}", nameId(), satId, M_0);
+        LOG_DATA("{}: [{}]       M_0 {}", nameId(), satId, M_0);
 
         w++;
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 3 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 3 */, std::bitset<32>(sfrbx.dwrd.at(w)));
         uint32_t e = sfrbx.dwrd.at(w);
-        LOG_DEBUG("{}: [{}]       e {}", nameId(), satId, e);
+        LOG_DATA("{}: [{}]       e {}", nameId(), satId, e);
 
         w++;
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 4 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 4 */, std::bitset<32>(sfrbx.dwrd.at(w)));
         uint32_t sqrt_A = ((sfrbx.dwrd.at(w) >> 14) & 0b111111111111111111) << 14;
-        LOG_DEBUG("{}: [{}]       sqrt_A {}", nameId(), satId, std::bitset<32>(sqrt_A));
+        LOG_DATA("{}: [{}]       sqrt_A {}", nameId(), satId, std::bitset<32>(sqrt_A));
 
         w++;
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 5 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 5 */, std::bitset<32>(sfrbx.dwrd.at(w)));
         sqrt_A |= (sfrbx.dwrd.at(w) >> 16) & 0b11111111111111;
-        LOG_DEBUG("{}: [{}]       sqrt_A {} ({})", nameId(), satId, sqrt_A, std::bitset<32>(sqrt_A));
+        LOG_DATA("{}: [{}]       sqrt_A {} ({})", nameId(), satId, sqrt_A, std::bitset<32>(sqrt_A));
 
         InsTime insTimeToe(gpsWeekToW.gpsCycle, gpsWeekToW.gpsWeek, toe * 60.0, GST);
 
@@ -803,8 +884,8 @@ void NAV::UbloxGnssOrbitCollector::decryptGalileo(const SatId& satId, const ubx:
         ephemeris->e = e * std::pow(2.0, -33);
         ephemeris->sqrt_A = sqrt_A * std::pow(2.0, -19);
 
-        LOG_DEBUG("{}: [{}]     IODnav [{}], toe [{}], M_0 [{:.3e} rad], e [{:.3e}], sqrt_A [{:.3e} m^(1/2)]", nameId(), satId,
-                  ephemeris->IODnav, ephemeris->toe.toYMDHMS(GPST), ephemeris->M_0, ephemeris->e, ephemeris->sqrt_A);
+        LOG_DATA("{}: [{}]     IODnav [{}], toe [{}], M_0 [{:.3e} rad], e [{:.3e}], sqrt_A [{:.3e} m^(1/2)]", nameId(), satId,
+                 ephemeris->IODnav, ephemeris->toe.toYMDHMS(GPST), ephemeris->M_0, ephemeris->e, ephemeris->sqrt_A);
 
         finishWord(ephemeris, wordType, ephemerisBuilder.subframes);
     }
@@ -820,32 +901,32 @@ void NAV::UbloxGnssOrbitCollector::decryptGalileo(const SatId& satId, const ubx:
         // Galileo-OS-SIS-ICD-v2.0: ch. 5.1.1, Table 60 Ephemeris Parameters, p. 43f
         // > Omega_0, i_0, omega, i_dot shall be two's complement, with the sign bit (+ or -) occupying the MSB
 
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 1 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 1 */, std::bitset<32>(sfrbx.dwrd.at(w)));
         auto IODnav = static_cast<uint16_t>((sfrbx.dwrd.at(w) >> 14) & 0b1111111111);
         auto Omega_0 = static_cast<int32_t>((sfrbx.dwrd.at(w) & 0b11111111111111) << 18);
-        LOG_DEBUG("{}: [{}]       IODnav {}, Omega_0 {}", nameId(), satId, IODnav, std::bitset<32>(static_cast<uint32_t>(Omega_0)));
+        LOG_DATA("{}: [{}]       IODnav {}, Omega_0 {}", nameId(), satId, IODnav, std::bitset<32>(static_cast<uint32_t>(Omega_0)));
 
         w++;
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 2 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 2 */, std::bitset<32>(sfrbx.dwrd.at(w)));
         Omega_0 |= static_cast<int32_t>((sfrbx.dwrd.at(w) >> 14) & 0b111111111111111111);
         auto i_0 = static_cast<int32_t>((sfrbx.dwrd.at(w) & 0b11111111111111) << 18);
-        LOG_DEBUG("{}: [{}]       Omega_0 {} ({}), i_0 {}", nameId(), satId, Omega_0, std::bitset<32>(static_cast<uint32_t>(Omega_0)), std::bitset<32>(static_cast<uint32_t>(i_0)));
+        LOG_DATA("{}: [{}]       Omega_0 {} ({}), i_0 {}", nameId(), satId, Omega_0, std::bitset<32>(static_cast<uint32_t>(Omega_0)), std::bitset<32>(static_cast<uint32_t>(i_0)));
 
         w++;
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 3 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 3 */, std::bitset<32>(sfrbx.dwrd.at(w)));
         i_0 |= static_cast<int32_t>((sfrbx.dwrd.at(w) >> 14) & 0b111111111111111111);
         auto omega = static_cast<int32_t>((sfrbx.dwrd.at(w) & 0b11111111111111) << 18);
-        LOG_DEBUG("{}: [{}]       i_0 {} ({}), omega {}", nameId(), satId, i_0, std::bitset<32>(static_cast<uint32_t>(i_0)), std::bitset<32>(static_cast<uint32_t>(omega)));
+        LOG_DATA("{}: [{}]       i_0 {} ({}), omega {}", nameId(), satId, i_0, std::bitset<32>(static_cast<uint32_t>(i_0)), std::bitset<32>(static_cast<uint32_t>(omega)));
 
         w++;
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 4 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 4 */, std::bitset<32>(sfrbx.dwrd.at(w)));
         omega |= static_cast<int32_t>((sfrbx.dwrd.at(w) >> 14) & 0b111111111111111111);
-        LOG_DEBUG("{}: [{}]       omega {} ({})", nameId(), satId, omega, std::bitset<32>(static_cast<uint32_t>(omega)));
+        LOG_DATA("{}: [{}]       omega {} ({})", nameId(), satId, omega, std::bitset<32>(static_cast<uint32_t>(omega)));
 
         w++;
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 5 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 5 */, std::bitset<32>(sfrbx.dwrd.at(w)));
         auto i_dot = math::interpretAs<int16_t, 14>(sfrbx.dwrd.at(w) >> 16);
-        LOG_DEBUG("{}: [{}]       i_dot {} ({})", nameId(), satId, i_dot, std::bitset<16>(static_cast<uint16_t>(i_dot)));
+        LOG_DATA("{}: [{}]       i_dot {} ({})", nameId(), satId, i_dot, std::bitset<16>(static_cast<uint16_t>(i_dot)));
 
         auto ephemerisBuilder = getEphemerisBuilder(satId, IODnav);
         if (!ephemerisBuilder.has_value())
@@ -860,8 +941,8 @@ void NAV::UbloxGnssOrbitCollector::decryptGalileo(const SatId& satId, const ubx:
         ephemeris->omega = semicircles2rad(omega * std::pow(2.0, -31));
         ephemeris->i_dot = semicircles2rad(i_dot * std::pow(2.0, -43));
 
-        LOG_DEBUG("{}: [{}]     IODnav [{}], Omega_0 [{} rad], i_0 [{:.3e} rad], omega [{:.3e} rad], i_dot [{:.3e} rad/s]", nameId(), satId,
-                  ephemeris->IODnav, ephemeris->Omega_0, ephemeris->i_0, ephemeris->omega, ephemeris->i_dot);
+        LOG_DATA("{}: [{}]     IODnav [{}], Omega_0 [{} rad], i_0 [{:.3e} rad], omega [{:.3e} rad], i_dot [{:.3e} rad/s]", nameId(), satId,
+                 ephemeris->IODnav, ephemeris->Omega_0, ephemeris->i_0, ephemeris->omega, ephemeris->i_dot);
 
         finishWord(ephemeris, wordType, ephemerisBuilder->get().subframes);
     }
@@ -877,38 +958,38 @@ void NAV::UbloxGnssOrbitCollector::decryptGalileo(const SatId& satId, const ubx:
         // Galileo-OS-SIS-ICD-v2.0: ch. 5.1.1, Table 60 Ephemeris Parameters, p. 43f
         // > Omega_dot, delta_n, Cuc, Cus, Crc, Crs shall be two's complement, with the sign bit (+ or -) occupying the MSB
 
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 1 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 1 */, std::bitset<32>(sfrbx.dwrd.at(w)));
         auto IODnav = static_cast<uint16_t>((sfrbx.dwrd.at(w) >> 14) & 0b1111111111);
         auto Omega_dot = static_cast<int32_t>((sfrbx.dwrd.at(w) & 0b11111111111111) << 10);
-        LOG_DEBUG("{}: [{}]       IODnav {}, Omega_dot {}", nameId(), satId, IODnav, std::bitset<32>(static_cast<uint32_t>(Omega_dot)));
+        LOG_DATA("{}: [{}]       IODnav {}, Omega_dot {}", nameId(), satId, IODnav, std::bitset<32>(static_cast<uint32_t>(Omega_dot)));
 
         w++;
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 2 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 2 */, std::bitset<32>(sfrbx.dwrd.at(w)));
         Omega_dot |= static_cast<int32_t>((sfrbx.dwrd.at(w) >> 22) & 0b1111111111);
         Omega_dot = math::interpretAs<int32_t, 24>(Omega_dot);
         auto delta_n = static_cast<int16_t>((sfrbx.dwrd.at(w) >> 6) & 0b1111111111111111);
         auto Cuc = static_cast<int16_t>((sfrbx.dwrd.at(w) & 0b111111) << 10);
-        LOG_DEBUG("{}: [{}]       Omega_dot {} ({}), delta_n {}, Cuc {}", nameId(), satId,
-                  Omega_dot, std::bitset<32>(static_cast<uint32_t>(Omega_dot)), delta_n, std::bitset<16>(static_cast<uint16_t>(Cuc)));
+        LOG_DATA("{}: [{}]       Omega_dot {} ({}), delta_n {}, Cuc {}", nameId(), satId,
+                 Omega_dot, std::bitset<32>(static_cast<uint32_t>(Omega_dot)), delta_n, std::bitset<16>(static_cast<uint16_t>(Cuc)));
 
         w++;
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 3 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 3 */, std::bitset<32>(sfrbx.dwrd.at(w)));
         Cuc |= static_cast<int16_t>((sfrbx.dwrd.at(w) >> 22) & 0b1111111111); // NOLINT(bugprone-narrowing-conversions,cppcoreguidelines-narrowing-conversions)
         auto Cus = static_cast<int16_t>((sfrbx.dwrd.at(w) >> 6) & 0b1111111111111111);
         auto Crc = static_cast<int16_t>((sfrbx.dwrd.at(w) & 0b111111) << 10);
-        LOG_DEBUG("{}: [{}]       Cuc {} ({}), Cus {}, Crc {}", nameId(), satId, Cuc, std::bitset<16>(static_cast<uint16_t>(Cuc)), Cus, std::bitset<16>(static_cast<uint16_t>(Crc)));
+        LOG_DATA("{}: [{}]       Cuc {} ({}), Cus {}, Crc {}", nameId(), satId, Cuc, std::bitset<16>(static_cast<uint16_t>(Cuc)), Cus, std::bitset<16>(static_cast<uint16_t>(Crc)));
 
         w++;
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 4 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 4 */, std::bitset<32>(sfrbx.dwrd.at(w)));
         Crc |= static_cast<int16_t>((sfrbx.dwrd.at(w) >> 22) & 0b1111111111); // NOLINT(bugprone-narrowing-conversions,cppcoreguidelines-narrowing-conversions)
         auto Crs = static_cast<int16_t>(((sfrbx.dwrd.at(w) >> 14) & 0b11111111) << 8);
-        LOG_DEBUG("{}: [{}]       Crc {} ({}), Crs {}", nameId(), satId, Crc, std::bitset<16>(static_cast<uint16_t>(Crc)), std::bitset<16>(static_cast<uint16_t>(Crs)));
+        LOG_DATA("{}: [{}]       Crc {} ({}), Crs {}", nameId(), satId, Crc, std::bitset<16>(static_cast<uint16_t>(Crc)), std::bitset<16>(static_cast<uint16_t>(Crs)));
 
         w++;
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 5 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 5 */, std::bitset<32>(sfrbx.dwrd.at(w)));
         Crs |= static_cast<int16_t>((sfrbx.dwrd.at(w) >> 22) & 0b11111111); // NOLINT(bugprone-narrowing-conversions,cppcoreguidelines-narrowing-conversions)
         auto SISA = static_cast<uint8_t>((sfrbx.dwrd.at(w) >> 14) & 0b11111111);
-        LOG_DEBUG("{}: [{}]       Crs {} ({}), SISA {}", nameId(), satId, Crs, std::bitset<16>(static_cast<uint16_t>(Crs)), SISA);
+        LOG_DATA("{}: [{}]       Crs {} ({}), SISA {}", nameId(), satId, Crs, std::bitset<16>(static_cast<uint16_t>(Crs)), SISA);
 
         auto ephemerisBuilder = getEphemerisBuilder(satId, IODnav);
         if (!ephemerisBuilder.has_value())
@@ -926,8 +1007,8 @@ void NAV::UbloxGnssOrbitCollector::decryptGalileo(const SatId& satId, const ubx:
         ephemeris->Crs = Crs * std::pow(2.0, -5);
         ephemeris->signalAccuracy = galSisaIdx2Val(SISA);
 
-        LOG_DEBUG("{}: [{}]     IODnav [{}], Omega_dot [{} rad/s], delta_n [{:.3e} rad/s], Cuc [{:.3e} rad], Cus [{:.3e} rad/s], Crc [{:.3e} m], Crs [{:.3e} m], SISA [{:.3e} m]", nameId(), satId,
-                  ephemeris->IODnav, ephemeris->Omega_dot, ephemeris->delta_n, ephemeris->Cuc, ephemeris->Cus, ephemeris->Crc, ephemeris->Crs, ephemeris->signalAccuracy);
+        LOG_DATA("{}: [{}]     IODnav [{}], Omega_dot [{} rad/s], delta_n [{:.3e} rad/s], Cuc [{:.3e} rad], Cus [{:.3e} rad/s], Crc [{:.3e} m], Crs [{:.3e} m], SISA [{:.3e} m]", nameId(), satId,
+                 ephemeris->IODnav, ephemeris->Omega_dot, ephemeris->delta_n, ephemeris->Cuc, ephemeris->Cus, ephemeris->Crc, ephemeris->Crs, ephemeris->signalAccuracy);
 
         finishWord(ephemeris, wordType, ephemerisBuilder->get().subframes);
     }
@@ -944,38 +1025,38 @@ void NAV::UbloxGnssOrbitCollector::decryptGalileo(const SatId& satId, const ubx:
         // Galileo-OS-SIS-ICD-v2.0: ch. 5.1.3, Table 63 Galileo Clock Correction Parameters, p. 46
         // > Cic, Cis, af0, af1, af2 shall be two's complement, with the sign bit (+ or -) occupying the MSB
 
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 1 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 1 */, std::bitset<32>(sfrbx.dwrd.at(w)));
         auto IODnav = static_cast<uint16_t>((sfrbx.dwrd.at(w) >> 14) & 0b1111111111);
         [[maybe_unused]] auto SVID = static_cast<uint8_t>((sfrbx.dwrd.at(w) >> 8) & 0b111111);
         auto Cic = static_cast<int16_t>((sfrbx.dwrd.at(w) & 0b11111111) << 8);
-        LOG_DEBUG("{}: [{}]       IODnav {}, SVID {}, Cic {}", nameId(), satId, IODnav, SVID, std::bitset<16>(static_cast<uint16_t>(Cic)));
+        LOG_DATA("{}: [{}]       IODnav {}, SVID {}, Cic {}", nameId(), satId, IODnav, SVID, std::bitset<16>(static_cast<uint16_t>(Cic)));
 
         w++;
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 2 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 2 */, std::bitset<32>(sfrbx.dwrd.at(w)));
         Cic |= static_cast<int16_t>((sfrbx.dwrd.at(w) >> 24) & 0b11111111); // NOLINT(bugprone-narrowing-conversions,cppcoreguidelines-narrowing-conversions)
         auto Cis = static_cast<int16_t>((sfrbx.dwrd.at(w) >> 8) & 0b1111111111111111);
         auto toc = static_cast<uint16_t>((sfrbx.dwrd.at(w) & 0b11111111) << 6);
-        LOG_DEBUG("{}: [{}]       Cic {} ({}), Cis {}, toc {}", nameId(), satId, Cic, std::bitset<16>(static_cast<uint16_t>(Cic)), Cis, std::bitset<16>(toc));
+        LOG_DATA("{}: [{}]       Cic {} ({}), Cis {}, toc {}", nameId(), satId, Cic, std::bitset<16>(static_cast<uint16_t>(Cic)), Cis, std::bitset<16>(toc));
 
         w++;
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 3 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 3 */, std::bitset<32>(sfrbx.dwrd.at(w)));
         toc |= static_cast<uint16_t>((sfrbx.dwrd.at(w) >> 26) & 0b111111);
         auto af0 = static_cast<int32_t>((sfrbx.dwrd.at(w) & 0b11111111111111111111111111) << 5);
-        LOG_DEBUG("{}: [{}]       toc {} ({}), af0 {}", nameId(), satId, toc, std::bitset<16>(toc), std::bitset<32>(static_cast<uint32_t>(af0)));
+        LOG_DATA("{}: [{}]       toc {} ({}), af0 {}", nameId(), satId, toc, std::bitset<16>(toc), std::bitset<32>(static_cast<uint32_t>(af0)));
 
         w++;
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 4 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 4 */, std::bitset<32>(sfrbx.dwrd.at(w)));
         af0 |= static_cast<int32_t>((sfrbx.dwrd.at(w) >> 27) & 0b11111);
         af0 = math::interpretAs<int32_t, 31>(af0);
         auto af1 = static_cast<int32_t>(((sfrbx.dwrd.at(w) >> 14) & 0b1111111111111) << 8);
-        LOG_DEBUG("{}: [{}]       af0 {} ({}), af1 {}", nameId(), satId, af0, std::bitset<32>(static_cast<uint32_t>(af0)), std::bitset<32>(static_cast<uint32_t>(af1)));
+        LOG_DATA("{}: [{}]       af0 {} ({}), af1 {}", nameId(), satId, af0, std::bitset<32>(static_cast<uint32_t>(af0)), std::bitset<32>(static_cast<uint32_t>(af1)));
 
         w++;
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 5 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 5 */, std::bitset<32>(sfrbx.dwrd.at(w)));
         af1 |= static_cast<int32_t>((sfrbx.dwrd.at(w) >> 22) & 0b11111111);
         af1 = math::interpretAs<int32_t, 21>(af1);
         auto af2 = math::interpretAs<int8_t, 6>(sfrbx.dwrd.at(w) >> 16);
-        LOG_DEBUG("{}: [{}]       af1 {} ({}), af1 {}", nameId(), satId, af1, std::bitset<32>(static_cast<uint32_t>(af1)), std::bitset<8>(static_cast<uint8_t>(af2)));
+        LOG_DATA("{}: [{}]       af1 {} ({}), af1 {}", nameId(), satId, af1, std::bitset<32>(static_cast<uint32_t>(af1)), std::bitset<8>(static_cast<uint8_t>(af2)));
 
         auto ephemerisBuilder = getEphemerisBuilder(satId, IODnav);
         if (!ephemerisBuilder.has_value())
@@ -997,9 +1078,9 @@ void NAV::UbloxGnssOrbitCollector::decryptGalileo(const SatId& satId, const ubx:
             af2 * std::pow(2, -59),
         };
 
-        LOG_DEBUG("{}: [{}]     IODnav [{}], Cic [{:.3e} rad], Cis [{:.3e} rad]", nameId(), satId, ephemeris->IODnav, ephemeris->Cic, ephemeris->Cis);
-        LOG_DEBUG("{}: [{}]     toc [{}], a0 [{:.3e} s], a1 [{:.3e} s/s], a2 [{:.3e} s/s^2]", nameId(), satId,
-                  ephemeris->toc.toYMDHMS(GPST), ephemeris->a[0], ephemeris->a[1], ephemeris->a[2]);
+        LOG_DATA("{}: [{}]     IODnav [{}], Cic [{:.3e} rad], Cis [{:.3e} rad]", nameId(), satId, ephemeris->IODnav, ephemeris->Cic, ephemeris->Cis);
+        LOG_DATA("{}: [{}]     toc [{}], a0 [{:.3e} s], a1 [{:.3e} s/s], a2 [{:.3e} s/s^2]", nameId(), satId,
+                 ephemeris->toc.toYMDHMS(GPST), ephemeris->a[0], ephemeris->a[1], ephemeris->a[2]);
 
         finishWord(ephemeris, wordType, ephemerisBuilder->get().subframes);
     }
@@ -1016,23 +1097,23 @@ void NAV::UbloxGnssOrbitCollector::decryptGalileo(const SatId& satId, const ubx:
         // Galileo-OS-SIS-ICD-v2.0: ch. 5.1.5, Table 65 BGD Parameters, p. 47
         // > ai1, ai2, BGD(E1,E5a), BGD(E1,E5b) shall be two's complement, with the sign bit (+ or -) occupying the MSB
 
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 1 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 1 */, std::bitset<32>(sfrbx.dwrd.at(w)));
         auto ai0 = static_cast<uint16_t>((sfrbx.dwrd.at(w) >> 13) & 0b11111111111);
         auto ai1 = math::interpretAs<int16_t, 11>((sfrbx.dwrd.at(w) >> 2) & 0b11111111111);
         auto ai2 = static_cast<int16_t>((sfrbx.dwrd.at(w) & 0b11) << 12);
-        LOG_DEBUG("{}: [{}]       ai0 {} ({}), ai1 {} ({}), ai2 {}", nameId(), satId,
-                  ai0, std::bitset<16>(ai0), ai1, std::bitset<16>(static_cast<uint16_t>(ai1)), std::bitset<16>(static_cast<uint16_t>(ai2)));
+        LOG_DATA("{}: [{}]       ai0 {} ({}), ai1 {} ({}), ai2 {}", nameId(), satId,
+                 ai0, std::bitset<16>(ai0), ai1, std::bitset<16>(static_cast<uint16_t>(ai1)), std::bitset<16>(static_cast<uint16_t>(ai2)));
 
         w++;
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 2 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 2 */, std::bitset<32>(sfrbx.dwrd.at(w)));
         ai2 |= static_cast<int16_t>((sfrbx.dwrd.at(w) >> 20) & 0b111111111111); // NOLINT(bugprone-narrowing-conversions,cppcoreguidelines-narrowing-conversions)
         ai2 = math::interpretAs<int16_t, 14>(ai2);
         auto BGD_E1_E5a = math::interpretAs<int16_t, 10>((sfrbx.dwrd.at(w) >> 5) & 0b1111111111);
         auto BGD_E1_E5b = static_cast<int16_t>((sfrbx.dwrd.at(w) & 0b11111) << 5);
-        LOG_DEBUG("{}: [{}]       ai2 {} ({}), BGD_E1_E5a {}, BGD_E1_E5b {}", nameId(), satId, ai2, std::bitset<16>(static_cast<uint16_t>(ai2)), BGD_E1_E5a, std::bitset<16>(static_cast<uint16_t>(BGD_E1_E5b)));
+        LOG_DATA("{}: [{}]       ai2 {} ({}), BGD_E1_E5a {}, BGD_E1_E5b {}", nameId(), satId, ai2, std::bitset<16>(static_cast<uint16_t>(ai2)), BGD_E1_E5a, std::bitset<16>(static_cast<uint16_t>(BGD_E1_E5b)));
 
         w++;
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 3 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 3 */, std::bitset<32>(sfrbx.dwrd.at(w)));
         BGD_E1_E5b |= static_cast<int16_t>((sfrbx.dwrd.at(w) >> 27) & 0b11111); // NOLINT(bugprone-narrowing-conversions,cppcoreguidelines-narrowing-conversions)
         BGD_E1_E5b = math::interpretAs<int16_t, 10>(BGD_E1_E5b);
         auto E5b_HS = static_cast<uint8_t>((sfrbx.dwrd.at(w) >> 25) & 0b11);
@@ -1041,16 +1122,16 @@ void NAV::UbloxGnssOrbitCollector::decryptGalileo(const SatId& satId, const ubx:
         auto E1b_DVS = static_cast<uint8_t>((sfrbx.dwrd.at(w) >> 21) & 0b1);
         [[maybe_unused]] auto WN = static_cast<uint16_t>((sfrbx.dwrd.at(w) >> 9) & 0b111111111111);
         [[maybe_unused]] uint32_t TOW = (sfrbx.dwrd.at(w) & 0b111111111) << 11;
-        LOG_DEBUG("{}: [{}]       BGD_E1_E5b {} ({}), E5b_HS {}, E1b_HS {}, E5b_DVS {}, E1b_DVS {}, WN {}, TOW {}", nameId(), satId,
-                  BGD_E1_E5b, std::bitset<16>(static_cast<uint16_t>(BGD_E1_E5b)), E5b_HS, E1b_HS, E5b_DVS, E1b_DVS, WN, std::bitset<32>(TOW));
+        LOG_DATA("{}: [{}]       BGD_E1_E5b {} ({}), E5b_HS {}, E1b_HS {}, E5b_DVS {}, E1b_DVS {}, WN {}, TOW {}", nameId(), satId,
+                 BGD_E1_E5b, std::bitset<16>(static_cast<uint16_t>(BGD_E1_E5b)), E5b_HS, E1b_HS, E5b_DVS, E1b_DVS, WN, std::bitset<32>(TOW));
 
         w++;
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 4 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 4 */, std::bitset<32>(sfrbx.dwrd.at(w)));
         TOW |= (sfrbx.dwrd.at(w) >> 21) & 0b11111111111;
-        LOG_DEBUG("{}: [{}]       TOW {} ({})", nameId(), satId, TOW, std::bitset<32>(TOW));
+        LOG_DATA("{}: [{}]       TOW {} ({})", nameId(), satId, TOW, std::bitset<32>(TOW));
 
         w++;
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 5 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 5 */, std::bitset<32>(sfrbx.dwrd.at(w)));
 
         auto ephemerisBuilder = getLastEphemerisBuilder(satId);
         if (!ephemerisBuilder.has_value())
@@ -1089,7 +1170,7 @@ void NAV::UbloxGnssOrbitCollector::decryptGalileo(const SatId& satId, const ubx:
                                                        });
         }
 
-        LOG_DEBUG("{}: [{}]     BGD_E1_E5a [{:.3e} s], BGD_E1_E5b [{:.3e} rad]", nameId(), satId, ephemeris->BGD_E1_E5a, ephemeris->BGD_E1_E5b);
+        LOG_DATA("{}: [{}]     BGD_E1_E5a [{:.3e} s], BGD_E1_E5b [{:.3e} rad]", nameId(), satId, ephemeris->BGD_E1_E5a, ephemeris->BGD_E1_E5b);
 
         finishWord(ephemeris, wordType, ephemerisBuilder->get().subframes);
     }
@@ -1105,24 +1186,24 @@ void NAV::UbloxGnssOrbitCollector::decryptGalileo(const SatId& satId, const ubx:
         // Galileo-OS-SIS-ICD-v2.0: ch. 5.1.7, Table 68 Ionospheric Correction Parameters, p. 49
         // > A0, A1, dt_LS, dt_LSF shall be two's complement, with the sign bit (+ or -) occupying the MSB
 
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 1 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 1 */, std::bitset<32>(sfrbx.dwrd.at(w)));
         auto A0 = static_cast<int32_t>((sfrbx.dwrd.at(w) & 0b111111111111111111111111) << 8);
-        LOG_DEBUG("{}: [{}]       A0 {}", nameId(), satId, std::bitset<32>(static_cast<uint32_t>(A0)));
+        LOG_DATA("{}: [{}]       A0 {}", nameId(), satId, std::bitset<32>(static_cast<uint32_t>(A0)));
 
         w++;
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 2 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 2 */, std::bitset<32>(sfrbx.dwrd.at(w)));
         A0 |= static_cast<int32_t>((sfrbx.dwrd.at(w) >> 24) & 0b11111111);
         auto A1 = math::interpretAs<int32_t, 24>(sfrbx.dwrd.at(w) & 0b111111111111111111111111);
-        LOG_DEBUG("{}: [{}]       A0 {} ({}), A1 {} ({})", nameId(), satId, A0, std::bitset<32>(static_cast<uint32_t>(A0)), A1, std::bitset<32>(static_cast<uint32_t>(A1)));
+        LOG_DATA("{}: [{}]       A0 {} ({}), A1 {} ({})", nameId(), satId, A0, std::bitset<32>(static_cast<uint32_t>(A0)), A1, std::bitset<32>(static_cast<uint32_t>(A1)));
 
         w++;
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 3 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 3 */, std::bitset<32>(sfrbx.dwrd.at(w)));
 
         w++;
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 4 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 4 */, std::bitset<32>(sfrbx.dwrd.at(w)));
 
         w++;
-        LOG_DEBUG("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 5 */, std::bitset<32>(sfrbx.dwrd.at(w)));
+        LOG_DATA("{}: [{}]     word {:2}: {}", nameId(), satId, w + 1 /* 5 */, std::bitset<32>(sfrbx.dwrd.at(w)));
 
         std::unique_lock guard(outputPins.at(OUTPUT_PORT_INDEX_GNSS_NAV_INFO).dataAccessMutex, std::defer_lock);
         if (!_postProcessingLock.has_value())

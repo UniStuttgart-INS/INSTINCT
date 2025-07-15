@@ -55,6 +55,10 @@ class UbloxGnssOrbitCollector : public Node
     /// @brief String representation of the Class Category
     [[nodiscard]] static std::string category();
 
+    /// @brief ImGui config window which is shown on double click
+    /// @attention Don't forget to set _hasConfig to true in the constructor of the node
+    void guiConfig() override;
+
   private:
     constexpr static size_t INPUT_PORT_INDEX_UBLOX_OBS = 0;      ///< @brief Flow (UbloxObs)
     constexpr static size_t OUTPUT_PORT_INDEX_GNSS_NAV_INFO = 0; ///< @brief Object

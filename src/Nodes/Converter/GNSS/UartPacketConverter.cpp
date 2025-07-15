@@ -255,12 +255,6 @@ void NAV::UartPacketConverter::receiveObs(NAV::InputPin::NodeDataQueue& queue, s
         //         return;
         //     }
         // }
-        if (auto currentTime = util::time::GetCurrentInsTime(); // HACK Use computer time instead of hardware sync
-            !currentTime.empty())
-        {
-            LOG_DATA("{}: Setting current computer time as insTime [{}]", nameId(), currentTime.toYMDHMS(GPST));
-            convertedData->insTime = currentTime;
-        }
 
         convertedData = obs;
     }
@@ -272,7 +266,12 @@ void NAV::UartPacketConverter::receiveObs(NAV::InputPin::NodeDataQueue& queue, s
         convertedData = obs;
     }
 
-    if (!convertedData || convertedData->insTime.empty()) { return; }
+    if (!convertedData) { return; }
+
+    if (convertedData->insTime.empty())
+    {
+        convertedData->insTime = util::time::GetCurrentInsTime();
+    }
 
     invokeCallbacks(OUTPUT_PORT_INDEX_CONVERTED, convertedData);
 }

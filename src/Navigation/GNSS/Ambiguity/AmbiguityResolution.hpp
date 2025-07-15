@@ -398,9 +398,9 @@ AmbiguityResolutionResult<typename DerivedA::Scalar, DerivedA::RowsAtCompileTime
     }
 #endif
 
-    result.ambiguityCriticalValueRatio = sqnorm(0) / sqnorm(1);
     if (cands.cols() > 1) // If we found only one candidate, the second one was very unlikely. Therefore we can accept this one without testing
     {
+        result.ambiguityCriticalValueRatio = sqnorm(0) / sqnorm(1);
         switch (params.validationAlgorithm)
         {
         case ValidationAlgorithm::DifferenceTest:

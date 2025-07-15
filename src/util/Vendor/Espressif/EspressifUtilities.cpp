@@ -38,7 +38,7 @@ bool NAV::vendor::espressif::decryptWiFiObs(const std::shared_ptr<NAV::WiFiObs>&
         InsTime_YMDHMS yearMonthDayHMS(packet.extractInt32(), packet.extractInt32(), packet.extractInt32(), packet.extractInt32(), packet.extractInt32(), packet.extractInt32());
         InsTime timeOfMeasurement(yearMonthDayHMS, UTC);
         [[maybe_unused]] uint32_t microseconds = packet.extractUint32();
-        obs->insTime = timeOfMeasurement + std::chrono::microseconds(microseconds);
+        // obs->insTime = timeOfMeasurement + std::chrono::microseconds(microseconds);
         // Time outputs
         std::shared_ptr<vendor::vectornav::TimeOutputs> timeOutputs = std::make_shared<vendor::vectornav::TimeOutputs>();
         obs->timeOutputs.syncInCnt = packet.extractUint32();
