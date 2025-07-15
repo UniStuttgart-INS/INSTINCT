@@ -15,6 +15,7 @@
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 #include "Navigation/Time/InsTime.hpp"
 #include "internal/NodeManager.hpp"
+#include "util/Assert.h"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
@@ -204,6 +205,7 @@ void NAV::UdpRecv::asyncReceive()
             if ((!errorRcvd) && (bytesRcvd > 0))
             {
                 std::memcpy(&_msgType, _charArray.data(), UdpUtil::SIZE_MSGTYPE);
+                LOG_DATA("{}: Received {} bytes (message type {})", nameId(), bytesRcvd, _msgType);
 
                 int32_t gpsCycle{};
                 int32_t gpsWeek{};
@@ -253,13 +255,16 @@ void NAV::UdpRecv::asyncReceive()
                     auto gnssObs = std::make_shared<GnssObs>();
                     gnssObs->insTime = InsTime(gpsCycle, gpsWeek, gpsTow);
 
-                    size_t sizeGnssData{};
-                    std::memcpy(&sizeGnssData, _charArray.data() + UdpUtil::OFFSET_SIZE, UdpUtil::SIZE_SIZE);
+                    size_t byteSizeGnssData{};
+                    std::memcpy(&byteSizeGnssData, _charArray.data() + UdpUtil::OFFSET_SIZE, UdpUtil::SIZE_SIZE);
+                    size_t sizeGnssData = byteSizeGnssData / UdpUtil::SIZE_SINGLE_OBSERVATION_DATA;
+                    INS_ASSERT_USER_ERROR(byteSizeGnssData % UdpUtil::SIZE_SINGLE_OBSERVATION_DATA == 0,
+                                          "The UdpRecv node received a not dividable amount of bytes for the GnssObs data.");
+                    LOG_DATA("{}:   {} GNSS signals ({} bytes)", nameId(), sizeGnssData, byteSizeGnssData);
                     gnssObs->data.resize(sizeGnssData, GnssObs::ObservationData(SatSigId()));
-                    std::memcpy(gnssObs->data.data(), _charArray.data() + UdpUtil::OFFSET_GNSSDATA, sizeGnssData);
+                    std::memcpy(gnssObs->data.data(), _charArray.data() + UdpUtil::OFFSET_GNSSDATA, byteSizeGnssData);
 
                     this->invokeCallbacks(OUTPUT_PORT_INDEX_NODE_DATA, gnssObs);
-                    LOG_DATA("{}: Received bytes: {}", nameId(), bytesRcvd);
                 }
                 else
                 {
