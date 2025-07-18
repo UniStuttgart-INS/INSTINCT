@@ -7,27 +7,27 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "udpRecv.hpp"
-#include <cstdint>
-#include <cstring>
-#include <memory>
-#include <boost/system/detail/error_code.hpp>
 
+#include "Nodes/DataLink/UdpUtil.hpp"
+#include "NodeData/GNSS/GnssObs.hpp"
+#include "NodeData/State/PosVelAtt.hpp"
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 #include "Navigation/Time/InsTime.hpp"
-#include "Nodes/DataLink/UdpUtil.hpp"
+
 #include "internal/NodeManager.hpp"
 #include "util/Assert.h"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
+#include "util/Logger.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
 #include "internal/gui/widgets/EnumCombo.hpp"
 #include "internal/gui/NodeEditorApplication.hpp"
 
-#include "NodeData/State/PosVelAtt.hpp"
-#include "NodeData/GNSS/GnssObs.hpp"
-
-#include "util/Logger.hpp"
+#include <cstdint>
+#include <cstring>
+#include <memory>
+#include <boost/system/detail/error_code.hpp>
 
 NAV::UdpRecv::UdpRecv()
     : Node(typeStatic()), _socket(_io_context)
@@ -212,8 +212,9 @@ void NAV::UdpRecv::asyncReceive()
         [this](boost::system::error_code errorRcvd, std::size_t bytesRcvd) {
             if ((!errorRcvd) && (bytesRcvd > 0))
             {
-                std::memcpy(&_msgType, _charArray.data(), UdpUtil::Size::MSGTYPE);
-                LOG_DATA("{}: Received {} bytes (message type {})", nameId(), bytesRcvd, fmt::underlying(_msgType));
+                UdpUtil::MessageType msgType{};
+                std::memcpy(&msgType, _charArray.data(), UdpUtil::Size::MSGTYPE);
+                LOG_DATA("{}: Received {} bytes (message type {})", nameId(), bytesRcvd, fmt::underlying(msgType));
 
                 int32_t gpsCycle{};
                 int32_t gpsWeek{};
@@ -223,7 +224,7 @@ void NAV::UdpRecv::asyncReceive()
                 std::memcpy(&gpsWeek, _charArray.data() + UdpUtil::Offset::GPSWEEK, UdpUtil::Size::GPSWEEK);
                 std::memcpy(&gpsTow, _charArray.data() + UdpUtil::Offset::GPSTOW, UdpUtil::Size::GPSTOW);
 
-                if (_msgType == UdpUtil::MessageType::PosVelAtt)
+                if (msgType == UdpUtil::MessageType::PosVelAtt)
                 {
                     if (outputPins.at(OUTPUT_PORT_INDEX_NODE_DATA).name != NAV::PosVelAtt::type())
                     {
@@ -253,7 +254,7 @@ void NAV::UdpRecv::asyncReceive()
 
                     this->invokeCallbacks(OUTPUT_PORT_INDEX_NODE_DATA, obs);
                 }
-                else if (_msgType == UdpUtil::MessageType::PosVel)
+                else if (msgType == UdpUtil::MessageType::PosVel)
                 {
                     if (outputPins.at(OUTPUT_PORT_INDEX_NODE_DATA).name != NAV::PosVel::type())
                     {
@@ -276,7 +277,7 @@ void NAV::UdpRecv::asyncReceive()
 
                     this->invokeCallbacks(OUTPUT_PORT_INDEX_NODE_DATA, obs);
                 }
-                else if (_msgType == UdpUtil::MessageType::Pos)
+                else if (msgType == UdpUtil::MessageType::Pos)
                 {
                     if (outputPins.at(OUTPUT_PORT_INDEX_NODE_DATA).name != NAV::Pos::type())
                     {
@@ -295,7 +296,7 @@ void NAV::UdpRecv::asyncReceive()
 
                     this->invokeCallbacks(OUTPUT_PORT_INDEX_NODE_DATA, obs);
                 }
-                else if (_msgType == UdpUtil::MessageType::GnssObs)
+                else if (msgType == UdpUtil::MessageType::GnssObs)
                 {
                     if (outputPins.at(OUTPUT_PORT_INDEX_NODE_DATA).name != NAV::GnssObs::type())
                     {

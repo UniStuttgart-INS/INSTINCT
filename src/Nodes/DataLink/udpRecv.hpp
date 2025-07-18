@@ -13,7 +13,9 @@
 
 #pragma once
 
-#include <array>
+#include "UdpUtil.hpp"
+#include "internal/Node/Node.hpp"
+
 #ifdef _WIN32
     // Set the proper SDK version before including boost/Asio
     #include <SDKDDKVer.h>
@@ -23,9 +25,7 @@
     #include <boost/asio.hpp>
 #endif
 
-#include "internal/Node/Node.hpp"
-#include "UdpUtil.hpp"
-
+#include <array>
 #include <string>
 
 namespace NAV
@@ -108,9 +108,6 @@ class UdpRecv : public Node
 
     /// The array that contains the data from the UDP stream
     std::array<char, UdpUtil::MAXIMUM_BYTES> _charArray{};
-
-    /// Message Type: 0 = posVelAtt, 1 = gnssObs
-    UdpUtil::MessageType _msgType = UdpUtil::MessageType::PosVelAtt;
 };
 
 /// @brief Converts the enum to a string

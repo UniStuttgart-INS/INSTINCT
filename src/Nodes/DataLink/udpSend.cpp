@@ -8,23 +8,21 @@
 
 #include "udpSend.hpp"
 
-#include "NodeRegistry.hpp"
-#include <cstring>
-#include <string>
-#include <vector>
 #include "NodeData/GNSS/GnssObs.hpp"
-#include "Nodes/DataLink/UdpUtil.hpp"
+#include "NodeData/State/PosVelAtt.hpp"
 #include "internal/Node/Pin.hpp"
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
+#include "NodeRegistry.hpp"
 
+#include "util/Logger.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
 #include "internal/gui/NodeEditorApplication.hpp"
 
-#include "NodeData/State/PosVelAtt.hpp"
-
-#include "util/Logger.hpp"
+#include <cstring>
+#include <string>
+#include <vector>
 
 // ---------------------------------------------------------- Private variabels ------------------------------------------------------------
 
@@ -143,12 +141,6 @@ void NAV::UdpSend::deinitialize()
 void NAV::UdpSend::receiveData(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     auto data = queue.extract_front();
-
-    if (!NAV::NodeRegistry::NodeDataTypeAnyIsChildOf({ data->getType() }, { PosVelAtt::type(), PosVel::type(), Pos::type(), GnssObs::type() }))
-    {
-        LOG_ERROR("{}: Data type {} not sendable, yet.", nameId(), data->getType());
-        return;
-    }
 
     std::vector<char> data2send{};
 

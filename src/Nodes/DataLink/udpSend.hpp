@@ -13,10 +13,11 @@
 
 #pragma once
 
-#include <cstddef>
-#include <vector>
-#include "Navigation/Time/InsTime.hpp"
 #include "Nodes/DataLink/UdpUtil.hpp"
+#include "Navigation/Time/InsTime.hpp"
+
+#include "internal/Node/Node.hpp"
+
 #ifdef _WIN32
     // Set the proper SDK version before including boost/Asio
     #include <SDKDDKVer.h>
@@ -26,8 +27,8 @@
     #include <boost/asio.hpp>
 #endif //_WIN32
 
-#include "internal/Node/Node.hpp"
-
+#include <cstddef>
+#include <vector>
 #include <string>
 
 namespace NAV
