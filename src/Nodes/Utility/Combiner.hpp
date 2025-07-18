@@ -28,6 +28,7 @@
 #include "NodeData/GNSS/GnssCombination.hpp"
 #include "NodeData/GNSS/GnssObs.hpp"
 #include "NodeData/GNSS/RtklibPosObs.hpp"
+#include "NodeData/GNSS/RtkSolution.hpp"
 #include "NodeData/GNSS/SppSolution.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/IMU/ImuObsSimulated.hpp"
@@ -94,6 +95,7 @@ class Combiner : public Node, public CommonLog
                                                                GnssObs::type(),
                                                                SppSolution::type(),
                                                                RtklibPosObs::type(),
+                                                               RtkSolution::type(),
                                                                ImuObs::type(),
                                                                ImuObsWDelta::type(),
                                                                ImuObsSimulated::type(),

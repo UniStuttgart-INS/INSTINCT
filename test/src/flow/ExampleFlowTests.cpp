@@ -50,4 +50,10 @@ TEST_CASE("[ExampleFlow] Test _SPP.flow", "[ExampleFlow][flow]")
     REQUIRE(testFlow("flow/_SPP.flow", false));
 }
 
+TEST_CASE("[ExampleFlow] Test _RTK.flow", "[ExampleFlow][flow]")
+{
+    auto logger = initializeTestLogger();
+    REQUIRE(testFlow("flow/_RTK.flow", false));
+}
+
 } // namespace NAV::TESTS::ExampleFlowTests

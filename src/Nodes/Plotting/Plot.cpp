@@ -2102,6 +2102,10 @@ void NAV::Plot::plotFlowData(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
             {
                 plotData(std::static_pointer_cast<const PosVelAtt>(nodeData), pinIdx, i, Pos::GetStaticDescriptorCount());
             }
+            else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(sourcePin->dataIdentifier, { RtkSolution::type() }))
+            {
+                plotData(std::static_pointer_cast<const RtkSolution>(nodeData), pinIdx, i, Pos::GetStaticDescriptorCount());
+            }
             else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(sourcePin->dataIdentifier, { SppSolution::type() }))
             {
                 plotData(std::static_pointer_cast<const SppSolution>(nodeData), pinIdx, i, Pos::GetStaticDescriptorCount());

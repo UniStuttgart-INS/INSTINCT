@@ -1,0 +1,1241 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file RTK.dox
+// @brief RTK algorithm description
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2024-06-27
+
+namespace Instinct {
+
+/** \page RealTimeKinematics Real-Time Kinematics Positioning
+
+\tableofcontents
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\section RTK-ObservationEquations Observation equations
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection RTK-SingleObservationEquations Single GNSS Observation Equation
+
+\f{equation}{
+\begin{aligned}
+{ p_{r,j}^s}
+         &= { \rho_r^s}
+          + {\delta\rho_{ie,r}^s}
+          + { T_r^s}
+          + { \mu_j^S I_r^s}
+          + c \left[ { dt_r}
+                   - { dt^s}
+                   + { dt_{ISB}^S}
+                   + { \delta t^{rel}_{stc}} - { \delta t^{rel}_{clk}}
+                   + { d_{r,j}^S}
+                   - { d_{j}^s}
+                   + { \Delta d_{r,j}^s}
+              \right]
+          + { \xi_{r,j}^s}
+          + { e_{r,j}^s} \\
+{ \varphi_{r,j}^s}
+         &= { \rho_r^s}
+          + {\delta\rho_{ie,r}^s}
+          + { T_r^s}
+          - { \mu_j^S I_r^s}
+          + c \left[ { dt_r}
+                   - { dt^s}
+                   + { dt_{ISB}^S}
+                   + { \delta t^{rel}_{stc}} - { \delta t^{rel}_{clk}}
+                   + { \delta_{r,j}^S}
+                   - { \delta_{j}^s}
+                   + { \Delta \delta_{r,j}^s}
+              \right]
+          + { \zeta_{r,j}^s}
+          + { \epsilon_{r,j}^s}
+          + { \lambda_j^S}
+                ({ \omega_{r}^s }
+                 + { N_{r,j}^s}) \\
+{ \dotup{p}_r^s} &= {{\mathbf{u}_{r}^{s}}^T}
+                               [ {\mathbf{v}^s}
+                                - {\mathbf{v}_r} ]
+                       - {\delta\dotup{\rho}_{ie,r}^s}
+                       + { \dotup{T}_r^s}
+                       - { \mu_j^S \dotup{I}_r^s}
+                       + c [{d\dotup{t}_r}
+                            - {d\dotup{t}^s }
+                            + {d\dotup{t}_{ISB}^S}
+                            + { \delta f^{rel}_{clk}}]
+\end{aligned}
+\f}
+
+\f{equation*}{
+\begin{array}{clcl}
+  { p_{r,j}^s}                    & \text{Code/pseudorange observable [m]}              & { \varphi_{r,j}^s}              & \text{Carrier-phase observable [m]} \\
+  { \dotup{p}_r^s}                  & \text{Pseudorange rate (doppler) measurement [m/s]} &  \\
+  { \rho_r^s}                   & \text{Receiver-satellite range [m]}                 & {\mathbf{u}_{r}^s}            & \text{Line-of-Sight vector} \\
+  {\delta\rho_{ie,r}^s}          & \text{Earth rotation/Sagnac correction [m]}         & {\delta\dotup{\rho}_{ie,r}^s}    & \text{Earth rotation/Sagnac rate correction [m/s]} \\
+  {\mathbf{r}^s}             & \text{Satellite position [m]}                       & {\mathbf{v}^s}             & \text{Satellite velocity [m/s]} \\
+  {\mathbf{r}_r}           & \text{Receiver position [m]}                        & {\mathbf{v}_r}           & \text{Receiver velocity [m/s]} \\
+  { I_r^s}                      & \text{Ionospheric delay [m]}                        & { \mu_j^S}                    & \text{Ionospheric coefficient} \\
+  { T_r^s}                        & \text{Tropospheric delay [m]}                       &  \\
+  { dt_r}                          & \text{Receiver clock error [s]}                     & {d\dotup{t}_r}                     & \text{Receiver clock drift [s/s]} \\
+  { dt^s}                   & \text{Satellite clock error [s]}                    & {d\dotup{t}^s}              & \text{Satellite clock drift [s/s]} \\
+  { dt_{ISB}^S}             & \text{Clock inter-system bias [s]}                  & {d\dotup{t}_{ISB}^S}        & \text{Inter-system bias clock drift [s/s]} \\
+  { \delta t^{rel}_{clk}} & \text{Relativistic clock correction [s]}            & { \delta t^{rel}_{stc}} & \text{Relativistic signal delay due to space-time curvature [s]}\\
+                                              &                                                     & { \delta f^{rel}_{clk}} & \text{Frequency deviation due to relativist effects [-]}\\
+  { d_{r,j}^S}                    & \text{Receiver code hardware bias [s]}              & { \delta_{r,j}^S}               & \text{Receiver phase hardware bias [s]} \\
+  { d_{j}^s}                & \text{Satellite code hardware bias [s]}             & { \delta_{j}^s}           & \text{Satellite phase hardware bias [s]} \\
+  { \Delta d_{r,j}^s}            & \text{Code interchannel bias [s] (FDMA only)}       & { \Delta \delta_{r,j}^s}       & \text{Phase interchannel bias [s] (FDMA only)} \\
+  { \xi_{r,j}^s}                 & \text{Phase-center offset \& variation [m]}         & { \zeta_{r,j}^s}               & \text{Phase-center offset \& variation [m]} \\
+  { e_{r,j}^s}            & \text{Residual errors (noise, mulitpath, NLOS) [m]} & { \epsilon_{r,j}^s}     & \text{Residual errors (noise, mulitpath, NLOS) [m]} \\
+  { \lambda_j^S}                  & \text{Wavelength [m]}                               & { N_{r,j}^s}                   & \text{Carrier-phase ambiguity [cyc]} \\
+  { \omega_{r}^s }      & \text{Phase wind-up error [m]} \\
+\end{array}
+\f}
+
+See
+- \cite SpringerHandbookGNSS2017 SpringerHandbookGNSS2017, p.606
+- \cite Morton2020 Morton2020Vol1, p. 483
+- \cite Groves2013 Groves2013, p. 443
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection RTK-SingleDifference Single Difference
+
+- Base receiver \f$ b \f$, rover receiver \f$ r \f$
+\f{equation}{
+\begin{aligned}
+{ p_{br}^s}
+        &= { p_{r}^s} - { p_{b}^s}
+        &&= \overbrace{{ \rho_r^s} - { \rho_b^s}}^{ \rho_{br}^s}
+          + \overbrace{{ \delta\rho_{ie,r}^s} - { \delta\rho_{ie,b}^s}}^{ \delta\rho_{ie,br}^s}
+          + \overbrace{{ T_r^s} - { T_b^s}}^{ T_{br}^s}
+          + {\mu_j^S} (\overbrace{{ I_r^s} - { I_b^s}}^{ I_{br}^s})
+          + c\ [ \overbrace{{ dt_r} - { dt_b}}^{ dt_{br}}
+                   - \overbrace{({ dt^s} - { dt^s})}^{= 0}
+                   + \overbrace{{ dt_{ISB}^S} - { dt_{ISB}^S}}^{= 0}
+                   + \overbrace{{ \delta t^{rel,s}_{stc,r}} - { \delta t^{rel,s}_{stc,b}}}^{ \delta t^{rel,s}_{stc,br}}
+                   - \overbrace{({ \delta t^{rel,s}_{clk}} - { \delta t^{rel,s}_{clk}})}^{= 0}
+              ]\\
+          & &&\quad\, + c\ [ \underbrace{{ d_{r,j}^S} - { d_{b,j}^S}}_{ d_{br,j}^S}
+                   - \underbrace{({ d_{j}^s} - { d_{j}^s})}_{= 0}
+                   + \underbrace{{ \Delta d_{r,j}^s} - { \Delta d_{b,j}^s}}_{ \Delta d_{br,j}^s}
+              ]
+          + \underbrace{{ \xi_{r,j}^s} - { \xi_{b,j}^s}}_{ \xi_{br,j}^s}
+          + \underbrace{{ e_{r,j}^s} - { e_{b,j}^s}}_{ e_{br,j}^s} \\
+{ \varphi_{br}^s}
+         &= { \varphi_{r}^s} - { \varphi_{b}^s}
+         &&= \overbrace{{ \rho_r^s} - { \rho_b^s}}^{ \rho_{br}^s}
+          + \overbrace{{ \delta\rho_{ie,r}^s} - { \delta\rho_{ie,b}^s}}^{ \delta\rho_{ie,br}^s}
+          + \overbrace{{ T_r^s} - { T_b^s}}^{ T_{br}^s}
+          - {\mu_j^S} (\overbrace{{ I_r^s} - { I_b^s}}^{ I_{br}^s})
+          + c [ \overbrace{{ dt_r} - { dt_b}}^{ dt_{br}}
+                   - \overbrace{({ dt^s} - { dt^s})}^{= 0}
+                   + \overbrace{{ dt_{ISB}^S} - { dt_{ISB}^S}}^{= 0}
+                   + \overbrace{{ \delta t^{rel,s}_{stc,r}} - { \delta t^{rel,s}_{stc,b}}}^{ \delta t^{rel,s}_{stc,br}}
+                   - \overbrace{({ \delta t^{rel,s}_{clk}} - { \delta t^{rel,s}_{clk}})}^{= 0}
+              ]\\
+          & &&\quad\, + c [\underbrace{{ \delta_{r,j}^S} - { \delta_{b,j}^S}}_{ \delta_{br,j}^S}
+                      - \underbrace{({ \delta_{j}^s} - { \delta_{j}^s})}_{= 0}
+                      + \underbrace{{ \Delta \delta_{r,j}^s} - { \Delta \delta_{b,j}^s}}_{ \Delta \delta_{br,j}^s}
+              ]
+          + \underbrace{{ \zeta_{r,j}^s} - { \zeta_{b,j}^s}}_{ \zeta_{br,j}^s}
+          + \underbrace{{ \epsilon_{r,j}^s} - { \epsilon_{b,j}^s}}_{ \epsilon_{br,j}^s}
+          + { \lambda_j^S}
+                (\underbrace{{ N_{r,j}^s} - { N_{b,j}^s}}_{ N_{br}^s}
+          + \underbrace{{ \omega_{r}^s } - { \omega_{b}^s }}_{ \omega_{br}^s }) \\
+{ \dotup{p}_{br}^s}
+         &= { \dotup{p}_{r}^s} - { \dotup{p}_{b}^s}
+         &&= {{\mathbf{u}_{r}^{s}}^T} [{\mathbf{v}^s} - {\mathbf{v}_r} ]
+             - {{\mathbf{u}_{b}^{s}}^T} {\mathbf{v}^s}
+             - \overbrace{({\delta\dotup{\rho}_{ie,r}^s} - {\delta\dotup{\rho}_{ie,b}^s})}^{\delta\dotup{\rho}_{ie,br}^s}
+             + \overbrace{{ \dotup{T}_r^s} - { \dotup{T}_b^s}}^{\approx 0}
+             + {\mu_j^S} (\overbrace{{ \dotup{I}_r^s} - { \dotup{I}_b^s}}^{\approx 0})
+             + c [\overbrace{{d\dotup{t}_r} - {d\dotup{t}_b}}^{d\dotup{t}_{br}}
+                  - \overbrace{({d\dotup{t}^s } - {d\dotup{t}^s })}^{= 0}
+                  + \overbrace{{d\dotup{t}_{ISB}^S} - {d\dotup{t}_{ISB}^S}}^{= 0}
+                  + \overbrace{{ \delta f^{rel,s}_{clk}} - { \delta f^{rel,s}_{clk}}}^{= 0}]
+\end{aligned}
+\f}
+
+\f{equation}{
+\begin{aligned}
+{ p_{br}^s} &= { \rho_{br}^s}
+                        + { \delta\rho_{ie,br}^s}
+                        + { T_{br}^s}
+                        + {\mu_j^S} { I_{br}^s}
+                        + c \left[ { dt_{br}}
+                                 + { \delta t^{rel,s}_{stc,br}}
+                                 + { d_{br,j}^S}
+                                 + { \Delta d_{br,j}^s}
+                            \right]
+                        + { \xi_{br,j}^s}
+                        + { e_{br,j}^s} \\
+{ \varphi_{br}^s} &= { \rho_{br}^s}
+                              + { \delta\rho_{ie,br}^s}
+                              + { T_{br}^s}
+                              - {\mu_j^S} { I_{br}^s}
+                              + c \left[ { dt_{br}}
+                                       + { \delta t^{rel,s}_{stc,br}}
+                                       + { \delta_{br,j}^S}
+                                       + { \Delta \delta_{br,j}^s}
+                                  \right]
+                              + { \zeta_{br,j}^s}
+                              + { \epsilon_{br,j}^s}
+                              + { \lambda_j^S}
+                                ({ N_{br}^s}
+                                 + { \omega_{br}^s }) \\
+{ d_{br}^s} &= {{\mathbf{u}_{r}^{s}}^T} [{\mathbf{v}^s} - {\mathbf{v}_r} ]
+                           - {{\mathbf{u}_{b}^{s}}^T} {\mathbf{v}^s}
+                           - {\delta\dotup{\rho}_{ie,br}^s}
+                           + c\ {d\dotup{t}_{br}}
+\end{aligned}
+\f}
+
+See
+- \cite SpringerHandbookGNSS2017 SpringerHandbookGNSS2017, p.596
+- \cite Morton2020 Morton2020Vol1, p. 486
+- \cite Groves2013 Groves2013, p. 443
+
+\note Increased noise of Single Difference, compared to separate measurements: \f$ \sigma_{12} = \sqrt{2}\sigma \f$
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection RTK-DoubleDifference Double Difference
+
+- Pivot satellite \f$1\f$ and other satellites as \f$s\f$
+- 1 Pivot satellite per GNSS constellation needed. Double Difference only possible for measurements on same frequency, otherwise the hardware biases do not cancel out each other
+
+\f{equation}{
+\begin{aligned}
+{ p_{br}^{1s}}
+        &= { p_{br}^s} - { p_{br}^1}
+        &&= \overbrace{{ \rho_{br}^s} - { \rho_{br}^1}}^{ \rho_{br}^{1s}}
+          + \overbrace{{ \delta\rho_{ie,br}^s} - { \delta\rho_{ie,br}^1}}^{ \delta\rho_{ie,br}^{1s}}
+          + \overbrace{{ T_{br}^s} - { T_{br}^1}}^{ T_{br}^{1s}}
+          + \overbrace{{\mu_j^1} { I_{br}^s} - {\mu_j^1} { I_{br}^1}}^{{\mu_j^{1}} { I_{br}^{1s}}}
+          + c\ [ \overbrace{{ dt_{br}} - { dt_{br}}}^{= 0}
+                   + \overbrace{{ \delta t^{rel,s}_{stc,br}} - { \delta t^{rel,1}_{stc,br}}}^{ \delta t^{rel,1s}_{stc,br}}
+              ]\\
+          & &&\quad\, + c\ [ \underbrace{{ d_{br,j}^S} - { d_{br,j}^1}}_{ d_{br}^{1S}}
+                   + \underbrace{{ \Delta d_{br,j}^s} - { \Delta d_{br,j}^1}}_{ \Delta d_{br}^{1s}}
+              ]
+          + \underbrace{{ \xi_{br,j}^s} - { \xi_{br,j}^1}}_{ \xi_{br}^{1s}}
+          + \underbrace{{ e_{br,j}^s} - { e_{br,j}^1}}_{ e_{br}^{1s}}\\
+{ \varphi_{br}^{1s}}
+         &= { \varphi_{br}^s} - { \varphi_{br}^1}
+         &&= \overbrace{{ \rho_{br}^s} - { \rho_{br}^1}}^{ \rho_{br}^{1s}}
+          + \overbrace{{ \delta\rho_{ie,br}^s} - { \delta\rho_{ie,br}^1}}^{ \delta\rho_{ie,br}^{1s}}
+          + \overbrace{{ T_{br}^s} - { T_{br}^1}}^{ T_{br}^{1s}}
+          - \overbrace{({\mu_j^1} { I_{br}^s} - {\mu_j^1} { I_{br}^1})}^{{\mu_j^{1}} { I_{br}^{1s}}}
+          + c [ \overbrace{{ dt_{br}} - { dt_{br}}}^{= 0}
+                   + \overbrace{{ \delta t^{rel,s}_{stc,br}} - { \delta t^{rel,1}_{stc,br}}}^{ \delta t^{rel,1s}_{stc,br}}
+              ]\\
+          & &&\quad\, + c [\underbrace{{ \delta_{br,j}^S} - { \delta_{br,j}^1}}_{ \delta_{br}^{1S}}
+                      + \underbrace{{ \Delta \delta_{br,j}^s} - { \Delta \delta_{br,j}^1}}_{ \Delta \delta_{br}^{1s}}
+              ]
+          + \underbrace{{ \zeta_{br,j}^s} - { \zeta_{br,j}^1}}_{ \zeta_{br}^{1s}}
+          + \underbrace{{ \epsilon_{br,j}^s} - { \epsilon_{br,j}^1}}_{ \epsilon_{br}^{1s}}
+          + { \lambda_j^1} (\underbrace{{N_{br}^s} - {N_{br}^1}}_{N_{br}^{1s}}
+                                      + \underbrace{{\omega_{br}^s} - {\omega_{br}^1}}_{\omega_{br}^{1s}})\\
+{ \dotup{p}_{br}^{1s}}
+         &= { \dotup{p}_{br}^s} - { \dotup{p}_{br}^1}
+         &&= {{\mathbf{u}_{r}^{s}}^T} [{\mathbf{v}^s} - {\mathbf{v}_r} ]
+                - {{\mathbf{u}_{b}^{s}}^T} {\mathbf{v}^s}
+             - {{\mathbf{u}_{r}^{1}}^T} [{\mathbf{v}^1} - {\mathbf{v}_r} ]
+                + {{\mathbf{u}_{b}^{1}}^T} {\mathbf{v}^1}
+             - ({\delta\dotup{\rho}_{ie,br}^s} - {\delta\dotup{\rho}_{ie,br}^1})
+             + c [ \overbrace{{d\dotup{t}_{br}} - {d\dotup{t}_{br}}}^{= 0} ]
+\end{aligned}
+\f}
+
+\f{equation}{
+\begin{aligned}
+{ p_{br}^{1s}} &= { \rho_{br}^{1s}}
+                        + { \delta\rho_{ie,br}^{1s}}
+                        + { T_{br}^{1s}}
+                        + {\mu_j^{1}} { I_{br}^{1s}}
+                        + c \left[ { \delta t^{rel,1s}_{stc,br}}
+                                 + { d_{br}^{1S}}
+                                 + { \Delta d_{br}^{1s}}
+                            \right]
+                        + { \xi_{br}^{1s}}
+                        + { e_{br}^{1s}} \\
+{ \varphi_{br}^{1s}} &= { \rho_{br}^{1s}}
+                              + { \delta\rho_{ie,br}^{1s}}
+                              + { T_{br}^{1s}}
+                              - {\mu_j^{1}} { I_{br}^{1s}}
+                              + c \left[ { \delta t^{rel,1s}_{stc,br}}
+                                       + { \delta_{br}^{1S}}
+                                       + { \Delta \delta_{br,j}^{1s}}
+                                  \right]
+                              + { \zeta_{br}^{1s}}
+                              + { \epsilon_{br}^{1s}}
+                              + { \lambda_j^1} ({ N_{br}^{1s}} + { \omega_{br}^{1s}})\\
+{ \dotup{p}_{br}^{1s}} &= {{\mathbf{u}_{r}^{s}}^T} [{\mathbf{v}^s} - {\mathbf{v}_r} ]
+                                 - {{\mathbf{u}_{b}^{s}}^T} {\mathbf{v}^s}
+                              - {{\mathbf{u}_{r}^{1}}^T} [{\mathbf{v}^1} - {\mathbf{v}_r} ]
+                                 + {{\mathbf{u}_{b}^{1}}^T} {\mathbf{v}^1}
+                              - ({\delta\dotup{\rho}_{ie,br}^s} - {\delta\dotup{\rho}_{ie,br}^1})
+\end{aligned}
+\f}
+
+See
+- \cite SpringerHandbookGNSS2017 SpringerHandbookGNSS2017, p. 597
+- \cite Morton2020 Morton2020Vol1, p. 486
+- \cite Groves2013 Groves2013, p. 444ff
+
+\note Increased noise of Double Difference, compared to separate measurements: \f$ \sigma_{br}^{1s} = \sqrt{4}\sigma = 2\sigma \f$
+
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\section RTK-State State
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+Theoretically our state would consist of the following states, **satellite 1 being our pivot satellite**.
+\f{equation}{
+\mathbf{x}^e = \left[
+\begin{array}{cc|ccccc}
+    { \mathbf{r}_{r} } & { \mathbf{v}_{r} } & {N_{br}^1} & {N_{br}^2} & {N_{br}^3} & \dots & {N_{br}^m}
+\end{array}\right]
+\f}
+This will however lead to the system not being solvable in a unique way, as it is is rank-deficient (see \cite SpringerHandbookGNSS2017 SpringerHandbookGNSS2017, ch. 26.3.1, p. 763).
+
+To solve this, we set the ambiguity of the pivot satellite to 0 and remove it from the state. This means all other ambiguities will be relative to the pivot satellite ambiguity. This practically results in us doing **double difference ambiguities** in the state
+\f{equation}{
+\mathbf{x}^e
+=
+\begin{bmatrix}
+    { \mathbf{r}_{r} } \\
+    { \mathbf{v}_{r} } \\\hdashline
+    {N_{br}^2} - {N_{br}^1} \\
+    {N_{br}^3} - {N_{br}^1} \\
+    \vdots \\
+    {N_{br}^m} - {N_{br}^1} \\
+\end{bmatrix}
+=
+\begin{bmatrix}
+    { \mathbf{r}_{r} } \\
+    { \mathbf{v}_{r} } \\\hdashline
+    {N_{br}^{12}} \\
+    {N_{br}^{13}} \\
+    \vdots \\
+    {N_{br}^{1m}} \\
+\end{bmatrix}
+=
+\begin{bmatrix}
+    \text{Baseline from Base to Rover [m]} \\
+    \text{Velocity difference between base and rover [m/s]} \\ \hdashline
+    \text{Double-Differenced Carrier-phase ambiguity of satellite 2 [cyc]} \\
+    \text{Double-Differenced Carrier-phase ambiguity of satellite 3 [cyc]} \\
+    \vdots \\
+    \text{Double-Differenced Carrier-phase ambiguity of satellite m [cyc]} \\
+\end{bmatrix}
+\f}
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\subsection RTK-AmbiguityInitialization Ambiguity initialization
+
+\subsubsection RTK-CarrierPseudorangeDifference Carrier-Pseudorange Difference
+
+The ambiguities can be initialized from the difference of the carrier-phase and pseudorange measurements
+\f{equation}{
+\begin{aligned}
+{ \tilde{\varphi}_{br}^{1s}} - { \tilde{p}_{br}^{1s}}
+		&= { \rho_{br}^{1s}}
+            + { \delta\rho_{ie,br}^{1s}}
+            + { T_{br}^{1s}}
+            - {\mu_j^{1}} { I_{br}^{1s}}
+            + c \left[ { \delta t^{rel,1s}_{stc,br}}
+                     + { \delta_{br}^{1S}}
+                     + { \Delta \delta_{br,j}^{1s}}
+               \right]
+            + { \zeta_{br}^{1s}}
+            + { \epsilon_{br}^{1s}}
+            + { \lambda_j^1} ({ N_{br}^{1s}} + { \omega_{br}^{1s}})\\
+        &- { \rho_{br}^{1s}}
+            - { \delta\rho_{ie,br}^{1s}}
+            - { T_{br}^{1s}}
+            - {\mu_j^{1}} { I_{br}^{1s}}
+            - c \left[ { \delta t^{rel,1s}_{stc,br}}
+                     + { d_{br}^{1S}}
+                     + { \Delta d_{br}^{1s}}
+                \right]
+            - { \xi_{br}^{1s}}
+            - { e_{br}^{1s}}\\
+{ \tilde{\varphi}_{br}^{1s}} - { \tilde{p}_{br}^{1s}}
+		&= -2 {\mu_j^{1}} { I_{br}^{1s}}
+            + c \left[ { \delta_{br}^{1S}}
+                     + { \Delta \delta_{br,j}^{1s}}
+                     - { d_{br}^{1S}}
+                     - { \Delta d_{br}^{1s}}
+               \right]
+            + { \zeta_{br}^{1s}}
+            - { \xi_{br}^{1s}}
+            + { \epsilon_{br}^{1s}}
+            - { e_{br}^{1s}}
+            + { \lambda_j^1} ({ N_{br}^{1s}} + { \omega_{br}^{1s}})\\
+{ N_{br}^{1s}} &= \frac{1}{{ \lambda_j^1}}
+		\left(
+			{ \tilde{\varphi}_{br}^{1s}} - { \tilde{p}_{br}^{1s}}
+			+2 {\mu_j^{1}} { I_{br}^{1s}}
+			- c \left[ { \delta_{br}^{1S}}
+                     + { \Delta \delta_{br,j}^{1s}}
+                     - { d_{br}^{1S}}
+                     - { \Delta d_{br}^{1s}}
+               \right]
+            - { \zeta_{br}^{1s}}
+            + { \xi_{br}^{1s}}
+            - { \epsilon_{br}^{1s}}
+            + { e_{br}^{1s}}
+            - { \lambda_j^1} { \omega_{br}^{1s}}
+		\right)
+\end{aligned}
+\f}
+
+Neglecting the error terms this becomes
+\f{equation}{
+{ N_{br}^{1s}} = \frac{1}{{ \lambda_j^1}}
+		\left(
+			{ \tilde{\varphi}_{br}^{1s}} - { \tilde{p}_{br}^{1s}}
+		\right)
+\f}
+However the pseudorange error terms are quite big and can lead to significant errors
+
+\subsubsection RTK-CarrierGeometryDifference Carrier-Geometry Difference
+
+As the pseudorange is very noisy, it is better to use the estimated measurement (with ambiguity 0) when the position is known
+\f{equation}{
+\begin{aligned}
+{ \tilde{\varphi}_{br}^{1s}} - { \hat{\varphi}_{br}^{1s}}
+		&= { \rho_{br}^{1s}}
+            + { \delta\rho_{ie,br}^{1s}}
+            + { T_{br}^{1s}}
+            - {\mu_j^{1}} { I_{br}^{1s}}
+            + c \left[ { \delta t^{rel,1s}_{stc,br}}
+                     + { \delta_{br}^{1S}}
+                     + { \Delta \delta_{br,j}^{1s}}
+               \right]
+            + { \zeta_{br}^{1s}}
+            + { \epsilon_{br}^{1s}}
+            + { \lambda_j^1} ({ N_{br}^{1s}} + { \omega_{br}^{1s}})\\
+        &- { \hat{\rho}_{br}^{1s}}
+            - { \delta\hat{\rho}_{ie,br}^{1s}}
+            - { \hat{T}_{br}^{1s}}
+            + {\mu_j^{1}} { \hat{I}_{br}^{1s}}\\
+{ \tilde{\varphi}_{br}^{1s}} - { \hat{\varphi}_{br}^{1s}}
+		&= c \left[ { \delta t^{rel,1s}_{stc,br}}
+                     + { \delta_{br}^{1S}}
+                     + { \Delta \delta_{br,j}^{1s}}
+               \right]
+            + { \zeta_{br}^{1s}}
+            + { \epsilon_{br}^{1s}}
+            + { \lambda_j^1} ({ N_{br}^{1s}} + { \omega_{br}^{1s}})\\
+{ N_{br}^{1s}} &= \frac{1}{{ \lambda_j^1}}
+		\left(
+			{ \tilde{\varphi}_{br}^{1s}} - { \hat{\varphi}_{br}^{1s}}
+			- c \left[ { \delta t^{rel,1s}_{stc,br}}
+                     + { \delta_{br}^{1S}}
+                     + { \Delta \delta_{br,j}^{1s}}
+               \right]
+            - { \zeta_{br}^{1s}}
+            - { \epsilon_{br}^{1s}}
+            - { \lambda_j^1} { \omega_{br}^{1s}}
+		\right)
+\end{aligned}
+\f}
+
+Neglecting the error terms this becomes
+\f{equation}{
+{ N_{br}^{1s}} = \frac{1}{{ \lambda_j^1}}
+		\left(
+			{ \tilde{\varphi}_{br}^{1s}} - { \hat{\varphi}_{br}^{1s}}
+		\right)
+\f}
+
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\section RTK-PivotSatelliteChange Pivot satellite change
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+When the pivot satellite changes, we have to take this into account. Lets assume we have 5 satellites and satellite 1 is the current pivot.
+Therefore the double difference ambiguity of satellite 1 is not in the state (as it would be 0 anyway)
+\f{equation}{
+\mathbf{x}_{\text{old}} =
+\begin{bmatrix}
+    { \mathbf{r}_{r} } \\
+    { \mathbf{v}_{r} } \\ \hdashline
+    {N_{br}^{12}} \\
+    {N_{br}^{13}} \\
+    {N_{br}^{14}} \\
+    {N_{br}^{15}} \\
+\end{bmatrix}_{\text{old}}
+\f}
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\subsection RTK-PivotCase1 Case 1: Low elevation
+
+- Old pivot satellite 1 has low elevation but is still observed
+- Satellite 2 becomes the new pivot
+We can transform the state with a matrix \f$ \mathbf{D} \f$ with \f$ \mathbf{x}_{\text{new}} = \mathbf{D} \cdot \mathbf{x}_{\text{old}} \f$
+
+\f{equation}{
+\begin{bmatrix}
+    { \mathbf{r}_{r} } \\
+    { \mathbf{v}_{r} } \\ \hdashline
+    {N_{br}^{21}} = {N_{br}^{1}} - {N_{br}^{2}} \\
+    {N_{br}^{23}} = {N_{br}^{3}} - {N_{br}^{2}} \\
+    {N_{br}^{24}} = {N_{br}^{4}} - {N_{br}^{2}} \\
+    {N_{br}^{25}} = {N_{br}^{5}} - {N_{br}^{2}} \\
+\end{bmatrix}_{\text{new}}
+=
+\overbrace{
+  \left[\begin{array}{cc:cccc}
+    \mathbf{I}_3     & \mathbf{0}_3     &    0   &    0   &    0  &  0  \\
+    \mathbf{0}_3     & \mathbf{I}_3     &    0   &    0   &    0  &  0  \\\hdashline
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &   -1   &    0   &    0  &  0  \\
+	\mathbf{0}_{1,3} & \mathbf{0}_{1,3} &   -1   &    1   &    0  &  0  \\
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &   -1   &    0   &    1  &  0  \\
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &   -1   &    0   &    0  &  1  \\
+  \end{array}\right]
+}^{\mathbf{D}}
+\cdot
+\begin{bmatrix}
+    { \mathbf{r}_{r} } \\
+    { \mathbf{v}_{r} } \\ \hdashline
+    {N_{br}^{12}} = {N_{br}^{2}} - {N_{br}^{1}} \\
+    {N_{br}^{13}} = {N_{br}^{3}} - {N_{br}^{1}} \\
+    {N_{br}^{14}} = {N_{br}^{4}} - {N_{br}^{1}} \\
+    {N_{br}^{15}} = {N_{br}^{5}} - {N_{br}^{1}} \\
+\end{bmatrix}_{\text{old}}
+\f}
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\subsection RTK-PivotCase2 Case 2: Not observed
+
+- Old pivot satellite 1 is not observed this epoch
+- Satellite 2 becomes the new pivot
+We can transform the state with a matrix \f$ \mathbf{D} \f$ with \f$ \mathbf{x}_{\text{new}} = \mathbf{D} \cdot \mathbf{x}_{\text{old}} \f$
+\f{equation}{
+\begin{bmatrix}
+    { \mathbf{r}_{r} } \\
+    { \mathbf{v}_{r} } \\ \hdashline
+    \cancel{{N_{br}^{21}} = 0} \\
+    {N_{br}^{23}} = {N_{br}^{3}} - {N_{br}^{2}} \\
+    {N_{br}^{24}} = {N_{br}^{4}} - {N_{br}^{2}} \\
+    {N_{br}^{25}} = {N_{br}^{5}} - {N_{br}^{2}} \\
+\end{bmatrix}_{\text{new}}
+=
+\overbrace{
+  \left[\begin{array}{cc:cccc}
+    \mathbf{I}_3     & \mathbf{0}_3     &    0   &    0   &    0  &  0  \\
+    \mathbf{0}_3     & \mathbf{I}_3     &    0   &    0   &    0  &  0  \\\hdashline
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &    0   &    0   &    0  &  0  \\
+	\mathbf{0}_{1,3} & \mathbf{0}_{1,3} &   -1   &    1   &    0  &  0  \\
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &   -1   &    0   &    1  &  0  \\
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &   -1   &    0   &    0  &  1  \\
+  \end{array}\right]
+}^{\mathbf{D}}
+\cdot
+\begin{bmatrix}
+    { \mathbf{r}_{r} } \\
+    { \mathbf{v}_{r} } \\ \hdashline
+    {N_{br}^{12}} = {N_{br}^{2}} - {N_{br}^{1}} \\
+    {N_{br}^{13}} = {N_{br}^{3}} - {N_{br}^{1}} \\
+    {N_{br}^{14}} = {N_{br}^{4}} - {N_{br}^{1}} \\
+    {N_{br}^{15}} = {N_{br}^{5}} - {N_{br}^{1}} \\
+\end{bmatrix}_{\text{old}}
+\f}
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\subsection RTK-ErrorPropagation Error propagation
+
+After a transformation, the covariance matrix has also to be adapted by error propagation
+\f{equation}{
+\mathbf{P}_{\text{new}} = \mathbf{D} \cdot \mathbf{P}_{\text{old}} \cdot \mathbf{D}^T
+\f}
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\section RTK-SyncCorrection Synchronization correction
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection RTK-syncTwoStep Two step correction
+> See \cite Stucke2023 Stucke2023
+
+The linearized observation equation is valid for a common point in time. So for example the rover receiver time \f$ t_r \f$
+\f{equation}{
+{ \tilde{p}_{br}^{1s}}({ t_r})
+- { \hat{p}_{br}^{1s}}({ t_r})
+  = \mathbf{H}({ t_r})\delta\mathbf{x}({ t_r})
+\f}
+However, the base observation is observed at a time \f$ t_b \f$. So we need to sync the observations according to \cite Stucke2023 Stucke2023, ch. 3 in two steps.
+### 1. Correction of receiver internal clock error
+The observations estimate their observations at times \f$ t_b \f$ for the base and \f$ t_r \f$ for the rover. However they are not logged for the estimated times but instead for the internal clock at times \f$ \tilde{t}_b \f$ and \f$ \tilde{t}_r \f$. According to \cite Stucke2023 Stucke2023 the error lies in the order of milliseconds.
+To remove this error, the receiver clock errors \f$ dt_b \f$ and \f$ dt_r \f$ are estimated by a SPP. This allows evaluation of the observations at the correct instances of time
+\f{equation}{
+\begin{aligned}
+{ t_b} &= { \tilde{t}_b} - { dt_b} \\
+{ t_r} &= { \tilde{t}_r} - { dt_r} \\
+\end{aligned}
+\f}
+While this correction of the time makes sense, it proved to deteriorate the solution. So this <span class="red"><b>first step is not applied</b></span>.
+### 2. Synchronizing base and rover observations
+We now correcting the pseudorange \f${ p_{b}^s}({ t_b}) \f$ of the base to the time of the rover \f${ t_r} \f$. This can be done for the carrier-phase analogously.
+
+Assuming the time-dependent error is approximately driven by the geometrical range, the correction equation for the basis receiver can be given as
+\f{equation}{
+\begin{aligned}
+{ \tilde{p}_{b}^s}({ t_r}) - { \tilde{p}_{b}^s}({ t_b}) &\approx { \hat{p}_{b}^s}({ t_r}) - { \hat{p}_{b}^s}({ t_b}) \\
+{ \tilde{p}_{b}^s}({ t_r}) &\approx { \tilde{p}_{b}^s}({ t_b}) + { \hat{p}_{b}^s}({ t_r}) - { \hat{p}_{b}^s}({ t_b})
+\end{aligned}
+\f}
+The linearized observation equation is
+\f{equation}{
+\begin{aligned}
+\delta\mathbf{z}({ t_r}) &= \mathbf{H}({ t_r})\delta\mathbf{x}({ t_r}) \\
+\mathbf{z}({ t_r}) - \mathbf{h}(\mathbf{\hat{x}}({ t_r})) &= \mathbf{H}({ t_r})\delta\mathbf{x}({ t_r}) \\
+\mathbf{\tilde{z}}({ t_r}) - \mathbf{\hat{z}}({ t_r}) &= \mathbf{H}({ t_r})\delta\mathbf{x}({ t_r}) \\
+\end{aligned}
+\f}
+For the double differenced pseudorange this is
+\f{equation}{
+\begin{aligned}
+  { \tilde{p}_{br}^{1s}}({ t_r})
+- { \hat{p}_{br}^{1s}}({ t_r})
+  &= \mathbf{H}({ t_r})\delta\mathbf{x}({ t_r}) \\
+  \left[\big({ \tilde{p}_{r}^s}({ t_r})
+               - { \tilde{p}_{b}^s}({ t_r})\big)
+          - \big({ \tilde{p}_{r}^1}({ t_r})
+               - { \tilde{p}_{b}^1}({ t_r})\big)\right]
+- \left[\big({ \hat{p}_{r}^s}({ t_r})
+               - { \hat{p}_{b}^s}({ t_r})\big)
+          - \big({ \hat{p}_{r}^1}({ t_r})
+               - { \hat{p}_{b}^1}({ t_r})\big)\right]
+  &= \mathbf{H}({ t_r})\delta\mathbf{x}({ t_r}) \\
+  \left[\big({ \tilde{p}_{r}^s}({ t_r})
+           - [\overbrace{{ \tilde{p}_{b}^s}({ t_b})
+              + \cancel{{ \hat{p}_{b}^s}({ t_r})}
+              - { \hat{p}_{b}^s}({ t_b})}^{{ \tilde{p}_{b}^s}({ t_r})}]\big)
+        - \big({ \tilde{p}_{r}^1}({ t_r})
+           - [\overbrace{{ \tilde{p}_{b}^1}({ t_b})
+              + \cancel{{ \hat{p}_{b}^1}({ t_r})}
+              - { \hat{p}_{b}^1}({ t_b})}^{{ \tilde{p}_{b}^1}({ t_r})}]\big)\right]
+- \left[({ \hat{p}_{r}^s}({ t_r})
+           - \cancel{{ \hat{p}_{b}^s}({ t_r})})
+        - ({ \hat{p}_{r}^1}({ t_r})
+           - \cancel{{ \hat{p}_{b}^1}({ t_r})})\right]
+  &= \mathbf{H}({ t_r})\delta\mathbf{x}({ t_r}) \\
+  \left[\big({ \tilde{p}_{r}^s}({ t_r})
+           - { \tilde{p}_{b}^s}({ t_b})\big)
+        - \big({ \tilde{p}_{r}^1}({ t_r})
+           - { \tilde{p}_{b}^1}({ t_b})\big)\right]
+- \left[\big({ \hat{p}_{r}^s}({ t_r})
+           - { \hat{p}_{b}^s}({ t_b})\big)
+       - \big({ \hat{p}_{r}^1}({ t_r})
+           - { \hat{p}_{b}^1}({ t_b})\big)\right]
+  &= \mathbf{H}({ t_r})\delta\mathbf{x}({ t_r}) \\
+\end{aligned}
+\f}
+
+#### Observation equations
+\f{equation}{
+\begin{aligned}
+{ p_{r,j}^s}
+         &= { \rho_r^s}
+          + {\delta\rho_{ie,r}^s}
+          + { T_r^s}
+          + { \mu_j^S I_r^s}
+          + c \left[ { dt_r}
+                   - { dt^s}
+                   + { dt_{ISB}^S}
+                   + { \delta t^{rel}_{stc}} - { \delta t^{rel}_{clk}}
+                   + { d_{r,j}^S}
+                   - { d_{j}^s}
+                   + { \Delta d_{r,j}^s}
+              \right]
+          + { \xi_{r,j}^s}
+          + { e_{r,j}^s} \\
+{ \varphi_{r,j}^s}
+         &= { \rho_r^s}
+          + {\delta\rho_{ie,r}^s}
+          + { T_r^s}
+          - { \mu_j^S I_r^s}
+          + c \left[ { dt_r}
+                   - { dt^s}
+                   + { dt_{ISB}^S}
+                   + { \delta t^{rel}_{stc}} - { \delta t^{rel}_{clk}}
+                   + { \delta_{r,j}^S}
+                   - { \delta_{j}^s}
+                   + { \Delta \delta_{r,j}^s}
+              \right]
+          + { \zeta_{r,j}^s}
+          + { \epsilon_{r,j}^s}
+          + { \lambda_j^S}
+                ({ \omega_{r}^s }
+                 + { N_{r,j}^s})\\
+{ \dotup{p}_r^s} &= {{\mathbf{u}_{r}^{s}}^T}
+                               [ {\mathbf{v}^s}
+                                - {\mathbf{v}_r} ]
+                       - {\delta\dotup{\rho}_{ie,r}^s}
+                       + { \dotup{T}_r^s}
+                       - { \mu_j^S \dotup{I}_r^s}
+                       + c [{d\dotup{t}_r}
+                            - {d\dotup{t}^s }
+                            + {d\dotup{t}_{ISB}^S}
+                            + { \delta f^{rel}_{clk}}]
+\end{aligned}
+\f}
+#### Single difference
+\f{equation}{
+\begin{aligned}
+{ p_{br}^s}
+        &= { p_{r}^s}({ t_r}) - { p_{b}^s}({ t_b})
+        &&= \overbrace{{ \rho_r^s}({ t_r}) - { \rho_b^s}({ t_b})}^{ \rho_{br}^s}
+          + \overbrace{{ \delta\rho_{ie,r}^s}({ t_r}) - { \delta\rho_{ie,b}^s}({ t_b})}^{ \delta\rho_{ie,br}^s}
+          + \overbrace{{ T_r^s}({ t_r}) - { T_b^s}({ t_b})}^{ T_{br}^s}
+          + {\mu_j^S} (\overbrace{{ I_r^s}({ t_r}) - { I_b^s}({ t_b})}^{ I_{br}^s}) \\
+          & &&\quad\, + c\ [ \overbrace{{ dt_r}({ t_r}) - { dt_b}({ t_b})}^{ dt_{br}}
+                   - \overbrace{({ dt^s}({ t_r}) - { dt^s}({ t_b}))}^{{ dt_{br}^s}}
+                   + \overbrace{{ dt_{ISB}^S}({ t_r}) - { dt_{ISB}^S}({ t_b})}^{\approx 0}
+                   + \overbrace{{ \delta t^{rel,s}_{stc,r}}({ t_r})
+                       - { \delta t^{rel,s}_{stc,b}}({ t_b})}^{ \delta t^{rel,s}_{stc,br}}
+                   - \overbrace{({ \delta t^{rel,s}_{clk}}({ t_r})
+                       - { \delta t^{rel,s}_{clk}}({ t_b}))}^{{ \delta t^{rel,s}_{clk,br}}}
+              ]\\
+          & &&\quad\, + c\ [ \underbrace{{ d_{r,j}^S}({ t_r}) - { d_{b,j}^S}({ t_b})}_{ d_{br,j}^S}
+                   - \underbrace{({ d_{j}^s}({ t_r}) - { d_{j}^s}({ t_b}))}_{{ d_{br,j}^s}}
+                   + \underbrace{{ \Delta d_{r,j}^s}({ t_r}) - { \Delta d_{b,j}^s}({ t_b})}_{ \Delta d_{br,j}^s}
+              ]
+          + \underbrace{{ \xi_{r,j}^s}({ t_r}) - { \xi_{b,j}^s}({ t_b})}_{ \xi_{br,j}^s}
+          + \underbrace{{ e_{r,j}^s}({ t_r}) - { e_{b,j}^s}({ t_b})}_{ e_{br,j}^s}
+\end{aligned}
+\f}
+- The satellite clock \f${ dt^s}\f$ drifts with approximately \f$2 \cdot 10^{-11}\ \text{[s/s]}\f$ which can lead to a maximum error of \f$0.012\ \text{[m]}\f$ over 1 second
+- The inter-system bias \f${ dt_{ISB}^S}\f$ can be bounded by \f$6\ \text{ns/day}\f$ which leads to a maximum error of \f$4 \times 10^{-5}\ \text{[m]}\f$ over 1 second and can be neglected
+- Deviation of the satellite clock frequency due to relativistic effects \f${ \delta t^{rel,s}_{clk}}\f$ (maximum value for GPS \f$\approx 45.0\text{ns} \equiv 13.5\text{m}\f$)
+- Satellite code hardware bias \f${ d_{j}^s}\f$ and satellite phase hardware bias \f${ \delta_{j}^s}\f$ also don't cancel out
+\f{equation}{
+\begin{aligned}
+{ \varphi_{br}^s}
+         &= { \varphi_{r}^s}({ t_r}) - { \varphi_{b}^s}({ t_b})
+         &&= \overbrace{{ \rho_r^s}({ t_r}) - { \rho_b^s}({ t_b})}^{ \rho_{br}^s}
+          + \overbrace{{ \delta\rho_{ie,r}^s}({ t_r}) - { \delta\rho_{ie,b}^s}({ t_b})}^{ \delta\rho_{ie,br}^s}
+          + \overbrace{{ T_r^s}({ t_r}) - { T_b^s}({ t_b})}^{ T_{br}^s}
+          - {\mu_j^S} (\overbrace{{ I_r^s}({ t_r}) - { I_b^s}({ t_b})}^{ I_{br}^s}) \\
+          & &&\quad\, + c [ \overbrace{{ dt_r}({ t_r}) - { dt_b}({ t_b})}^{ dt_{br}}
+                   - \overbrace{({ dt^s}({ t_r}) - { dt^s}({ t_b}))}^{{ dt_{br}^s}}
+                   + \overbrace{{ dt_{ISB}^S}({ t_r}) - { dt_{ISB}^S}({ t_b})}^{\approx 0}
+                   + \overbrace{{ \delta t^{rel,s}_{stc,r}}({ t_r})
+                       - { \delta t^{rel,s}_{stc,b}}({ t_b})}^{ \delta t^{rel,s}_{stc,br}}
+                   - \overbrace{({ \delta t^{rel,s}_{clk}}({ t_r})
+                       - { \delta t^{rel,s}_{clk}}({ t_b}))}^{{ \delta t^{rel,s}_{clk,br}}}
+              ]\\
+          & &&\quad\, + c [\underbrace{{ \delta_{r,j}^S}({ t_r}) - { \delta_{b,j}^S}({ t_b})}_{ \delta_{br,j}^S}
+                      - \underbrace{({ \delta_{j}^s}({ t_r}) - { \delta_{j}^s}({ t_b}))}_{ \delta_{br,j}^s}
+                      + \underbrace{{ \Delta \delta_{r,j}^s}({ t_r}) - { \Delta \delta_{b,j}^s}({ t_b})}_{ \Delta \delta_{br,j}^s}
+              ]
+          + \underbrace{{ \zeta_{r,j}^s}({ t_r}) - { \zeta_{b,j}^s}({ t_b})}_{ \zeta_{br,j}^s}
+          + \underbrace{{ \epsilon_{r,j}^s}({ t_r}) - { \epsilon_{b,j}^s}({ t_b})}_{ \epsilon_{br,j}^s}\\
+          & &&\quad\, + { \lambda_j^S}
+                (\underbrace{{ N_{r,j}^s}({ t_r}) - { N_{b,j}^s}({ t_b})}_{ N_{br}^s}
+          + \underbrace{{ \omega_{r}^s}({ t_r}) - { \omega_{b}^s}({ t_b})}_{ \omega_{br}^s })\\
+{ \dotup{p}_{br}^s}
+         &= { \dotup{p}_{r}^s}({ t_r}) - { \dotup{p}_{b}^s}({ t_b})
+         &&= {{\mathbf{u}_{r}^{s}}^T}({ t_r})
+                 [{\mathbf{v}^s}({ t_r})
+                  - {\mathbf{v}_r}({ t_r})]
+             - {{\mathbf{u}_{b}^{s}}^T}({ t_b}) {\mathbf{v}^s}({ t_b})
+             - \overbrace{({\delta\dotup{\rho}_{ie,r}^s}({ t_r})
+                 - {\delta\dotup{\rho}_{ie,b}^s}({ t_b}))}^{\delta\dotup{\rho}_{ie,br}^s}
+             + \overbrace{{ \dotup{T}_r^s}({ t_r})
+                 - { \dotup{T}_b^s}({ t_b})}^{\approx 0}
+             + {\mu_j^S} (\overbrace{{ \dotup{I}_r^s}({ t_r})
+                 - { \dotup{I}_b^s}({ t_b})}^{\approx 0})\\
+             & &&\quad\, + c [\underbrace{{d\dotup{t}_r}({ t_r})
+                      - {d\dotup{t}_b}({ t_b})}_{d\dotup{t}_{br}}
+                  - \underbrace{({d\dotup{t}^s}({ t_r})
+                      - {d\dotup{t}^s}({ t_b}))}_{\approx 0}
+                  + \underbrace{{d\dotup{t}_{ISB}^S}({ t_r})
+                      - {d\dotup{t}_{ISB}^S}({ t_b})}_{\approx 0}
+                  + \underbrace{{ \delta f^{rel,s}_{clk}}({ t_r})
+                      - { \delta f^{rel,s}_{clk}}({ t_b})}_{\approx 0}]
+\end{aligned}
+\f}
+#### Double difference
+\f{equation}{
+\begin{aligned}
+{ p_{br}^{1s}}
+        &= { p_{br}^s} - { p_{br}^1}
+        &&= \overbrace{{ \rho_{br}^s} - { \rho_{br}^1}}^{ \rho_{br}^{1s}}
+          + \overbrace{{ \delta\rho_{ie,br}^s} - { \delta\rho_{ie,br}^1}}^{ \delta\rho_{ie,br}^{1s}}
+          + \overbrace{{ T_{br}^s} - { T_{br}^1}}^{ T_{br}^{1s}}
+          + \overbrace{{\mu_j^1} { I_{br}^s} - {\mu_j^1} { I_{br}^1}}^{{\mu_j^{1}} { I_{br}^{1s}}}
+          + c\ [ \overbrace{{ dt_{br}} - { dt_{br}}}^{= 0}
+                   - (\overbrace{{ dt_{br}^s} - { dt_{br}^1}}^{{ dt_{br}^{1s}}})
+                   + \overbrace{{ \delta t^{rel,s}_{stc,br}} - { \delta t^{rel,1}_{stc,br}}}^{ \delta t^{rel,1s}_{stc,br}}
+                   + \overbrace{{ \delta t^{rel,s}_{clk,br}} - { \delta t^{rel,1}_{clk,br}}}^{ \delta t^{rel,1s}_{clk,br}}
+              ]\\
+          & &&\quad\, + c\ [ \underbrace{{ d_{br,j}^S} - { d_{br,j}^1}}_{ d_{br}^{1S}}
+                   + \underbrace{{ d_{br,j}^s} - { d_{br,j}^1}}_{ d_{br}^{1s}}
+                   + \underbrace{{ \Delta d_{br,j}^s} - { \Delta d_{br,j}^1}}_{ \Delta d_{br}^{1s}}
+              ]
+          + \underbrace{{ \xi_{br,j}^s} - { \xi_{br,j}^1}}_{ \xi_{br}^{1s}}
+          + \underbrace{{ e_{br,j}^s} - { e_{br,j}^1}}_{ e_{br}^{1s}}\\
+{ \varphi_{br}^{1s}}
+         &= { \varphi_{br}^s} - { \varphi_{br}^1}
+         &&= \overbrace{{ \rho_{br}^s} - { \rho_{br}^1}}^{ \rho_{br}^{1s}}
+          + \overbrace{{ \delta\rho_{ie,br}^s} - { \delta\rho_{ie,br}^1}}^{ \delta\rho_{ie,br}^{1s}}
+          + \overbrace{{ T_{br}^s} - { T_{br}^1}}^{ T_{br}^{1s}}
+          - \overbrace{({\mu_j^1} { I_{br}^s} - {\mu_j^1} { I_{br}^1})}^{{\mu_j^{1}} { I_{br}^{1s}}}
+          + c [ \overbrace{{ dt_{br}} - { dt_{br}}}^{= 0}
+                   - (\overbrace{{ dt_{br}^s} - { dt_{br}^1}}^{{ dt_{br}^{1s}}})
+                   + \overbrace{{ \delta t^{rel,s}_{stc,br}} - { \delta t^{rel,1}_{stc,br}}}^{ \delta t^{rel,1s}_{stc,br}}
+                   + \overbrace{{ \delta t^{rel,s}_{clk,br}} - { \delta t^{rel,1}_{clk,br}}}^{ \delta t^{rel,1s}_{clk,br}}
+              ]\\
+          & &&\quad\, + c [\underbrace{{ \delta_{br,j}^S} - { \delta_{br,j}^1}}_{ \delta_{br}^{1S}}
+			          + \underbrace{{ \delta_{br,j}^s} - { \delta_{br,j}^1}}_{ \delta_{br}^{1s}}
+                      + \underbrace{{ \Delta \delta_{br,j}^s} - { \Delta \delta_{br,j}^1}}_{ \Delta \delta_{br}^{1s}}
+              ]
+          + \underbrace{{ \zeta_{br,j}^s} - { \zeta_{br,j}^1}}_{ \zeta_{br}^{1s}}
+          + \underbrace{{ \epsilon_{br,j}^s} - { \epsilon_{br,j}^1}}_{ \epsilon_{br}^{1s}}
+          + { \lambda_j^1} (\underbrace{{N_{br}^s} - {N_{br}^1}}_{N_{br}^{1s}}
+                                      + \underbrace{{\omega_{br}^s} - {\omega_{br}^1}}_{\omega_{br}^{1s}})\\
+{ \dotup{p}_{br}^{1s}}
+         &= { \dotup{p}_{br}^s} - { \dotup{p}_{br}^1}
+         &&= {{\mathbf{u}_{r}^{s}}^T} [{\mathbf{v}^s} - {\mathbf{v}_r} ]
+                - {{\mathbf{u}_{b}^{s}}^T} {\mathbf{v}^s}
+             - {{\mathbf{u}_{r}^{1}}^T} [{\mathbf{v}^1} - {\mathbf{v}_r} ]
+                + {{\mathbf{u}_{b}^{1}}^T} {\mathbf{v}^1}
+             - ({\delta\dotup{\rho}_{ie,br}^s} - {\delta\dotup{\rho}_{ie,br}^1})
+             + c [ \overbrace{{d\dotup{t}_{br}} - {d\dotup{t}_{br}}}^{= 0} ]
+\end{aligned}
+\f}
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\section RTK-KalmanFilter Kalman Filter
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+
+\subsection RTK-SystemModel System Model
+
+\f{equation}{
+\overbrace{
+  \begin{bmatrix}
+    { \mathbf{v}_{br} } \\
+    { \mathbf{a}_{br} } \\\hdashline
+    {\dotup{N}_{br}^{12}} \\
+    {\dotup{N}_{br}^{13}} \\
+    \vdots \\
+    {\dotup{N}_{br}^{1m}} \\
+  \end{bmatrix}
+}^{\mathbf{\dotup{x}}^e}
+=
+\overbrace{\left[\begin{array}{cc:cccc}
+%                                   |
+\mathbf{0}_3     & \mathbf{I}_3     & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \dots  & \mathbf{0}_{3,1}\\
+\mathbf{0}_3     & \mathbf{0}_3     & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \dots  & \mathbf{0}_{3,1}\\\hdashline
+\mathbf{0}_{1,3} & \mathbf{0}_{1,3} &         0        &         0        & \dots  &         0       \\
+\mathbf{0}_{1,3} & \mathbf{0}_{1,3} &         0        &         0        & \dots  &         0       \\
+     \vdots      &      \vdots      &       \vdots     &       \vdots     & \ddots &       \vdots    \\
+\mathbf{0}_{1,3} & \mathbf{0}_{1,3} &         0        &         0        & \dots  &         0       \\
+\end{array}\right]}^{\mathbf{F}}
+\cdot
+\overbrace{
+  \begin{bmatrix}
+    { \mathbf{r}_{br} } \\
+    { \mathbf{v}_{br} } \\\hdashline
+    {N_{br}^{12}} \\
+    {N_{br}^{13}} \\
+    \vdots \\
+    {N_{br}^{1m}} \\
+  \end{bmatrix}
+}^{\mathbf{x}^e}
++
+\mathbf{G} \cdot \boldsymbol{w}
+\f}
+### State transition matrix 𝛟
+Higher order terms are zero, so the exact solution is
+\f{equation}{
+\mathbf{\Phi} = \text{exp}(\mathbf{F} \tau_s) = \mathbf{I} + \mathbf{F}\tau_s
+\f}
+### Process noise covariance matrix Q
+#### Noise input matrix G
+\f{equation}{
+\begin{array}{rc}
+    & \begin{array}{cc cccc}
+        { \mathbf{r}_r } & { \mathbf{v}_r } &
+        {N_{br}^{12}} & {N_{br}^{13}} & \quad\ & {N_{br}^{1m}}
+    \end{array}\\[0.6em]
+    \mathbf{G} = \text{diag} &
+    \left[\begin{array}{cc:cccc}
+        \mathbf{0}_3 & \mathbf{C}_n^e &
+        \;\;\ 1 \;\;\ & \;\;\ 1 \;\;\ & \dots & \;\;\ 1 \;\;\
+    \end{array}\right]
+\end{array}
+\f}
+#### Noise scale matrix W
+\f{equation}{
+\begin{array}{rc}
+    & \begin{array}{cc cccc}
+        { \mathbf{r}_r } & { \mathbf{v}_r} &
+        {N_{br}^{12}} & {N_{br}^{13}} & \quad\ & {N_{br}^{1m}}
+    \end{array}\\[0.6em]
+    \mathbf{W} = \text{diag} &
+    \left[\begin{array}{cc:cccc}
+        \mathbf{0}_3 & \mathbf{S}_{a} &
+        \:\ \sigma_N^2 \:\ & \:\ \sigma_N^3 \: & \dots & \: \sigma_N^m \:\
+    \end{array}\right]
+\end{array}
+\f}
+
+- Velocity change due to user motion (Variances) \f$\rightarrow\f$ IRW on position
+\f{equation}{
+\mathbf{S}_a^n = \begin{bmatrix}
+S_{aH} &   0    & 0      \\
+0    & S_{aH} & 0      \\
+0    &   0    & S_{aV} \\
+\end{bmatrix}
+\f}
+  - Suitable values for \f$S_{aH}\f$ are around
+    - \f$1 \text{ m}^2 \text{s}^{-3}\f$ for a pedestrian or ship,
+    - \f$10 \text{ m}^2 \text{s}^{-3}\f$ for a car,
+    - \f$100 \text{ m}^2 \text{s}^{-3}\f$ for a military aircraft.
+  - The vertical acceleration PSD \f$S_{aV}\f$ is usually smaller
+- Ambiguities are modeled as RW with very small noise to keep numerical stability \f$\sigma_N \approx 10^{-6}\f$
+
+
+
+#### Van-Loan method
+The state transition matrix and the system/process noise covariance matrix can be calculated with the van Loan method \cite Loan1978 vanloan1978. In short
+1. Form a \f$2n \times 2n\f$ matrix called \f$\mathbf{A}\f$ (\f$n\f$ is the dimension of \f$\mathbf{x}\f$ and \f$\mathbf{W}\f$ is the power spectral density of the noise \f$W(t)\f$)
+\f{equation}{
+  \mathbf{A} = \begin{bmatrix} -\mathbf{F} & \mathbf{G} \mathbf{W} \mathbf{G}^T \\
+                                \mathbf{0} &            \mathbf{F}^T          \end{bmatrix} \Delta t
+\f}
+2. Calculate the exponential of \f$\mathbf{A}\f$
+\f{equation}{
+  \mathbf{B} = \text{expm}(\mathbf{A}) = \left[ \begin{array}{c:c}
+                                            \dots          & \mathbf{\Phi}^{-1} \mathbf{Q} \\ \hdashline
+                                            \mathbf{0}          & \mathbf{\Phi}^T                     \end{array} \right]
+                                       = \begin{bmatrix} \mathbf{B}_{11} & \mathbf{B}_{12} \\
+                                                         \mathbf{B}_{21} & \mathbf{B}_{22} \end{bmatrix}
+\f}
+3. Calculate the state transition matrix \f$\mathbf{\Phi}\f$ as
+\f{equation}{
+  \mathbf{\Phi} = \mathbf{B}_{22}^T
+\f}
+4. Calculate the process noise covariance matrix \f$\mathbf{Q}\f$ as
+\f{equation}{
+  \mathbf{Q} = \mathbf{\Phi} \mathbf{B}_{12}
+\f}
+##### Computation
+Because the  ambiguity related parts of \f$\mathbf{F}\f$ are 0 and \f$\mathbf{G}, \mathbf{W}\f$ are purely diagonal matrices, the Van-Loan method must be only calculated for the 6x6 top left part of the matrices (position, velocity). The ambiguities can be directly computed in \f$\mathbf{Q}\f$ as \f$\sigma_N^2 \cdot \Delta t\f$ .
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\subsection RTK-MeasurementModel Measurement Model
+> See \cite Groves2013 Groves2013, p. 419ff
+
+### Measurement innovation dz
+#### Measurement vector
+\f{equation}{
+\mathbf{z} =
+\left\{\begin{array}{cccc:cccc:cccc}
+{ \tilde{\varphi}_{br}^{12}} & { \tilde{\varphi}_{br}^{13}} & \dots & { \tilde{\varphi}_{br}^{1n}} &
+{ \tilde{p}_{br}^{12}} & { \tilde{p}_{br}^{13}} & \dots & { \tilde{p}_{br}^{1n}} &
+{ \tilde{\dotup{p}}_{br}^{12}} & { \tilde{\dotup{p}}_{br}^{13}} & \dots & { \tilde{\dotup{p}}_{br}^{1n}}
+\end{array}\right\}^T
+\f}
+
+#### Measurement innovation
+\f{equation}{
+\boldsymbol{\delta}\mathbf{z} = \overbrace{\mathbf{z}}^{\text{measurement}} - \underbrace{\mathbf{h}(\mathbf{\hat{x}})}_{\text{estimate}}
+\f}
+where the estimates are
+\f{equation}{
+\mathbf{h}(\mathbf{\hat{x}}) =
+\left\{\begin{array}{cccc:cccc:cccc}
+  { \hat{\varphi}_{br}^{12}} & { \hat{\varphi}_{br}^{13}} & \dots & { \hat{\varphi}_{br}^{1n}} &
+  { \hat{p}_{br}^{12}} & { \hat{p}_{br}^{13}} & \dots & { \hat{p}_{br}^{1n}} &
+  { \hat{\dotup{p}}_{br}^{12}} & { \hat{\dotup{p}}_{br}^{13}} & \dots & { \hat{\dotup{p}}_{br}^{1n}}
+\end{array}\right\}^T
+\f}
+### Measurement sensitivity Matrix H
+\f{equation}{
+\mathbf{H}_k = \frac{\partial\mathbf{h}(\mathbf{x}, t_k)}{\partial\mathbf{x}}\Biggr\rvert_{x=\hat{x}_k^-}
+= \frac{\partial\mathbf{z}(\mathbf{x}, t_k)}{\partial\mathbf{x}}\Biggr\rvert_{x=\hat{x}_k^-}
+\f}
+
+with helper definition for the velocities similar to the Line-of-Sight vector
+\f{equation}{
+{\mathbf{u}_{r,v}^s} = \frac{{\mathbf{v}^s} - {\mathbf{v}_r}}{ \rho_r^s}
+\f}
+Differentiating yields
+\f{equation}{
+\begin{array}{rl}
+\mathbf{H}_k &= \left[\begin{array}{ccc:ccc:cccc}
+{\text{u}_{r,x}^1} - {\text{u}_{r,x}^2} & {\text{u}_{r,y}^1} - {\text{u}_{r,y}^2} & {\text{u}_{r,z}^1} - {\text{u}_{r,z}^2} & 0 & 0 & 0 & {\lambda_j^1} & 0 & \dots & 0\\
+{\text{u}_{r,x}^1} - {\text{u}_{r,x}^3} & {\text{u}_{r,y}^1} - {\text{u}_{r,y}^3} & {\text{u}_{r,z}^1} - {\text{u}_{r,z}^3} & 0 & 0 & 0 & 0 & {\lambda_j^1} & \dots & 0\\
+\dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots\\
+{\text{u}_{r,x}^1} - {\text{u}_{r,x}^m} & {\text{u}_{r,y}^1} - {\text{u}_{r,y}^m} & {\text{u}_{r,z}^1} - {\text{u}_{r,z}^m} & 0 & 0 & 0 & 0 & 0 & \dots & {\lambda_j^1}\\ \hdashline
+{\text{u}_{r,x}^1} - {\text{u}_{r,x}^2} & {\text{u}_{r,y}^1} - {\text{u}_{r,y}^2} & {\text{u}_{r,z}^1} - {\text{u}_{r,z}^2} & 0 & 0 & 0 & 0 & 0 & \dots & 0\\
+{\text{u}_{r,x}^1} - {\text{u}_{r,x}^3} & {\text{u}_{r,y}^1} - {\text{u}_{r,y}^3} & {\text{u}_{r,z}^1} - {\text{u}_{r,z}^3} & 0 & 0 & 0 & 0 & 0 & \dots & 0\\
+\dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots\\
+{\text{u}_{r,x}^1} - {\text{u}_{r,x}^m} & {\text{u}_{r,y}^1} - {\text{u}_{r,y}^m} & {\text{u}_{r,z}^1} - {\text{u}_{r,z}^m} & 0 & 0 & 0 & 0 & 0 & \dots & 0\\ \hdashline
+- {\text{u}_{r,v_x}^1} \left({\text{u}_{r,x}^1}\right)^{2} + {\text{u}_{r,v_x}^1} + {\text{u}_{r,v_x}^2} \left({\text{u}_{r,x}^2}\right)^{2} - {\text{u}_{r,v_x}^2} - {\text{u}_{r,v_y}^1} {\text{u}_{r,x}^1} {\text{u}_{r,y}^1} + {\text{u}_{r,v_y}^2} {\text{u}_{r,x}^2} {\text{u}_{r,y}^2} - {\text{u}_{r,v_z}^1} {\text{u}_{r,x}^1} {\text{u}_{r,z}^1} + {\text{u}_{r,v_z}^2} {\text{u}_{r,x}^2} {\text{u}_{r,z}^2} & - {\text{u}_{r,v_x}^1} {\text{u}_{r,x}^1} {\text{u}_{r,y}^1} + {\text{u}_{r,v_x}^2} {\text{u}_{r,x}^2} {\text{u}_{r,y}^2} - {\text{u}_{r,v_y}^1} \left({\text{u}_{r,y}^1}\right)^{2} + {\text{u}_{r,v_y}^1} + {\text{u}_{r,v_y}^2} \left({\text{u}_{r,y}^2}\right)^{2} - {\text{u}_{r,v_y}^2} - {\text{u}_{r,v_z}^1} {\text{u}_{r,y}^1} {\text{u}_{r,z}^1} + {\text{u}_{r,v_z}^2} {\text{u}_{r,y}^2} {\text{u}_{r,z}^2} & - {\text{u}_{r,v_x}^1} {\text{u}_{r,x}^1} {\text{u}_{r,z}^1} + {\text{u}_{r,v_x}^2} {\text{u}_{r,x}^2} {\text{u}_{r,z}^2} - {\text{u}_{r,v_y}^1} {\text{u}_{r,y}^1} {\text{u}_{r,z}^1} + {\text{u}_{r,v_y}^2} {\text{u}_{r,y}^2} {\text{u}_{r,z}^2} - {\text{u}_{r,v_z}^1} \left({\text{u}_{r,z}^1}\right)^{2} + {\text{u}_{r,v_z}^1} + {\text{u}_{r,v_z}^2} \left({\text{u}_{r,z}^2}\right)^{2} - {\text{u}_{r,v_z}^2} & {\text{u}_{r,x}^1} - {\text{u}_{r,x}^2} & {\text{u}_{r,y}^1} - {\text{u}_{r,y}^2} & {\text{u}_{r,z}^1} - {\text{u}_{r,z}^2} & 0 & 0 & \dots & 0\\
+- {\text{u}_{r,v_x}^1} \left({\text{u}_{r,x}^1}\right)^{2} + {\text{u}_{r,v_x}^1} + {\text{u}_{r,v_x}^3} \left({\text{u}_{r,x}^3}\right)^{2} - {\text{u}_{r,v_x}^3} - {\text{u}_{r,v_y}^1} {\text{u}_{r,x}^1} {\text{u}_{r,y}^1} + {\text{u}_{r,v_y}^3} {\text{u}_{r,x}^3} {\text{u}_{r,y}^3} - {\text{u}_{r,v_z}^1} {\text{u}_{r,x}^1} {\text{u}_{r,z}^1} + {\text{u}_{r,v_z}^3} {\text{u}_{r,x}^3} {\text{u}_{r,z}^3} & - {\text{u}_{r,v_x}^1} {\text{u}_{r,x}^1} {\text{u}_{r,y}^1} + {\text{u}_{r,v_x}^3} {\text{u}_{r,x}^3} {\text{u}_{r,y}^3} - {\text{u}_{r,v_y}^1} \left({\text{u}_{r,y}^1}\right)^{2} + {\text{u}_{r,v_y}^1} + {\text{u}_{r,v_y}^3} \left({\text{u}_{r,y}^3}\right)^{2} - {\text{u}_{r,v_y}^3} - {\text{u}_{r,v_z}^1} {\text{u}_{r,y}^1} {\text{u}_{r,z}^1} + {\text{u}_{r,v_z}^3} {\text{u}_{r,y}^3} {\text{u}_{r,z}^3} & - {\text{u}_{r,v_x}^1} {\text{u}_{r,x}^1} {\text{u}_{r,z}^1} + {\text{u}_{r,v_x}^3} {\text{u}_{r,x}^3} {\text{u}_{r,z}^3} - {\text{u}_{r,v_y}^1} {\text{u}_{r,y}^1} {\text{u}_{r,z}^1} + {\text{u}_{r,v_y}^3} {\text{u}_{r,y}^3} {\text{u}_{r,z}^3} - {\text{u}_{r,v_z}^1} \left({\text{u}_{r,z}^1}\right)^{2} + {\text{u}_{r,v_z}^1} + {\text{u}_{r,v_z}^3} \left({\text{u}_{r,z}^3}\right)^{2} - {\text{u}_{r,v_z}^3} & {\text{u}_{r,x}^1} - {\text{u}_{r,x}^3} & {\text{u}_{r,y}^1} - {\text{u}_{r,y}^3} & {\text{u}_{r,z}^1} - {\text{u}_{r,z}^3} & 0 & 0 & \dots & 0\\
+\dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots\\
+- {\text{u}_{r,v_x}^1} \left({\text{u}_{r,x}^1}\right)^{2} + {\text{u}_{r,v_x}^1} + {\text{u}_{r,v_x}^m} \left({\text{u}_{r,x}^m}\right)^{2} - {\text{u}_{r,v_x}^m} - {\text{u}_{r,v_y}^1} {\text{u}_{r,x}^1} {\text{u}_{r,y}^1} + {\text{u}_{r,v_y}^m} {\text{u}_{r,x}^m} {\text{u}_{r,y}^m} - {\text{u}_{r,v_z}^1} {\text{u}_{r,x}^1} {\text{u}_{r,z}^1} + {\text{u}_{r,v_z}^m} {\text{u}_{r,x}^m} {\text{u}_{r,z}^m} & - {\text{u}_{r,v_x}^1} {\text{u}_{r,x}^1} {\text{u}_{r,y}^1} + {\text{u}_{r,v_x}^m} {\text{u}_{r,x}^m} {\text{u}_{r,y}^m} - {\text{u}_{r,v_y}^1} \left({\text{u}_{r,y}^1}\right)^{2} + {\text{u}_{r,v_y}^1} + {\text{u}_{r,v_y}^m} \left({\text{u}_{r,y}^m}\right)^{2} - {\text{u}_{r,v_y}^m} - {\text{u}_{r,v_z}^1} {\text{u}_{r,y}^1} {\text{u}_{r,z}^1} + {\text{u}_{r,v_z}^m} {\text{u}_{r,y}^m} {\text{u}_{r,z}^m} & - {\text{u}_{r,v_x}^1} {\text{u}_{r,x}^1} {\text{u}_{r,z}^1} + {\text{u}_{r,v_x}^m} {\text{u}_{r,x}^m} {\text{u}_{r,z}^m} - {\text{u}_{r,v_y}^1} {\text{u}_{r,y}^1} {\text{u}_{r,z}^1} + {\text{u}_{r,v_y}^m} {\text{u}_{r,y}^m} {\text{u}_{r,z}^m} - {\text{u}_{r,v_z}^1} \left({\text{u}_{r,z}^1}\right)^{2} + {\text{u}_{r,v_z}^1} + {\text{u}_{r,v_z}^m} \left({\text{u}_{r,z}^m}\right)^{2} - {\text{u}_{r,v_z}^m} & {\text{u}_{r,x}^1} - {\text{u}_{r,x}^m} & {\text{u}_{r,y}^1} - {\text{u}_{r,y}^m} & {\text{u}_{r,z}^1} - {\text{u}_{r,z}^m} & 0 & 0 & \dots & 0\\
+\end{array}\right]
+\end{array}
+\f}
+
+### Measurement noise covariance matrix R
+#### Correlated measurement error
+Because of the double differences, the measurements are correlated which causes the \f$\mathbf{R}\f$ matrix to have non diagonal elements.
+According to the propagation of uncertainty one can write this as:
+\f{equation}{
+\mathbf{R} = \mathbf{J} \cdot \mathbf{\tilde{R}} \cdot \mathbf{J}^T
+\f}
+where
+- \f$\mathbf{\tilde{R}}\f$ is the uncorrelated measurement error described below
+- \f$\mathbf{J}\f$ is the Jacobi-Matrix \f$J_{ij} = \dfrac{\partial h_i}{\partial z_r^s}\f$ with \f$z_r^s\f$ being the \ref RTK-SingleObservationEquations (see \cite SpringerHandbookGNSS2017 SpringerHandbookGNSS2017, p.606 / \cite Morton2020 Morton2020-vol1, p. 483 / \cite Groves2013 Groves2013, p. 443)
+
+For the double difference measurements the estimates are
+\f{equation}{
+h = \left[\begin{matrix}
+  {p_b^1} - {p_b^2} - {p_r^1} + {p_r^2}\\
+  {p_b^1} - {p_b^3} - {p_r^1} + {p_r^3}\\
+  \dots\\
+  {p_b^1} - {p_b^m} - {p_r^1} + {p_r^m}\\ \hline
+  {\varphi_b^1} - {\varphi_b^2} - {\varphi_r^1} + {\varphi_r^2}\\
+  {\varphi_b^1} - {\varphi_b^3} - {\varphi_r^1} + {\varphi_r^3}\\
+  \dots\\
+  {\varphi_b^1} - {\varphi_b^m} - {\varphi_r^1} + {\varphi_r^m}\\ \hline
+  {\dotup{p}_b^1} - {\dotup{p}_b^2} - {\dotup{p}_r^1} + {\dotup{p}_r^2}\\
+  {\dotup{p}_b^1} - {\dotup{p}_b^3} - {\dotup{p}_r^1} + {\dotup{p}_r^3}\\
+  \dots\\
+  {\dotup{p}_b^1} - {\dotup{p}_b^m} - {\dotup{p}_r^1} + {\dotup{p}_r^m}\\
+\end{matrix}\right]
+\f}
+which leads to the following \f$\sigma\f$ means variances, not standard deviations
+\f{equation}{
+\mathbf{\tilde{R}} =
+    \left[\begin{array}{ccccccccc|ccccccccc|ccccccccc}
+        {\sigma_{\varphi,r}^1} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & {\sigma_{\varphi,b}^1} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & {\sigma_{\varphi,r}^2} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & {\sigma_{\varphi,b}^2} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & {\sigma_{\varphi,r}^3} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & {\sigma_{\varphi,b}^3} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & \ddots & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & {\sigma_{\varphi,r}^m} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & {\sigma_{\varphi,b}^m} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\\hline
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & {\sigma_{p,r}^1} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & {\sigma_{p,b}^1} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & {\sigma_{p,r}^2} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & {\sigma_{p,b}^2} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & {\sigma_{p,r}^3} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & {\sigma_{p,b}^3} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & \ddots & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & {\sigma_{p,r}^m} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & {\sigma_{p,b}^m} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\\hline
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & {\sigma_{d,r}^1} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & {\sigma_{d,b}^1} & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & {\sigma_{d,r}^2} & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & {\sigma_{d,b}^2} & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & {\sigma_{d,r}^3} & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & {\sigma_{d,b}^3} & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & \ddots & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & {\sigma_{d,r}^m} & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & {\sigma_{d,b}^m} \\
+    \end{array}\right]
+\f}
+\f{equation}{
+\mathbf{J} =
+    \left[\begin{array}{ccccccccc|ccccccccc|ccccccccc}
+        -1 & 1 & 1 & -1 & 0 & 0 & \dots & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & \dots & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & \dots & 0 & 0\\
+        -1 & 1 & 0 & 0 & 1 & -1 & \dots & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & \dots & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & \dots & 0 & 0\\
+        \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots\\
+        -1 & 1 & 0 & 0 & 0 & 0 & \dots & 1 & -1 & 0 & 0 & 0 & 0 & 0 & 0 & \dots & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & \dots & 0 & 0\\\hline
+        0 & 0 & 0 & 0 & 0 & 0 & \dots & 0 & 0 & -1 & 1 & 1 & -1 & 0 & 0 & \dots & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & \dots & 0 & 0\\
+        0 & 0 & 0 & 0 & 0 & 0 & \dots & 0 & 0 & -1 & 1 & 0 & 0 & 1 & -1 & \dots & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & \dots & 0 & 0\\
+        \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots\\
+        0 & 0 & 0 & 0 & 0 & 0 & \dots & 0 & 0 & -1 & 1 & 0 & 0 & 0 & 0 & \dots & 1 & -1 & 0 & 0 & 0 & 0 & 0 & 0 & \dots & 0 & 0\\\hline
+        0 & 0 & 0 & 0 & 0 & 0 & \dots & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & \dots & 0 & 0 & -1 & 1 & 1 & -1 & 0 & 0 & \dots & 0 & 0\\
+        0 & 0 & 0 & 0 & 0 & 0 & \dots & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & \dots & 0 & 0 & -1 & 1 & 0 & 0 & 1 & -1 & \dots & 0 & 0\\
+        \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots\\
+        0 & 0 & 0 & 0 & 0 & 0 & \dots & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & \dots & 0 & 0 & -1 & 1 & 0 & 0 & 0 & 0 & \dots & 1 & -1
+    \end{array}\right]
+\f}
+As the \f$\mathbf{J}\f$ matrix has a block for each observation type and the \f$\mathbf{\tilde{R}}\f$ matrix is diagonal, we can calculate each part separately and join them into the final \f$\mathbf{R}\f$ matrix like
+\f{equation}{
+\mathbf{R} = \begin{bmatrix}
+    \mathbf{R}_\varphi & \mathbf{0} & \mathbf{0} \\
+    \mathbf{0} & \mathbf{R}_p & \mathbf{0} \\
+    \mathbf{0} & \mathbf{0} & \mathbf{R}_d \\
+\end{bmatrix}
+\f}
+
+#### Uncorrelated Measurement Error
+- Increased noise of Single Difference, compared to separate measurements: \f$\sigma_{br} = \sqrt{2}\sigma\f$
+- Increased noise of Double Difference, compared to separate measurements: \f$\sigma_{br}^{1s} = \sqrt{4}\sigma = 2\sigma\f$
+- But errors are correlated, so the error propagation above is applied
+
+##### GNSS measurement error
+
+> See \cite RTKLIB rtklibexplorer2021, eq. E.6.24, p. 162
+
+\f{equation}{
+\begin{array}{rl}
+\sigma_{pj}^2     &= {F^s}^2 {R_r}^2 \left(a_\sigma^2 + \frac{b_\sigma^2}{\sin^2{\text{El}_r^s}} \right) \\
+\sigma_{\phi j}^2 &= {F^s}^2 \left(a_\sigma^2 + \frac{b_\sigma^2}{\sin^2{\text{El}_r^s}} \right) \\
+\end{array}
+\f}
+where:
+\f{equation*}{
+\begin{array}{cl}
+F^s                & \text{Satellite system error factor (1:GPS, Galileo, QZSS and BeiDou, 1.5: GLONASS, 3.0: SBAS)} \\
+R_r                & \text{Code/Carrier-phase error ratio (default value is 100)} \\
+a_\sigma, b_\sigma & \text{Carrier-phase error factor $a$ and $b$ [m] (default values are 0.003m for both factors)} \\
+\sigma_{dj}        & \text{Doppler Frequency error factor [Hz] (default value is 1 Hz)} \\
+\end{array}
+\f}
+
+##### GNSS measurement error
+
+> See \cite Groves2013 Groves2013, p. 422f
+
+\f{equation*}{
+\begin{array}{rl}
+\sigma_{pj}^2     &= \dfrac{1}{\sin^2({el})} \left( \sigma_{pZ}^2 + \dfrac{\sigma_{pc}^2}{(c/n_0)_j} + \sigma_{pa}^2 \ddot{r}_{aj}^2 \right)\\
+\sigma_{\phi j}^2 &= \dfrac{1}{\sin^2({el})} \left( \sigma_{\phi Z}^2 + \dfrac{\sigma_{\phi c}^2}{(c/n_0)_j} + \sigma_{\phi a}^2 \ddot{r}_{aj}^2 \right)\\
+\end{array}
+\f}
+- coefficients \f$\sigma_{pZ}\f$, \f$\sigma_{pc}\f$, \f$\sigma_{pa}\f$, \f$\sigma_{\phi Z}\f$, \f$\sigma_{\phi c}\f$ and \f$\sigma_{\phi a}\f$ should be determined empirically
+- \f$\ddotup{r}_{aj}\f$ Range acceleration [groves2013, Appendix G.4.1] (probably not necessary)
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\subsection RTK-MeasurementInnovationValidation Measurement Innovation validation
+
+### Normalized Innovation Squared (NIS)
+
+> See [Dingler2022-NIS](https://kalman-filter.com/normalized-innovation-squared/)
+
+\f{equation}{
+\text{NIS} (\boldsymbol{\delta}\mathbf{z}_k,\mathbf{S}_k) = \epsilon_{\boldsymbol{\delta}\mathbf{z}_k} = \boldsymbol{\delta}\mathbf{z}_k^T \mathbf{S}_k^{-1} \boldsymbol{\delta}\mathbf{z}_k
+\f}
+where
+- Measurement innovation \f$\boldsymbol{\delta}\mathbf{z}\f$
+- \f$n_z = \text{dim}( \boldsymbol{\delta}\mathbf{z} )\f$ degrees of freedom is the the dimension of the measurement vector
+- \f$\mathbf{S}(k) = \mathbf{H}_{k} \mathbf{P}_{k}^{-} \mathbf{H}_{k}^\text{T} + \mathbf{R}_{k}\f$ Innovation Covariance Matrix
+
+NIS accepted if
+\f{equation}{
+\epsilon_{\boldsymbol{\delta}\mathbf{z}} \in [r_1,r_2] \text{.}
+\f}
+where \f$[r_1,r_2]\f$ is the confidence interval
+\f{equation}{
+r_1 = F^{-1} ( \frac{\alpha}{2}, n_z ), \ r_2 = F^{-1} ( 1- \frac{\alpha}{2}, n_z ) \text{.}
+\f}
+and can be calculated with the inverse cumulative distribution function \f$F^{-1}\f$ (also called [Quantile function](https://en.wikipedia.org/wiki/Quantile_function)) of the chi-squared distribution ([Chi Squared Distribution - Boost 1.85.0](https://www.boost.org/doc/libs/1_85_0/libs/math/doc/html/math_toolkit/dist_ref/dists/chi_squared_dist.html) - `quantile` function)
+
+[Chi-squared distribution - Wikipedia](https://en.wikipedia.org/wiki/Chi-squared_distribution) ([Incomplete Gamma Functions - Boost 1.85.0](https://www.boost.org/doc/libs/1_85_0/libs/math/doc/html/math_toolkit/sf_gamma/igamma.html))
+\f{equation}{
+\text{CDF} = \frac{1}{\Gamma(k/2)} \gamma \left( \frac{k}{2}, \frac{x}{2} \right), \quad \text{gamma\_p(a, z)} = \frac{\gamma(a, z)}{\Gamma(a)}
+\f}
+[Gamma function - Wikipedia](https://en.wikipedia.org/wiki/Gamma_function)
+\f{equation}{
+\Gamma (z) = \int_0^\infty t^{z-1} e^{-t} dt
+\f}
+[Lower incomplete gamma function - Wikipedia](https://en.wikipedia.org/wiki/Incomplete_gamma_function)
+\f{equation}{
+\gamma (s, x) = \int_0^x t^{s-1} e^{-t} dt
+\f}
+#### One sided Test
+Test only \f$\epsilon_{\boldsymbol{\delta}\mathbf{z}} \le r_2\f$ with \f$r_2 = F^{-1} ( 1 - \alpha, n_z )\f$
+
+### KF scheme with NIS test
+NIS only tells that something is wrong, not what. Need to look at post-fit residuals to find incorrect measurements.
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\section RTK-AmbiguityResolution Ambiguity resolution
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection RTK-CorrectingFloatState Correcting float state
+
+Readjusting the float estimator \f$\boldsymbol{\hat{b}}\f$ with the ambiguity residual \f$\boldsymbol{\hat{a}} - \boldsymbol{\check{a}}\f$
+\f{equation}{
+\begin{aligned}
+  \boldsymbol{\check{b}}                       & = \boldsymbol{\hat{b}} - \mathbf{Q}_{\boldsymbol{\hat{b}\hat{a}}} \mathbf{Q}_{\boldsymbol{\hat{a}\hat{a}}}^{-1} \left( \boldsymbol{\hat{a}} - \boldsymbol{\check{a}} \right)         \\
+  \mathbf{Q}_{\boldsymbol{\check{b}\check{b}}} & = \mathbf{Q}_{\boldsymbol{\hat{b}\hat{b}}} - \mathbf{Q}_{\boldsymbol{\hat{b}\hat{a}}} \mathbf{Q}_{\boldsymbol{\hat{a}\hat{a}}}^{-1} \mathbf{Q}_{\boldsymbol{\hat{a}\hat{b}}}
+\end{aligned}
+\f}
+\subsection RTK-UpdatingAmbiguityCovariance Updating Ambiguity covariance
+After fixing the ambiguities we do a Kalman Filter update with the ambiguities
+
+### Measurement innovation dz
+
+#### Measurement vector
+
+\f{equation}{
+\mathbf{z} =
+\left\{\begin{array}{cccc}
+{\check{N}_{br}^{12}} & {\check{N}_{br}^{13}} & \dots & {\check{N}_{br}^{1m}}
+\end{array}\right\}^T
+\f}
+
+#### Measurement innovation
+This is the difference between the current ambiguities in the state vector and the fixed ambiguities here
+\f{equation}{
+\boldsymbol{\delta}\mathbf{z} = \mathbf{z} - \mathbf{h}(\mathbf{\hat{x}})
+\f}
+
+### Measurement sensitivity Matrix H
+
+This extends the previously stated \f$\mathbf{H}\f$ matrix
+\f{equation}{
+\overbrace{
+  \begin{bmatrix}
+    {\check{N}_{br}^{12}} \\
+    {\check{N}_{br}^{13}} \\
+    \vdots \\
+    {\check{N}_{br}^{1m}} \\
+  \end{bmatrix}
+}^{\mathbf{z}} =
+\overbrace{
+\left[ \begin{array}{cc:cccc}
+\mathbf{0}_{1x3} & \mathbf{0}_{1x3} &    1   &   0    & \dots  & 0 \\
+\mathbf{0}_{1x3} & \mathbf{0}_{1x3} &    0   &   1    & \dots  & 0 \\
+     \vdots      &      \vdots      & \vdots & \vdots & \ddots & \vdots \\
+\mathbf{0}_{1x3} & \mathbf{0}_{1x3} &    0   &   0    & \dots  & 1 \\
+\end{array} \right]}^{\mathbf{H}}
+\overbrace{
+  \begin{bmatrix}
+    { \mathbf{r}_{br} } \\
+    { \mathbf{v}_{br} } \\\hline
+    {N_{br}^{12}} \\
+    {N_{br}^{13}} \\
+    \vdots \\
+    {N_{br}^{1m}} \\
+  \end{bmatrix}
+}^{\mathbf{x}}
+\f}
+
+### Measurement noise covariance matrix R
+
+\f{equation}{
+\mathbf{R} = \left[ \begin{array}{cccc}
+\sigma_{N}^2 &   0    & \dots & 0 \\
+   0   & \sigma_{N}^2 & \dots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+   0   &   0    & \dots & \sigma_{N}^2 \\
+\end{array} \right]
+\f}
+with \f$\sigma_{N}^2\f$ being very small, e.g. \f$10^{-6}\f$
+
+*/
+
+}

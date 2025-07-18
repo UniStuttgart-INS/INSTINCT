@@ -197,6 +197,7 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataProcessor/ErrorModel/AllanDeviation.hpp"
 #include "Nodes/DataProcessor/ErrorModel/ErrorModel.hpp"
 #include "Nodes/DataProcessor/GNSS/GnssAnalyzer.hpp"
+#include "Nodes/DataProcessor/GNSS/RealTimeKinematic.hpp"
 #include "Nodes/DataProcessor/GNSS/SinglePointPositioning.hpp"
 #include "Nodes/DataProcessor/Integrator/ImuIntegrator.hpp"
 #include "Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.hpp"
@@ -275,6 +276,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<AllanDeviation>();
     registerNodeType<ErrorModel>();
     registerNodeType<GnssAnalyzer>();
+    registerNodeType<RealTimeKinematic>();
     registerNodeType<SinglePointPositioning>();
     registerNodeType<ImuIntegrator>();
     registerNodeType<LooselyCoupledKF>();
@@ -325,6 +327,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
 #include "NodeData/GNSS/GnssCombination.hpp"
 #include "NodeData/GNSS/GnssObs.hpp"
 #include "NodeData/GNSS/RtklibPosObs.hpp"
+#include "NodeData/GNSS/RtkSolution.hpp"
 #include "NodeData/GNSS/SppSolution.hpp"
 #include "NodeData/GNSS/UbloxObs.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
@@ -354,6 +357,7 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
     registerNodeDataType<GnssCombination>();
     registerNodeDataType<GnssObs>();
     registerNodeDataType<RtklibPosObs>();
+    registerNodeDataType<RtkSolution>();
     registerNodeDataType<SppSolution>();
     registerNodeDataType<UbloxObs>();
     // IMU
@@ -392,6 +396,7 @@ std::vector<std::string> NAV::NodeRegistry::GetStaticDataDescriptors(const std::
     if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { InsGnssTCKFSolution::type() })) { return InsGnssTCKFSolution::GetStaticDataDescriptors(); }
     if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { InsGnssLCKFSolution::type() })) { return InsGnssLCKFSolution::GetStaticDataDescriptors(); }
     if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { PosVelAtt::type() })) { return PosVelAtt::GetStaticDataDescriptors(); }
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { RtkSolution::type() })) { return RtkSolution::GetStaticDataDescriptors(); }
     if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { SppSolution::type() })) { return SppSolution::GetStaticDataDescriptors(); }
     if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { RtklibPosObs::type() })) { return RtklibPosObs::GetStaticDataDescriptors(); }
     if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { WiFiPositioningSolution::type() })) { return WiFiPositioningSolution::GetStaticDataDescriptors(); }
@@ -414,6 +419,7 @@ bool NAV::NodeRegistry::TypeHasDynamicData(const std::string& type)
     return type == DynamicData::type()
            || type == GnssCombination::type()
            || type == GnssObs::type()
+           || type == RtkSolution::type()
            || type == SppSolution::type()
            || type == VectorNavBinaryOutput::type();
 }
@@ -430,6 +436,7 @@ std::shared_ptr<NAV::NodeData> NAV::NodeRegistry::CopyNodeData(const std::shared
     if (nodeData->getType() == GnssCombination::type()) { return std::make_shared<GnssCombination>(*std::static_pointer_cast<const GnssCombination>(nodeData)); }
     if (nodeData->getType() == GnssObs::type()) { return std::make_shared<GnssObs>(*std::static_pointer_cast<const GnssObs>(nodeData)); }
     if (nodeData->getType() == RtklibPosObs::type()) { return std::make_shared<RtklibPosObs>(*std::static_pointer_cast<const RtklibPosObs>(nodeData)); }
+    if (nodeData->getType() == RtkSolution::type()) { return std::make_shared<RtkSolution>(*std::static_pointer_cast<const RtkSolution>(nodeData)); }
     if (nodeData->getType() == SppSolution::type()) { return std::make_shared<SppSolution>(*std::static_pointer_cast<const SppSolution>(nodeData)); }
     if (nodeData->getType() == UbloxObs::type()) { return std::make_shared<UbloxObs>(*std::static_pointer_cast<const UbloxObs>(nodeData)); }
     // IMU

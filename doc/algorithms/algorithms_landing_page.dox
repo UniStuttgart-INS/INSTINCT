@@ -23,6 +23,7 @@
 - \subpage SppBasics
   - \subpage SppLSE
   - \subpage SppKF
+- \subpage RealTimeKinematics
 
 ### Inertial
 - IMU Integration
