@@ -65,11 +65,12 @@ void NAV::UbloxGnssOrbitCollector::guiConfig()
     bool isDisabled = ImGui::GetCurrentContext()->CurrentItemFlags & ImGuiItemFlags_Disabled;
 
     if (isDisabled) { ImGui::EndDisabled(); }
-    if (ImGui::BeginTable(fmt::format("{} UbloxGnssOrbitCollector", size_t(id)).c_str(), 3,
+    if (ImGui::BeginTable(fmt::format("{} UbloxGnssOrbitCollector", size_t(id)).c_str(), 4,
                           ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX))
     {
         ImGui::TableSetupColumn("");
         ImGui::TableSetupColumn("Received");
+        ImGui::TableSetupColumn("Iono");
         ImGui::TableSetupColumn("Building");
         ImGui::TableHeadersRow();
 
@@ -107,6 +108,16 @@ void NAV::UbloxGnssOrbitCollector::guiConfig()
                 }
                 i++;
             }
+
+            ImGui::TableNextColumn();
+            std::string iono;
+            for (const auto& correction : _gnssNavInfo.ionosphericCorrections.data())
+            {
+                if (correction.satSys != satSys) { continue; }
+                if (!iono.empty()) { iono += ", "; }
+                iono += correction.alphaBeta == IonosphericCorrections::Alpha ? "α" : "β";
+            }
+            ImGui::TextUnformatted(iono.c_str());
 
             ImGui::TableNextColumn();
             for (const auto& builder : _ephemerisBuilder)
@@ -382,6 +393,10 @@ void NAV::UbloxGnssOrbitCollector::decryptGPS(const SatId& satId, const ubx::Ubx
             if (subframesFound.count() == 3)
             {
                 LOG_DATA("{}: [{}] [{}] All subframes found. Updating gnnsNavInfo", nameId(), satId, ephemeris->refTime.toYMDHMS(GPST));
+                if (!_gnssNavInfo.searchNavigationData(satId, ephemeris->refTime))
+                {
+                    LOG_DEBUG("{}: Adding new ephemeris data [{}] [{}]", nameId(), satId, ephemeris->refTime.toYMDHMS(GPST));
+                }
                 std::unique_lock guard(outputPins.at(OUTPUT_PORT_INDEX_GNSS_NAV_INFO).dataAccessMutex, std::defer_lock);
                 if (!_postProcessingLock.has_value())
                 {
@@ -602,7 +617,7 @@ void NAV::UbloxGnssOrbitCollector::decryptGPS(const SatId& satId, const ubx::Ubx
         auto ephemerisBuilder = getEphemerisBuilder(satId, IODE);
         if (!ephemerisBuilder.has_value())
         {
-            LOG_WARN("{}: [{}]       Could not find Ephemeris builder for IODE {}", nameId(), satId, IODE);
+            LOG_DATA("{}: [{}]       Could not find Ephemeris builder for IODE {}", nameId(), satId, IODE);
             return;
         }
         auto ephemeris = std::dynamic_pointer_cast<GPSEphemeris>(ephemerisBuilder->get().navData);
@@ -626,15 +641,16 @@ void NAV::UbloxGnssOrbitCollector::decryptGPS(const SatId& satId, const ubx::Ubx
     }
     else if (subFrameId == 4) // Words three through ten of each page contain six parity bits as their LSBs
     {
-        // Page description
-        // 1, 6, 11, 16 and 21:        Reserved
-        // 2, 3, 4, 5, 7, 8, 9 and 10: almanac data for SV 25 through 32 respectively
-        // 12, 19, 20, 22, 23 and 24:  Reserved
-        // 13:                         NMCT
-        // 14 and 15:                  Reserved for system use
-        // 17:                         Special messages
-        // 18:                         Ionospheric and UTC data
-        // 25:                         A-S flags/SV configurations for 32 SVs, plus SV health for SV 25 through 32
+        // Page                     | SV ID                          | Description
+        // ------------------------ | ------------------------------ | -----------
+        // 1, 6, 11, 16, 21:        | 57                             | Reserved
+        // 2, 3, 4, 5, 7, 8, 9, 10: | 25, 26, 27, 28, 29, 30, 31, 32 | almanac data for SV 25 through 32 respectively
+        // 12, 19, 20, 22, 23, 24:  | 62, 58, 59, 60, 61, 62         | Reserved
+        // 13:                      | 52                             | NMCT
+        // 14, 15:                  | 53, 54                         | Reserved for system use
+        // 17:                      | 55                             | Special messages
+        // 18:                      | 56                             | Ionospheric and UTC data
+        // 25:                      | 63                             | A-S flags/SV configurations for 32 SVs, plus SV health for SV 25 through 32
         //
         // IS-GPS-200M: Table 20-V. Data IDs and SV IDs in Subframes 4 and 5, p. 114
         // IS-GPS-200M: 20.3.3.5 Subframes 4 and 5, p. 112ff
@@ -651,7 +667,7 @@ void NAV::UbloxGnssOrbitCollector::decryptGPS(const SatId& satId, const ubx::Ubx
             // IS-GPS-200M: Table 20-IX. UTC Parameters, p. 122
 
             // IS-GPS-200M: 20.3.3.5.1.7 Ionospheric Data, p. 121
-            // IS-GPS-200M: Table 20-X. onospheric Parameters, p. 123
+            // IS-GPS-200M: Table 20-X. Ionospheric Parameters, p. 123
 
             auto alpha0 = static_cast<int8_t>((sfrbx.dwrd.at(w) >> 14) & 0b11111111); // 8 BITS
             auto alpha1 = static_cast<int8_t>((sfrbx.dwrd.at(w) >> 6) & 0b11111111);  // 8 BITS
@@ -696,6 +712,19 @@ void NAV::UbloxGnssOrbitCollector::decryptGPS(const SatId& satId, const ubx::Ubx
             if (!_postProcessingLock.has_value())
             {
                 guard.lock();
+            }
+            if (!_gnssNavInfo.ionosphericCorrections.contains(satId.satSys, IonosphericCorrections::Alpha))
+            {
+                if (auto ephemerisBuilder = getLastEphemerisBuilder(satId);
+                    ephemerisBuilder.has_value())
+                {
+                    auto ephemeris = std::dynamic_pointer_cast<GPSEphemeris>(ephemerisBuilder->get().navData);
+                    LOG_DEBUG("{}: [{}] Received Ionospheric and Time system corrections [{}]", nameId(), satId.satSys, ephemeris->refTime.toYMDHMS(GPST));
+                }
+                else
+                {
+                    LOG_DEBUG("{}: [{}] Received Ionospheric and Time system corrections", nameId(), satId.satSys);
+                }
             }
 
             _gnssNavInfo.ionosphericCorrections.insert(satId.satSys, IonosphericCorrections::Alpha,
@@ -825,6 +854,10 @@ void NAV::UbloxGnssOrbitCollector::decryptGalileo(const SatId& satId, const ubx:
             if (subframesFound.count() == 5)
             {
                 LOG_DATA("{}: [{}] [{}] All words found. Updating gnnsNavInfo", nameId(), satId, ephemeris->refTime.toYMDHMS(GPST));
+                if (!_gnssNavInfo.searchNavigationData(satId, ephemeris->refTime))
+                {
+                    LOG_DEBUG("{}: Adding new ephemeris data [{}] [{}]", nameId(), satId, ephemeris->refTime.toYMDHMS(GPST));
+                }
                 std::unique_lock guard(outputPins.at(OUTPUT_PORT_INDEX_GNSS_NAV_INFO).dataAccessMutex, std::defer_lock);
                 if (!_postProcessingLock.has_value())
                 {
@@ -931,7 +964,7 @@ void NAV::UbloxGnssOrbitCollector::decryptGalileo(const SatId& satId, const ubx:
         auto ephemerisBuilder = getEphemerisBuilder(satId, IODnav);
         if (!ephemerisBuilder.has_value())
         {
-            LOG_WARN("{}: [{}]       Could not find Ephemeris builder for IODnav {}", nameId(), satId, IODnav);
+            LOG_DATA("{}: [{}]       Could not find Ephemeris builder for IODnav {}", nameId(), satId, IODnav);
             return;
         }
         auto ephemeris = std::dynamic_pointer_cast<GalileoEphemeris>(ephemerisBuilder->get().navData);
@@ -994,7 +1027,7 @@ void NAV::UbloxGnssOrbitCollector::decryptGalileo(const SatId& satId, const ubx:
         auto ephemerisBuilder = getEphemerisBuilder(satId, IODnav);
         if (!ephemerisBuilder.has_value())
         {
-            LOG_WARN("{}: [{}]       Could not find Ephemeris builder for IODnav {}", nameId(), satId, IODnav);
+            LOG_DATA("{}: [{}]       Could not find Ephemeris builder for IODnav {}", nameId(), satId, IODnav);
             return;
         }
         auto ephemeris = std::dynamic_pointer_cast<GalileoEphemeris>(ephemerisBuilder->get().navData);
@@ -1061,7 +1094,7 @@ void NAV::UbloxGnssOrbitCollector::decryptGalileo(const SatId& satId, const ubx:
         auto ephemerisBuilder = getEphemerisBuilder(satId, IODnav);
         if (!ephemerisBuilder.has_value())
         {
-            LOG_WARN("{}: [{}]       Could not find Ephemeris builder for IODnav {}", nameId(), satId, IODnav);
+            LOG_DATA("{}: [{}]       Could not find Ephemeris builder for IODnav {}", nameId(), satId, IODnav);
             return;
         }
         auto ephemeris = std::dynamic_pointer_cast<GalileoEphemeris>(ephemerisBuilder->get().navData);
@@ -1136,7 +1169,7 @@ void NAV::UbloxGnssOrbitCollector::decryptGalileo(const SatId& satId, const ubx:
         auto ephemerisBuilder = getLastEphemerisBuilder(satId);
         if (!ephemerisBuilder.has_value())
         {
-            LOG_WARN("{}: [{}]       Could not find any ephemeris builder", nameId(), satId);
+            LOG_DATA("{}: [{}]       Could not find any ephemeris builder", nameId(), satId);
             return;
         }
         auto ephemeris = std::dynamic_pointer_cast<GalileoEphemeris>(ephemerisBuilder->get().navData);
@@ -1160,6 +1193,12 @@ void NAV::UbloxGnssOrbitCollector::decryptGalileo(const SatId& satId, const ubx:
             {
                 guard.lock();
             }
+
+            if (!_gnssNavInfo.ionosphericCorrections.contains(satId.satSys, IonosphericCorrections::Alpha))
+            {
+                LOG_DEBUG("{}: [{}] Received Ionospheric corrections [{}]", nameId(), satId.satSys, ephemeris->refTime.toYMDHMS(GPST));
+            }
+
             // ‘sfu’ (solar flux unit) is not a SI unit but can be converted as: 1 sfu = 10e-22 W/(m2*Hz)
             _gnssNavInfo.ionosphericCorrections.insert(satId.satSys, IonosphericCorrections::Alpha,
                                                        {
@@ -1211,7 +1250,22 @@ void NAV::UbloxGnssOrbitCollector::decryptGalileo(const SatId& satId, const ubx:
             guard.lock();
         }
 
-        _gnssNavInfo.timeSysCorr[{ satId.satSys.getTimeSystem(), UTC }] = GnssNavInfo::TimeSystemCorrections{
+        auto key = std::make_pair(satId.satSys.getTimeSystem(), UTC);
+        if (!_gnssNavInfo.timeSysCorr.contains(key))
+        {
+            if (auto ephemerisBuilder = getLastEphemerisBuilder(satId);
+                ephemerisBuilder.has_value())
+            {
+                auto ephemeris = std::dynamic_pointer_cast<GalileoEphemeris>(ephemerisBuilder->get().navData);
+                LOG_DEBUG("{}: [{}] Received Time system corrections [{}]", nameId(), satId.satSys, ephemeris->refTime.toYMDHMS(GPST));
+            }
+            else
+            {
+                LOG_DEBUG("{}: [{}] Received Time system corrections", nameId(), satId.satSys);
+            }
+        }
+
+        _gnssNavInfo.timeSysCorr[key] = GnssNavInfo::TimeSystemCorrections{
             .a0 = A0 * std::pow(2, -30),
             .a1 = A1 * std::pow(2, -50),
         };
