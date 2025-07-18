@@ -301,6 +301,23 @@ Recommended changes to the User's ```keybindings.json```
 * [Prof. Dr. Thomas Hobiger](mailto:thomas.hobiger@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
 * [Rui Wang, M.Sc.](mailto:rui.wang@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
 
+## Citation
+
+If you are using INSTINCT for academic work, please use the following citation:
+
+```bibtex
+@article{topp2025,
+  title = {{{INSTINCT}}: A Flow-Based Open-Source {{PNT}} Framework for Satellite Navigation and Sensor Fusion},
+  author = {Topp, Thomas and Maier, Marcel and Hobiger, Thomas and Becker, Doris},
+  date = {2025-07},
+  journaltitle = {GPS Solutions},
+  volume = {29},
+  number = {171},
+  doi = {10.1007/s10291-025-01927-4},
+  url = {https://link.springer.com/article/10.1007/s10291-025-01927-4},
+}
+```
+
 ## License
 
 This project is licensed under the [MPL 2.0](https://mozilla.org/MPL/2.0/) License - see the LICENSE file for details.

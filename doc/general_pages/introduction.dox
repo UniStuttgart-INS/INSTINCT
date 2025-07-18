@@ -39,15 +39,26 @@ To contact the Institute for all other purposes, the INS University [Homepage](h
 \section introduction_cite License and Citation
 INSTINCT by the Institute of Navigation of the University of Stuttgart, Germany, is subject to the terms of the Mozilla Public License, v. 2.0. A copy can be found at [https://mozilla.org/MPL/2.0/](https://mozilla.org/MPL/2.0/).
 
-In order to cite INSTINCT properly, the following (-missing-) can be used:
+If you are using INSTINCT for academic work, please use the following citation:
 
-    -missing-
-
+```bibtex
+@article{topp2025,
+  title = {{{INSTINCT}}: A Flow-Based Open-Source {{PNT}} Framework for Satellite Navigation and Sensor Fusion},
+  author = {Topp, Thomas and Maier, Marcel and Hobiger, Thomas and Becker, Doris},
+  date = {2025-07},
+  journaltitle = {GPS Solutions},
+  volume = {29},
+  number = {171},
+  doi = {10.1007/s10291-025-01927-4},
+  url = {https://link.springer.com/article/10.1007/s10291-025-01927-4},
+}
+```
 
 \section introduction_publications Publications
 If you are interested in papers and publications that are related to INSTINCT, the following list provides a selection of such:
 - Topp, Thomas, Hobiger, Thomas, "Flow-Based Programming for Real-Time Multi-Sensor Data Fusion," Proceedings of the 35th International Technical Meeting of the Satellite Division of The Institute of Navigation (ION GNSS+ 2022), Denver, Colorado, September 2022, pp. 2492-2502.
   [https://doi.org/10.33012/2022.18429](https://doi.org/10.33012/2022.18429)
+- Topp, T., Maier, M., Hobiger, T. et al. INSTINCT: a flow-based open-source PNT framework for satellite navigation and sensor fusion. GPS Solut 29, 171 (2025). [https://doi.org/10.1007/s10291-025-01927-4](https://doi.org/10.1007/s10291-025-01927-4)
 
 
 \section introduction_programming Flow-Based Programming
@@ -72,7 +83,7 @@ Like the modules in FBP, nodes can pass data elements to each other via so-calle
 Beside data flowing between nodes, the FBP paradigm was extended in INSTINCT through object pins that provide access to C++ objects living inside the nodes. This can be used as an interface to provide access to data that either does not change or changes very slowly with time and whose ownership should stay within the source node. An example for such data would be navigation GNSS data which is read from a file at the start of the execution or is slowly collected inside a node from a GNSS receiver.
 
 ________
-<i>Last updated: 2024-01-31</i>
+<i>Last updated: 2025-07-18</i>
 
 */
 
