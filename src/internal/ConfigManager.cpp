@@ -83,7 +83,7 @@ std::vector<std::string> NAV::ConfigManager::FetchConfigs(const int argc, const 
     std::vector<std::string> failedConfigFiles;
 
     // if config file is available, the parameters from file will be added
-    if (vm.count("config"))
+    if (vm.contains("config"))
     {
         for (const std::string& configFile : vm["config"].as<std::vector<std::string>>())
         {
@@ -163,7 +163,7 @@ void NAV::ConfigManager::CheckOptions(const int argc, [[maybe_unused]] const cha
 
 bool NAV::ConfigManager::HasKey(const std::string& key)
 {
-    return vm.count(key);
+    return vm.contains(key);
 }
 
 std::vector<std::string> NAV::ConfigManager::GetKeys()

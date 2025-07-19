@@ -40,7 +40,7 @@ Eigen::MatrixXd NAV::internal::readAscii2Matrix()
         {
             while ((pos = line.find(delimiter)) != std::string::npos)
             {
-                if (line.substr(0, 1) == " ")
+                if (line.starts_with(" "))
                 {
                     NAV::str::ltrim(line);
                 }

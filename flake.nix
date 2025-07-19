@@ -28,7 +28,8 @@
               lldb
               gcovr
               mold
-              clang-tools # clang-format, clang-tidy
+              # clang-tools # clang-format, clang-tidy
+              llvmPackages_20.clang-tools
               gcc
               gccStdenv
               doxygen

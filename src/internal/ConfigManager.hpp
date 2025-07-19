@@ -57,7 +57,7 @@ void CheckOptions(const int argc, const char* argv[]); // NOLINT
 template<typename T>
 const T& Get(const std::string& key, const T&& defaultValue)
 {
-    if (vm.count(key))
+    if (vm.contains(key))
     {
         return vm[key].as<T>();
     }
@@ -72,7 +72,7 @@ const T& Get(const std::string& key, const T&& defaultValue)
 template<typename T>
 const T& Get(const std::string& key)
 {
-    if (vm.count(key))
+    if (vm.contains(key))
     {
         return vm[key].as<T>();
     }

@@ -221,7 +221,7 @@ std::shared_ptr<const NAV::NodeData> NAV::NmeaFile::pollData()
 
         splittedData = str::split(line, ",");
 
-        if (splittedData[0].substr(0, 1) == "$")
+        if (splittedData[0].starts_with("$"))
         {
             if (_hasValidDate && splittedData[0].substr(3, 3) == "GGA")
             {
