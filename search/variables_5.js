@@ -47,7 +47,7 @@ var searchData=
   ['errorboundsmodifierexpression_44',['errorBoundsModifierExpression',['../structNAV_1_1PlotItemStyle.html#a7f573258460aa9223bfbfa27d52d0b7f',1,'NAV::PlotItemStyle']]],
   ['errorboundsmodifierexpressiontemp_45',['errorBoundsModifierExpressionTemp',['../structNAV_1_1PlotItemStyle.html#aa3387a25f0a9336f8bd6dbcf6bb60322',1,'NAV::PlotItemStyle']]],
   ['errorboundsrecalcneeded_46',['errorBoundsReCalcNeeded',['../structNAV_1_1PlotItemStyle_1_1LegendPopupReturn.html#a9c305bacbf9a0e4c1b419788d89623c4',1,'NAV::PlotItemStyle::LegendPopupReturn']]],
-  ['estimate_47',['estimate',['../structNAV_1_1Observations_1_1SignalObservation_1_1ReceiverSpecificData_1_1Observation.html#aac7cba167cc9b2cf6ce1f0bf96591bb1',1,'NAV::Observations::SignalObservation::ReceiverSpecificData::Observation']]],
+  ['estimate_47',['estimate',['../structNAV_1_1Observations_1_1SignalObservation_1_1ReceiverSpecificData_1_1Observation.html#aac7cba167cc9b2cf6ce1f0bf96591bb1',1,'NAV::Observations::SignalObservation::ReceiverSpecificData::Observation::estimate'],['../structNAV_1_1RealTimeKinematic_1_1Difference.html#ac7040ccc04fa3b6e05245074679bd06a',1,'NAV::RealTimeKinematic::Difference::estimate']]],
   ['eventmarker_48',['eventMarker',['../structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem.html#a40d7ca68a20edfe07bd8fc80cde7bbfb',1,'NAV::Plot::PlotInfo::PlotItem']]],
   ['eventmarkerfillcolor_49',['eventMarkerFillColor',['../structNAV_1_1PlotItemStyle.html#a16c2eef432f72770736cd379d0906ceb',1,'NAV::PlotItemStyle']]],
   ['eventmarkeroutlinecolor_50',['eventMarkerOutlineColor',['../structNAV_1_1PlotItemStyle.html#a8d83c491a134a90e37a9730c50ab1a97',1,'NAV::PlotItemStyle']]],

@@ -16,8 +16,13 @@ var classNAV_1_1ImuIntegrator =
     [ "save", "classNAV_1_1ImuIntegrator.html#ad2bf3669dd2e955fa12ee799013978bb", null ],
     [ "type", "classNAV_1_1ImuIntegrator.html#a5a0507b5fef8650e4963eba52f1a5872", null ],
     [ "typeStatic", "classNAV_1_1ImuIntegrator.html#a33e94c4206ae0c3e874f71fb839cea5f", null ],
+    [ "_imuPreintegration", "classNAV_1_1ImuIntegrator.html#a4ab421f5f0345f18c776e37dfe423e69", null ],
     [ "_inertialIntegrator", "classNAV_1_1ImuIntegrator.html#adda05d93ca64e2c6bbf3c12f0ceb2f3c", null ],
+    [ "_inertialPreintegrator", "classNAV_1_1ImuIntegrator.html#abbeb87cc6817f95cbb7bd61354704f79", null ],
+    [ "_lastImuObs", "classNAV_1_1ImuIntegrator.html#a24d7992d3a3e54769b22acad6e0db7ae", null ],
+    [ "_lastPosVelAtt", "classNAV_1_1ImuIntegrator.html#a0e5f67eb59b3074c657f6b0d309f53ab", null ],
     [ "_preferAccelerationOverDeltaMeasurements", "classNAV_1_1ImuIntegrator.html#a2aeccd2e759ea56523f82c1f51a148ca", null ],
+    [ "_resetPreintegratorEveryEpoch", "classNAV_1_1ImuIntegrator.html#ad4451055aa732e30662bba2ad7335e8e", null ],
     [ "INPUT_PORT_INDEX_IMU_OBS", "classNAV_1_1ImuIntegrator.html#af7df5dd45061530efbff20993ce711d0", null ],
     [ "INPUT_PORT_INDEX_POS_VEL_ATT_INIT", "classNAV_1_1ImuIntegrator.html#a00a15646c6c43d6a03eee1f68f23d419", null ],
     [ "OUTPUT_PORT_INDEX_INERTIAL_NAV_SOL", "classNAV_1_1ImuIntegrator.html#ab2f6604e7e7eb99d52c2447d8a028083", null ]

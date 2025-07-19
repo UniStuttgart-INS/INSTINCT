@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-06-06 13:17:47</td>
+      <td>2025-07-19 10:51:51</td>
     </tr>
   </table>
 </div>
@@ -70,13 +70,13 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l14">NAV::doppler2rangeRate(double, NAV::Frequency, signed char) (line 14)</a></td><td>called 68054 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l14">NAV::doppler2rangeRate(double, NAV::Frequency, signed char) (line 14)</a></td><td>called 400908 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l38">NAV::galSisaIdx2Val(unsigned char) (line 38)</a></td><td>called 225 times</td><td>30.0%</td></tr>
     <tr><td><a href="#l29">NAV::galSisaVal2Idx(double) (line 29)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l54">NAV::gpsUraIdx2Val(unsigned char) (line 54)</a></td><td>called 245 times</td><td>50.0%</td></tr>
     <tr><td><a href="#l47">NAV::gpsUraVal2Idx(double) (line 47)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l19">NAV::rangeRate2doppler(double, NAV::Frequency, signed char) (line 19)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l24">NAV::ratioFreqSquared(NAV::Frequency, NAV::Frequency, signed char, signed char) (line 24)</a></td><td>called 82530 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l24">NAV::ratioFreqSquared(NAV::Frequency, NAV::Frequency, signed char, signed char) (line 24)</a></td><td>called 607055 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -185,7 +185,7 @@
       <td class="lineno"><a id="l14" href="#l14">14</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">68054</td>
+      <td class="linecount coveredLine">400908</td>
       <td class="src coveredLine"><span class="kt">double</span><span class="w"> </span><span class="nf">doppler2rangeRate</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">doppler</span><span class="p">,</span><span class="w"> </span><span class="n">Frequency</span><span class="w"> </span><span class="n">freq</span><span class="p">,</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="n">num</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -199,7 +199,7 @@
       <td class="lineno"><a id="l16" href="#l16">16</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">68054</td>
+      <td class="linecount coveredLine">400908</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">-</span><span class="n">InsConst</span><span class="o">::</span><span class="n">C</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">freq</span><span class="p">.</span><span class="n">getFrequency</span><span class="p">(</span><span class="n">num</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">doppler</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -255,7 +255,7 @@
       <td class="lineno"><a id="l24" href="#l24">24</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">82530</td>
+      <td class="linecount coveredLine">607055</td>
       <td class="src coveredLine"><span class="kt">double</span><span class="w"> </span><span class="nf">ratioFreqSquared</span><span class="p">(</span><span class="n">Frequency</span><span class="w"> </span><span class="n">f1</span><span class="p">,</span><span class="w"> </span><span class="n">Frequency</span><span class="w"> </span><span class="n">f2</span><span class="p">,</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="n">num1</span><span class="p">,</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="n">num2</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -269,7 +269,7 @@
       <td class="lineno"><a id="l26" href="#l26">26</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">82530</td>
+      <td class="linecount coveredLine">607055</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">pow</span><span class="p">(</span><span class="n">f1</span><span class="p">.</span><span class="n">getFrequency</span><span class="p">(</span><span class="n">num1</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">f2</span><span class="p">.</span><span class="n">getFrequency</span><span class="p">(</span><span class="n">num2</span><span class="p">),</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">

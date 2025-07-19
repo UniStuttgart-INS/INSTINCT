@@ -1,9 +1,25 @@
 var searchData=
 [
-  ['main_20menu_20bar_0',['Main Menu Bar',['../main_menu_bar.html',1,'gui_landing_page']]],
-  ['manual_1',['Manual',['../developer_manual.html',1,'Developer Manual'],['../user_manual_landing_page.html',1,'User Manual']]],
-  ['matrixlogger_20node_2',['MatrixLogger Node',['../matrix_logger_node.html',1,'node_guide_landing_page']]],
-  ['menu_20bar_3',['Main Menu Bar',['../main_menu_bar.html',1,'gui_landing_page']]],
-  ['merger_20node_4',['Merger Node',['../merger_node.html',1,'node_guide_landing_page']]],
-  ['multiimufile_20node_5',['MultiImuFile Node',['../multi_imu_file_node.html',1,'node_guide_landing_page']]]
+  ['g_0',['G',['../LooselyCoupledKF_n.html#LooselyCoupledKF_n-Units-beta-G',1,'Gauss-Markov constant 𝛽 &amp; Noise scale matrix G'],['../RealTimeKinematics.html#autotoc_md34',1,'Noise input matrix G']]],
+  ['gal_20glo_1',['Case 1: New Sat System with higher priority found (GPS &amp;gt; GAL &amp;gt; GLO &amp;gt; ...)',['../SppKF.html#SppKF-InterChange-Case1',1,'']]],
+  ['gauss_20markov_201_20order_2',['Gauss Markov 1 Order',['../LooselyCoupledKF_e.html#LooselyCoupledKF_e-Noise-GM1',1,'Gauss-Markov 1. Order'],['../LooselyCoupledKF_n.html#LooselyCoupledKF_n-Noise-GM1',1,'Gauss-Markov 1. Order']]],
+  ['gauss_20markov_20constant_20𝛽_20noise_20scale_20matrix_20g_3',['Gauss-Markov constant 𝛽 &amp;amp; Noise scale matrix G',['../LooselyCoupledKF_n.html#LooselyCoupledKF_n-Units-beta-G',1,'']]],
+  ['geometry_20difference_4',['Carrier-Geometry Difference',['../RealTimeKinematics.html#RTK-CarrierGeometryDifference',1,'']]],
+  ['getting_20started_5',['Getting Started',['../Dev_Getting_Started.html',1,'Getting Started'],['../getting_started.html',1,'Getting Started']]],
+  ['getting_20started_20as_20a_20user_6',['Getting Started as a User',['../main_introduction.html#introduction_users',1,'']]],
+  ['glance_7',['Kalman filtering at a glance',['../KalmanFilterBasics.html#KalmanFilterBasics-Summary',1,'']]],
+  ['gleason_8',['Gleason',['../LooselyCoupledKF_n.html#LooselyCoupledKF_n-Appendix-ErrorStateEquations-LocalLevelFrame-Comparison-Gleason',1,'']]],
+  ['glo_9',['Case 1: New Sat System with higher priority found (GPS &amp;gt; GAL &amp;gt; GLO &amp;gt; ...)',['../SppKF.html#SppKF-InterChange-Case1',1,'']]],
+  ['gnss_10',['GNSS',['../algorithms_landing_page.html#autotoc_md24',1,'']]],
+  ['gnss_20loosely_20coupled_20kalman_20filter_20earth_20fixed_20frame_11',['INS/GNSS Loosely-coupled Kalman Filter (Earth-fixed frame)',['../LooselyCoupledKF_e.html',1,'algorithms_landing_page']]],
+  ['gnss_20loosely_20coupled_20kalman_20filter_20local_20navigation_20frame_12',['INS/GNSS Loosely-coupled Kalman Filter (local-navigation frame)',['../LooselyCoupledKF_n.html',1,'algorithms_landing_page']]],
+  ['gnss_20measurement_20error_13',['GNSS measurement error',['../RealTimeKinematics.html#autotoc_md45',1,'GNSS measurement error'],['../RealTimeKinematics.html#autotoc_md46',1,'GNSS measurement error']]],
+  ['gnss_20observation_20equation_14',['Single GNSS Observation Equation',['../RealTimeKinematics.html#RTK-SingleObservationEquations',1,'']]],
+  ['gnssanalyzer_20node_15',['GnssAnalyzer Node',['../gnss_analyzer_node.html',1,'node_guide_landing_page']]],
+  ['gps_20gal_20glo_16',['Case 1: New Sat System with higher priority found (GPS &amp;gt; GAL &amp;gt; GLO &amp;gt; ...)',['../SppKF.html#SppKF-InterChange-Case1',1,'']]],
+  ['group_20box_17',['Group Box',['../group_box.html',1,'node_guide_landing_page']]],
+  ['groves_18',['Groves',['../SppKF.html#SppKF-processModel-processNoise-groves',1,'Groves'],['../ImuIntegrator_n.html#ImuIntegrator-Mechanization-n-Attitude-Quaternion-Comparison-Groves',1,'Groves']]],
+  ['groves_20process_20noise_20definition_19',['Groves process noise definition',['../LooselyCoupledKF_e.html#LooselyCoupledKF_e-Groves-process-noise-definition',1,'Groves' process noise definition'],['../LooselyCoupledKF_n.html#LooselyCoupledKF_n-Groves-process-noise-definition',1,'Groves' process noise definition']]],
+  ['gui_20',['GUI',['../advanced_gui_landing_page.html',1,'Advanced GUI'],['../gui_landing_page.html',1,'GUI']]],
+  ['guide_21',['Node Guide',['../node_guide_landing_page.html',1,'user_manual_landing_page']]]
 ];

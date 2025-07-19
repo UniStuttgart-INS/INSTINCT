@@ -42,5 +42,6 @@ var searchData=
   ['logpatterntrace_39',['logPatternTrace',['../Logger_8cpp.html#ad8142f78aaf5003aab558b7797113fd9',1,'Logger.cpp']]],
   ['logpatterntracecolor_40',['logPatternTraceColor',['../Logger_8cpp.html#acb55b05e8d34466997c58cf6822834a2',1,'Logger.cpp']]],
   ['lon_41',['lon',['../structNAV_1_1internal_1_1GPT2Data.html#a18bd1fefc95da9b7bd4f19123838acfd',1,'NAV::internal::GPT2Data::lon'],['../structNAV_1_1internal_1_1GPT3Data.html#ab87717cc236bd7862b8e5679d129ef01',1,'NAV::internal::GPT3Data::lon'],['../structNAV_1_1UlogFile_1_1VehicleGpsPosition.html#abd14309c5c5d6b0bd3bbf1bb748bb656',1,'NAV::UlogFile::VehicleGpsPosition::lon'],['../structNAV_1_1vendor_1_1emlid_1_1ErbPos.html#ac228096070b48094838009bc21f25123',1,'NAV::vendor::emlid::ErbPos::lon'],['../structNAV_1_1vendor_1_1ublox_1_1UbxNavPosllh.html#aa39eb8cf2b60a18ecbae34c28f681235',1,'NAV::vendor::ublox::UbxNavPosllh::lon']]],
-  ['lowerband_42',['lowerBand',['../classNAV_1_1CubicSpline_1_1BandMatrix.html#a18e447a617263e3bdaf47d13feb969c4',1,'NAV::CubicSpline::BandMatrix']]]
+  ['lookuptablefailureprobability_42',['lookupTableFailureProbability',['../namespaceNAV_1_1Ambiguity.html#acc7e197e6d857720fc630f02472bdbe4',1,'NAV::Ambiguity']]],
+  ['lowerband_43',['lowerBand',['../classNAV_1_1CubicSpline_1_1BandMatrix.html#a18e447a617263e3bdaf47d13feb969c4',1,'NAV::CubicSpline::BandMatrix']]]
 ];

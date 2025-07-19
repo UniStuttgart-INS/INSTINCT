@@ -5,5 +5,5 @@ var searchData=
   ['timesystemenum_2',['TimeSystemEnum',['../classNAV_1_1TimeSystem.html#a1f58694e11a43f4dcfc2431bcb158081',1,'NAV::TimeSystem']]],
   ['trajectorytype_3',['TrajectoryType',['../classNAV_1_1ImuSimulator.html#a18a915dcefec7aedb766ab4bd2ce9e09',1,'NAV::ImuSimulator']]],
   ['tropospheremodel_4',['TroposphereModel',['../namespaceNAV.html#aa860003b748e378ac37bcfdaf8d1e6cc',1,'NAV']]],
-  ['type_5',['Type',['../classNAV_1_1SatNavData.html#ab8ee23e943f90f953e0092d31b7a8341',1,'NAV::SatNavData::Type'],['../namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#a1eafe3f84238235e70a18218b9fa4d39',1,'NAV::gui::widgets::PinIcon::Type']]]
+  ['type_5',['Type',['../classNAV_1_1SatNavData.html#ab8ee23e943f90f953e0092d31b7a8341',1,'NAV::SatNavData::Type'],['../structNAV_1_1RtkSolution_1_1Outlier.html#a5d53635c7d6e032050c895bd10dbaec2',1,'NAV::RtkSolution::Outlier::Type'],['../namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#a1eafe3f84238235e70a18218b9fa4d39',1,'NAV::gui::widgets::PinIcon::Type']]]
 ];

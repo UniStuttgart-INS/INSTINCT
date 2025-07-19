@@ -2,6 +2,7 @@ var Gravity_8hpp =
 [
     [ "NAV::GravitationModel", "namespaceNAV.html#a3efcc391e50b070b4c8e660ffca2c92c", [
       [ "NAV::GravitationModel::None", "namespaceNAV.html#a3efcc391e50b070b4c8e660ffca2c92ca6adf97f83acf6453d4a6a4b1070f3754", null ],
+      [ "NAV::GravitationModel::Const", "namespaceNAV.html#a3efcc391e50b070b4c8e660ffca2c92ca79ceee9f8e3c1f0cc74223e05d2448bf", null ],
       [ "NAV::GravitationModel::WGS84", "namespaceNAV.html#a3efcc391e50b070b4c8e660ffca2c92ca5dda43a21474cf33e7088b8247f19c4b", null ],
       [ "NAV::GravitationModel::WGS84_Skydel", "namespaceNAV.html#a3efcc391e50b070b4c8e660ffca2c92ca22070eb9b1172183793836bbdd5f6806", null ],
       [ "NAV::GravitationModel::Somigliana", "namespaceNAV.html#a3efcc391e50b070b4c8e660ffca2c92cabb08c06e19a2e689147bdef1ccfcf926", null ],
@@ -10,6 +11,7 @@ var Gravity_8hpp =
     ] ],
     [ "NAV::ComboGravitationModel", "namespaceNAV.html#a635ccfffdd10fe61a3892a34c078b274", null ],
     [ "NAV::n_calcGravitation", "namespaceNAV.html#a042d6170525be3acf24d9f69fd78d82f", null ],
+    [ "NAV::n_calcGravitation_Const", "namespaceNAV.html#a87cebd039540f30d045983fcca477ea7", null ],
     [ "NAV::n_calcGravitation_EGM96", "namespaceNAV.html#aa4738f34a5365340e623f4548b8748ea", null ],
     [ "NAV::n_calcGravitation_SomiglianaAltitude", "namespaceNAV.html#ae31b9b313c742c1e153562b86a533cd3", null ],
     [ "NAV::n_calcGravitation_WGS84", "namespaceNAV.html#a2ef8606cf90050c01f86931f67275412", null ],

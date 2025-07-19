@@ -27,6 +27,6 @@ var searchData=
   ['initcovariancevelocityunits_24',['InitCovarianceVelocityUnits',['../classNAV_1_1SPP_1_1KalmanFilter.html#a4a87f1dbb113aedebbee532db74d7afd',1,'NAV::SPP::KalmanFilter']]],
   ['inputwithunitchange_25',['InputWithUnitChange',['../namespaceNAV_1_1gui_1_1widgets.html#a7fdfdfd674facfdd41ef278150e92640',1,'NAV::gui::widgets']]],
   ['integrationalgorithm_26',['IntegrationAlgorithm',['../classNAV_1_1InertialIntegrator.html#a467717a9c1e1fb82f892fba30ea04e52',1,'NAV::InertialIntegrator']]],
-  ['integrationframe_27',['IntegrationFrame',['../classNAV_1_1InertialIntegrator.html#abeff56dbebc53fbd89cdbd070948e8e1',1,'NAV::InertialIntegrator']]],
+  ['integrationframe_27',['IntegrationFrame',['../classNAV_1_1InertialIntegrator.html#abeff56dbebc53fbd89cdbd070948e8e1',1,'NAV::InertialIntegrator::IntegrationFrame'],['../classNAV_1_1InertialPreIntegrator.html#a8f665b9762b3249520218a98cc64ba57',1,'NAV::InertialPreIntegrator::IntegrationFrame']]],
   ['ionospheremodel_28',['IonosphereModel',['../namespaceNAV.html#a3c6a3f17c27803840eecce1fb73f21e2',1,'NAV']]]
 ];

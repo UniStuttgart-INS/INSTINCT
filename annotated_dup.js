@@ -61,6 +61,18 @@ var annotated_dup =
         [ "NodeInfo", "structNAV_1_1NodeRegistry_1_1NodeInfo.html", "structNAV_1_1NodeRegistry_1_1NodeInfo" ],
         [ "PinInfo", "structNAV_1_1NodeRegistry_1_1PinInfo.html", "structNAV_1_1NodeRegistry_1_1PinInfo" ]
       ] ],
+      [ "RTK", "namespaceNAV_1_1RTK.html", [
+        [ "Meas", "namespaceNAV_1_1RTK_1_1Meas.html", [
+          [ "AmbObs", "structNAV_1_1RTK_1_1Meas_1_1AmbObs.html", "structNAV_1_1RTK_1_1Meas_1_1AmbObs" ],
+          [ "CarrierDD", "structNAV_1_1RTK_1_1Meas_1_1CarrierDD.html", "structNAV_1_1RTK_1_1Meas_1_1CarrierDD" ],
+          [ "DopplerDD", "structNAV_1_1RTK_1_1Meas_1_1DopplerDD.html", "structNAV_1_1RTK_1_1Meas_1_1DopplerDD" ],
+          [ "PsrDD", "structNAV_1_1RTK_1_1Meas_1_1PsrDD.html", "structNAV_1_1RTK_1_1Meas_1_1PsrDD" ],
+          [ "SingleObs", "structNAV_1_1RTK_1_1Meas_1_1SingleObs.html", "structNAV_1_1RTK_1_1Meas_1_1SingleObs" ]
+        ] ],
+        [ "States", "namespaceNAV_1_1RTK_1_1States.html", [
+          [ "AmbiguityDD", "structNAV_1_1RTK_1_1States_1_1AmbiguityDD.html", "structNAV_1_1RTK_1_1States_1_1AmbiguityDD" ]
+        ] ]
+      ] ],
       [ "SPP", "namespaceNAV_1_1SPP.html", [
         [ "Meas", "namespaceNAV_1_1SPP_1_1Meas.html", [
           [ "Doppler", "structNAV_1_1SPP_1_1Meas_1_1Doppler.html", "structNAV_1_1SPP_1_1Meas_1_1Doppler" ],
@@ -138,6 +150,8 @@ var annotated_dup =
         ] ]
       ] ],
       [ "AllanDeviation", "classNAV_1_1AllanDeviation.html", "classNAV_1_1AllanDeviation" ],
+      [ "AmbiguityResolutionParameters", "structNAV_1_1AmbiguityResolutionParameters.html", "structNAV_1_1AmbiguityResolutionParameters" ],
+      [ "AmbiguityResolutionResult", "structNAV_1_1AmbiguityResolutionResult.html", "structNAV_1_1AmbiguityResolutionResult" ],
       [ "AntexReader", "classNAV_1_1AntexReader.html", "classNAV_1_1AntexReader" ],
       [ "ArubaSensor", "classNAV_1_1ArubaSensor.html", "classNAV_1_1ArubaSensor" ],
       [ "AtmosphereModels", "structNAV_1_1AtmosphereModels.html", "structNAV_1_1AtmosphereModels" ],
@@ -192,6 +206,7 @@ var annotated_dup =
       [ "ImuSimulator", "classNAV_1_1ImuSimulator.html", "classNAV_1_1ImuSimulator" ],
       [ "IncrementalLeastSquares", "classNAV_1_1IncrementalLeastSquares.html", "classNAV_1_1IncrementalLeastSquares" ],
       [ "InertialIntegrator", "classNAV_1_1InertialIntegrator.html", "classNAV_1_1InertialIntegrator" ],
+      [ "InertialPreIntegrator", "classNAV_1_1InertialPreIntegrator.html", "classNAV_1_1InertialPreIntegrator" ],
       [ "InputPin", "classNAV_1_1InputPin.html", "classNAV_1_1InputPin" ],
       [ "InsConst", "classNAV_1_1InsConst.html", "classNAV_1_1InsConst" ],
       [ "InsGnssLCKFSolution", "classNAV_1_1InsGnssLCKFSolution.html", "classNAV_1_1InsGnssLCKFSolution" ],
@@ -253,6 +268,7 @@ var annotated_dup =
       [ "PressToHgt", "classNAV_1_1PressToHgt.html", "classNAV_1_1PressToHgt" ],
       [ "QZSSEphemeris", "classNAV_1_1QZSSEphemeris.html", "classNAV_1_1QZSSEphemeris" ],
       [ "RandomNumberGenerator", "classNAV_1_1RandomNumberGenerator.html", "classNAV_1_1RandomNumberGenerator" ],
+      [ "RealTimeKinematic", "classNAV_1_1RealTimeKinematic.html", "classNAV_1_1RealTimeKinematic" ],
       [ "Receiver", "structNAV_1_1Receiver.html", "structNAV_1_1Receiver" ],
       [ "ReceiverClock", "structNAV_1_1ReceiverClock.html", "structNAV_1_1ReceiverClock" ],
       [ "ReceiverClockModel", "classNAV_1_1ReceiverClockModel.html", "classNAV_1_1ReceiverClockModel" ],
@@ -262,6 +278,7 @@ var annotated_dup =
       [ "RtklibPosConverter", "classNAV_1_1RtklibPosConverter.html", "classNAV_1_1RtklibPosConverter" ],
       [ "RtklibPosFile", "classNAV_1_1RtklibPosFile.html", "classNAV_1_1RtklibPosFile" ],
       [ "RtklibPosObs", "classNAV_1_1RtklibPosObs.html", "classNAV_1_1RtklibPosObs" ],
+      [ "RtkSolution", "classNAV_1_1RtkSolution.html", "classNAV_1_1RtkSolution" ],
       [ "Satellite", "classNAV_1_1Satellite.html", "classNAV_1_1Satellite" ],
       [ "SatelliteSystem", "structNAV_1_1SatelliteSystem.html", "structNAV_1_1SatelliteSystem" ],
       [ "SatId", "structNAV_1_1SatId.html", "structNAV_1_1SatId" ],
@@ -320,6 +337,12 @@ var annotated_dup =
       [ "hash< NAV::Keys::InterFreqBias >", "structstd_1_1hash_3_01NAV_1_1Keys_1_1InterFreqBias_01_4.html", "structstd_1_1hash_3_01NAV_1_1Keys_1_1InterFreqBias_01_4" ],
       [ "hash< NAV::Keys::RecvClkBias >", "structstd_1_1hash_3_01NAV_1_1Keys_1_1RecvClkBias_01_4.html", "structstd_1_1hash_3_01NAV_1_1Keys_1_1RecvClkBias_01_4" ],
       [ "hash< NAV::Keys::RecvClkDrift >", "structstd_1_1hash_3_01NAV_1_1Keys_1_1RecvClkDrift_01_4.html", "structstd_1_1hash_3_01NAV_1_1Keys_1_1RecvClkDrift_01_4" ],
+      [ "hash< NAV::RTK::Meas::AmbObs< ReceiverType > >", "structstd_1_1hash_3_01NAV_1_1RTK_1_1Meas_1_1AmbObs_3_01ReceiverType_01_4_01_4.html", "structstd_1_1hash_3_01NAV_1_1RTK_1_1Meas_1_1AmbObs_3_01ReceiverType_01_4_01_4" ],
+      [ "hash< NAV::RTK::Meas::CarrierDD >", "structstd_1_1hash_3_01NAV_1_1RTK_1_1Meas_1_1CarrierDD_01_4.html", "structstd_1_1hash_3_01NAV_1_1RTK_1_1Meas_1_1CarrierDD_01_4" ],
+      [ "hash< NAV::RTK::Meas::DopplerDD >", "structstd_1_1hash_3_01NAV_1_1RTK_1_1Meas_1_1DopplerDD_01_4.html", "structstd_1_1hash_3_01NAV_1_1RTK_1_1Meas_1_1DopplerDD_01_4" ],
+      [ "hash< NAV::RTK::Meas::PsrDD >", "structstd_1_1hash_3_01NAV_1_1RTK_1_1Meas_1_1PsrDD_01_4.html", "structstd_1_1hash_3_01NAV_1_1RTK_1_1Meas_1_1PsrDD_01_4" ],
+      [ "hash< NAV::RTK::Meas::SingleObs< ReceiverType > >", "structstd_1_1hash_3_01NAV_1_1RTK_1_1Meas_1_1SingleObs_3_01ReceiverType_01_4_01_4.html", "structstd_1_1hash_3_01NAV_1_1RTK_1_1Meas_1_1SingleObs_3_01ReceiverType_01_4_01_4" ],
+      [ "hash< NAV::RTK::States::AmbiguityDD >", "structstd_1_1hash_3_01NAV_1_1RTK_1_1States_1_1AmbiguityDD_01_4.html", "structstd_1_1hash_3_01NAV_1_1RTK_1_1States_1_1AmbiguityDD_01_4" ],
       [ "hash< NAV::SatelliteSystem >", "structstd_1_1hash_3_01NAV_1_1SatelliteSystem_01_4.html", "structstd_1_1hash_3_01NAV_1_1SatelliteSystem_01_4" ],
       [ "hash< NAV::SatelliteSystem_ >", "structstd_1_1hash_3_01NAV_1_1SatelliteSystem___01_4.html", "structstd_1_1hash_3_01NAV_1_1SatelliteSystem___01_4" ],
       [ "hash< NAV::SatId >", "structstd_1_1hash_3_01NAV_1_1SatId_01_4.html", "structstd_1_1hash_3_01NAV_1_1SatId_01_4" ],

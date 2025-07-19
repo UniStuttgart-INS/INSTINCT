@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-06-06 13:17:47</td>
+      <td>2025-07-19 10:51:51</td>
     </tr>
   </table>
 </div>
@@ -40,21 +40,21 @@
     </tr>
     <tr>
       <th scope="row">Lines:</th>
-      <td>18</td>
+      <td>24</td>
       <td>77</td>
-      <td class="coverage-low">23.4%</td>
+      <td class="coverage-low">31.2%</td>
     </tr>
     <tr>
       <th scope="row">Functions:</th>
-      <td>1</td>
+      <td>3</td>
       <td>8</td>
-      <td class="coverage-low">12.5%</td>
+      <td class="coverage-low">37.5%</td>
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>16</td>
+      <td>18</td>
       <td>106</td>
-      <td class="coverage-low">15.1%</td>
+      <td class="coverage-low">17.0%</td>
     </tr>
   </table>
 </div>
@@ -70,14 +70,14 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l11">NAV::Observations::countObservations(NAV::SatSigId const&amp;, NAV::GnssObs::ObservationType const&amp;) const (line 11)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l21">NAV::Observations::recalcObservableCounts(std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;) (line 21)</a></td><td>called 933 times</td><td>84.0%</td></tr>
+    <tr><td><a href="#l11">NAV::Observations::countObservations(NAV::SatSigId const&amp;, NAV::GnssObs::ObservationType const&amp;) const (line 11)</a></td><td>called 23582 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l21">NAV::Observations::recalcObservableCounts(std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;) (line 21)</a></td><td>called 5445 times</td><td>84.0%</td></tr>
     <tr><td><a href="#l127">NAV::Observations::removeMeasurementsFor(NAV::Code const&amp;, NAV::GnssObs::ObservationType const&amp;, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;) (line 127)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l151">NAV::Observations::removeObsType(NAV::GnssObs::ObservationType const&amp;, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;) (line 151)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l108">NAV::Observations::removeSatellite(NAV::SatId const&amp;, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;) (line 108)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l83">NAV::Observations::removeSignal(NAV::SatSigId const&amp;, NAV::GnssObs::ObservationType const&amp;, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;) (line 83)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l70">NAV::Observations::removeSignal(NAV::SatSigId const&amp;, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;) (line 70)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l16">auto NAV::Observations::countObservations(NAV::SatSigId const&amp;, NAV::GnssObs::ObservationType const&amp;) const::{lambda(auto:1 const&amp;)#1}::operator()&lt;std::pair&lt;unsigned long const, std::shared_ptr&lt;NAV::Observations::SignalObservation::ReceiverSpecificData&gt; &gt; &gt;(std::pair&lt;unsigned long const, std::shared_ptr&lt;NAV::Observations::SignalObservation::ReceiverSpecificData&gt; &gt; const&amp;) const (line 16)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l16">auto NAV::Observations::countObservations(NAV::SatSigId const&amp;, NAV::GnssObs::ObservationType const&amp;) const::{lambda(auto:1 const&amp;)#1}::operator()&lt;std::pair&lt;unsigned long const, std::shared_ptr&lt;NAV::Observations::SignalObservation::ReceiverSpecificData&gt; &gt; &gt;(std::pair&lt;unsigned long const, std::shared_ptr&lt;NAV::Observations::SignalObservation::ReceiverSpecificData&gt; &gt; const&amp;) const (line 16)</a></td><td>called 47158 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -165,8 +165,8 @@
       <td class="lineno"><a id="l11" href="#l11">11</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="kt">size_t</span><span class="w"> </span><span class="nf">Observations::countObservations</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">SatSigId</span><span class="o">&amp;</span><span class="w"> </span><span class="n">satSigId</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">GnssObs</span><span class="o">::</span><span class="n">ObservationType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">obsType</span><span class="p">)</span><span class="w"> </span><span class="k">const</span></td>
+      <td class="linecount coveredLine">23582</td>
+      <td class="src coveredLine"><span class="kt">size_t</span><span class="w"> </span><span class="nf">Observations::countObservations</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">SatSigId</span><span class="o">&amp;</span><span class="w"> </span><span class="n">satSigId</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">GnssObs</span><span class="o">::</span><span class="n">ObservationType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">obsType</span><span class="p">)</span><span class="w"> </span><span class="k">const</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l12" href="#l12">12</a></td>
@@ -178,9 +178,16 @@
     <tr class="source-line">
       <td class="lineno"><a id="l13" href="#l13">13</a></td>
       <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">2/2</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 1 taken 3 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 23579 times.</div>
+          </div>
+        </details>
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">signals</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="n">satSigId</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">23582</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">signals</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="n">satSigId</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l14" href="#l14">14</a></td>
@@ -193,29 +200,29 @@
       <td class="lineno"><a id="l15" href="#l15">15</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">recvObs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">signals</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">satSigId</span><span class="p">).</span><span class="n">recvObs</span><span class="p">;</span></td>
+      <td class="linecount coveredLine">23579</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">recvObs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">signals</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">satSigId</span><span class="p">).</span><span class="n">recvObs</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l16" href="#l16">16</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ranges</span><span class="o">::</span><span class="n">count_if</span><span class="p">(</span><span class="n">recvObs</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="n">obsType</span><span class="p">](</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">obs</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount coveredLine">23579</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ranges</span><span class="o">::</span><span class="n">count_if</span><span class="p">(</span><span class="n">recvObs</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="n">obsType</span><span class="p">](</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">obs</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l17" href="#l17">17</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">obs</span><span class="p">.</span><span class="n">second</span><span class="o">-&gt;</span><span class="n">obs</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="n">obsType</span><span class="p">);</span></td>
+      <td class="linecount coveredLine">47158</td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">obs</span><span class="p">.</span><span class="n">second</span><span class="o">-&gt;</span><span class="n">obs</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="n">obsType</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l18" href="#l18">18</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="p">}));</span></td>
+      <td class="linecount coveredLine">23579</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="p">}));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l19" href="#l19">19</a></td>
@@ -235,7 +242,7 @@
       <td class="lineno"><a id="l21" href="#l21">21</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">933</td>
+      <td class="linecount coveredLine">5445</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="nf">Observations::recalcObservableCounts</span><span class="p">([[</span><span class="n">maybe_unused</span><span class="p">]]</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">nameId</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -249,21 +256,21 @@
       <td class="lineno"><a id="l23" href="#l23">23</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">933</td>
+      <td class="linecount coveredLine">5445</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unordered_set</span><span class="o">&lt;</span><span class="n">SatId</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">GnssObs</span><span class="o">::</span><span class="n">ObservationType_COUNT</span><span class="o">&gt;</span><span class="w"> </span><span class="n">nMeasUniqueSat</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l24" href="#l24">24</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">933</td>
+      <td class="linecount coveredLine">5445</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">systems</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l25" href="#l25">25</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">933</td>
+      <td class="linecount coveredLine">5445</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">satellites</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -272,12 +279,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 933 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5445 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">933</td>
+      <td class="linecount partialCoveredLine">5445</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">nObservables</span><span class="p">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -286,12 +293,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 933 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5445 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">933</td>
+      <td class="linecount partialCoveredLine">5445</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">nObservablesUniqueSatellite</span><span class="p">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -307,12 +314,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 7 taken 34903 times.</div>
-            <div class="takenBranch">&check; Branch 8 taken 933 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 269936 times.</div>
+            <div class="takenBranch">&check; Branch 8 taken 5445 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">35836</td>
+      <td class="linecount coveredLine">275368</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="p">[</span><span class="n">satSigId</span><span class="p">,</span><span class="w"> </span><span class="n">sigObs</span><span class="p">]</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">signals</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -328,12 +335,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 34903 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 269939 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">34903</td>
+      <td class="linecount partialCoveredLine">269938</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">satId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">satSigId</span><span class="p">.</span><span class="n">toSatId</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -342,12 +349,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 34903 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 269938 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">34903</td>
+      <td class="linecount partialCoveredLine">269939</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="n">satellites</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">satId</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -356,12 +363,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 34903 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 269937 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">34903</td>
+      <td class="linecount partialCoveredLine">269938</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="n">systems</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">satId</span><span class="p">.</span><span class="n">satSys</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -375,7 +382,7 @@
       <td class="lineno"><a id="l35" href="#l35">35</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">34903</td>
+      <td class="linecount coveredLine">269937</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">recvObs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sigObs</span><span class="p">.</span><span class="n">recvObs</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -384,12 +391,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 7 taken 68930 times.</div>
-            <div class="takenBranch">&check; Branch 8 taken 34903 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 704038 times.</div>
+            <div class="takenBranch">&check; Branch 8 taken 269923 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">103833</td>
+      <td class="linecount coveredLine">973970</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">obs</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">recvObs</span><span class="o">-&gt;</span><span class="n">second</span><span class="o">-&gt;</span><span class="n">obs</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -403,7 +410,7 @@
       <td class="lineno"><a id="l38" href="#l38">38</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">68930</td>
+      <td class="linecount coveredLine">704037</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="n">obsType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">obs</span><span class="p">.</span><span class="n">first</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -412,12 +419,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 68930 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 704033 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">68930</td>
+      <td class="linecount partialCoveredLine">704037</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="n">nObservables</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">obsType</span><span class="p">)</span><span class="o">++</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -426,14 +433,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 68930 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 704032 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 68930 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 704034 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">68930</td>
+      <td class="linecount partialCoveredLine">704033</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="n">nMeasUniqueSat</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">obsType</span><span class="p">).</span><span class="n">insert</span><span class="p">(</span><span class="n">satId</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -463,12 +470,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 2799 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 933 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 16335 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 5445 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">3732</td>
+      <td class="linecount coveredLine">21780</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">obsType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">obsType</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">GnssObs</span><span class="o">::</span><span class="n">ObservationType_COUNT</span><span class="p">;</span><span class="w"> </span><span class="n">obsType</span><span class="o">++</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -484,14 +491,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2799 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 16335 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 5 taken 2799 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 16335 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2799</td>
+      <td class="linecount partialCoveredLine">16335</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="n">nObservablesUniqueSatellite</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">obsType</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nMeasUniqueSat</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">obsType</span><span class="p">).</span><span class="n">size</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -645,7 +652,7 @@
       <td class="lineno"><a id="l68" href="#l68">68</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">933</td>
+      <td class="linecount coveredLine">5445</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">

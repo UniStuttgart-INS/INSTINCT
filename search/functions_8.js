@@ -16,7 +16,7 @@ var searchData=
   ['hasrows_13',['hasRows',['../classNAV_1_1internal_1_1KeyedMatrixRowsBase.html#a1ad95991c8b2d54b446d43b97fc67a0c',1,'NAV::internal::KeyedMatrixRowsBase']]],
   ['hasstate_14',['hasState',['../classNAV_1_1KeyedKalmanFilter.html#a580665306f2a4105d59c41e3cf98e86d',1,'NAV::KeyedKalmanFilter']]],
   ['hasstates_15',['hasStates',['../classNAV_1_1KeyedKalmanFilter.html#ab8bf7b31ffa5dae53f0963450be74225',1,'NAV::KeyedKalmanFilter']]],
-  ['hastooltip_16',['hasTooltip',['../classNAV_1_1DynamicData.html#aaac2358df980651adb6b1b9efcf576d3',1,'NAV::DynamicData::hasTooltip()'],['../classNAV_1_1NodeData.html#a7951ae5f522e7aa323a092d5711f3411',1,'NAV::NodeData::hasTooltip()']]],
+  ['hastooltip_16',['hasTooltip',['../classNAV_1_1DynamicData.html#aaac2358df980651adb6b1b9efcf576d3',1,'NAV::DynamicData::hasTooltip()'],['../classNAV_1_1RtkSolution.html#ad889ec0cc25f52e8521efb49c5dcc17d',1,'NAV::RtkSolution::hasTooltip()'],['../classNAV_1_1NodeData.html#a7951ae5f522e7aa323a092d5711f3411',1,'NAV::NodeData::hasTooltip()']]],
   ['hasunsavedchanges_17',['HasUnsavedChanges',['../namespaceNAV_1_1flow.html#ae90b86943790df844a176ad1d5572b10',1,'NAV::flow']]],
   ['header_18',['Header',['../classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#aeb9a0ad965437943fba1440ccd973f88',1,'ax::NodeEditor::Utilities::BlueprintNodeBuilder']]],
   ['headerfontratio_19',['headerFontRatio',['../classNAV_1_1gui_1_1NodeEditorApplication.html#aeea64003ac69b9225b6fdf1924f10aa5',1,'NAV::gui::NodeEditorApplication']]],
@@ -43,7 +43,9 @@ var searchData=
   ['headerlinetimeoflastobs_40',['headerLineTimeOfLastObs',['../structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html#a63a0eb7ec59ac8f7f71f899b490abf82',1,'NAV::vendor::RINEX::ObsHeader']]],
   ['helpmarker_41',['HelpMarker',['../namespaceNAV_1_1gui_1_1widgets.html#ab86988e86b4c90bc36dbea966b8d8540',1,'NAV::gui::widgets']]],
   ['heun2_42',['Heun2',['../namespaceNAV.html#aee6b09be4f922b99fada30a2b67fb415',1,'NAV']]],
-  ['heun3_43',['Heun3',['../namespaceNAV.html#a9d115d5f324ae907d7f491280e88f4c1',1,'NAV']]],
-  ['householderqr_44',['HouseholderQr',['../classNAV_1_1HouseholderQr.html#a40054ac6074a3889a08ef9791b5320d8',1,'NAV::HouseholderQr']]],
-  ['hundu_45',['hundu',['../namespaceNAV.html#a7ab59432faef2b3c330e5d98590d0a82',1,'NAV']]]
+  ['heun2quat_43',['Heun2Quat',['../namespaceNAV.html#af8f80e81d2580a085f42656e0a50e32a',1,'NAV']]],
+  ['heun3_44',['Heun3',['../namespaceNAV.html#a9d115d5f324ae907d7f491280e88f4c1',1,'NAV']]],
+  ['heun3quat_45',['Heun3Quat',['../namespaceNAV.html#a7547a548834a53a615b60465c39b640f',1,'NAV']]],
+  ['householderqr_46',['HouseholderQr',['../classNAV_1_1HouseholderQr.html#a40054ac6074a3889a08ef9791b5320d8',1,'NAV::HouseholderQr']]],
+  ['hundu_47',['hundu',['../namespaceNAV.html#a7ab59432faef2b3c330e5d98590d0a82',1,'NAV']]]
 ];

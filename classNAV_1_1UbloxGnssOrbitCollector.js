@@ -16,6 +16,7 @@ var classNAV_1_1UbloxGnssOrbitCollector =
     [ "getEphemerisBuilder", "classNAV_1_1UbloxGnssOrbitCollector.html#a824aaf014805fead7a6ce6b1197488de", null ],
     [ "getEphemerisBuilder", "classNAV_1_1UbloxGnssOrbitCollector.html#ae108ddbfb8c00be55adda867a44ca5dc", null ],
     [ "getLastEphemerisBuilder", "classNAV_1_1UbloxGnssOrbitCollector.html#a0b9c7354b331485f371fbdb213008c2f", null ],
+    [ "guiConfig", "classNAV_1_1UbloxGnssOrbitCollector.html#a4b9646460b1e2d28aedab8e9282a1969", null ],
     [ "initialize", "classNAV_1_1UbloxGnssOrbitCollector.html#a5a9d81226ac4e5ce71cf922b1e19de9c", null ],
     [ "onDeleteLink", "classNAV_1_1UbloxGnssOrbitCollector.html#ad21071284a4238fb4452d1f915ac8385", null ],
     [ "operator=", "classNAV_1_1UbloxGnssOrbitCollector.html#a226ce5a9cffd067c8c207bba372ce761", null ],

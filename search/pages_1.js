@@ -1,8 +1,12 @@
 var searchData=
 [
-  ['bar_0',['Main Menu Bar',['../main_menu_bar.html',1,'gui_landing_page']]],
-  ['basics_1',['Single Point Positioning Basics',['../SppBasics.html',1,'algorithms_landing_page']]],
-  ['basics_20about_20kalman_20filtering_20and_20how_20it_20is_20used_20in_20instinct_2',['Basics about Kalman Filtering and how it is used in INSTINCT',['../KalmanFilterBasics.html',1,'algorithms_landing_page']]],
-  ['bibliography_3',['Bibliography',['../citelist.html',1,'']]],
-  ['box_4',['Group Box',['../group_box.html',1,'node_guide_landing_page']]]
+  ['2_0',['Example 2',['../node_connections.html#node_connections_connections_example2',1,'']]],
+  ['2_20msbs_20most_20significant_20bit_20of_20iodc_20indicate_20fit_20intervals_3a_1',['2 MSBs (most significant bit) of IODC indicate fit intervals:',['../classNAV_1_1QZSSEphemeris.html#autotoc_md10',1,'']]],
+  ['2_20msbs_20of_20iodc_20binary_20fit_20intervals_20minutes_2',['| 2 MSBs of IODC(binary) | Fit intervals(minutes)',['../classNAV_1_1QZSSEphemeris.html#autotoc_md11',1,'']]],
+  ['2_20since_20two_20time_20points_20are_20required_20to_20calculate_20a_20data_20rate_3',['of packages for averaging dataRate (minimum is &apos;2&apos;, since two time points are required to calculate a data rate)',['../classNAV_1_1experimental_1_1SkydelNetworkStream.html#autotoc_md21',1,'']]],
+  ['2_20synchronizing_20base_20and_20rover_20observations_4',['2. Synchronizing base and rover observations',['../RealTimeKinematics.html#autotoc_md28',1,'']]],
+  ['255_2030_20min_20for_20the_20ephemeris_20and_20clock_20parameters_20with_20update_20rate_20lesser_20than_2030_20minutes_5',['160 to 255 | &amp;lt; 30 min | For the ephemeris and clock parameters with update rate lesser than 30 minutes',['../classNAV_1_1IRNSSEphemeris.html#autotoc_md5',1,'']]],
+  ['2_3a_20no_20observation_20for_20reference_20system_20within_20an_20epoch_6',['Case 2: No observation for reference system within an epoch',['../SppKF.html#SppKF-InterChange-Case2',1,'']]],
+  ['2_3a_20node_20settings_20and_20run_20flow_7',['EXAMPLE 2: Node Settings and run Flow',['../getting_started.html#getting_started_ex2',1,'']]],
+  ['2_3a_20not_20observed_8',['Case 2: Not observed',['../RealTimeKinematics.html#RTK-PivotCase2',1,'']]]
 ];

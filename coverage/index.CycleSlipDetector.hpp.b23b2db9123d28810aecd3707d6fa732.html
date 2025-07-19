@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-06-06 13:17:47</td>
+      <td>2025-07-19 10:51:51</td>
     </tr>
   </table>
 </div>
@@ -40,21 +40,21 @@
     </tr>
     <tr>
       <th scope="row">Lines:</th>
-      <td>5</td>
-      <td>8</td>
-      <td class="coverage-low">62.5%</td>
+      <td>10</td>
+      <td>17</td>
+      <td class="coverage-low">58.8%</td>
     </tr>
     <tr>
       <th scope="row">Functions:</th>
-      <td>1</td>
       <td>3</td>
-      <td class="coverage-low">33.3%</td>
+      <td>4</td>
+      <td class="coverage-medium">75.0%</td>
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>2</td>
-      <td>14</td>
-      <td class="coverage-low">14.3%</td>
+      <td>6</td>
+      <td>18</td>
+      <td class="coverage-low">33.3%</td>
     </tr>
   </table>
 </div>
@@ -70,9 +70,10 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l31">NAV::DualFrequencyCombination::operator==(NAV::DualFrequencyCombination const&amp;) const (line 31)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l86">NAV::CycleSlipDetector::isEnabled(NAV::CycleSlipDetector::Detector const&amp;) const (line 86)</a></td><td>called 16721 times</td><td>50.0%</td></tr>
+    <tr><td><a href="#l31">NAV::DualFrequencyCombination::operator==(NAV::DualFrequencyCombination const&amp;) const (line 31)</a></td><td>called 118140 times</td><td>90.0%</td></tr>
     <tr><td><a href="#l286">auto fmt::v11::formatter&lt;std::variant&lt;NAV::CycleSlipDetector::CycleSlipLossOfLockIndicator, NAV::CycleSlipDetector::CycleSlipDualFrequency, NAV::CycleSlipDetector::CycleSlipSingleFrequency&gt;, char, void&gt;::format&lt;fmt::v11::context&gt;(std::variant&lt;NAV::CycleSlipDetector::CycleSlipLossOfLockIndicator, NAV::CycleSlipDetector::CycleSlipDualFrequency, NAV::CycleSlipDetector::CycleSlipSingleFrequency&gt; const&amp;, fmt::v11::context&amp;) const (line 286)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l58">std::hash&lt;NAV::DualFrequencyCombination&gt;::operator()(NAV::DualFrequencyCombination const&amp;) const (line 58)</a></td><td>called 564800 times</td><td>86.0%</td></tr>
+    <tr><td><a href="#l58">std::hash&lt;NAV::DualFrequencyCombination&gt;::operator()(NAV::DualFrequencyCombination const&amp;) const (line 58)</a></td><td>called 683182 times</td><td>86.0%</td></tr>
   </table>
 </details>
 
@@ -299,9 +300,20 @@
     <tr class="source-line">
       <td class="lineno"><a id="l31" href="#l31">31</a></td>
       <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">3/6</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 1 taken 118140 times.</div>
+            <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
+            <div class="takenBranch">&check; Branch 4 taken 118140 times.</div>
+            <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
+            <div class="takenBranch">&check; Branch 7 taken 118140 times.</div>
+            <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
+          </div>
+        </details>
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">DualFrequencyCombination</span><span class="o">&amp;</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">satId</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">rhs</span><span class="p">.</span><span class="n">satId</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">sig1</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">rhs</span><span class="p">.</span><span class="n">sig1</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">sig2</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">rhs</span><span class="p">.</span><span class="n">sig2</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
+      <td class="linecount partialCoveredLine">118140</td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">DualFrequencyCombination</span><span class="o">&amp;</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">satId</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">rhs</span><span class="p">.</span><span class="n">satId</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">sig1</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">rhs</span><span class="p">.</span><span class="n">sig1</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">sig2</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">rhs</span><span class="p">.</span><span class="n">sig2</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l32" href="#l32">32</a></td>
@@ -489,7 +501,7 @@
       <td class="lineno"><a id="l58" href="#l58">58</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">564800</td>
+      <td class="linecount coveredLine">683182</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="nf">operator</span><span class="p">()(</span><span class="k">const</span><span class="w"> </span><span class="n">NAV</span><span class="o">::</span><span class="n">DualFrequencyCombination</span><span class="o">&amp;</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="k">const</span></td>
     </tr>
     <tr class="source-line">
@@ -503,7 +515,7 @@
       <td class="lineno"><a id="l60" href="#l60">60</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">564800</td>
+      <td class="linecount coveredLine">683182</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">hash1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">hash</span><span class="o">&lt;</span><span class="n">NAV</span><span class="o">::</span><span class="n">SatId</span><span class="o">&gt;</span><span class="p">{}(</span><span class="n">c</span><span class="p">.</span><span class="n">satId</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -512,12 +524,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 564800 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 683182 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">564800</td>
+      <td class="linecount partialCoveredLine">683182</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">hash2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">hash</span><span class="o">&lt;</span><span class="n">NAV</span><span class="o">::</span><span class="n">Code</span><span class="o">&gt;</span><span class="p">{}(</span><span class="n">c</span><span class="p">.</span><span class="n">sig1</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -526,12 +538,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 564800 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 683182 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">564800</td>
+      <td class="linecount partialCoveredLine">683182</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">hash3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">hash</span><span class="o">&lt;</span><span class="n">NAV</span><span class="o">::</span><span class="n">Code</span><span class="o">&gt;</span><span class="p">{}(</span><span class="n">c</span><span class="p">.</span><span class="n">sig2</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -545,7 +557,7 @@
       <td class="lineno"><a id="l64" href="#l64">64</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">564800</td>
+      <td class="linecount coveredLine">683182</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">hash1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="n">hash2</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">24</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="n">hash3</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">48</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -699,8 +711,8 @@
       <td class="lineno"><a id="l86" href="#l86">86</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="p">[[</span><span class="n">nodiscard</span><span class="p">]]</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isEnabled</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Detector</span><span class="o">&amp;</span><span class="w"> </span><span class="n">detector</span><span class="p">)</span><span class="w"> </span><span class="k">const</span></td>
+      <td class="linecount coveredLine">16721</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="p">[[</span><span class="n">nodiscard</span><span class="p">]]</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isEnabled</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Detector</span><span class="o">&amp;</span><span class="w"> </span><span class="n">detector</span><span class="p">)</span><span class="w"> </span><span class="k">const</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l87" href="#l87">87</a></td>
@@ -712,9 +724,18 @@
     <tr class="source-line">
       <td class="lineno"><a id="l88" href="#l88">88</a></td>
       <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/4</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 0 taken 16721 times.</div>
+            <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
+            <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
+            <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
+          </div>
+        </details>
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">detector</span><span class="p">)</span></td>
+      <td class="linecount partialCoveredLine">16721</td>
+      <td class="src partialCoveredLine"><span class="w">        </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">detector</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l89" href="#l89">89</a></td>
@@ -727,43 +748,43 @@
       <td class="lineno"><a id="l90" href="#l90">90</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Detector</span><span class="o">::</span><span class="no">LLI</span><span class="p">:</span></td>
+      <td class="linecount coveredLine">16721</td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Detector</span><span class="o">::</span><span class="no">LLI</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l91" href="#l91">91</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">_enableLLICheck</span><span class="p">;</span></td>
+      <td class="linecount coveredLine">16721</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">_enableLLICheck</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l92" href="#l92">92</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Detector</span><span class="o">::</span><span class="no">SingleFrequency</span><span class="p">:</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Detector</span><span class="o">::</span><span class="no">SingleFrequency</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l93" href="#l93">93</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">_singleFrequencyDetector</span><span class="p">.</span><span class="n">isEnabled</span><span class="p">();</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">_singleFrequencyDetector</span><span class="p">.</span><span class="n">isEnabled</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l94" href="#l94">94</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Detector</span><span class="o">::</span><span class="no">DualFrequency</span><span class="p">:</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Detector</span><span class="o">::</span><span class="no">DualFrequency</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l95" href="#l95">95</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">_dualFrequencyDetector</span><span class="p">.</span><span class="n">isEnabled</span><span class="p">();</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">_dualFrequencyDetector</span><span class="p">.</span><span class="n">isEnabled</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l96" href="#l96">96</a></td>
@@ -776,8 +797,8 @@
       <td class="lineno"><a id="l97" href="#l97">97</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l98" href="#l98">98</a></td>

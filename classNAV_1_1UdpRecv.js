@@ -16,16 +16,15 @@ var classNAV_1_1UdpRecv =
     [ "save", "classNAV_1_1UdpRecv.html#acaca62e1620b48ee0cb7a17459e42c18", null ],
     [ "type", "classNAV_1_1UdpRecv.html#acb21f8b1a3a59c04629911ad513597ee", null ],
     [ "typeStatic", "classNAV_1_1UdpRecv.html#ae179310ea8c842bfe3ae861aa8d0fd31", null ],
-    [ "_data", "classNAV_1_1UdpRecv.html#aa0fc11a233ecd2aac594581eea07c3ae", null ],
+    [ "_charArray", "classNAV_1_1UdpRecv.html#a8fc4f9e52b52c37cfbd37b9aee1acc30", null ],
     [ "_io_context", "classNAV_1_1UdpRecv.html#a56451912871bcfcce93c27354cce4c4f", null ],
     [ "_isStartup", "classNAV_1_1UdpRecv.html#a81e82e8fe8f05ac6a0a794c42c415c49", null ],
-    [ "_maxBytes", "classNAV_1_1UdpRecv.html#ae587612757b5cecb91873c6d468e8686", null ],
+    [ "_outputType", "classNAV_1_1UdpRecv.html#a4df1b5be66d88252a24bb52c3b2c486d", null ],
     [ "_port", "classNAV_1_1UdpRecv.html#ae6ef1b7560d49415f231d097bc8899d1", null ],
     [ "_recvThread", "classNAV_1_1UdpRecv.html#ab4d8be0551af3b59f6592192f779d982", null ],
     [ "_running", "classNAV_1_1UdpRecv.html#abc352540c0632f0b170319d6ba048342", null ],
     [ "_sender_endpoint", "classNAV_1_1UdpRecv.html#afc10891e98c236d1d332fffebf713935", null ],
     [ "_socket", "classNAV_1_1UdpRecv.html#ad09daf9ed1e466015eb8a9cf6780a65f", null ],
     [ "_startPoint", "classNAV_1_1UdpRecv.html#abde4015dc03aeaa85686f81a490fb6e4", null ],
-    [ "OUTPUT_PORT_INDEX_NODE_DATA", "classNAV_1_1UdpRecv.html#ac21008f746d480108f814e8cf9cfbcd0", null ],
-    [ "PORT_LIMITS", "classNAV_1_1UdpRecv.html#a55f7840fa69a35fea82e5bc1b6cd0b55", null ]
+    [ "OUTPUT_PORT_INDEX_NODE_DATA", "classNAV_1_1UdpRecv.html#ac21008f746d480108f814e8cf9cfbcd0", null ]
 ];

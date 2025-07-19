@@ -35,5 +35,6 @@ var searchData=
   ['uncertainvalue_32',['UncertainValue',['../structNAV_1_1UncertainValue.html',1,'NAV']]],
   ['uncertainvalue_3c_20double_20_3e_33',['UncertainValue&lt; double &gt;',['../structNAV_1_1UncertainValue.html',1,'NAV']]],
   ['uncertainvalue_3c_20eigen_3a_3avector3d_20_3e_34',['UncertainValue&lt; Eigen::Vector3d &gt;',['../structNAV_1_1UncertainValue.html',1,'NAV']]],
-  ['utc_35',['UTC',['../structNAV_1_1vendor_1_1vectornav_1_1UTC.html',1,'NAV::vendor::vectornav']]]
+  ['updatestatus_35',['UpdateStatus',['../structNAV_1_1RealTimeKinematic_1_1UpdateStatus.html',1,'NAV::RealTimeKinematic']]],
+  ['utc_36',['UTC',['../structNAV_1_1vendor_1_1vectornav_1_1UTC.html',1,'NAV::vendor::vectornav']]]
 ];

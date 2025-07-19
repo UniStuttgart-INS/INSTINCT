@@ -7,9 +7,11 @@ var searchData=
   ['q_5fa2_4',['Q_A2',['../structNAV_1_1internal_1_1GPT2Data.html#a088416dadbb6e81aa4f608836d1e649e',1,'NAV::internal::GPT2Data::Q_A2'],['../structNAV_1_1internal_1_1GPT3Data.html#ab7468c729f06dfefad8982949812bd6d',1,'NAV::internal::GPT3Data::Q_A2']]],
   ['q_5fb1_5',['Q_B1',['../structNAV_1_1internal_1_1GPT2Data.html#ad1ebf8acf121729f4f3cbd30ea575f42',1,'NAV::internal::GPT2Data::Q_B1'],['../structNAV_1_1internal_1_1GPT3Data.html#abbc8280164f067a164810aa017673c9e',1,'NAV::internal::GPT3Data::Q_B1']]],
   ['q_5fb2_6',['Q_B2',['../structNAV_1_1internal_1_1GPT2Data.html#aa4facdd46bc339e9804ee5ac030ccc82',1,'NAV::internal::GPT2Data::Q_B2'],['../structNAV_1_1internal_1_1GPT3Data.html#a7ba1f41730d3ecbe3eceb4b8e2746baa',1,'NAV::internal::GPT3Data::Q_B2']]],
-  ['qi_7',['qi',['../structNAV_1_1vendor_1_1vectornav_1_1SatInfo_1_1SatInfoElement.html#a767f5778c0bfe5c727913a10611adad0',1,'NAV::vendor::vectornav::SatInfo::SatInfoElement']]],
-  ['qtn_8',['qtn',['../structNAV_1_1vendor_1_1vectornav_1_1AttitudeOutputs.html#ac35e86181a13e350ab20be59fad7c1ca',1,'NAV::vendor::vectornav::AttitudeOutputs']]],
-  ['quat_5freset_5fcounter_9',['quat_reset_counter',['../structNAV_1_1UlogFile_1_1VehicleAttitude.html#abe18cbe9f52871cdafb555e9452632f7',1,'NAV::UlogFile::VehicleAttitude']]],
-  ['queue_10',['queue',['../classNAV_1_1InputPin.html#af7a59e5c82986d1980ffe0335f5b61ad',1,'NAV::InputPin']]],
-  ['queueblocked_11',['queueBlocked',['../classNAV_1_1InputPin.html#acfb8536e839011248ce13774caf6d346',1,'NAV::InputPin']]]
+  ['qb_7',['Qb',['../structNAV_1_1AmbiguityResolutionResult.html#ae32d92fe53bbbe59204c02f68abee672',1,'NAV::AmbiguityResolutionResult']]],
+  ['qi_8',['qi',['../structNAV_1_1vendor_1_1vectornav_1_1SatInfo_1_1SatInfoElement.html#a767f5778c0bfe5c727913a10611adad0',1,'NAV::vendor::vectornav::SatInfo::SatInfoElement']]],
+  ['qtn_9',['qtn',['../structNAV_1_1vendor_1_1vectornav_1_1AttitudeOutputs.html#ac35e86181a13e350ab20be59fad7c1ca',1,'NAV::vendor::vectornav::AttitudeOutputs']]],
+  ['quat_10',['QUAT',['../namespaceNAV_1_1UdpUtil_1_1Size.html#a5a6d02db23c3ea89e53c3c4a5271be85',1,'NAV::UdpUtil::Size::QUAT'],['../namespaceNAV_1_1UdpUtil_1_1Offset.html#a6c64e93c5e5026eafee540875682983f',1,'NAV::UdpUtil::Offset::QUAT']]],
+  ['quat_5freset_5fcounter_11',['quat_reset_counter',['../structNAV_1_1UlogFile_1_1VehicleAttitude.html#abe18cbe9f52871cdafb555e9452632f7',1,'NAV::UlogFile::VehicleAttitude']]],
+  ['queue_12',['queue',['../classNAV_1_1InputPin.html#af7a59e5c82986d1980ffe0335f5b61ad',1,'NAV::InputPin']]],
+  ['queueblocked_13',['queueBlocked',['../classNAV_1_1InputPin.html#acfb8536e839011248ce13774caf6d346',1,'NAV::InputPin']]]
 ];

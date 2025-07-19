@@ -10,19 +10,20 @@ var classNAV_1_1UdpSend =
     [ "initialize", "classNAV_1_1UdpSend.html#a33ee7624800eb1c865a66e6384f09bab", null ],
     [ "operator=", "classNAV_1_1UdpSend.html#acf5b9d7eabf3372e21e9e0a1af1c0b1d", null ],
     [ "operator=", "classNAV_1_1UdpSend.html#a10b063936aa969e87a54d2cb8f563aa7", null ],
-    [ "receivePosVelAtt", "classNAV_1_1UdpSend.html#acf65a264620eb95534588da7165fca41", null ],
+    [ "receiveData", "classNAV_1_1UdpSend.html#a9b62b7e787562625a9ef1204d52aa177", null ],
     [ "resetNode", "classNAV_1_1UdpSend.html#a7acf85081102b713004b89ef151f8002", null ],
     [ "restore", "classNAV_1_1UdpSend.html#aa59eb20d3e145f24151400288a629fe1", null ],
     [ "save", "classNAV_1_1UdpSend.html#af2ee9c98c3ea178c529856e600025511", null ],
+    [ "setMsgTypeAndTime", "classNAV_1_1UdpSend.html#aafbd4ec946efd96d0656efa20fdb6116", null ],
     [ "type", "classNAV_1_1UdpSend.html#a95d4bca38b70fb844ca5fd55ba1aa6db", null ],
     [ "typeStatic", "classNAV_1_1UdpSend.html#ab794ac12cda51f4388dc9650cf48b58a", null ],
     [ "_endpoints", "classNAV_1_1UdpSend.html#a0760a7d714d60f0d0bf7eb6bc666a63f", null ],
     [ "_io_context", "classNAV_1_1UdpSend.html#a974dd86111b9ce473e6cab34e7fd5e09", null ],
     [ "_ip", "classNAV_1_1UdpSend.html#aeff512f0a8e54a0915b20ad33670c04a", null ],
+    [ "_msgType", "classNAV_1_1UdpSend.html#a17b17480fdcb377ffca9c36efd24e32a", null ],
     [ "_port", "classNAV_1_1UdpSend.html#ae3837cb307b7f7ddbd05f46865d5c021", null ],
     [ "_resolver", "classNAV_1_1UdpSend.html#a5107b5658b9491ec5c9b8fb8c8935102", null ],
     [ "_socket", "classNAV_1_1UdpSend.html#ae46c4500087ff332d2293018f752889f", null ],
     [ "INPUT_PORT_INDEX_NODE_DATA", "classNAV_1_1UdpSend.html#a2e66c7dcb00a12bc55ae439b0c49217d", null ],
-    [ "IP_LIMITS", "classNAV_1_1UdpSend.html#a3be9e1438d8878556dd75f826d34ebb2", null ],
-    [ "PORT_LIMITS", "classNAV_1_1UdpSend.html#abb5f31f0b115bfc56cbd13e86e5e85ab", null ]
+    [ "IP_LIMITS", "classNAV_1_1UdpSend.html#a3be9e1438d8878556dd75f826d34ebb2", null ]
 ];

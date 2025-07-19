@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-06-06 13:17:47</td>
+      <td>2025-07-19 10:51:51</td>
     </tr>
   </table>
 </div>
@@ -70,7 +70,7 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l59">bool NAV::operator&lt; &lt;108ul&gt;(std::bitset&lt;108ul&gt; const&amp;, std::bitset&lt;108ul&gt; const&amp;) (line 59)</a></td><td>called 35596 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l59">bool NAV::operator&lt; &lt;108ul&gt;(std::bitset&lt;108ul&gt; const&amp;, std::bitset&lt;108ul&gt; const&amp;) (line 59)</a></td><td>called 674178 times</td><td>80.0%</td></tr>
     <tr><td><a href="#l30">std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; NAV::joinToString&lt;std::array&lt;double, 3ul&gt; &gt;(std::array&lt;double, 3ul&gt; const&amp;, char const*, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;) (line 30)</a></td><td>called 270 times</td><td>79.0%</td></tr>
     <tr><td><a href="#l30">std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; NAV::joinToString&lt;std::array&lt;double, 4ul&gt; &gt;(std::array&lt;double, 4ul&gt; const&amp;, char const*, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;) (line 30)</a></td><td>called 66 times</td><td>79.0%</td></tr>
     <tr><td><a href="#l30">std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; NAV::joinToString&lt;std::array&lt;double, 6ul&gt; &gt;(std::array&lt;double, 6ul&gt; const&amp;, char const*, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;) (line 30)</a></td><td>called 2 times</td><td>79.0%</td></tr>
@@ -577,7 +577,7 @@
       <td class="lineno"><a id="l59" href="#l59">59</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">35596</td>
+      <td class="linecount coveredLine">674178</td>
       <td class="src coveredLine"><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">bitset</span><span class="o">&lt;</span><span class="n">N</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">lhs</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">bitset</span><span class="o">&lt;</span><span class="n">N</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -591,7 +591,7 @@
       <td class="lineno"><a id="l61" href="#l61">61</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">35596</td>
+      <td class="linecount coveredLine">674178</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;;</span><span class="w"> </span><span class="n">i</span><span class="o">--</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -607,12 +607,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 35596 times.</div>
-            <div class="takenBranch">&check; Branch 3 taken 2883132 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 674178 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 52580286 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2918728</td>
+      <td class="linecount coveredLine">53254464</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">lhs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">^</span><span class="w"> </span><span class="n">rhs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">rhs</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -622,11 +622,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 2883132 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 52580286 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2883132</td>
+      <td class="linecount partialCoveredLine">52580286</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">break</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">

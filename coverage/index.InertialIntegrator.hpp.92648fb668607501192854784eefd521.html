@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-06-06 13:17:47</td>
+      <td>2025-07-19 10:51:51</td>
     </tr>
   </table>
 </div>
@@ -71,7 +71,7 @@
       <th>Block coverage</th>
     </tr>
     <tr><td><a href="#l200">Eigen::Matrix&lt;double, 10, 1, 0, 10, 1&gt; NAV::InertialIntegrator::calcInertialSolution&lt;double&gt;(NAV::ImuPos const&amp;, NAV::InertialIntegrator::GenericState&lt;double&gt; const&amp;, NAV::InertialIntegrator::GenericState&lt;double&gt; const&amp;, char const*) const (line 200)</a></td><td>called 49997 times</td><td>14.0%</td></tr>
-    <tr><td><a href="#l98">NAV::InertialIntegrator::InertialIntegrator() (line 98)</a></td><td>called 242 times</td><td>73.0%</td></tr>
+    <tr><td><a href="#l98">NAV::InertialIntegrator::InertialIntegrator() (line 98)</a></td><td>called 246 times</td><td>73.0%</td></tr>
     <tr><td><a href="#l240">NAV::InertialIntegrator::calcInertialSolution&lt;double&gt;(NAV::ImuPos const&amp;, NAV::InertialIntegrator::GenericState&lt;double&gt; const&amp;, NAV::InertialIntegrator::GenericState&lt;double&gt; const&amp;, char const*) const::{lambda(NAV::InertialIntegrator::GenericState&lt;double&gt; const&amp;)#1}::operator()(NAV::InertialIntegrator::GenericState&lt;double&gt; const&amp;) const (line 240)</a></td><td>called 99994 times</td><td>80.0%</td></tr>
     <tr><td><a href="#l243">NAV::InertialIntegrator::calcInertialSolution&lt;double&gt;(NAV::ImuPos const&amp;, NAV::InertialIntegrator::GenericState&lt;double&gt; const&amp;, NAV::InertialIntegrator::GenericState&lt;double&gt; const&amp;, char const*) const::{lambda(NAV::InertialIntegrator::GenericState&lt;double&gt; const&amp;)#2}::operator()(NAV::InertialIntegrator::GenericState&lt;double&gt; const&amp;) const (line 243)</a></td><td>called 99994 times</td><td>80.0%</td></tr>
   </table>
@@ -772,18 +772,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">4/8</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 242 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 246 times.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 5 taken 242 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 246 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
-            <div class="takenBranch">&check; Branch 8 taken 242 times.</div>
+            <div class="takenBranch">&check; Branch 8 taken 246 times.</div>
             <div class="notTakenBranch">&cross; Branch 9 not taken.</div>
-            <div class="takenBranch">&check; Branch 11 taken 242 times.</div>
+            <div class="takenBranch">&check; Branch 11 taken 246 times.</div>
             <div class="notTakenBranch">&cross; Branch 12 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">242</td>
+      <td class="linecount partialCoveredLine">246</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">InertialIntegrator</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -2085,7 +2085,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RungeKutta1</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">state__t0</span><span class="p">.</span><span class="n">m</span><span class="p">.</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">n_calcPosVelAttDerivative</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">_posVelAttDerivativeConstants</span><span class="p">);</span></td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RungeKutta1Quat</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">state__t0</span><span class="p">.</span><span class="n">m</span><span class="p">.</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">n_calcPosVelAttDerivative</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">_posVelAttDerivativeConstants</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l269" href="#l269">269</a></td>
@@ -2106,7 +2106,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RungeKutta1</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">state__t0</span><span class="p">.</span><span class="n">m</span><span class="p">.</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">e_calcPosVelAttDerivative</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">_posVelAttDerivativeConstants</span><span class="p">);</span></td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RungeKutta1Quat</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">state__t0</span><span class="p">.</span><span class="n">m</span><span class="p">.</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">e_calcPosVelAttDerivative</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">_posVelAttDerivativeConstants</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l272" href="#l272">272</a></td>
@@ -2267,7 +2267,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RungeKutta2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">state__t0</span><span class="p">.</span><span class="n">m</span><span class="p">.</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">n_calcPosVelAttDerivative</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">_posVelAttDerivativeConstants</span><span class="p">);</span></td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RungeKutta2Quat</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">state__t0</span><span class="p">.</span><span class="n">m</span><span class="p">.</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">n_calcPosVelAttDerivative</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">_posVelAttDerivativeConstants</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l295" href="#l295">295</a></td>
@@ -2288,7 +2288,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RungeKutta2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">state__t0</span><span class="p">.</span><span class="n">m</span><span class="p">.</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">e_calcPosVelAttDerivative</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">_posVelAttDerivativeConstants</span><span class="p">);</span></td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RungeKutta2Quat</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">state__t0</span><span class="p">.</span><span class="n">m</span><span class="p">.</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">e_calcPosVelAttDerivative</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">_posVelAttDerivativeConstants</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l298" href="#l298">298</a></td>
@@ -2449,7 +2449,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Heun2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">state__t0</span><span class="p">.</span><span class="n">m</span><span class="p">.</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">n_calcPosVelAttDerivative</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">_posVelAttDerivativeConstants</span><span class="p">);</span></td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Heun2Quat</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">state__t0</span><span class="p">.</span><span class="n">m</span><span class="p">.</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">n_calcPosVelAttDerivative</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">_posVelAttDerivativeConstants</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l321" href="#l321">321</a></td>
@@ -2470,7 +2470,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Heun2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">state__t0</span><span class="p">.</span><span class="n">m</span><span class="p">.</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">e_calcPosVelAttDerivative</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">_posVelAttDerivativeConstants</span><span class="p">);</span></td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Heun2Quat</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">state__t0</span><span class="p">.</span><span class="n">m</span><span class="p">.</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">e_calcPosVelAttDerivative</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">_posVelAttDerivativeConstants</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l324" href="#l324">324</a></td>
@@ -2708,7 +2708,7 @@
         </details>
       </td>
       <td class="linecount partialCoveredLine">37109</td>
-      <td class="src partialCoveredLine"><span class="w">                </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RungeKutta3</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">state__t0</span><span class="p">.</span><span class="n">m</span><span class="p">.</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">n_calcPosVelAttDerivative</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">_posVelAttDerivativeConstants</span><span class="p">);</span></td>
+      <td class="src partialCoveredLine"><span class="w">                </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RungeKutta3Quat</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">state__t0</span><span class="p">.</span><span class="n">m</span><span class="p">.</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">n_calcPosVelAttDerivative</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">_posVelAttDerivativeConstants</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l350" href="#l350">350</a></td>
@@ -2736,7 +2736,7 @@
         </details>
       </td>
       <td class="linecount partialCoveredLine">12888</td>
-      <td class="src partialCoveredLine"><span class="w">                </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RungeKutta3</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">state__t0</span><span class="p">.</span><span class="n">m</span><span class="p">.</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">e_calcPosVelAttDerivative</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">_posVelAttDerivativeConstants</span><span class="p">);</span></td>
+      <td class="src partialCoveredLine"><span class="w">                </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RungeKutta3Quat</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">state__t0</span><span class="p">.</span><span class="n">m</span><span class="p">.</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">e_calcPosVelAttDerivative</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">_posVelAttDerivativeConstants</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l353" href="#l353">353</a></td>
@@ -2918,7 +2918,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RungeKutta3</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">state__t0</span><span class="p">.</span><span class="n">m</span><span class="p">.</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">n_calcPosVelAttDerivative</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">_posVelAttDerivativeConstants</span><span class="p">);</span></td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RungeKutta3Quat</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">state__t0</span><span class="p">.</span><span class="n">m</span><span class="p">.</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">n_calcPosVelAttDerivative</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">_posVelAttDerivativeConstants</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l379" href="#l379">379</a></td>
@@ -2939,7 +2939,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RungeKutta3</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">state__t0</span><span class="p">.</span><span class="n">m</span><span class="p">.</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">e_calcPosVelAttDerivative</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">_posVelAttDerivativeConstants</span><span class="p">);</span></td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RungeKutta3Quat</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">state__t0</span><span class="p">.</span><span class="n">m</span><span class="p">.</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">e_calcPosVelAttDerivative</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">_posVelAttDerivativeConstants</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l382" href="#l382">382</a></td>
@@ -3142,7 +3142,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RungeKutta4</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">state__t0</span><span class="p">.</span><span class="n">m</span><span class="p">.</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">n_calcPosVelAttDerivative</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">_posVelAttDerivativeConstants</span><span class="p">);</span></td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RungeKutta4Quat</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">state__t0</span><span class="p">.</span><span class="n">m</span><span class="p">.</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">n_calcPosVelAttDerivative</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">_posVelAttDerivativeConstants</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l411" href="#l411">411</a></td>
@@ -3163,7 +3163,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RungeKutta4</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">state__t0</span><span class="p">.</span><span class="n">m</span><span class="p">.</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">e_calcPosVelAttDerivative</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">_posVelAttDerivativeConstants</span><span class="p">);</span></td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RungeKutta4Quat</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">state__t0</span><span class="p">.</span><span class="n">m</span><span class="p">.</span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">e_calcPosVelAttDerivative</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">_posVelAttDerivativeConstants</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l414" href="#l414">414</a></td>

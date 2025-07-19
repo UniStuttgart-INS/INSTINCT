@@ -47,9 +47,80 @@ var algorithms_landing_page =
       ] ],
       [ "Initialization", "SppKF.html#SppKF-init", null ],
       [ "Inter system time difference reference system change", "SppKF.html#SppKF-InterChange", [
-        [ "Case 1: New Sat System with higher priority found (GPS > GAL > GLO > ...)", "SppKF.html#SppKF-InterChange-Case1", null ],
+        [ "Case 1: New Sat System with higher priority found (GPS &gt; GAL &gt; GLO &gt; ...)", "SppKF.html#SppKF-InterChange-Case1", null ],
         [ "Case 2: No observation for reference system within an epoch", "SppKF.html#SppKF-InterChange-Case2", null ],
         [ "Error propagation", "SppKF.html#SppKF-InterChange-ErrorProp", null ]
+      ] ]
+    ] ],
+    [ "Real-Time Kinematics Positioning", "RealTimeKinematics.html", [
+      [ "Observation equations", "RealTimeKinematics.html#RTK-ObservationEquations", [
+        [ "Single GNSS Observation Equation", "RealTimeKinematics.html#RTK-SingleObservationEquations", null ],
+        [ "Single Difference", "RealTimeKinematics.html#RTK-SingleDifference", null ],
+        [ "Double Difference", "RealTimeKinematics.html#RTK-DoubleDifference", null ]
+      ] ],
+      [ "State", "RealTimeKinematics.html#RTK-State", [
+        [ "Ambiguity initialization", "RealTimeKinematics.html#RTK-AmbiguityInitialization", [
+          [ "Carrier-Pseudorange Difference", "RealTimeKinematics.html#RTK-CarrierPseudorangeDifference", null ],
+          [ "Carrier-Geometry Difference", "RealTimeKinematics.html#RTK-CarrierGeometryDifference", null ]
+        ] ]
+      ] ],
+      [ "Pivot satellite change", "RealTimeKinematics.html#RTK-PivotSatelliteChange", [
+        [ "Case 1: Low elevation", "RealTimeKinematics.html#RTK-PivotCase1", null ],
+        [ "Case 2: Not observed", "RealTimeKinematics.html#RTK-PivotCase2", null ],
+        [ "Error propagation", "RealTimeKinematics.html#RTK-ErrorPropagation", null ]
+      ] ],
+      [ "Synchronization correction", "RealTimeKinematics.html#RTK-SyncCorrection", [
+        [ "Two step correction", "RealTimeKinematics.html#RTK-syncTwoStep", [
+          [ "1. Correction of receiver internal clock error", "RealTimeKinematics.html#autotoc_md27", null ],
+          [ "2. Synchronizing base and rover observations", "RealTimeKinematics.html#autotoc_md28", [
+            [ "Observation equations", "RealTimeKinematics.html#autotoc_md29", null ],
+            [ "Single difference", "RealTimeKinematics.html#autotoc_md30", null ],
+            [ "Double difference", "RealTimeKinematics.html#autotoc_md31", null ]
+          ] ]
+        ] ]
+      ] ],
+      [ "Kalman Filter", "RealTimeKinematics.html#RTK-KalmanFilter", [
+        [ "System Model", "RealTimeKinematics.html#RTK-SystemModel", [
+          [ "State transition matrix 𝛟", "RealTimeKinematics.html#autotoc_md32", null ],
+          [ "Process noise covariance matrix Q", "RealTimeKinematics.html#autotoc_md33", [
+            [ "Noise input matrix G", "RealTimeKinematics.html#autotoc_md34", null ],
+            [ "Noise scale matrix W", "RealTimeKinematics.html#autotoc_md35", null ],
+            [ "Van-Loan method", "RealTimeKinematics.html#autotoc_md36", [
+              [ "Computation", "RealTimeKinematics.html#autotoc_md37", null ]
+            ] ]
+          ] ]
+        ] ],
+        [ "Measurement Model", "RealTimeKinematics.html#RTK-MeasurementModel", [
+          [ "Measurement innovation dz", "RealTimeKinematics.html#autotoc_md38", [
+            [ "Measurement vector", "RealTimeKinematics.html#autotoc_md39", null ],
+            [ "Measurement innovation", "RealTimeKinematics.html#autotoc_md40", null ]
+          ] ],
+          [ "Measurement sensitivity Matrix H", "RealTimeKinematics.html#autotoc_md41", null ],
+          [ "Measurement noise covariance matrix R", "RealTimeKinematics.html#autotoc_md42", [
+            [ "Correlated measurement error", "RealTimeKinematics.html#autotoc_md43", null ],
+            [ "Uncorrelated Measurement Error", "RealTimeKinematics.html#autotoc_md44", [
+              [ "GNSS measurement error", "RealTimeKinematics.html#autotoc_md45", null ],
+              [ "GNSS measurement error", "RealTimeKinematics.html#autotoc_md46", null ]
+            ] ]
+          ] ]
+        ] ],
+        [ "Measurement Innovation validation", "RealTimeKinematics.html#RTK-MeasurementInnovationValidation", [
+          [ "Normalized Innovation Squared (NIS)", "RealTimeKinematics.html#autotoc_md47", [
+            [ "One sided Test", "RealTimeKinematics.html#autotoc_md48", null ]
+          ] ],
+          [ "KF scheme with NIS test", "RealTimeKinematics.html#autotoc_md49", null ]
+        ] ]
+      ] ],
+      [ "Ambiguity resolution", "RealTimeKinematics.html#RTK-AmbiguityResolution", [
+        [ "Correcting float state", "RealTimeKinematics.html#RTK-CorrectingFloatState", null ],
+        [ "Updating Ambiguity covariance", "RealTimeKinematics.html#RTK-UpdatingAmbiguityCovariance", [
+          [ "Measurement innovation dz", "RealTimeKinematics.html#autotoc_md50", [
+            [ "Measurement vector", "RealTimeKinematics.html#autotoc_md51", null ],
+            [ "Measurement innovation", "RealTimeKinematics.html#autotoc_md52", null ]
+          ] ],
+          [ "Measurement sensitivity Matrix H", "RealTimeKinematics.html#autotoc_md53", null ],
+          [ "Measurement noise covariance matrix R", "RealTimeKinematics.html#autotoc_md54", null ]
+        ] ]
       ] ]
     ] ],
     [ "IMU Integrator (Earth-fixed frame)", "ImuIntegrator_e.html", [
@@ -95,10 +166,10 @@ var algorithms_landing_page =
         [ "Groves' process noise definition", "LooselyCoupledKF_e.html#LooselyCoupledKF_e-Groves-process-noise-definition", null ]
       ] ],
       [ "Kalman-Filter Matrices", "LooselyCoupledKF_e.html#LooselyCoupledKF_e-KF-Matrices", [
-        [ "State transition matrix 𝚽 & Process noise covariance matrix Q", "LooselyCoupledKF_e.html#LooselyCoupledKF_e-KF-Phi-Q", [
+        [ "State transition matrix 𝚽 &amp; Process noise covariance matrix Q", "LooselyCoupledKF_e.html#LooselyCoupledKF_e-KF-Phi-Q", [
           [ "State transition matrix 𝚽", "LooselyCoupledKF_e.html#LooselyCoupledKF_e-KF-Phi", [
-            [ "Exponential Matrix", "LooselyCoupledKF_e.html#autotoc_md27", null ],
-            [ "Taylor series", "LooselyCoupledKF_e.html#autotoc_md28", null ]
+            [ "Exponential Matrix", "LooselyCoupledKF_e.html#autotoc_md55", null ],
+            [ "Taylor series", "LooselyCoupledKF_e.html#autotoc_md56", null ]
           ] ],
           [ "Process noise covariance matrix Q", "LooselyCoupledKF_e.html#LooselyCoupledKF_e-KF-Q", null ],
           [ "Van Loan method", "LooselyCoupledKF_e.html#LooselyCoupledKF_e-KF-Phi-Q-Van-Loan", null ]
@@ -132,10 +203,10 @@ var algorithms_landing_page =
         [ "Groves' process noise definition", "LooselyCoupledKF_n.html#LooselyCoupledKF_n-Groves-process-noise-definition", null ]
       ] ],
       [ "Kalman-Filter Matrices", "LooselyCoupledKF_n.html#LooselyCoupledKF_n-KF-Matrices", [
-        [ "State transition matrix 𝚽 & Process noise covariance matrix Q", "LooselyCoupledKF_n.html#LooselyCoupledKF_n-KF-Phi-Q", [
+        [ "State transition matrix 𝚽 &amp; Process noise covariance matrix Q", "LooselyCoupledKF_n.html#LooselyCoupledKF_n-KF-Phi-Q", [
           [ "State transition matrix 𝚽", "LooselyCoupledKF_n.html#LooselyCoupledKF_n-KF-Phi", [
-            [ "Exponential Matrix", "LooselyCoupledKF_n.html#autotoc_md29", null ],
-            [ "Taylor series", "LooselyCoupledKF_n.html#autotoc_md30", null ]
+            [ "Exponential Matrix", "LooselyCoupledKF_n.html#autotoc_md57", null ],
+            [ "Taylor series", "LooselyCoupledKF_n.html#autotoc_md58", null ]
           ] ],
           [ "Process noise covariance matrix Q", "LooselyCoupledKF_n.html#LooselyCoupledKF_n-KF-Q", null ],
           [ "Van Loan method", "LooselyCoupledKF_n.html#LooselyCoupledKF_n-KF-Phi-Q-Van-Loan", null ]
@@ -151,7 +222,7 @@ var algorithms_landing_page =
       ] ],
       [ "Unit discussion", "LooselyCoupledKF_n.html#LooselyCoupledKF_n-Units", [
         [ "System matrix F", "LooselyCoupledKF_n.html#LooselyCoupledKF_n-Units-F", null ],
-        [ "Gauss-Markov constant 𝛽 & Noise scale matrix G", "LooselyCoupledKF_n.html#LooselyCoupledKF_n-Units-beta-G", null ],
+        [ "Gauss-Markov constant 𝛽 &amp; Noise scale matrix G", "LooselyCoupledKF_n.html#LooselyCoupledKF_n-Units-beta-G", null ],
         [ "Process noise covariance matrix Q", "LooselyCoupledKF_n.html#LooselyCoupledKF_n-Units-Q", null ],
         [ "Error covariance matrix P", "LooselyCoupledKF_n.html#LooselyCoupledKF_n-Units-P", null ],
         [ "Measurement innovation 𝛿z", "LooselyCoupledKF_n.html#LooselyCoupledKF_n-Units-deltaz", null ],

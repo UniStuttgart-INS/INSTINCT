@@ -50,7 +50,8 @@ var searchData=
   ['sm_5fx3_47',['SM_X3',['../classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html#a995fd6637127cc3c737c363af8e10f13adba8e8e8c9a2c3d05252503a87aff996',1,'NAV::vendor::kvh::KvhUartSensor']]],
   ['somigliana_48',['Somigliana',['../namespaceNAV.html#a3efcc391e50b070b4c8e660ffca2c92cabb08c06e19a2e689147bdef1ccfcf926',1,'NAV']]],
   ['spaceborne_49',['SPACEBORNE',['../structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html#a84b392d54932436e79da84fd1872e6baab9ba3c714ecad335bfdb4593325517a0',1,'NAV::vendor::RINEX::ObsHeader']]],
-  ['square_50',['Square',['../namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#a1eafe3f84238235e70a18218b9fa4d39aceb46ca115d05c51aa5a16a8867c3304',1,'NAV::gui::widgets::PinIcon']]],
-  ['sto_51',['STO',['../classNAV_1_1RinexNavFile.html#a676075b95f7e4ad69764dfaa0eaee669a1c79844d86bafd69a5119632d52321aa',1,'NAV::RinexNavFile']]],
-  ['string_52',['String',['../structNAV_1_1Pin_1_1Type.html#a279e3676818f11aa004d931727122b07a5722f93011c6502e0233dbe06cf8bcb3',1,'NAV::Pin::Type::String'],['../classNAV_1_1Demo.html#acb7badb036171ac1744213a1876bb8dfa27118326006d3829667a400ad23d5d98',1,'NAV::Demo::String']]]
+  ['spp_50',['SPP',['../classNAV_1_1RtkSolution.html#a76769b402587acc7793ae1a599e5d2f0aa434e0a6aec72cae759ccb703f4bfb54',1,'NAV::RtkSolution']]],
+  ['square_51',['Square',['../namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#a1eafe3f84238235e70a18218b9fa4d39aceb46ca115d05c51aa5a16a8867c3304',1,'NAV::gui::widgets::PinIcon']]],
+  ['sto_52',['STO',['../classNAV_1_1RinexNavFile.html#a676075b95f7e4ad69764dfaa0eaee669a1c79844d86bafd69a5119632d52321aa',1,'NAV::RinexNavFile']]],
+  ['string_53',['String',['../structNAV_1_1Pin_1_1Type.html#a279e3676818f11aa004d931727122b07a5722f93011c6502e0233dbe06cf8bcb3',1,'NAV::Pin::Type::String'],['../classNAV_1_1Demo.html#acb7badb036171ac1744213a1876bb8dfa27118326006d3829667a400ad23d5d98',1,'NAV::Demo::String']]]
 ];

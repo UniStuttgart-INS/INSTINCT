@@ -28,7 +28,9 @@ var VectorNavTypes_8hpp =
       [ "NAV::vendor::vectornav::SatSys::QZSS", "namespaceNAV_1_1vendor_1_1vectornav.html#a62e32a1bad2112cd23a8beddf30bd9c5a10b5ac7cdca8f06ca82238f8f3b2d119", null ],
       [ "NAV::vendor::vectornav::SatSys::GLONASS", "namespaceNAV_1_1vendor_1_1vectornav.html#a62e32a1bad2112cd23a8beddf30bd9c5a48549df6f41418cb94b963fe84894cd6", null ]
     ] ],
+    [ "NAV::vendor::vectornav::fromSatelliteSystem", "namespaceNAV_1_1vendor_1_1vectornav.html#a64b5620181f8fdee9a4495eb78263185", null ],
     [ "NAV::vendor::vectornav::operator&", "namespaceNAV_1_1vendor_1_1vectornav.html#ada5723a2f484234608e77841e43bab2c", null ],
     [ "NAV::vendor::vectornav::operator&", "namespaceNAV_1_1vendor_1_1vectornav.html#a4bc38e953e1d4ec20c90c67a7a27f69f", null ],
-    [ "NAV::vendor::vectornav::operator<<", "namespaceNAV_1_1vendor_1_1vectornav.html#a5ad770c7dfc460f6388bd6209d26f2f7", null ]
+    [ "NAV::vendor::vectornav::operator<<", "namespaceNAV_1_1vendor_1_1vectornav.html#a5ad770c7dfc460f6388bd6209d26f2f7", null ],
+    [ "NAV::vendor::vectornav::toSatelliteSystem", "namespaceNAV_1_1vendor_1_1vectornav.html#a4a8db6ec8892c25fde40bf9c92917abe", null ]
 ];

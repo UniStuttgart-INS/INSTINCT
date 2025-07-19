@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-06-06 13:17:47</td>
+      <td>2025-07-19 10:51:51</td>
     </tr>
   </table>
 </div>
@@ -70,14 +70,14 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l15">NAV::vendor::ublox::UbloxUartSensor::UbloxUartSensor(std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;) (line 15)</a></td><td>called 226 times</td><td>56.0%</td></tr>
+    <tr><td><a href="#l15">NAV::vendor::ublox::UbloxUartSensor::UbloxUartSensor(std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;) (line 15)</a></td><td>called 230 times</td><td>56.0%</td></tr>
     <tr><td><a href="#l237">NAV::vendor::ublox::UbloxUartSensor::checksumFunction(uart::protocol::Packet const&amp;) (line 237)</a></td><td>called 63712 times</td><td>65.0%</td></tr>
     <tr><td><a href="#l52">NAV::vendor::ublox::UbloxUartSensor::findPacket(unsigned char) (line 52)</a></td><td>called 5305878 times</td><td>68.0%</td></tr>
     <tr><td><a href="#l277">NAV::vendor::ublox::UbloxUartSensor::isErrorFunction(uart::protocol::Packet const&amp;) (line 277)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l282">NAV::vendor::ublox::UbloxUartSensor::isResponseFunction(uart::protocol::Packet const&amp;) (line 282)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l199">NAV::vendor::ublox::UbloxUartSensor::packetFinderFunction(std::vector&lt;unsigned char, std::allocator&lt;unsigned char&gt; &gt; const&amp;, uart::xplat::TimeStamp const&amp;, void (*)(void*, uart::protocol::Packet&amp;, unsigned long, uart::xplat::TimeStamp const&amp;), void*, void*) (line 199)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l215">NAV::vendor::ublox::UbloxUartSensor::packetTypeFunction(uart::protocol::Packet const&amp;) (line 215)</a></td><td>called 254598 times</td><td>50.0%</td></tr>
-    <tr><td><a href="#l21">NAV::vendor::ublox::UbloxUartSensor::resetTracking() (line 21)</a></td><td>called 127650 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l21">NAV::vendor::ublox::UbloxUartSensor::resetTracking() (line 21)</a></td><td>called 127654 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -193,7 +193,7 @@
       <td class="lineno"><a id="l15" href="#l15">15</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">226</td>
+      <td class="linecount coveredLine">230</td>
       <td class="src coveredLine"><span class="n">NAV</span><span class="o">::</span><span class="n">vendor</span><span class="o">::</span><span class="n">ublox</span><span class="o">::</span><span class="n">UbloxUartSensor</span><span class="o">::</span><span class="n">UbloxUartSensor</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -202,14 +202,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 3 taken 226 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 230 times.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
-            <div class="takenBranch">&check; Branch 6 taken 226 times.</div>
+            <div class="takenBranch">&check; Branch 6 taken 230 times.</div>
             <div class="notTakenBranch">&cross; Branch 7 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">452</td>
+      <td class="linecount partialCoveredLine">460</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">_name</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">name</span><span class="p">)),</span><span class="w"> </span><span class="n">_buffer</span><span class="p">(</span><span class="n">uart</span><span class="o">::</span><span class="n">sensors</span><span class="o">::</span><span class="n">UartSensor</span><span class="o">::</span><span class="n">DefaultReadBufferSize</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -225,19 +225,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 226 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 230 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">226</td>
+      <td class="linecount partialCoveredLine">230</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">resetTracking</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l19" href="#l19">19</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">226</td>
+      <td class="linecount coveredLine">230</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -251,7 +251,7 @@
       <td class="lineno"><a id="l21" href="#l21">21</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">127650</td>
+      <td class="linecount coveredLine">127654</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">NAV</span><span class="o">::</span><span class="n">vendor</span><span class="o">::</span><span class="n">ublox</span><span class="o">::</span><span class="n">UbloxUartSensor</span><span class="o">::</span><span class="n">resetTracking</span><span class="p">()</span></td>
     </tr>
     <tr class="source-line">
@@ -272,14 +272,14 @@
       <td class="lineno"><a id="l24" href="#l24">24</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">127650</td>
+      <td class="linecount coveredLine">127654</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">_currentlyBuildingBinaryPacket</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l25" href="#l25">25</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">127650</td>
+      <td class="linecount coveredLine">127654</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">_currentlyBuildingAsciiPacket</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -293,42 +293,42 @@
       <td class="lineno"><a id="l27" href="#l27">27</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">127650</td>
+      <td class="linecount coveredLine">127654</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">_asciiEndChar1Found</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l28" href="#l28">28</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">127650</td>
+      <td class="linecount coveredLine">127654</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">_binarySyncChar2Found</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l29" href="#l29">29</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">127650</td>
+      <td class="linecount coveredLine">127654</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">_binaryMsgClassFound</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l30" href="#l30">30</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">127650</td>
+      <td class="linecount coveredLine">127654</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">_binaryMsgIdFound</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l31" href="#l31">31</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">127650</td>
+      <td class="linecount coveredLine">127654</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">_binaryPayloadLength1Found</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l32" href="#l32">32</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">127650</td>
+      <td class="linecount coveredLine">127654</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">_binaryPayloadLength2Found</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -370,21 +370,21 @@
       <td class="lineno"><a id="l38" href="#l38">38</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">127650</td>
+      <td class="linecount coveredLine">127654</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">_binaryMsgClass</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l39" href="#l39">39</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">127650</td>
+      <td class="linecount coveredLine">127654</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">_binaryMsgId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l40" href="#l40">40</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">127650</td>
+      <td class="linecount coveredLine">127654</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">_binaryPayloadLength</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -419,14 +419,14 @@
       <td class="lineno"><a id="l45" href="#l45">45</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">127650</td>
+      <td class="linecount coveredLine">127654</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">_buffer</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l46" href="#l46">46</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">127650</td>
+      <td class="linecount coveredLine">127654</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">_numOfBytesRemainingForCompletePacket</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -454,7 +454,7 @@
       <td class="lineno"><a id="l50" href="#l50">50</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">127650</td>
+      <td class="linecount coveredLine">127654</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">

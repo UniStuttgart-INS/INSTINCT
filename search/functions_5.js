@@ -5,7 +5,7 @@ var searchData=
   ['e_5fcalclineofsightunitvector_2',['e_calcLineOfSightUnitVector',['../namespaceNAV.html#afd47cd4222b0cd8a1d96d05f0b07f072',1,'NAV']]],
   ['e_5fcalcposapc_3',['e_calcPosAPC',['../structNAV_1_1Receiver.html#aa2e05afbe26527187285551577984473',1,'NAV::Receiver']]],
   ['e_5fcalcposarp_4',['e_calcPosARP',['../structNAV_1_1Receiver.html#a872633e854cc6ef93c3abeb1e186e98b',1,'NAV::Receiver']]],
-  ['e_5fcalcposvelattderivative_5',['e_calcPosVelAttDerivative',['../namespaceNAV.html#ab6d6c37a81ebf58bf7c9f7aa1c4a2946',1,'NAV']]],
+  ['e_5fcalcposvelattderivative_5',['e_calcPosVelAttDerivative',['../namespaceNAV.html#a2aa16a2093c20bb7185d74885486d091',1,'NAV']]],
   ['e_5fcalcrecvposapc_6',['e_calcRecvPosAPC',['../classNAV_1_1ObservationEstimator.html#a62b470a7d63531da15a8949a174bf9ff',1,'NAV::ObservationEstimator']]],
   ['e_5fcalctimederivativeforposition_7',['e_calcTimeDerivativeForPosition',['../namespaceNAV.html#aea5605b413afe7b796de583056af8cbb',1,'NAV']]],
   ['e_5fcalctimederivativeforvelocity_8',['e_calcTimeDerivativeForVelocity',['../namespaceNAV.html#adc6c7982adac0cadd5abfecb69a05702',1,'NAV']]],
@@ -90,5 +90,7 @@ var searchData=
   ['executeheaderparser_87',['executeHeaderParser',['../classNAV_1_1RinexNavFile.html#a501b5f3b54d7494da675d1962df8dce2',1,'NAV::RinexNavFile']]],
   ['executeorbitparser_88',['executeOrbitParser',['../classNAV_1_1RinexNavFile.html#a64bad215a922bddad4fd2fd502f61e0a',1,'NAV::RinexNavFile']]],
   ['expm_89',['expm',['../namespaceNAV_1_1math.html#a2434274094c750fa59d0abc24f950455',1,'NAV::math']]],
-  ['extract_5ffront_90',['extract_front',['../classNAV_1_1TsDeque.html#ad79acf8736f97723df0081a8610a376f',1,'NAV::TsDeque']]]
+  ['expmapmatrix_90',['expMapMatrix',['../namespaceNAV_1_1math.html#a31896294d57ce77d5f95a6fc94956eae',1,'NAV::math']]],
+  ['expmapquat_91',['expMapQuat',['../namespaceNAV_1_1math.html#a1ebbced87b3938cf10047b4c3b58a083',1,'NAV::math']]],
+  ['extract_5ffront_92',['extract_front',['../classNAV_1_1TsDeque.html#ad79acf8736f97723df0081a8610a376f',1,'NAV::TsDeque']]]
 ];

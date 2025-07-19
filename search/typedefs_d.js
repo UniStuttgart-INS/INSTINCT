@@ -2,6 +2,6 @@ var searchData=
 [
   ['set_0',['Set',['../classNAV_1_1Code.html#a37fbd44b2d8b0f4138d5874041818adb',1,'NAV::Code']]],
   ['state_1',['State',['../classNAV_1_1InertialIntegrator.html#af9440c4f0babe2cba3de0efa9ef48040',1,'NAV::InertialIntegrator']]],
-  ['statekeytype_2',['StateKeyType',['../namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683',1,'NAV::SPP::States']]],
+  ['statekeytype_2',['StateKeyType',['../namespaceNAV_1_1RTK_1_1States.html#a5a206b2b9486b4b492456cd9acb7d050',1,'NAV::RTK::States::StateKeyType'],['../namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683',1,'NAV::SPP::States::StateKeyType']]],
   ['strategy_3',['Strategy',['../classNAV_1_1CycleSlipDetector.html#ae84115ae3dfae2bc0ddd305033a1793f',1,'NAV::CycleSlipDetector::Strategy'],['../classNAV_1_1PolynomialCycleSlipDetector.html#a656d5f87e2dd2de8960a11957fc44b14',1,'NAV::PolynomialCycleSlipDetector::Strategy']]]
 ];

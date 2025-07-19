@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-06-06 13:17:47</td>
+      <td>2025-07-19 10:51:51</td>
     </tr>
   </table>
 </div>
@@ -52,9 +52,9 @@
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>13</td>
+      <td>14</td>
       <td>38</td>
-      <td class="coverage-low">34.2%</td>
+      <td class="coverage-low">36.8%</td>
     </tr>
   </table>
 </div>
@@ -70,12 +70,12 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l35">NAV::ReceiverClock::ReceiverClock(std::vector&lt;NAV::SatelliteSystem, std::allocator&lt;NAV::SatelliteSystem&gt; &gt;) (line 35)</a></td><td>called 483 times</td><td>64.0%</td></tr>
-    <tr><td><a href="#l81">NAV::ReceiverClock::biasFor(NAV::SatelliteSystem) const (line 81)</a></td><td>called 69806 times</td><td>90.0%</td></tr>
+    <tr><td><a href="#l35">NAV::ReceiverClock::ReceiverClock(std::vector&lt;NAV::SatelliteSystem, std::allocator&lt;NAV::SatelliteSystem&gt; &gt;) (line 35)</a></td><td>called 1445 times</td><td>64.0%</td></tr>
+    <tr><td><a href="#l81">NAV::ReceiverClock::biasFor(NAV::SatelliteSystem) const (line 81)</a></td><td>called 216031 times</td><td>90.0%</td></tr>
     <tr><td><a href="#l98">NAV::ReceiverClock::biasStdDevFor(NAV::SatelliteSystem) const (line 98)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l115">NAV::ReceiverClock::driftFor(NAV::SatelliteSystem) const (line 115)</a></td><td>called 68054 times</td><td>90.0%</td></tr>
+    <tr><td><a href="#l115">NAV::ReceiverClock::driftFor(NAV::SatelliteSystem) const (line 115)</a></td><td>called 159587 times</td><td>90.0%</td></tr>
     <tr><td><a href="#l132">NAV::ReceiverClock::driftStdDevFor(NAV::SatelliteSystem) const (line 132)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l149">NAV::ReceiverClock::getIdx(NAV::SatelliteSystem) const (line 149)</a></td><td>called 139334 times</td><td>73.0%</td></tr>
+    <tr><td><a href="#l149">NAV::ReceiverClock::getIdx(NAV::SatelliteSystem) const (line 149)</a></td><td>called 383124 times</td><td>80.0%</td></tr>
   </table>
 </details>
 
@@ -331,14 +331,14 @@
       <td class="lineno"><a id="l35" href="#l35">35</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">483</td>
+      <td class="linecount coveredLine">1445</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">explicit</span><span class="w"> </span><span class="n">ReceiverClock</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">SatelliteSystem</span><span class="o">&gt;</span><span class="w"> </span><span class="n">satelliteSystems</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l36" href="#l36">36</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">483</td>
+      <td class="linecount coveredLine">1445</td>
       <td class="src coveredLine"><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="n">satelliteSystems</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">satelliteSystems</span><span class="p">))</span></td>
     </tr>
     <tr class="source-line">
@@ -354,12 +354,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 483 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1445 times.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">483</td>
+      <td class="linecount partialCoveredLine">1445</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="n">bias</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">satelliteSystems</span><span class="p">.</span><span class="n">size</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
@@ -368,12 +368,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 483 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1445 times.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">483</td>
+      <td class="linecount partialCoveredLine">1445</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="n">biasStdDev</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">satelliteSystems</span><span class="p">.</span><span class="n">size</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
@@ -382,12 +382,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 483 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1445 times.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">483</td>
+      <td class="linecount partialCoveredLine">1445</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="n">drift</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">satelliteSystems</span><span class="p">.</span><span class="n">size</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
@@ -396,19 +396,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 483 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1445 times.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">483</td>
+      <td class="linecount partialCoveredLine">1445</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="n">driftStdDev</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">satelliteSystems</span><span class="p">.</span><span class="n">size</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l42" href="#l42">42</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">483</td>
+      <td class="linecount coveredLine">1445</td>
       <td class="src coveredLine"><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -681,7 +681,7 @@
       <td class="lineno"><a id="l81" href="#l81">81</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">69806</td>
+      <td class="linecount coveredLine">216031</td>
       <td class="src coveredLine"><span class="w">    </span><span class="p">[[</span><span class="n">nodiscard</span><span class="p">]]</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">biasFor</span><span class="p">(</span><span class="n">SatelliteSystem</span><span class="w"> </span><span class="n">satSys</span><span class="p">)</span><span class="w"> </span><span class="k">const</span></td>
     </tr>
     <tr class="source-line">
@@ -697,16 +697,16 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 69806 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 216030 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 69806 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 216025 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 8 taken 69806 times.</div>
+            <div class="takenBranch">&check; Branch 8 taken 216028 times.</div>
             <div class="notTakenBranch">&cross; Branch 9 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">69806</td>
+      <td class="linecount partialCoveredLine">216031</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getIdx</span><span class="p">(</span><span class="n">satSys</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="o">&amp;</span><span class="n">bias</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="o">*</span><span class="n">i</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -930,7 +930,7 @@
       <td class="lineno"><a id="l115" href="#l115">115</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">68054</td>
+      <td class="linecount coveredLine">159587</td>
       <td class="src coveredLine"><span class="w">    </span><span class="p">[[</span><span class="n">nodiscard</span><span class="p">]]</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">driftFor</span><span class="p">(</span><span class="n">SatelliteSystem</span><span class="w"> </span><span class="n">satSys</span><span class="p">)</span><span class="w"> </span><span class="k">const</span></td>
     </tr>
     <tr class="source-line">
@@ -946,16 +946,16 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 68054 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 159586 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 68054 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 159586 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 8 taken 68054 times.</div>
+            <div class="takenBranch">&check; Branch 8 taken 159587 times.</div>
             <div class="notTakenBranch">&cross; Branch 9 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">68054</td>
+      <td class="linecount partialCoveredLine">159587</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getIdx</span><span class="p">(</span><span class="n">satSys</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="o">&amp;</span><span class="n">drift</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="o">*</span><span class="n">i</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -1179,7 +1179,7 @@
       <td class="lineno"><a id="l149" href="#l149">149</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">139334</td>
+      <td class="linecount coveredLine">383124</td>
       <td class="src coveredLine"><span class="w">    </span><span class="p">[[</span><span class="n">nodiscard</span><span class="p">]]</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getIdx</span><span class="p">(</span><span class="n">SatelliteSystem</span><span class="w"> </span><span class="n">satSys</span><span class="p">)</span><span class="w"> </span><span class="k">const</span></td>
     </tr>
     <tr class="source-line">
@@ -1195,12 +1195,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 139334 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 545290 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">139334</td>
+      <td class="linecount partialCoveredLine">545290</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">satelliteSystems</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -1214,16 +1214,16 @@
       <td class="lineno"><a id="l153" href="#l153">153</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">2/4</summary>
+          <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 139334 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 545285 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 139334 times.</div>
-            <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
+            <div class="takenBranch">&check; Branch 4 taken 383121 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 162166 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">139334</td>
+      <td class="linecount partialCoveredLine">545290</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">satelliteSystems</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">satSys</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">

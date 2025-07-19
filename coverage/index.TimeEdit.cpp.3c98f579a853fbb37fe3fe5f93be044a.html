@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-06-06 13:17:47</td>
+      <td>2025-07-19 10:51:51</td>
     </tr>
   </table>
 </div>
@@ -72,7 +72,7 @@
     </tr>
     <tr><td><a href="#l42">NAV::gui::widgets::(anonymous namespace)::ComboTimeEditFormat(char const*, NAV::gui::widgets::TimeEditFormat::Format&amp;) (line 42)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l52">NAV::gui::widgets::TimeEdit(char const*, NAV::InsTime&amp;, NAV::gui::widgets::TimeEditFormat&amp;, float) (line 52)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l151">NAV::gui::widgets::from_json(nlohmann::json_abi_diag_v3_12_0::basic_json&lt;std::map, std::vector, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, bool, long, unsigned long, double, std::allocator, nlohmann::json_abi_diag_v3_12_0::adl_serializer, std::vector&lt;unsigned char, std::allocator&lt;unsigned char&gt; &gt;, void&gt; const&amp;, NAV::gui::widgets::TimeEditFormat&amp;) (line 151)</a></td><td>called 11 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l151">NAV::gui::widgets::from_json(nlohmann::json_abi_diag_v3_12_0::basic_json&lt;std::map, std::vector, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, bool, long, unsigned long, double, std::allocator, nlohmann::json_abi_diag_v3_12_0::adl_serializer, std::vector&lt;unsigned char, std::allocator&lt;unsigned char&gt; &gt;, void&gt; const&amp;, NAV::gui::widgets::TimeEditFormat&amp;) (line 151)</a></td><td>called 12 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l143">NAV::gui::widgets::to_json(nlohmann::json_abi_diag_v3_12_0::basic_json&lt;std::map, std::vector, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, bool, long, unsigned long, double, std::allocator, nlohmann::json_abi_diag_v3_12_0::adl_serializer, std::vector&lt;unsigned char, std::allocator&lt;unsigned char&gt; &gt;, void&gt;&amp;, NAV::gui::widgets::TimeEditFormat const&amp;) (line 143)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l20">NAV::to_string(NAV::gui::widgets::TimeEditFormat::Format) (line 20)</a></td><td>not called</td><td>0.0%</td></tr>
   </table>
@@ -1142,7 +1142,7 @@
       <td class="lineno"><a id="l151" href="#l151">151</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">11</td>
+      <td class="linecount coveredLine">12</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">NAV</span><span class="o">::</span><span class="n">gui</span><span class="o">::</span><span class="n">widgets</span><span class="o">::</span><span class="n">from_json</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">json</span><span class="o">&amp;</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">TimeEditFormat</span><span class="o">&amp;</span><span class="w"> </span><span class="n">timeEditFormat</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -1156,21 +1156,21 @@
       <td class="lineno"><a id="l153" href="#l153">153</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">11</td>
+      <td class="linecount coveredLine">12</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;format&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">timeEditFormat</span><span class="p">.</span><span class="n">format</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l154" href="#l154">154</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">11</td>
+      <td class="linecount coveredLine">12</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;system&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">timeEditFormat</span><span class="p">.</span><span class="n">system</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l155" href="#l155">155</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">11</td>
+      <td class="linecount coveredLine">12</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">

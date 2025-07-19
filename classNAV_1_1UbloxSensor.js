@@ -16,6 +16,7 @@ var classNAV_1_1UbloxSensor =
     [ "save", "classNAV_1_1UbloxSensor.html#a5a5ea98043b20b69c5a520407ceb99eb", null ],
     [ "type", "classNAV_1_1UbloxSensor.html#a3594226225f621df3e1e45add6770e41", null ],
     [ "typeStatic", "classNAV_1_1UbloxSensor.html#ae55feb04c7c6d5ead759dc8d63d351e4", null ],
+    [ "_connected", "classNAV_1_1UbloxSensor.html#a3ba8fae4f0a69b697ff3105e587b8484", null ],
     [ "_sensor", "classNAV_1_1UbloxSensor.html#ade040c8e9ffe5fb6f4be68b7dc34d672", null ],
     [ "OUTPUT_PORT_INDEX_UBLOX_OBS", "classNAV_1_1UbloxSensor.html#a4d06cd01fd7bc904451ef283f1212946", null ]
 ];

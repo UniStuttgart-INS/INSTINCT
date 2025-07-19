@@ -99,7 +99,7 @@ var node_guide_landing_page =
         [ "Scenario", "imu_simulator_node.html#imu_simulator_node_settings_scenario", null ],
         [ "Simulation Stop Condition", "imu_simulator_node.html#imu_simulator_node_settings_simulation_stop_condition", null ],
         [ "Simulation models", "imu_simulator_node.html#imu_simulator_node_settings_simulation_models", null ],
-        [ "IMU Position & Rotation", "imu_simulator_node.html#imu_simulator_node_settings_imu_position_rotation", null ]
+        [ "IMU Position &amp; Rotation", "imu_simulator_node.html#imu_simulator_node_settings_imu_position_rotation", null ]
       ] ],
       [ "Example Flow", "imu_simulator_node.html#imu_simulator_node_example_flow", null ]
     ] ],

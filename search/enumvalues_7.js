@@ -46,7 +46,7 @@ var searchData=
   ['gnssfix_5frtk_5ffloat_43',['GnssFix_RTK_Float',['../namespaceNAV_1_1vendor_1_1vectornav.html#ae0c711ef0bb825c7059baab7bfb6998ba91314b1bb2c80187fff235046c4b0271',1,'NAV::vendor::vectornav']]],
   ['gnssfix_5fsbas_44',['GnssFix_SBAS',['../namespaceNAV_1_1vendor_1_1vectornav.html#ae0c711ef0bb825c7059baab7bfb6998ba8ab613d1d6494f2cc331256bad1221e4',1,'NAV::vendor::vectornav']]],
   ['gnssfix_5ftimeonly_45',['GnssFix_TimeOnly',['../namespaceNAV_1_1vendor_1_1vectornav.html#ae0c711ef0bb825c7059baab7bfb6998ba73e3fa2c6969dd3f59425b104123007c',1,'NAV::vendor::vectornav']]],
-  ['gnssobs_46',['GnssObs',['../classNAV_1_1VectorNavBinaryConverter.html#a48dbe1904d755920718e4bf8dd8dcf67a465c896bb511593ec0a9fed5f8ffcd76',1,'NAV::VectorNavBinaryConverter']]],
+  ['gnssobs_46',['GnssObs',['../classNAV_1_1VectorNavBinaryConverter.html#a48dbe1904d755920718e4bf8dd8dcf67a465c896bb511593ec0a9fed5f8ffcd76',1,'NAV::VectorNavBinaryConverter::GnssObs'],['../namespaceNAV_1_1UdpUtil.html#a403290b03902f6158e967c7191c1e659a465c896bb511593ec0a9fed5f8ffcd76',1,'NAV::UdpUtil::GnssObs']]],
   ['gpgga_47',['GPGGA',['../classNAV_1_1MultiImuFile.html#ac7e69efa027da791d11e0e8dbc77b530a5a8278daa02c92611be51974e0f325d1',1,'NAV::MultiImuFile']]],
   ['gps_48',['GPS',['../namespaceNAV.html#af01e645814479c1179804a8d5ffb411ea092931b9f0e5d5415e39d9da7cc1b702',1,'NAV::GPS'],['../namespaceNAV_1_1vendor_1_1vectornav.html#a62e32a1bad2112cd23a8beddf30bd9c5a8c578de37278ada488d763ea86c5cf20',1,'NAV::vendor::vectornav::GPS']]],
   ['gpsephemeris_49',['GPSEphemeris',['../classNAV_1_1SatNavData.html#ab8ee23e943f90f953e0092d31b7a8341ac78f9efd11826eaea97f2ecf607350fc',1,'NAV::SatNavData']]],

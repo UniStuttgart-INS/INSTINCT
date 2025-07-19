@@ -41,6 +41,8 @@ var structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement =
     [ "SatRawElement", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a44ae43dd2da499089d879ed6ad1ce7c8", null ],
     [ "SatRawElement", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a1e08c6168ae826fca880b2de2a45af9d", null ],
     [ "SatRawElement", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a42c1b7596c74cf9cd0a49cf9f6ec9dab", null ],
+    [ "toCode", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a4daf6b822b4aa305a25538250270368d", null ],
+    [ "toSatSigId", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a56ab6b74cdd834fec8d2d8c683ba59f8", null ],
     [ "operator<<", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a30a52755968695340596de31f0c8477a", null ],
     [ "operator<<", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a3f51e50fccebe2f1a92d37aafd797e08", null ],
     [ "operator|", "structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a7c9533031ba00e09392ba6b1d4b41078", null ],

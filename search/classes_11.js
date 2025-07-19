@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['satdata_0',['SatData',['../structNAV_1_1SppSolution_1_1SatData.html',1,'NAV::SppSolution']]],
+  ['satdata_0',['SatData',['../structNAV_1_1RtkSolution_1_1SatData.html',1,'NAV::RtkSolution::SatData'],['../structNAV_1_1SppSolution_1_1SatData.html',1,'NAV::SppSolution::SatData']]],
   ['satellite_1',['Satellite',['../classNAV_1_1Satellite.html',1,'NAV']]],
   ['satellitedata_2',['SatelliteData',['../structNAV_1_1GnssObs_1_1SatelliteData.html',1,'NAV::GnssObs']]],
   ['satelliteinfo_3',['SatelliteInfo',['../structNAV_1_1ObservationEstimator_1_1SatelliteInfo.html',1,'NAV::ObservationEstimator']]],
@@ -28,13 +28,14 @@ var searchData=
   ['signal_25',['Signal',['../structNAV_1_1CycleSlipDetector_1_1SatelliteObservation_1_1Signal.html',1,'NAV::CycleSlipDetector::SatelliteObservation']]],
   ['signaldetector_26',['SignalDetector',['../structNAV_1_1PolynomialCycleSlipDetector_1_1SignalDetector.html',1,'NAV::PolynomialCycleSlipDetector']]],
   ['signalobservation_27',['SignalObservation',['../structNAV_1_1Observations_1_1SignalObservation.html',1,'NAV::Observations']]],
-  ['singlepointpositioning_28',['SinglePointPositioning',['../classNAV_1_1SinglePointPositioning.html',1,'NAV']]],
-  ['skydelnetworkstream_29',['SkydelNetworkStream',['../classNAV_1_1experimental_1_1SkydelNetworkStream.html',1,'NAV::experimental']]],
-  ['snrmask_30',['SNRMask',['../classNAV_1_1SNRMask.html',1,'NAV']]],
-  ['sppsolution_31',['SppSolution',['../classNAV_1_1SppSolution.html',1,'NAV']]],
-  ['state_32',['State',['../structNAV_1_1WiFiPositioning_1_1State.html',1,'NAV::WiFiPositioning']]],
-  ['strategy_33',['Strategy',['../classNAV_1_1PolynomialRegressor.html',1,'NAV']]],
-  ['stringobs_34',['StringObs',['../classNAV_1_1StringObs.html',1,'NAV']]],
-  ['subscriptiondata_35',['SubscriptionData',['../structNAV_1_1UlogFile_1_1SubscriptionData.html',1,'NAV::UlogFile']]],
-  ['svhealth_36',['SvHealth',['../structNAV_1_1GalileoEphemeris_1_1SvHealth.html',1,'NAV::GalileoEphemeris']]]
+  ['singleobs_28',['SingleObs',['../structNAV_1_1RTK_1_1Meas_1_1SingleObs.html',1,'NAV::RTK::Meas']]],
+  ['singlepointpositioning_29',['SinglePointPositioning',['../classNAV_1_1SinglePointPositioning.html',1,'NAV']]],
+  ['skydelnetworkstream_30',['SkydelNetworkStream',['../classNAV_1_1experimental_1_1SkydelNetworkStream.html',1,'NAV::experimental']]],
+  ['snrmask_31',['SNRMask',['../classNAV_1_1SNRMask.html',1,'NAV']]],
+  ['sppsolution_32',['SppSolution',['../classNAV_1_1SppSolution.html',1,'NAV']]],
+  ['state_33',['State',['../structNAV_1_1WiFiPositioning_1_1State.html',1,'NAV::WiFiPositioning']]],
+  ['strategy_34',['Strategy',['../classNAV_1_1PolynomialRegressor.html',1,'NAV']]],
+  ['stringobs_35',['StringObs',['../classNAV_1_1StringObs.html',1,'NAV']]],
+  ['subscriptiondata_36',['SubscriptionData',['../structNAV_1_1UlogFile_1_1SubscriptionData.html',1,'NAV::UlogFile']]],
+  ['svhealth_37',['SvHealth',['../structNAV_1_1GalileoEphemeris_1_1SvHealth.html',1,'NAV::GalileoEphemeris']]]
 ];
