@@ -18,6 +18,8 @@
 #include <iostream>
 #include <fmt/ostream.h>
 #include <fmt/ranges.h>
+#include <stdexcept>
+#include <type_traits>
 
 namespace NAV
 {
@@ -63,7 +65,9 @@ class ScrollingBuffer
     ///        If pos is not within the range of the container, an exception of type std::out_of_range is thrown.
     /// @param[in] pos position of the element to return
     /// @return Reference to the requested element.
+    /// @note Disabled for bool, because std::vector<bool> uses bitset internally
     T& at(size_t pos)
+        requires(!std::is_same_v<T, bool>)
     {
         // Cast the const away and reuse the implementation below
         return const_cast<T&>(static_cast<const ScrollingBuffer&>(*this).at(pos)); // NOLINT(cppcoreguidelines-pro-type-const-cast)
@@ -72,8 +76,10 @@ class ScrollingBuffer
     /// @brief Returns a reference to the element at specified location pos, with bounds checking.
     ///        If pos is not within the range of the container, an exception of type std::out_of_range is thrown.
     /// @param[in] pos position of the element to return
-    /// @return Reference to the requested element.
-    [[nodiscard]] const T& at(size_t pos) const
+    /// @return Reference to the requested element. Returns bool by value.
+    /// @note std::vector<bool> uses bitset internally, so we can't return a reference to elements
+    [[nodiscard]] auto at(size_t pos) const
+        -> std::conditional_t<std::is_same_v<T, bool>, bool, const T&>
     {
         if (!(pos < size()))
         {
@@ -96,7 +102,9 @@ class ScrollingBuffer
     /// @brief Returns a reference to the first element in the container.
     ///        Calling front on an empty container is undefined.
     /// @return reference to the first element
+    /// @note Disabled for bool, because std::vector<bool> uses bitset internally
     T& front()
+        requires(!std::is_same_v<T, bool>)
     {
         // Cast the const away and reuse the implementation below (don't repeat yourself)
         return const_cast<T&>(static_cast<const ScrollingBuffer&>(*this).front()); // NOLINT(cppcoreguidelines-pro-type-const-cast)
@@ -105,7 +113,9 @@ class ScrollingBuffer
     /// @brief Returns a reference to the first element in the container.
     ///        Calling front on an empty container is undefined.
     /// @return Reference to the first element
-    [[nodiscard]] const T& front() const
+    /// @note std::vector<bool> uses bitset internally, so we can't return a reference to elements
+    [[nodiscard]] auto front() const
+        -> std::conditional_t<std::is_same_v<T, bool>, bool, const T&>
     {
         return _data.at(_dataStart);
     }
@@ -113,7 +123,9 @@ class ScrollingBuffer
     /// @brief Returns a reference to the last element in the container.
     ///        Calling back on an empty container causes undefined behavior.
     /// @return Reference to the last element.
+    /// @note Disabled for bool, because std::vector<bool> uses bitset internally
     T& back()
+        requires(!std::is_same_v<T, bool>)
     {
         return const_cast<T&>(static_cast<const ScrollingBuffer&>(*this).back()); // NOLINT(cppcoreguidelines-pro-type-const-cast)
     }
@@ -121,7 +133,9 @@ class ScrollingBuffer
     /// @brief Returns a reference to the last element in the container.
     ///        Calling back on an empty container causes undefined behavior.Reference to the last element.
     /// @return Reference to the last element.
-    [[nodiscard]] const T& back() const
+    /// @note std::vector<bool> uses bitset internally, so we can't return a reference to elements
+    [[nodiscard]] auto back() const
+        -> std::conditional_t<std::is_same_v<T, bool>, bool, const T&>
     {
         if (_dataEnd == 0)
         {
@@ -515,7 +529,10 @@ class ScrollingBuffer
             //       e  s              e        s              e        s              s            e    s        e
             // 5, 6, _, 3, 4  // 5, 6, _, _, _, 3, 4  // 5, 6, _, X, X, 3, 4  // X, X, 7, 8, 9, 10, _ // 5, 6, 7, _
 
-            front() = {}; // Set to default in case shared_ptr is stored
+            if constexpr (!std::is_same_v<T, bool>)
+            {
+                front() = {}; // Set to default in case shared_ptr is stored
+            }
             _dataStart = (_dataStart + 1) % _maxSize;
         }
     }
@@ -540,7 +557,10 @@ class ScrollingBuffer
         }
         else
         {
-            back() = {}; // Set to default in case shared_ptr is stored
+            if constexpr (!std::is_same_v<T, bool>)
+            {
+                back() = {}; // Set to default in case shared_ptr is stored
+            }
             _dataEnd = _dataEnd == 0 ? _maxSize - 1 : (_dataEnd - 1);
         }
     }

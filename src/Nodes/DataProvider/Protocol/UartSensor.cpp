@@ -72,7 +72,9 @@ NAV::UartSensor::Baudrate NAV::UartSensor::sensorBaudrate() const
     case 9:
         return BAUDRATE_921600;
         break;
-
+    case 10:
+        return BAUDRATE_2000000;
+        break;
     default:
         return BAUDRATE_FASTEST;
     }
@@ -102,6 +104,8 @@ int NAV::UartSensor::baudrate2Selection(Baudrate baud)
         return 8;
     case BAUDRATE_921600:
         return 9;
+    case BAUDRATE_2000000:
+        return 10;
     }
     return 0;
 }
