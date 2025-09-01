@@ -134,7 +134,7 @@ class InsConst
         /// Gravitational constant GLONASS [m³/s²]
         static constexpr double MU = PZ90::MU;
         /// Earth angular velocity GLONASS [rad/s]
-        static constexpr double omega_ie = 7.2921151467e-05;
+        static constexpr double omega_ie = PZ90::omega_ie;
         /// Second degree zonal coefficient of normal potential [-]
         static constexpr double J2 = PZ90::J2;
         /// Normalized harmonic of the normal geopotential [-]
@@ -191,7 +191,7 @@ class InsConst
         /// Earth angular velocity QZSS [rad/s]
         static constexpr double omega_ie = WGS84::omega_ie;
         /// Earth gravitational constant QZSS [m³/s²]
-        static constexpr double MU = 3.986005e+14;
+        static constexpr double MU = GPS::MU;
         /// Relativistic constant F for clock corrections [s/√m] (-2*√µ/c²)
         static constexpr double F = -2.0 * gcem::sqrt(MU) / (C * C);
     };
@@ -206,7 +206,7 @@ class InsConst
         /// Earth angular velocity IRNSS [rad/s]
         static constexpr double omega_ie = WGS84::omega_ie;
         /// Earth gravitational constant IRNSS [m³/s²]
-        static constexpr double MU = 3.986005e+14;
+        static constexpr double MU = GPS::MU;
         /// Relativistic constant F for clock corrections [s/√m] (-2*√µ/c²)
         static constexpr double F = -2.0 * gcem::sqrt(MU) / (C * C);
     };

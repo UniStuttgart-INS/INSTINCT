@@ -6,6 +6,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+#include "util/Logger.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include "CatchMatchers.hpp"
 
@@ -14,6 +15,7 @@
 #include "Logger.hpp"
 
 #include "util/Eigen.hpp"
+#include <catch2/matchers/catch_matchers.hpp>
 
 #include <limits>
 
@@ -133,6 +135,73 @@ Eigen::Vector3d ecef2lla_iter(const Eigen::Vector3d& e_position, double a = InsC
 
 } // namespace
 } // namespace ref
+
+TEST_CASE("[InsTransformations] Quaternion multiplication <-> Hamilton product [WIP]", "[InsTransformations]")
+{
+    auto logger = initializeTestLogger();
+
+    auto hamprod = [](const Eigen::Quaterniond& q1, const Eigen::Quaterniond& q2) -> Eigen::Quaterniond {
+        return {
+            q1.w() * q2.w() - q1.x() * q2.x() - q1.y() * q2.y() - q1.z() * q2.z(),
+            q1.w() * q2.x() + q1.x() * q2.w() + q1.y() * q2.z() - q1.z() * q2.y(),
+            q1.w() * q2.y() - q1.x() * q2.z() + q1.y() * q2.w() + q1.z() * q2.x(),
+            q1.w() * q2.z() + q1.x() * q2.y() - q1.y() * q2.x() + q1.z() * q2.w()
+        };
+    };
+
+    auto hamprodVec = [&hamprod](const Eigen::Quaterniond& quat, const Eigen::Vector3d& vec) -> Eigen::Quaterniond {
+        Eigen::Quaterniond quat2(0, vec.x(), vec.y(), vec.z());
+        return hamprod(quat, quat2);
+    };
+
+    double alpha = deg2rad(66.0);
+    Eigen::Quaterniond S_quat_T(Eigen::AngleAxisd(alpha, Eigen::Vector3d::UnitX()));
+    Eigen::Vector3d T_a(1, 2, 3);
+
+    LOG_INFO("S_quat_T: {}", S_quat_T);
+    LOG_INFO("S_a (Eigen):   {}", (S_quat_T * T_a).transpose());
+    LOG_INFO("S_a (hamprod): {}", (hamprod(hamprodVec(S_quat_T, T_a), S_quat_T.conjugate())).coeffs().head<3>().transpose());
+    REQUIRE_THAT(S_quat_T * T_a, Catch::Matchers::WithinAbs((hamprod(hamprodVec(S_quat_T, T_a), S_quat_T.conjugate())).coeffs().head<3>(), 1e-12));
+}
+
+TEST_CASE("[InsTransformations] DCM <-> Angle-Axis", "[InsTransformations]")
+{
+    auto logger = initializeTestLogger();
+
+    double alpha = deg2rad(66.0);
+    double beta = deg2rad(-59.0);
+    double gamma = deg2rad(192.0);
+
+    // clang-format off
+    Eigen::Matrix3d dcmX;
+    dcmX << 1,         0       ,         0       ,
+            0,  std::cos(alpha), -std::sin(alpha),
+            0,  std::sin(alpha),  std::cos(alpha);
+    Eigen::Matrix3d dcmY;
+    dcmY <<  std::cos(beta), 0,  std::sin(beta),
+                    0      , 1,         0      ,
+            -std::sin(beta), 0,  std::cos(beta);
+    Eigen::Matrix3d dcmZ;
+    dcmZ << std::cos(gamma), -std::sin(gamma), 0,
+            std::sin(gamma),  std::cos(gamma), 0,
+                   0       ,         0       , 1;
+    // clang-format on
+
+    Eigen::AngleAxisd angleX(alpha, Eigen::Vector3d::UnitX());
+    Eigen::AngleAxisd angleY(beta, Eigen::Vector3d::UnitY());
+    Eigen::AngleAxisd angleZ(gamma, Eigen::Vector3d::UnitZ());
+
+    LOG_INFO("dcmX = \n{}", dcmX);
+    LOG_INFO("angleX = \n{}", angleX.toRotationMatrix());
+    LOG_INFO("dcmY = \n{}", dcmY);
+    LOG_INFO("angleY = \n{}", angleY.toRotationMatrix());
+    LOG_INFO("dcmZ = \n{}", dcmZ);
+    LOG_INFO("angleZ = \n{}", angleZ.toRotationMatrix());
+
+    REQUIRE(angleX.toRotationMatrix() == dcmX);
+    REQUIRE(angleY.toRotationMatrix() == dcmY);
+    REQUIRE(angleZ.toRotationMatrix() == dcmZ);
+}
 
 TEST_CASE("[InsTransformations] Euler to Quaternion conversion", "[InsTransformations]")
 {

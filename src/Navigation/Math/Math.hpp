@@ -20,6 +20,7 @@
 #include <type_traits>
 #include <Eigen/Core>
 #include <Eigen/Dense>
+#include <unsupported/Eigen/MatrixFunctions>
 #include <gcem.hpp>
 #include <fmt/format.h>
 

@@ -11,11 +11,16 @@
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2024-02-15
 
+#include "util/Eigen.hpp"
+#include <Eigen/Dense>
+#include <Eigen/src/Geometry/Quaternion.h>
 #include <catch2/catch_test_macros.hpp>
 #include "CatchMatchers.hpp"
 
 #include "Logger.hpp"
 #include "Navigation/Math/Math.hpp"
+
+#include "Navigation/Transformations/Units.hpp"
 
 namespace NAV::TESTS
 {
@@ -124,6 +129,82 @@ TEST_CASE("[Math] Catch Matcher significant digits container", "[Math]")
     std::ranges::copy(arr2, std::back_inserter(vec2));
     LOG_DEBUG("Vector:\n{}\n    ==\n{}", joinToString(vec1, ", ", ":.5e"), joinToString(vec2, ", ", ":.5e"));
     REQUIRE_THAT(vec1, Catch::Matchers::EqualsSigDigitsContainer(vec2, 4));
+}
+
+TEST_CASE("[Math] Rotation angular rate DCM/Quat Derivative", "[Math]")
+{
+    auto logger = initializeTestLogger();
+
+    auto A_Titterton = [](const Eigen::Vector3d& T_omega_ST) -> Eigen::Matrix4d {
+        // clang-format off
+        Eigen::Matrix4d A;
+        A <<       0      , -T_omega_ST.x(), -T_omega_ST.y(), -T_omega_ST.z(),
+            T_omega_ST.x(),        0       ,  T_omega_ST.z(), -T_omega_ST.y(),
+            T_omega_ST.y(), -T_omega_ST.z(),        0       ,  T_omega_ST.x(),
+            T_omega_ST.z(),  T_omega_ST.y(), -T_omega_ST.x(),        0       ;
+        // clang-format on
+        return A;
+    };
+    auto A_Groves = [](const Eigen::Vector3d& T_omega_TS) -> Eigen::Matrix4d {
+        // clang-format off
+        Eigen::Matrix4d A;
+        A <<       0      , -T_omega_TS.x(), -T_omega_TS.y(), -T_omega_TS.z(),
+            T_omega_TS.x(),        0       , -T_omega_TS.z(),  T_omega_TS.y(),
+            T_omega_TS.y(),  T_omega_TS.z(),        0       , -T_omega_TS.x(),
+            T_omega_TS.z(), -T_omega_TS.y(),  T_omega_TS.x(),        0       ;
+        // clang-format on
+        return A;
+    };
+
+    auto quatFromCoeffsWXYZ = [](const Eigen::Vector4d& coeffsWXYZ) -> Eigen::Quaterniond {
+        return { coeffsWXYZ(0), coeffsWXYZ(1), coeffsWXYZ(2), coeffsWXYZ(3) };
+    };
+    auto quatCoeffsWXYZ = [](const Eigen::Quaterniond& quat) -> Eigen::Vector4d {
+        return { quat.w(), quat.x(), quat.y(), quat.z() };
+    };
+
+    auto transform = [&]([[maybe_unused]] const char* idx, const Eigen::Vector3d& T_p, const Eigen::Vector3d& S_ref1, const Eigen::Vector3d& S_ref2) {
+        Eigen::Matrix3d S_DCM_T = Eigen::Matrix3d::Identity();
+        Eigen::Quaterniond S_quat_T = Eigen::Quaterniond::Identity();
+        Eigen::Quaterniond S_quatTitterton_T = Eigen::Quaterniond::Identity();
+        Eigen::Quaterniond S_quatGroves_T = Eigen::Quaterniond::Identity();
+
+        LOG_INFO("T_{}: {}", idx, T_p.transpose());
+        LOG_INFO("S_{}: {}\n", idx, (S_DCM_T * T_p).array().round().transpose());
+
+        Eigen::Vector3d T_omega_TS(0, 0, deg2rad(90));
+        Eigen::Vector3d T_omega_ST = -T_omega_TS;
+        S_DCM_T = S_DCM_T * math::expMapMatrix(T_omega_ST);
+        S_quat_T = S_quat_T * math::expMapQuat(T_omega_ST);
+        S_quatTitterton_T = quatFromCoeffsWXYZ(A_Titterton(0.5 * T_omega_ST).exp() * quatCoeffsWXYZ(S_quatTitterton_T));
+        S_quatGroves_T = quatFromCoeffsWXYZ(A_Groves(0.5 * T_omega_TS).exp() * quatCoeffsWXYZ(S_quatGroves_T));
+        LOG_INFO("S_{} (DCM):       {}", idx, (S_DCM_T * T_p).array().round().transpose());
+        LOG_INFO("S_{} (quat):      {}", idx, (S_quat_T * T_p).array().round().transpose());
+        LOG_INFO("S_{} (Titterton): {}", idx, (S_quatTitterton_T * T_p).array().round().transpose());
+        LOG_INFO("S_{} (Groves):    {}\n", idx, (S_quatGroves_T * T_p).array().round().transpose());
+        REQUIRE((S_DCM_T * T_p).array().round().matrix() == S_ref1);
+        REQUIRE((S_quat_T * T_p).array().round().matrix() == S_ref1);
+        REQUIRE((S_quatTitterton_T * T_p).array().round().matrix() == S_ref1);
+        // REQUIRE((S_quatGroves_T * T_p).array().round().matrix() == S_ref1); // NOTE: Groves implementation is different and does not work
+
+        T_omega_TS = Eigen::Vector3d(deg2rad(90), 0, 0);
+        T_omega_ST = -T_omega_TS;
+        S_DCM_T = S_DCM_T * math::expMapMatrix(T_omega_ST);
+        S_quat_T = S_quat_T * math::expMapQuat(T_omega_ST);
+        S_quatTitterton_T = quatFromCoeffsWXYZ(A_Titterton(0.5 * T_omega_ST).exp() * quatCoeffsWXYZ(S_quatTitterton_T));
+        S_quatGroves_T = quatFromCoeffsWXYZ(A_Groves(0.5 * T_omega_TS).exp() * quatCoeffsWXYZ(S_quatGroves_T));
+        LOG_INFO("S_{} (DCM):       {}", idx, (S_DCM_T * T_p).array().round().transpose());
+        LOG_INFO("S_{} (quat):      {}", idx, (S_quat_T * T_p).array().round().transpose());
+        LOG_INFO("S_{} (Titterton): {}", idx, (S_quatTitterton_T * T_p).array().round().transpose());
+        LOG_INFO("S_{} (Groves):    {}\n", idx, (S_quatGroves_T * T_p).array().round().transpose());
+        REQUIRE((S_DCM_T * T_p).array().round().matrix() == S_ref2);
+        REQUIRE((S_quat_T * T_p).array().round().matrix() == S_ref2);
+        REQUIRE((S_quatTitterton_T * T_p).array().round().matrix() == S_ref2);
+        // REQUIRE((S_quatGroves_T * T_p).array().round().matrix() == S_ref2); // NOTE: Groves implementation is different and does not work
+    };
+
+    transform("a", /* T_a */ { 1, 0, 0 }, /* S_ref1 */ { 0, -1, 0 }, /* S_ref2 */ { 0, -1, 0 });
+    transform("b", /* T_b */ { 0, 1, 0 }, /* S_ref1 */ { 1, 0, 0 }, /* S_ref2 */ { 0, 0, -1 });
 }
 
 } // namespace NAV::TESTS
