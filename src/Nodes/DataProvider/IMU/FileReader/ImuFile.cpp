@@ -144,6 +144,7 @@ bool NAV::ImuFile::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
+    bool success = false;
     if (FileReader::initialize())
     {
         for (auto& col : _headerColumns)
@@ -165,10 +166,12 @@ bool NAV::ImuFile::initialize()
         _withDelta = nDelta == 7;
 
         outputPins[OUTPUT_PORT_INDEX_IMU_OBS].dataIdentifier = _withDelta ? std::vector{ NAV::ImuObsWDelta::type() } : std::vector{ NAV::ImuObs::type() };
-        return true;
+        success = true;
     }
-
-    outputPins[OUTPUT_PORT_INDEX_IMU_OBS].dataIdentifier = { NAV::ImuObs::type(), NAV::ImuObsWDelta::type() };
+    else
+    {
+        outputPins[OUTPUT_PORT_INDEX_IMU_OBS].dataIdentifier = { NAV::ImuObs::type(), NAV::ImuObsWDelta::type() };
+    }
 
     for (auto& link : outputPins[OUTPUT_PORT_INDEX_IMU_OBS].links)
     {
@@ -178,7 +181,7 @@ bool NAV::ImuFile::initialize()
         }
     }
 
-    return false;
+    return success;
 }
 
 void NAV::ImuFile::deinitialize()
