@@ -308,6 +308,7 @@ void NAV::GnssAnalyzer::guiConfig()
     {
         flow::ApplyChanges();
         _combinations.emplace_back();
+        _combinations.back().polynomialCycleSlipDetector.setResetAfterCycleSlip(false);
     }
 }
 
@@ -384,6 +385,7 @@ void NAV::GnssAnalyzer::receiveGnssObs(NAV::InputPin::NodeDataQueue& queue, size
                 break;
             }
         }
+        LOG_DATA("{}: {}", nameId(), combination.description);
 
         double result = 0.0;
         double lambdaMin = 100.0;
@@ -396,6 +398,7 @@ void NAV::GnssAnalyzer::receiveGnssObs(NAV::InputPin::NodeDataQueue& queue, size
             oTerm.obsType = term.obsType == Combination::Term::ObservationType::Pseudorange
                                 ? GnssObs::ObservationType::Pseudorange
                                 : GnssObs::ObservationType::Carrier;
+            LOG_DATA("{}:   {}[{}][{}]", nameId(), oTerm.sign == 1 ? "+" : "-", oTerm.satSigId, oTerm.obsType);
 
             double freq = term.satSigId.freq().getFrequency(term.freqNum);
             double lambda = InsConst::C / freq;
@@ -422,6 +425,7 @@ void NAV::GnssAnalyzer::receiveGnssObs(NAV::InputPin::NodeDataQueue& queue, size
                     }
                     else
                     {
+                        LOG_DATA("{}: Resetting cycle-slip detector as no pseudorange in measurement", nameId());
                         comb.polynomialCycleSlipDetector.reset(comb.description());
                     }
                 }
@@ -444,6 +448,7 @@ void NAV::GnssAnalyzer::receiveGnssObs(NAV::InputPin::NodeDataQueue& queue, size
                     }
                     else
                     {
+                        LOG_DATA("{}: Resetting cycle-slip detector as no carrier-phase in measurement", nameId());
                         comb.polynomialCycleSlipDetector.reset(comb.description());
                     }
                 }
@@ -451,6 +456,7 @@ void NAV::GnssAnalyzer::receiveGnssObs(NAV::InputPin::NodeDataQueue& queue, size
 
             combination.terms.push_back(oTerm);
         }
+        LOG_DATA("{}:   Found {}/{}", nameId(), termsFound, comb.terms.size());
         if (termsFound == comb.terms.size())
         {
             auto lambda = InsConst::C / comb.calcCombinationFrequency();
@@ -460,10 +466,14 @@ void NAV::GnssAnalyzer::receiveGnssObs(NAV::InputPin::NodeDataQueue& queue, size
             if (comb.polynomialCycleSlipDetector.isEnabled())
             {
                 auto key = comb.description();
+                LOG_DATA("{}:   Polynomial {}/{} data points ({} needed for calculation)", nameId(),
+                         comb.polynomialCycleSlipDetector.getDataSize(key), comb.polynomialCycleSlipDetector.getWindowSize(),
+                         comb.polynomialCycleSlipDetector.getPolynomialDegree() + 1);
                 combination.cycleSlipPrediction = comb.polynomialCycleSlipDetector.predictValue(key, gnssComb->insTime);
                 if (combination.cycleSlipPrediction.has_value())
                 {
                     combination.cycleSlipMeasMinPred = *combination.result - *combination.cycleSlipPrediction;
+                    LOG_DATA("{}:     Predicting: meas - pred = {}", nameId(), *combination.cycleSlipMeasMinPred);
                 }
 
                 if (comb.polynomialCycleSlipDetectorOutputPolynomials)
@@ -485,7 +495,9 @@ void NAV::GnssAnalyzer::receiveGnssObs(NAV::InputPin::NodeDataQueue& queue, size
                 double threshold = comb.polynomialCycleSlipDetectorThresholdPercentage * lambdaMin;
                 if (comb.unit == Combination::Unit::Cycles) { threshold /= lambda; }
 
+                // This adds the measurement to the polynomial
                 combination.cycleSlipResult = comb.polynomialCycleSlipDetector.checkForCycleSlip(key, gnssComb->insTime, *combination.result, threshold);
+
                 if (!comb.polynomialCycleSlipDetectorOutputWhenWindowSizeNotReached
                     && *combination.cycleSlipResult == PolynomialCycleSlipDetectorResult::LessDataThanWindowSize)
                 {

@@ -44,8 +44,9 @@ struct TimeEditFormat
 /// @param[in, out] insTime Time object to modify
 /// @param[in, out] timeEditFormat Format to modify the time in
 /// @param[in] itemWidth Width of the widget items
+/// @param[in] columns Allows splitting the inputs into multiple columns (either 1 or 2)
 /// @return True if changes were made to the object
-bool TimeEdit(const char* str_id, InsTime& insTime, TimeEditFormat& timeEditFormat, float itemWidth = 170.0F);
+bool TimeEdit(const char* str_id, InsTime& insTime, TimeEditFormat& timeEditFormat, float itemWidth = 170.0F, int columns = 1);
 
 /// @brief Converts the provided Object into a json object
 /// @param[out] j Return Json object

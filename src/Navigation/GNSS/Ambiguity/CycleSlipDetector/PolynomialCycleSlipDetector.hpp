@@ -78,11 +78,16 @@ class PolynomialCycleSlipDetector
         }
 
         auto polynomial = detector.polyReg.calcPolynomial();
-        auto predictedValue = polynomial.f(calcRelativeTime(insTime, detector));
+        if (!polynomial)
+        {
+            addMeasurement(key, insTime, measurementDifference);
+            return PolynomialCycleSlipDetectorResult::LessDataThanWindowSize;
+        }
+        auto predictedValue = polynomial->f(calcRelativeTime(insTime, detector));
 
         if (std::abs(measurementDifference - predictedValue) > threshold)
         {
-            reset(key);
+            if (_resetAfterCycleSlip) { reset(key); }
             addMeasurement(key, insTime, measurementDifference);
             return PolynomialCycleSlipDetectorResult::CycleSlip;
         }
@@ -116,6 +121,18 @@ class PolynomialCycleSlipDetector
     void setEnabled(bool enabled)
     {
         _enabled = enabled;
+    }
+
+    /// @brief Whether to discard all data after a cycle-slip
+    [[nodiscard]] bool resetAfterCycleSlip() const
+    {
+        return _resetAfterCycleSlip;
+    }
+    /// @brief Sets whether to discard all data after a cycle-slip
+    /// @param[in] reset Whether to reset or not
+    void setResetAfterCycleSlip(bool reset)
+    {
+        _resetAfterCycleSlip = reset;
     }
 
     /// @brief Get the window size for the polynomial fit
@@ -160,6 +177,15 @@ class PolynomialCycleSlipDetector
         }
     }
 
+    /// @brief Get the amount of data collected
+    /// @param[in] key Key of the detector
+    [[nodiscard]] std::optional<size_t> getDataSize(const Key& key) const
+    {
+        if (!_detectors.contains(key)) { return {}; }
+
+        return _detectors.at(key).polyReg.data().size();
+    }
+
   private:
     /// @brief Signal Detector struct
     struct SignalDetector
@@ -177,6 +203,7 @@ class PolynomialCycleSlipDetector
     };
 
     bool _enabled = true;                          ///< Whether the cycle-slip detector is enabled
+    bool _resetAfterCycleSlip = true;              ///< Whether to discard all data after a cycle-slip
     size_t _windowSize;                            ///< Window size for the sliding window
     size_t _polyDegree = 2;                        ///< Polynomial degree to fit
     Strategy _strategy = Strategy::HouseholderQR;  ///< Strategy used for fitting
@@ -209,7 +236,8 @@ class PolynomialCycleSlipDetector
         const auto& detector = _detectors.at(key);
 
         auto polynomial = detector.polyReg.calcPolynomial();
-        return polynomial.f(calcRelativeTime(insTime, detector));
+        if (!polynomial) { return {}; }
+        return polynomial->f(calcRelativeTime(insTime, detector));
     }
 
     /// @brief Calculates the polynomial from the collected data
@@ -280,6 +308,12 @@ bool PolynomialCycleSlipDetectorGui(const char* label, PolynomialCycleSlipDetect
         changed = true;
         polynomialCycleSlipDetector.setFitStrategy(strategy);
     }
+    if (auto resetAfterCycleSlip = polynomialCycleSlipDetector.resetAfterCycleSlip();
+        ImGui::Checkbox(fmt::format("Reset after cycle-slip##{}", label).c_str(), &resetAfterCycleSlip))
+    {
+        changed = true;
+        polynomialCycleSlipDetector.setResetAfterCycleSlip(resetAfterCycleSlip);
+    }
 
     if (!enabled) { ImGui::EndDisabled(); }
 
@@ -297,6 +331,7 @@ void to_json(json& j, const PolynomialCycleSlipDetector<Key>& data)
         { "windowSize", data.getWindowSize() },
         { "polynomialDegree", data.getPolynomialDegree() },
         { "strategy", data.getFitStrategy() },
+        { "resetAfterCycleSlip", data.resetAfterCycleSlip() },
     };
 }
 /// @brief Read info from a json object
@@ -324,6 +359,11 @@ void from_json(const json& j, PolynomialCycleSlipDetector<Key>& data)
     {
         auto strategy = j.at("strategy").get<size_t>();
         data.setFitStrategy(static_cast<typename PolynomialCycleSlipDetector<Key>::Strategy>(strategy));
+    }
+    if (j.contains("resetAfterCycleSlip"))
+    {
+        auto reset = j.at("resetAfterCycleSlip").get<bool>();
+        data.setResetAfterCycleSlip(reset);
     }
 }
 

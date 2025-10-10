@@ -13,7 +13,9 @@
 
 #pragma once
 
+#include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 #include "internal/Node/Node.hpp"
+#include "internal/gui/widgets/TimeEdit.hpp"
 
 #include "Navigation/INS/Units.hpp"
 #include "NodeData/GNSS/GnssObs.hpp"
@@ -338,6 +340,14 @@ class ErrorModel : public Node
     RandomNumberGenerator _ambiguityRng;
     /// Ambiguity map
     std::map<SatSigId, std::vector<std::pair<InsTime, int>>> _ambiguities;
+    /// Cycle-slips set by the user
+    std::map<std::pair<InsTime, SatSigId>, std::pair<int, bool>> _manualCycleSlips;
+
+    InsTime _manualCycleSlipTime;                                ///< GUI input for new manual cycle-slips
+    gui::widgets::TimeEditFormat _manualCycleSlipTimeEditFormat; ///< GUI input for new manual cycle-slips
+    SatSigId _manualCycleSlipSignal = SatSigId(Code::G1C, 1);    ///< GUI input for new manual cycle-slips
+    int _manualCycleSlipAmbiguity{};                             ///< GUI input for new manual cycle-slips
+    bool _manualCycleSlipSetLLI = true;                          ///< GUI input for new manual cycle-slips
 
     // ------------------------------------------------------------- Cycle-slip ----------------------------------------------------------------
 

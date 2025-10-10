@@ -38,7 +38,7 @@ TEST_CASE("[PolynomialRegressor] More data than degree", "[PolynomialRegressor]"
     PolynomialRegressor<double> polynomial(polynomialDegree, data.size());
     for (const auto& d : data) { polynomial.push_back(d); }
 
-    auto coeffs = polynomial.calcPolynomial().coeffs();
+    auto coeffs = polynomial.calcPolynomial().value().coeffs();
     LOG_DEBUG("coeffs = {}", fmt::join(coeffs, ", "));
     REQUIRE(coeffs.rows() == 3);
     REQUIRE_THAT(coeffs(0), Catch::Matchers::WithinAbs(-2, 1e-12));
@@ -48,7 +48,7 @@ TEST_CASE("[PolynomialRegressor] More data than degree", "[PolynomialRegressor]"
     polynomial.reset();
     for (size_t i = 0; i < data.size() - 1; i++) { polynomial.push_back(data.at(i)); }
 
-    coeffs = polynomial.calcPolynomial().coeffs();
+    coeffs = polynomial.calcPolynomial().value().coeffs();
     LOG_DEBUG("coeffs = {}", fmt::join(coeffs, ", "));
     REQUIRE(coeffs.rows() == 3);
     REQUIRE_THAT(coeffs(0), Catch::Matchers::WithinAbs(-2, 1e-11));
@@ -61,27 +61,27 @@ TEST_CASE("[PolynomialRegressor] Less data than degree", "[PolynomialRegressor]"
     auto logger = initializeTestLogger();
 
     std::vector<std::pair<double, double>> data = {
-        { 1, 5 },
-        { 2, 16 },
+        { 1, 2 },
+        { 2, 17 },
+        { 3, 40 },
     };
 
     size_t polynomialDegree = 2;
     PolynomialRegressor<double> polynomial(polynomialDegree, polynomialDegree + 1);
     for (const auto& d : data) { polynomial.push_back(d); }
 
-    auto coeffs = polynomial.calcPolynomial().coeffs();
+    auto poly = polynomial.calcPolynomial();
+    REQUIRE(poly.has_value());
+    auto coeffs = polynomial.calcPolynomial().value().coeffs();
     LOG_DEBUG("coeffs = {}", fmt::join(coeffs, ", "));
-    REQUIRE(coeffs.rows() == 2);
-    REQUIRE_THAT(coeffs(0), Catch::Matchers::WithinAbs(-6, 1e-12));
-    REQUIRE_THAT(coeffs(1), Catch::Matchers::WithinAbs(11, 1e-12));
+    REQUIRE(coeffs.rows() == 3);
+    REQUIRE_THAT(coeffs(0), Catch::Matchers::WithinAbs(-5, 1e-12));
+    REQUIRE_THAT(coeffs(1), Catch::Matchers::WithinAbs(3, 1e-12));
+    REQUIRE_THAT(coeffs(2), Catch::Matchers::WithinAbs(4, 1e-12));
 
     polynomial.reset();
     for (size_t i = 0; i < data.size() - 1; i++) { polynomial.push_back(data.at(i)); }
-
-    coeffs = polynomial.calcPolynomial().coeffs();
-    LOG_DEBUG("coeffs = {}", fmt::join(coeffs, ", "));
-    REQUIRE(coeffs.rows() == 1);
-    REQUIRE_THAT(coeffs(0), Catch::Matchers::WithinAbs(5, 1e-12));
+    REQUIRE_FALSE(polynomial.calcPolynomial().has_value());
 }
 
 TEST_CASE("[PolynomialRegressor] Data wrong order", "[PolynomialRegressor]")
@@ -98,7 +98,7 @@ TEST_CASE("[PolynomialRegressor] Data wrong order", "[PolynomialRegressor]")
     PolynomialRegressor<double> polynomial(polynomialDegree, data.size());
     for (const auto& d : data) { polynomial.push_back(d); }
 
-    auto coeffs = polynomial.calcPolynomial().coeffs();
+    auto coeffs = polynomial.calcPolynomial().value().coeffs();
     LOG_DEBUG("coeffs = {}", fmt::join(coeffs, ", "));
     REQUIRE(coeffs.rows() == 3);
     REQUIRE_THAT(coeffs(0), Catch::Matchers::WithinAbs(1.30, 1e-12));
@@ -127,14 +127,14 @@ TEST_CASE("[PolynomialRegressor] Moving window", "[PolynomialRegressor]")
     PolynomialRegressor<double> polynomial2(polynomialDegree, 4);
     for (size_t d = 4; d < data.size(); d++) { polynomial2.push_back(data.at(d)); }
 
-    auto coeffs = polynomial.calcPolynomial().coeffs();
+    auto coeffs = polynomial.calcPolynomial().value().coeffs();
     LOG_DEBUG("coeffs  = {}", fmt::join(coeffs, ", "));
     REQUIRE(coeffs.rows() == 3);
     REQUIRE_THAT(coeffs(0), Catch::Matchers::WithinAbs(-2, 1e-11));
     REQUIRE_THAT(coeffs(1), Catch::Matchers::WithinAbs(5, 1e-11));
     REQUIRE_THAT(coeffs(2), Catch::Matchers::WithinAbs(2, 1e-11));
 
-    auto coeffs2 = polynomial2.calcPolynomial().coeffs();
+    auto coeffs2 = polynomial2.calcPolynomial().value().coeffs();
     LOG_DEBUG("coeffs2 = {}", fmt::join(coeffs2, ", "));
     REQUIRE(coeffs == coeffs2);
 }
@@ -155,7 +155,7 @@ TEST_CASE("[PolynomialRegressor] Strategy comparison (4 points)", "[PolynomialRe
 
     polynomialReg.setStrategy(PolynomialRegressor<>::Strategy::IncrementalLeastSquares);
     for (const auto& d : data) { polynomialReg.push_back(d); }
-    Polynomial<double> polynomial = polynomialReg.calcPolynomial();
+    Polynomial<double> polynomial = polynomialReg.calcPolynomial().value();
 
     LOG_DEBUG("{} (IncrementalLeastSquares)", polynomial);
     REQUIRE(polynomial.coeffs().rows() == 3);
@@ -170,7 +170,7 @@ TEST_CASE("[PolynomialRegressor] Strategy comparison (4 points)", "[PolynomialRe
 
     polynomialReg.setStrategy(PolynomialRegressor<>::Strategy::LeastSquares);
     for (const auto& d : data) { polynomialReg.push_back(d); }
-    polynomial = polynomialReg.calcPolynomial();
+    polynomial = polynomialReg.calcPolynomial().value();
 
     LOG_DEBUG("{} (LeastSquares)", polynomial);
     REQUIRE(polynomial.coeffs().rows() == 3);
@@ -185,7 +185,7 @@ TEST_CASE("[PolynomialRegressor] Strategy comparison (4 points)", "[PolynomialRe
 
     polynomialReg.setStrategy(PolynomialRegressor<>::Strategy::HouseholderQR);
     for (const auto& d : data) { polynomialReg.push_back(d); }
-    polynomial = polynomialReg.calcPolynomial();
+    polynomial = polynomialReg.calcPolynomial().value();
 
     LOG_DEBUG("{} (HouseholderQR)", polynomial);
     REQUIRE(polynomial.coeffs().rows() == 3);
@@ -200,7 +200,7 @@ TEST_CASE("[PolynomialRegressor] Strategy comparison (4 points)", "[PolynomialRe
 
     polynomialReg.setStrategy(PolynomialRegressor<>::Strategy::BDCSVD);
     for (const auto& d : data) { polynomialReg.push_back(d); }
-    polynomial = polynomialReg.calcPolynomial();
+    polynomial = polynomialReg.calcPolynomial().value();
 
     LOG_DEBUG("{} (BDCSVD)", polynomial);
     REQUIRE(polynomial.coeffs().rows() == 3);
@@ -215,7 +215,7 @@ TEST_CASE("[PolynomialRegressor] Strategy comparison (4 points)", "[PolynomialRe
 
     polynomialReg.setStrategy(PolynomialRegressor<>::Strategy::COD);
     for (const auto& d : data) { polynomialReg.push_back(d); }
-    polynomial = polynomialReg.calcPolynomial();
+    polynomial = polynomialReg.calcPolynomial().value();
 
     LOG_DEBUG("{} (COD)", polynomial);
     REQUIRE(polynomial.coeffs().rows() == 3);
@@ -837,7 +837,7 @@ TEST_CASE("[PolynomialRegressor] Strategy comparison (large dataset)", "[Polynom
 
     constexpr size_t WINDOW_SIZE = 30;
 
-    size_t polynomialDegree = 2;
+    constexpr size_t polynomialDegree = 2;
     std::array<PolynomialRegressor<double>, 5> polynomialReg = { PolynomialRegressor<double>(polynomialDegree, WINDOW_SIZE),
                                                                  PolynomialRegressor<double>(polynomialDegree, WINDOW_SIZE),
                                                                  PolynomialRegressor<double>(polynomialDegree, WINDOW_SIZE),
@@ -852,11 +852,17 @@ TEST_CASE("[PolynomialRegressor] Strategy comparison (large dataset)", "[Polynom
     for (size_t i = 0; i < data.size(); ++i) // NOLINT(modernize-loop-convert)
     {
         const auto& d = data.at(i);
-        std::vector<Polynomial<double>> polynomials;
         for (auto& regressor : polynomialReg)
         {
             regressor.push_back(d.first, d.second);
-            polynomials.push_back(regressor.calcPolynomial());
+        }
+        if (i < polynomialDegree) { continue; }
+
+        std::vector<Polynomial<double>> polynomials;
+        polynomials.reserve(polynomialReg.size());
+        for (auto& regressor : polynomialReg)
+        {
+            polynomials.push_back(regressor.calcPolynomial().value());
         }
 
         LOG_DEBUG("Point {}", i);
@@ -918,7 +924,7 @@ TEST_CASE("[PolynomialRegressor] Strategy Benchmark (insert all at once)", "[Pol
 
                 const auto start{ std::chrono::steady_clock::now() };
                 for (const auto& d : data) { polynomialReg.push_back(d); }
-                auto coeffs = polynomialReg.calcPolynomial().coeffs();
+                auto coeffs = polynomialReg.calcPolynomial().value().coeffs();
                 const auto end{ std::chrono::steady_clock::now() };
                 avgTimes.at(a++) += std::chrono::duration<double>(end - start).count();
 
@@ -930,7 +936,7 @@ TEST_CASE("[PolynomialRegressor] Strategy Benchmark (insert all at once)", "[Pol
 
                 const auto start{ std::chrono::steady_clock::now() };
                 for (const auto& d : data) { polynomialReg.push_back(d); }
-                auto coeffs = polynomialReg.calcPolynomial().coeffs();
+                auto coeffs = polynomialReg.calcPolynomial().value().coeffs();
                 const auto end{ std::chrono::steady_clock::now() };
                 avgTimes.at(a++) += std::chrono::duration<double>(end - start).count();
 
@@ -942,7 +948,7 @@ TEST_CASE("[PolynomialRegressor] Strategy Benchmark (insert all at once)", "[Pol
 
                 const auto start{ std::chrono::steady_clock::now() };
                 for (const auto& d : data) { polynomialReg.push_back(d); }
-                auto coeffs = polynomialReg.calcPolynomial().coeffs();
+                auto coeffs = polynomialReg.calcPolynomial().value().coeffs();
                 const auto end{ std::chrono::steady_clock::now() };
                 avgTimes.at(a++) += std::chrono::duration<double>(end - start).count();
 
@@ -954,7 +960,7 @@ TEST_CASE("[PolynomialRegressor] Strategy Benchmark (insert all at once)", "[Pol
 
                 const auto start{ std::chrono::steady_clock::now() };
                 for (const auto& d : data) { polynomialReg.push_back(d); }
-                auto coeffs = polynomialReg.calcPolynomial().coeffs();
+                auto coeffs = polynomialReg.calcPolynomial().value().coeffs();
                 const auto end{ std::chrono::steady_clock::now() };
                 avgTimes.at(a++) += std::chrono::duration<double>(end - start).count();
 
@@ -966,7 +972,7 @@ TEST_CASE("[PolynomialRegressor] Strategy Benchmark (insert all at once)", "[Pol
 
                 const auto start{ std::chrono::steady_clock::now() };
                 for (const auto& d : data) { polynomialReg.push_back(d); }
-                auto coeffs = polynomialReg.calcPolynomial().coeffs();
+                auto coeffs = polynomialReg.calcPolynomial().value().coeffs();
                 const auto end{ std::chrono::steady_clock::now() };
                 avgTimes.at(a++) += std::chrono::duration<double>(end - start).count();
 
@@ -1086,11 +1092,20 @@ TEST_CASE("[PolynomialRegressor] Strategy Benchmark (insert sequentially)", "[Po
                 {
                     const auto start{ std::chrono::steady_clock::now() };
                     polynomialReg.at(a).push_back(x, y);
-                    auto coeffs = polynomialReg.at(a).calcPolynomial().coeffs();
-                    const auto end{ std::chrono::steady_clock::now() };
-                    avgTimes.at(a) += std::chrono::duration<double>(end - start).count();
+                    if (p >= polynomialDegree)
+                    {
+                        auto poly = polynomialReg.at(a).calcPolynomial();
+                        REQUIRE(poly.has_value());
+                        auto coeffs = poly->coeffs();
+                        const auto end{ std::chrono::steady_clock::now() };
+                        avgTimes.at(a) += std::chrono::duration<double>(end - start).count();
 
-                    REQUIRE(coeffs.rows() <= static_cast<int>(polynomialDegree) + 1);
+                        REQUIRE(coeffs.rows() <= static_cast<int>(polynomialDegree) + 1);
+                    }
+                    else
+                    {
+                        REQUIRE(!polynomialReg.at(a).calcPolynomial().has_value());
+                    }
                 }
 
                 {

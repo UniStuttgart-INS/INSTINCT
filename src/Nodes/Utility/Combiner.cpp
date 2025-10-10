@@ -661,11 +661,13 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
                         }
                         else
                         {
-                            auto poly = term.polyReg.calcPolynomial();
-                            LOG_DATA("{}:           Updating send request: {} += {:.2f} * {:.3g} (by interpolating to time [{:.3f}s])", nameId(),
-                                     sendRequest.result, term.factor, poly.f(math::round(calcTimeIntoRun(sendRequestTime), 8)),
-                                     math::round(calcTimeIntoRun(sendRequestTime), 8));
-                            sendRequest.result += term.factor * poly.f(math::round(calcTimeIntoRun(sendRequestTime), 8));
+                            if (auto poly = term.polyReg.calcPolynomial())
+                            {
+                                LOG_DATA("{}:           Updating send request: {} += {:.2f} * {:.3g} (by interpolating to time [{:.3f}s])", nameId(),
+                                         sendRequest.result, term.factor, poly->f(math::round(calcTimeIntoRun(sendRequestTime), 8)),
+                                         math::round(calcTimeIntoRun(sendRequestTime), 8));
+                                sendRequest.result += term.factor * poly->f(math::round(calcTimeIntoRun(sendRequestTime), 8));
+                            }
                         }
                         sendRequest.termIndices.insert(t);
 

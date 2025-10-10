@@ -9,6 +9,7 @@
 #include "ErrorModel.hpp"
 
 #include <algorithm>
+#include <cstdint>
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <limits>
@@ -16,6 +17,7 @@
 #include <type_traits>
 
 #include "NodeRegistry.hpp"
+#include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 #include "Navigation/INS/Units.hpp"
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -321,6 +323,133 @@ void NAV::ErrorModel::guiConfig()
             {
                 flow::ApplyChanges();
             }
+            ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+            if (ImGui::TreeNode(fmt::format("Manual Cycle-slips Tree##{}", size_t(id)).c_str()))
+            {
+                ImGui::BeginGroup();
+                {
+                    ImGui::TextUnformatted("New:");
+
+                    float groupWidth = 62.0F * 2 + ImGui::GetStyle().ItemSpacing.x;
+                    ImGui::BeginHorizontal(fmt::format("Horizontal SatSigId {}", size_t(id)).c_str());
+                    {
+                        ImGui::SetNextItemWidth(62.0F);
+                        if (ShowCodeSelector(fmt::format("##Manual cycle-slip code {}", size_t(id)).c_str(), _manualCycleSlipSignal.code, Freq_All, true))
+                        {
+                            flow::ApplyChanges();
+                        }
+                        ImGui::SetNextItemWidth(62.0F);
+                        SatId satId = _manualCycleSlipSignal.toSatId();
+                        if (ShowSatelliteSelector(fmt::format("##Manual cycle-slip sat{}", size_t(id)).c_str(), satId, satId.satSys, true))
+                        {
+                            _manualCycleSlipSignal.satNum = satId.satNum;
+                            flow::ApplyChanges();
+                        }
+                        ImGui::EndHorizontal();
+                    }
+
+                    ImGui::SetNextItemWidth(groupWidth);
+                    if (ImGui::InputInt(fmt::format("##Ambiguity value {}", size_t(id)).c_str(), &_manualCycleSlipAmbiguity)) { flow::ApplyChanges(); }
+                    if (ImGui::IsItemHovered()) { ImGui::SetTooltip("Ambiguity value"); }
+
+                    ImGui::BeginHorizontal(fmt::format("Horizontal LLI/Button {}", size_t(id)).c_str(), ImVec2(groupWidth, 0.0F));
+                    {
+                        if (ImGui::Checkbox(fmt::format("LLI##Ambiguity LLI {}", size_t(id)).c_str(), &_manualCycleSlipSetLLI)) { flow::ApplyChanges(); }
+                        ImGui::Spring();
+                        if (ImGui::Button(fmt::format("Add##manual cycle-slip {}", size_t(id)).c_str()))
+                        {
+                            _manualCycleSlips[{ _manualCycleSlipTime, _manualCycleSlipSignal }] = { _manualCycleSlipAmbiguity, _manualCycleSlipSetLLI };
+                            flow::ApplyChanges();
+                        }
+                        ImGui::EndHorizontal();
+                    }
+                }
+                ImGui::EndGroup();
+
+                ImGui::SameLine();
+                if (gui::widgets::TimeEdit(fmt::format("Manual Cycle-slips Time##{}", size_t(id)).c_str(),
+                                           _manualCycleSlipTime, _manualCycleSlipTimeEditFormat, 130.0F, 2))
+                {
+                    flow::ApplyChanges();
+                }
+
+                if (!_manualCycleSlips.empty()
+                    && ImGui::BeginTable(fmt::format("Manual cycle-slips Table##{}", size_t(id)).c_str(), 5,
+                                         ImGuiTableFlags_Borders | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_ScrollY,
+                                         ImVec2(0.0F, std::min(25.0F + static_cast<float>(_manualCycleSlips.size()) * 28.0F, 300.0F)
+                                                          * gui::NodeEditorApplication::monoFontRatio())))
+                {
+                    ImGui::TableSetupColumn("Time");
+                    ImGui::TableSetupColumn("Signal");
+                    ImGui::TableSetupColumn("Value");
+                    ImGui::TableSetupColumn("LLI");
+                    ImGui::TableSetupColumn("Delete");
+
+                    ImGui::TableSetupScrollFreeze(1, 1);
+                    ImGui::TableHeadersRow();
+
+                    std::optional<std::pair<InsTime, SatSigId>> _toRemove;
+                    for (auto& cycleSlip : _manualCycleSlips)
+                    {
+                        const auto& [insTime, satSigId] = cycleSlip.first;
+                        auto& [ambValue, setLLI] = cycleSlip.second;
+                        ImGui::TableNextRow();
+
+                        ImGui::TableNextColumn();
+                        ImGui::TextUnformatted(fmt::format("{}", insTime.toYMDHMS(GPST)).c_str());
+
+                        ImGui::TableNextColumn();
+                        {
+                            ImGui::SetNextItemWidth(62.0F);
+                            auto newSatSigId = satSigId;
+                            if (ShowCodeSelector(fmt::format("##Manual cycle-slip code {} {} {}", size_t(id), insTime, satSigId).c_str(), newSatSigId.code, Freq_All, true))
+                            {
+                                flow::ApplyChanges();
+                            }
+                            ImGui::SameLine();
+                            ImGui::SetNextItemWidth(62.0F);
+                            SatId satId = newSatSigId.toSatId();
+                            if (ShowSatelliteSelector(fmt::format("##Manual cycle-slip sat{} {} {}", size_t(id), insTime, satSigId).c_str(), satId, satId.satSys, true))
+                            {
+                                newSatSigId.satNum = satId.satNum;
+                                flow::ApplyChanges();
+                            }
+                            if (newSatSigId != satSigId)
+                            {
+                                _toRemove = cycleSlip.first;
+                                _manualCycleSlips[{ insTime, newSatSigId }] = { ambValue, setLLI };
+                            }
+                        }
+
+                        ImGui::TableNextColumn();
+                        ImGui::SetNextItemWidth(120.0F);
+                        if (ImGui::InputInt(fmt::format("##Ambiguity value {} {} {}", size_t(id), insTime, satSigId).c_str(), &ambValue))
+                        {
+                            flow::ApplyChanges();
+                        }
+
+                        ImGui::TableNextColumn();
+                        if (ImGui::Checkbox(fmt::format("##Ambiguity LLI {} {} {}", size_t(id), insTime, satSigId).c_str(), &setLLI))
+                        {
+                            flow::ApplyChanges();
+                        }
+
+                        ImGui::TableNextColumn();
+                        if (ImGui::Button(fmt::format("X##Manual cycle remove {} {} {}", size_t(id), insTime, satSigId).c_str()))
+                        {
+                            _toRemove = cycleSlip.first;
+                        }
+                    }
+                    if (_toRemove)
+                    {
+                        _manualCycleSlips.erase(*_toRemove);
+                        flow::ApplyChanges();
+                    }
+                    ImGui::EndTable();
+                }
+
+                ImGui::TreePop();
+            }
         }
         ImGui::Unindent();
 
@@ -466,6 +595,12 @@ json NAV::ErrorModel::save() const
     j["dopplerRng"] = _dopplerRng;
     j["ambiguityLimits"] = _gui_ambiguityLimits;
     j["ambiguityRng"] = _ambiguityRng;
+    j["manualAmbiguities"] = _manualCycleSlips;
+    j["manualCycleSlipTime"] = _manualCycleSlipTime;
+    j["manualCycleSlipTimeEditFormat"] = _manualCycleSlipTimeEditFormat;
+    j["manualCycleSlipSignal"] = _manualCycleSlipSignal;
+    j["manualCycleSlipAmbiguity"] = _manualCycleSlipAmbiguity;
+    j["manualCycleSlipSetLLI"] = _manualCycleSlipSetLLI;
     j["cycleSlipFrequencyUnit"] = _gui_cycleSlipFrequencyUnit;
     j["cycleSlipFrequency"] = _gui_cycleSlipFrequency;
     j["cycleSlipRange"] = _gui_cycleSlipRange;
@@ -534,6 +669,12 @@ void NAV::ErrorModel::restore(json const& j)
     if (j.contains("dopplerRng")) { j.at("dopplerRng").get_to(_dopplerRng); }
     if (j.contains("ambiguityLimits")) { j.at("ambiguityLimits").get_to(_gui_ambiguityLimits); }
     if (j.contains("ambiguityRng")) { j.at("ambiguityRng").get_to(_ambiguityRng); }
+    if (j.contains("manualAmbiguities")) { j.at("manualAmbiguities").get_to(_manualCycleSlips); }
+    if (j.contains("manualCycleSlipTime")) { j.at("manualCycleSlipTime").get_to(_manualCycleSlipTime); }
+    if (j.contains("manualCycleSlipTimeEditFormat")) { j.at("manualCycleSlipTimeEditFormat").get_to(_manualCycleSlipTimeEditFormat); }
+    if (j.contains("manualCycleSlipSignal")) { j.at("manualCycleSlipSignal").get_to(_manualCycleSlipSignal); }
+    if (j.contains("manualCycleSlipAmbiguity")) { j.at("manualCycleSlipAmbiguity").get_to(_manualCycleSlipAmbiguity); }
+    if (j.contains("manualCycleSlipSetLLI")) { j.at("manualCycleSlipSetLLI").get_to(_manualCycleSlipSetLLI); }
     if (j.contains("cycleSlipFrequencyUnit")) { j.at("cycleSlipFrequencyUnit").get_to(_gui_cycleSlipFrequencyUnit); }
     if (j.contains("cycleSlipFrequency")) { j.at("cycleSlipFrequency").get_to(_gui_cycleSlipFrequency); }
     if (j.contains("cycleSlipRange")) { j.at("cycleSlipRange").get_to(_gui_cycleSlipRange); }
@@ -1226,7 +1367,26 @@ std::shared_ptr<NAV::GnssObs> NAV::ErrorModel::receiveGnssObs(const std::shared_
 
             // ---------------------------------------- Cycle-slip -------------------------------------------
 
-            if (obs.satSigId.freq() & _filterFreq                                                // GUI selected frequencies
+            bool manualCycleSlip = false;
+            for (const auto& cycleSlip : _manualCycleSlips)
+            {
+                const auto& [insTime, satSigId] = cycleSlip.first;
+                if (std::abs((insTime - gnssObs->insTime).count()) < 1e-4 && obs.satSigId == satSigId)
+                {
+                    manualCycleSlip = true;
+
+                    const auto& [ambValue, setLLI] = cycleSlip.second;
+                    _ambiguities[obs.satSigId].emplace_back(gnssObs->insTime, ambValue);
+                    obs.carrierPhase.value().LLI = static_cast<uint8_t>(setLLI);
+                    _cycleSlips.push_back(CycleSlipInfo{ .time = gnssObs->insTime, .satSigId = obs.satSigId, .LLI = obs.carrierPhase.value().LLI != 0 });
+
+                    LOG_DEBUG("{}: [{}] Applied manual cycle-slip for satellite [{}] with LLI {}", nameId(), gnssObs->insTime.toYMDHMS(GPST),
+                              obs.satSigId, obs.carrierPhase.value().LLI);
+                }
+            }
+
+            if (!manualCycleSlip                                                                 // If already manual cycle-slip applied do not do another
+                && obs.satSigId.freq() & _filterFreq                                             // GUI selected frequencies
                 && obs.satSigId.code & _filterCode                                               // GUI selected codes
                 && _gui_cycleSlipFrequency != 0.0                                                // 0 Frequency means disabled
                 && !_lastObservationTime.empty()                                                 // Do not apply a cycle slip on the first message

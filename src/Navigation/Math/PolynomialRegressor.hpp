@@ -14,6 +14,7 @@
 #pragma once
 
 #include <cstddef>
+#include <optional>
 #include <utility>
 
 #include <nlohmann/json.hpp>
@@ -140,8 +141,10 @@ class PolynomialRegressor
     }
 
     /// @brief Calculates the polynomial
-    [[nodiscard]] Polynomial<Scalar> calcPolynomial() const
+    [[nodiscard]] std::optional<Polynomial<Scalar>> calcPolynomial() const
     {
+        if (_data.size() <= _polyDegree) { return std::nullopt; }
+
         auto prepareDataVectors = [&]() {
             auto n = static_cast<int>(_data.size());
             Eigen::VectorX<Scalar> x = Eigen::VectorX<Scalar>(n);

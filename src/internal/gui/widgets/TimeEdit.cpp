@@ -49,7 +49,7 @@ bool ComboTimeEditFormat(const char* label, TimeEditFormat::Format& format)
 
 } // namespace NAV
 
-bool NAV::gui::widgets::TimeEdit(const char* str_id, InsTime& insTime, TimeEditFormat& timeEditFormat, float itemWidth)
+bool NAV::gui::widgets::TimeEdit(const char* str_id, InsTime& insTime, TimeEditFormat& timeEditFormat, float itemWidth, int columns)
 {
     bool changes = false;
     bool edited = false;
@@ -79,6 +79,7 @@ bool NAV::gui::widgets::TimeEdit(const char* str_id, InsTime& insTime, TimeEditF
         int min = ymdhms.min;
         auto sec = static_cast<double>(ymdhms.sec);
 
+        ImGui::BeginGroup();
         ImGui::SetNextItemWidth(itemWidth);
         if (ImGui::InputInt(fmt::format("Year##{}", str_id).c_str(), &year, 0, 0)) { edited = true; }
         if (ImGui::IsItemDeactivatedAfterEdit()) { changes = true; }
@@ -90,7 +91,10 @@ bool NAV::gui::widgets::TimeEdit(const char* str_id, InsTime& insTime, TimeEditF
         ImGui::SetNextItemWidth(itemWidth);
         if (ImGui::InputIntL(fmt::format("Day##{}", str_id).c_str(), &day, 1, InsTimeUtil::daysInMonth(month, year), 0, 0)) { edited = true; }
         if (ImGui::IsItemDeactivatedAfterEdit()) { changes = true; }
+        ImGui::EndGroup();
 
+        if (columns == 2) { ImGui::SameLine(); }
+        ImGui::BeginGroup();
         ImGui::SetNextItemWidth(itemWidth);
         if (ImGui::InputIntL(fmt::format("Hour##{}", str_id).c_str(), &hour, 0, InsTimeUtil::HOURS_PER_DAY - 1, 0, 0)) { edited = true; }
         if (ImGui::IsItemDeactivatedAfterEdit()) { changes = true; }
@@ -102,6 +106,7 @@ bool NAV::gui::widgets::TimeEdit(const char* str_id, InsTime& insTime, TimeEditF
         ImGui::SetNextItemWidth(itemWidth);
         if (ImGui::InputDoubleL(fmt::format("Sec##{}", str_id).c_str(), &sec, 0, InsTimeUtil::SECONDS_PER_MINUTE - 1e-5, 0, 0, "%.6f")) { edited = true; }
         if (ImGui::IsItemDeactivatedAfterEdit()) { changes = true; }
+        ImGui::EndGroup();
 
         if (changes || edited)
         {
