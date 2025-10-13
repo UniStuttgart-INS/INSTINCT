@@ -319,24 +319,27 @@ void Combiner::guiConfig()
                                     {
                                         term.dataSelection = i;
                                     }
-                                    for (size_t t2 = 0; t2 < comb.terms.size(); t2++) // Set other terms to same data if possible
+                                    if (t == 0)
                                     {
-                                        if (t2 == t) { continue; }
-                                        auto& term2 = comb.terms.at(t2);
-                                        auto dataDescriptors2 = getDataDescriptors(term2.pinIndex);
-                                        auto iter = std::ranges::find(dataDescriptors2,
-                                                                      std::holds_alternative<size_t>(term.dataSelection)
-                                                                          ? dataDescriptors.at(std::get<size_t>(term.dataSelection))
-                                                                          : std::get<std::string>(term.dataSelection));
-                                        if (iter != dataDescriptors2.end())
+                                        for (size_t t2 = 0; t2 < comb.terms.size(); t2++) // Set other terms to same data if possible
                                         {
-                                            if (std::holds_alternative<size_t>(term.dataSelection))
+                                            if (t2 == t) { continue; }
+                                            auto& term2 = comb.terms.at(t2);
+                                            auto dataDescriptors2 = getDataDescriptors(term2.pinIndex);
+                                            auto iter = std::ranges::find(dataDescriptors2,
+                                                                          std::holds_alternative<size_t>(term.dataSelection)
+                                                                              ? dataDescriptors.at(std::get<size_t>(term.dataSelection))
+                                                                              : std::get<std::string>(term.dataSelection));
+                                            if (iter != dataDescriptors2.end())
                                             {
-                                                term2.dataSelection = static_cast<size_t>(std::distance(dataDescriptors2.begin(), iter));
-                                            }
-                                            else
-                                            {
-                                                term2.dataSelection = term.dataSelection;
+                                                if (std::holds_alternative<size_t>(term.dataSelection))
+                                                {
+                                                    term2.dataSelection = static_cast<size_t>(std::distance(dataDescriptors2.begin(), iter));
+                                                }
+                                                else
+                                                {
+                                                    term2.dataSelection = term.dataSelection;
+                                                }
                                             }
                                         }
                                     }

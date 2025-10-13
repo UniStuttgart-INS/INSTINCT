@@ -22,6 +22,7 @@
 
 #include "NodeData/NodeData.hpp"
 
+#include "Navigation/Constants.hpp"
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 #include "Navigation/GNSS/Core/Code.hpp"
 #include "util/Assert.h"
@@ -258,6 +259,7 @@ class GnssObs : public NodeData
             descriptors.push_back(fmt::format("{} Pseudorange SSI", obsData.satSigId));
 
             descriptors.push_back(fmt::format("{} Carrier-phase [cycles]", obsData.satSigId));
+            descriptors.push_back(fmt::format("{} Carrier-phase [m]", obsData.satSigId));
             descriptors.push_back(fmt::format("{} Carrier-phase SSI", obsData.satSigId));
             descriptors.push_back(fmt::format("{} Carrier-phase LLI", obsData.satSigId));
 
@@ -285,6 +287,11 @@ class GnssObs : public NodeData
             if (descriptor == fmt::format("{} Carrier-phase [cycles]", obsData.satSigId) && obsData.carrierPhase)
             {
                 return obsData.carrierPhase->value;
+            }
+            if (descriptor == fmt::format("{} Carrier-phase [m]", obsData.satSigId) && obsData.carrierPhase)
+            {
+                auto wavelength = InsConst::C / obsData.satSigId.freq().getFrequency(0);
+                return obsData.carrierPhase->value * wavelength;
             }
             if (descriptor == fmt::format("{} Carrier-phase SSI", obsData.satSigId) && obsData.carrierPhase)
             {
@@ -317,6 +324,11 @@ class GnssObs : public NodeData
             if (obsData.pseudorange) { dynData.emplace_back(fmt::format("{} Pseudorange SSI", obsData.satSigId), obsData.pseudorange->SSI); }
 
             if (obsData.carrierPhase) { dynData.emplace_back(fmt::format("{} Carrier-phase [cycles]", obsData.satSigId), obsData.carrierPhase->value); }
+            if (obsData.carrierPhase)
+            {
+                auto wavelength = InsConst::C / obsData.satSigId.freq().getFrequency(0);
+                dynData.emplace_back(fmt::format("{} Carrier-phase [m]", obsData.satSigId), obsData.carrierPhase->value * wavelength);
+            }
             if (obsData.carrierPhase) { dynData.emplace_back(fmt::format("{} Carrier-phase SSI", obsData.satSigId), obsData.carrierPhase->SSI); }
             if (obsData.carrierPhase) { dynData.emplace_back(fmt::format("{} Carrier-phase LLI", obsData.satSigId), obsData.carrierPhase->LLI); }
 
