@@ -292,7 +292,7 @@ bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
         if (j.contains("lightMode"))
         {
             j.at("lightMode").get_to(gui::windows::nodeEditorLightMode);
-            gui::windows::ApplyDarkLightMode(gui::NodeEditorApplication::m_colors);
+            gui::windows::ApplyDarkLightMode(gui::NodeEditorApplication::m_colors, ImGui::GetStyle().Colors[ImGuiCol_WindowBg].w != 1.0F);
         }
         if (j.contains("gridLinesEnabled")) { j.at("gridLinesEnabled").get_to(ed::GetStyle().Colors[ed::StyleColor_Grid].w); }
         if (j.contains("transparentWindows")) { j.at("transparentWindows").get_to(ImGui::GetStyle().Colors[ImGuiCol_WindowBg].w); }

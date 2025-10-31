@@ -34,6 +34,9 @@ extern std::string plotScreenshotImPlotStyleFile;
 /// If true, copy screenshots to clipboard
 extern bool copyScreenshotsToClipboard;
 
+/// If true, print the screenshot location to the log
+extern bool printScreenshotSaveLocation;
+
 } // namespace NAV::gui::windows
 
 #endif

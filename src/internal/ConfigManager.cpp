@@ -186,6 +186,7 @@ void NAV::ConfigManager::SaveGlobalSettings()
 #ifdef IMGUI_IMPL_OPENGL_LOADER_GL3W
     j["plotScreenshotImPlotStyleFile"] = gui::windows::plotScreenshotImPlotStyleFile;
     j["copyScreenshotsToClipboard"] = gui::windows::copyScreenshotsToClipboard;
+    j["printScreenshotSaveLocation"] = gui::windows::printScreenshotSaveLocation;
 #endif
     j["colormaps"] = ColormapsGlobal;
 
@@ -232,6 +233,10 @@ void NAV::ConfigManager::LoadGlobalSettings()
     if (j.contains("copyScreenshotsToClipboard"))
     {
         j.at("copyScreenshotsToClipboard").get_to(gui::windows::copyScreenshotsToClipboard);
+    }
+    if (j.contains("printScreenshotSaveLocation"))
+    {
+        j.at("printScreenshotSaveLocation").get_to(gui::windows::printScreenshotSaveLocation);
     }
 #endif
     if (j.contains("ImPlotColormaps"))

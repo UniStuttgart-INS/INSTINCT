@@ -34,13 +34,13 @@ namespace NAV::gui::windows
 
 std::string plotScreenshotImPlotStyleFile = "implot-light.json";
 bool copyScreenshotsToClipboard = true;
+bool printScreenshotSaveLocation = true;
 
 namespace
 {
 ImRect _screenshotNavigateRect;
 ImRect _screenshotCaptureRect;
 bool _showScreenshotCaptureRect = false;
-bool _printScreenshotSaveLocation = true;
 size_t _screenshotFrameCnt = 0;
 
 } // namespace
@@ -52,7 +52,7 @@ void NAV::gui::windows::ShowScreenshotter(bool* show /* = nullptr*/)
     {
         _screenshotFrameCnt++;
 
-        if (_screenshotFrameCnt == 4)
+        if (_screenshotFrameCnt == 8)
         {
             ImGuiIO& io = ImGui::GetIO();
             ImGuiScreenshotImageBuf Output(static_cast<int>(_screenshotCaptureRect.Min.x),
@@ -67,7 +67,7 @@ void NAV::gui::windows::ShowScreenshotter(bool* show /* = nullptr*/)
                             / fmt::format("Screenshot_{:04d}-{:02d}-{:02d}_{:02d}-{:02d}-{:02d}.png",
                                           now->tm_year + 1900, now->tm_mon + 1, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec);
             Output.SaveFile(savePath.c_str());
-            if (_printScreenshotSaveLocation)
+            if (printScreenshotSaveLocation)
             {
                 LOG_INFO("Screenshot saved as: {}", savePath);
             }
@@ -76,6 +76,9 @@ void NAV::gui::windows::ShowScreenshotter(bool* show /* = nullptr*/)
             {
                 CopyFileToClipboard(savePath.c_str());
             }
+        }
+        else if (_screenshotFrameCnt == 10)
+        {
             _screenshotFrameCnt = 0;
         }
 
@@ -111,9 +114,10 @@ void NAV::gui::windows::ShowScreenshotter(bool* show /* = nullptr*/)
 
     ImGui::Checkbox("Copy screenshots to clipboard", &copyScreenshotsToClipboard);
 
+    bool transparentWindows = ImGui::GetStyle().Colors[ImGuiCol_WindowBg].w != 1.0F;
     if (ImGui::Checkbox("Light mode", &nodeEditorLightMode))
     {
-        ApplyDarkLightMode(NodeEditorApplication::m_colors);
+        ApplyDarkLightMode(NodeEditorApplication::m_colors, transparentWindows);
         flow::ApplyChanges();
     }
     ImGui::SameLine();
@@ -124,10 +128,10 @@ void NAV::gui::windows::ShowScreenshotter(bool* show /* = nullptr*/)
         flow::ApplyChanges();
     }
     ImGui::SameLine();
-    bool transparentWindows = ImGui::GetStyle().Colors[ImGuiCol_WindowBg].w != 1.0F;
     if (ImGui::Checkbox("Transparent windows", &transparentWindows))
     {
         ImGui::GetStyle().Colors[ImGuiCol_WindowBg].w = transparentWindows ? ImGuiStyle().Colors[ImGuiCol_WindowBg].w : 1.0F;
+        ImGui::GetStyle().Colors[ImGuiCol_PopupBg].w = transparentWindows ? ImGuiStyle().Colors[ImGuiCol_PopupBg].w : 1.0F;
         flow::ApplyChanges();
     }
 
@@ -146,7 +150,7 @@ void NAV::gui::windows::ShowScreenshotter(bool* show /* = nullptr*/)
         flow::ApplyChanges();
     }
     ImGui::SameLine();
-    ImGui::Checkbox("Print save location", &_printScreenshotSaveLocation);
+    ImGui::Checkbox("Print save location", &printScreenshotSaveLocation);
 
     ImGui::Separator();
 

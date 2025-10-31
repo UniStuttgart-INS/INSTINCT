@@ -26,7 +26,8 @@ void ShowNodeEditorStyleEditor(bool* show, std::vector<ImVec4>& colors, const st
 
 /// Applies the currently selected mode
 /// @param[in, out] colors Colors of the GUI
-void ApplyDarkLightMode(std::vector<ImVec4>& colors);
+/// @param[in] transparentWindows Whether windows should be transparent
+void ApplyDarkLightMode(std::vector<ImVec4>& colors, bool transparentWindows);
 
 /// If true, light mode is selected
 extern bool nodeEditorLightMode;

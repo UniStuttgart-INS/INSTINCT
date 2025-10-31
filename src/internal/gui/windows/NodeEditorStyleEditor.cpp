@@ -71,7 +71,7 @@ void NAV::gui::windows::ShowNodeEditorStyleEditor(bool* show, std::vector<ImVec4
     ImGui::BeginHorizontal("Color Mode", ImVec2(paneWidth, 0), 1.0F);
     ImGui::TextUnformatted("Filter Colors");
     ImGui::Spring();
-    if (ImGui::Checkbox("Light mode", &nodeEditorLightMode)) { ApplyDarkLightMode(colors); }
+    if (ImGui::Checkbox("Light mode", &nodeEditorLightMode)) { ApplyDarkLightMode(colors, ImGui::GetStyle().Colors[ImGuiCol_WindowBg].w != 1.0F); }
     ImGui::Spring(0);
     ImGui::RadioButton("RGB", &edit_mode, ImGuiColorEditFlags_DisplayRGB);
     ImGui::Spring(0);
@@ -111,7 +111,7 @@ void NAV::gui::windows::ShowNodeEditorStyleEditor(bool* show, std::vector<ImVec4
     ImGui::End();
 }
 
-void NAV::gui::windows::ApplyDarkLightMode(std::vector<ImVec4>& colors)
+void NAV::gui::windows::ApplyDarkLightMode(std::vector<ImVec4>& colors, bool transparentWindows)
 {
     auto& editorStyle = ed::GetStyle();
     if (nodeEditorLightMode)
@@ -142,4 +142,7 @@ void NAV::gui::windows::ApplyDarkLightMode(std::vector<ImVec4>& colors)
 
         ImGui::StyleColorsDark();
     }
+
+    ImGui::GetStyle().Colors[ImGuiCol_WindowBg].w = transparentWindows ? ImGuiStyle().Colors[ImGuiCol_WindowBg].w : 1.0F;
+    ImGui::GetStyle().Colors[ImGuiCol_PopupBg].w = transparentWindows ? ImGuiStyle().Colors[ImGuiCol_PopupBg].w : 1.0F;
 }
