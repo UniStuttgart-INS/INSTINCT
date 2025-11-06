@@ -8,8 +8,6 @@
 
 #include "Merger.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "NodeRegistry.hpp"
@@ -24,9 +22,9 @@ NAV::Merger::Merger()
     _hasConfig = false;
     kind = Kind::Simple;
 
-    nm::CreateInputPin(this, "", Pin::Type::Flow, { NodeData::type() }, &Merger::receiveData);
-    nm::CreateInputPin(this, "", Pin::Type::Flow, { NodeData::type() }, &Merger::receiveData);
-    nm::CreateOutputPin(this, "", Pin::Type::Flow, { NodeData::type() });
+    CreateInputPin("", Pin::Type::Flow, { NodeData::type() }, &Merger::receiveData);
+    CreateInputPin("", Pin::Type::Flow, { NodeData::type() }, &Merger::receiveData);
+    CreateOutputPin("", Pin::Type::Flow, { NodeData::type() });
 }
 
 NAV::Merger::~Merger()

@@ -13,8 +13,6 @@
 #include "util/Logger.hpp"
 #include "util/Time/TimeBase.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "util/Vendor/Ublox/UbloxUtilities.hpp"
@@ -35,9 +33,9 @@ NAV::UartPacketConverter::UartPacketConverter()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 340, 93 };
 
-    nm::CreateOutputPin(this, "UbloxObs", Pin::Type::Flow, { NAV::UbloxObs::type() });
+    CreateOutputPin("UbloxObs", Pin::Type::Flow, { NAV::UbloxObs::type() });
 
-    nm::CreateInputPin(this, "UartPacket", Pin::Type::Flow, { NAV::UartPacket::type() }, &UartPacketConverter::receiveObs);
+    CreateInputPin("UartPacket", Pin::Type::Flow, { NAV::UartPacket::type() }, &UartPacketConverter::receiveObs);
 }
 
 NAV::UartPacketConverter::~UartPacketConverter()
@@ -115,18 +113,18 @@ void NAV::UartPacketConverter::guiConfig()
             flow::ApplyChanges();
             if (_syncInPin && (inputPins.size() <= 1))
             {
-                nm::CreateInputPin(this, "SyncIn", Pin::Type::Object, { "TimeSync" });
+                CreateInputPin("SyncIn", Pin::Type::Object, { "TimeSync" });
             }
             else if (!_syncInPin)
             {
-                nm::DeleteInputPin(inputPins.at(INPUT_PORT_INDEX_SYNC_IN));
+                DeleteInputPin(INPUT_PORT_INDEX_SYNC_IN);
             }
         }
         // Remove the extra flow::ApplyChanges() statement here
     }
     else if (inputPins.size() > 1)
     {
-        nm::DeleteInputPin(inputPins.at(INPUT_PORT_INDEX_SYNC_IN));
+        DeleteInputPin(INPUT_PORT_INDEX_SYNC_IN);
     }
 }
 
@@ -174,7 +172,7 @@ void NAV::UartPacketConverter::restore(json const& j)
         j.at("syncInPin").get_to(_syncInPin);
         if (_syncInPin && inputPins.size() <= 1)
         {
-            nm::CreateInputPin(this, "SyncIn", Pin::Type::Object, { "TimeSync" });
+            CreateInputPin("SyncIn", Pin::Type::Object, { "TimeSync" });
         }
     }
 }

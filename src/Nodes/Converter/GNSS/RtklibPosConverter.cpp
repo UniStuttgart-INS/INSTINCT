@@ -10,8 +10,6 @@
 
 #include "util/Logger.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "NodeData/State/PosVel.hpp"
@@ -23,9 +21,9 @@ NAV::RtklibPosConverter::RtklibPosConverter()
     LOG_TRACE("{}: called", name);
     _hasConfig = false;
 
-    nm::CreateOutputPin(this, "PosVel", Pin::Type::Flow, { NAV::PosVel::type() });
+    CreateOutputPin("PosVel", Pin::Type::Flow, { NAV::PosVel::type() });
 
-    nm::CreateInputPin(this, "RtklibPosObs", Pin::Type::Flow, { NAV::RtklibPosObs::type() }, &RtklibPosConverter::receiveObs);
+    CreateInputPin("RtklibPosObs", Pin::Type::Flow, { NAV::RtklibPosObs::type() }, &RtklibPosConverter::receiveObs);
 }
 
 NAV::RtklibPosConverter::~RtklibPosConverter()

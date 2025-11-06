@@ -14,8 +14,6 @@
 #include "util/Time/TimeBase.hpp"
 #include "util/StringUtil.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "NodeData/GNSS/RtklibPosObs.hpp"
@@ -28,7 +26,7 @@ NAV::RtklibPosFile::RtklibPosFile()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 380, 290 };
 
-    nm::CreateOutputPin(this, "RtklibPosObs", Pin::Type::Flow, { NAV::RtklibPosObs::type() }, &RtklibPosFile::pollData);
+    CreateOutputPin("RtklibPosObs", Pin::Type::Flow, { NAV::RtklibPosObs::type() }, &RtklibPosFile::pollData);
 }
 
 NAV::RtklibPosFile::~RtklibPosFile()

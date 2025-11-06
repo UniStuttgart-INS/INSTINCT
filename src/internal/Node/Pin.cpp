@@ -11,8 +11,6 @@
 #include "internal/Node/Node.hpp"
 #include "internal/gui/widgets/PinIcon.hpp"
 #include "internal/gui/NodeEditorApplication.hpp"
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "util/Assert.h"
@@ -169,7 +167,7 @@ bool NAV::Pin::createLink(OutputPin& startPin, InputPin& endPin, ax::NodeEditor:
     startPin.connect(endPin, linkId);
     endPin.connect(startPin, linkId);
 
-    nm::AddLink(linkId);
+    flow::AddLink(linkId);
 
     if (endPin.type != Pin::Type::Flow)
     {
@@ -309,7 +307,7 @@ void NAV::OutputPin::connect(NAV::InputPin& endPin, ax::NodeEditor::LinkId linkI
         else
         {
             // Connected pin is not linked, so get new linkId
-            links.emplace_back(nm::GetNextLinkId(), endPin.parentNode, endPin.id);
+            links.emplace_back(flow::GetNextLinkId(), endPin.parentNode, endPin.id);
             // Also connect the endPin to this one
             endPin.connect(*this);
         }
@@ -404,7 +402,7 @@ void NAV::InputPin::connect(NAV::OutputPin& startPin, ax::NodeEditor::LinkId lin
         else
         {
             // Connected pin is not linked, so get new linkId
-            link.linkId = nm::GetNextLinkId();
+            link.linkId = flow::GetNextLinkId();
             // Also connect the startPin to this one
             startPin.connect(*this);
         }

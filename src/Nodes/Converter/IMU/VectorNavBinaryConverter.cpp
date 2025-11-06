@@ -14,8 +14,6 @@
 #include "NodeData/Baro/BaroPressObs.hpp"
 #include "util/Logger.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "internal/gui/widgets/EnumCombo.hpp"
@@ -33,9 +31,9 @@ NAV::VectorNavBinaryConverter::VectorNavBinaryConverter()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 350, 123 };
 
-    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObsWDelta::type() });
+    CreateOutputPin("ImuObs", Pin::Type::Flow, { NAV::ImuObsWDelta::type() });
 
-    nm::CreateInputPin(this, "BinaryOutput", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() }, &VectorNavBinaryConverter::receiveObs);
+    CreateInputPin("BinaryOutput", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() }, &VectorNavBinaryConverter::receiveObs);
 }
 
 NAV::VectorNavBinaryConverter::~VectorNavBinaryConverter()

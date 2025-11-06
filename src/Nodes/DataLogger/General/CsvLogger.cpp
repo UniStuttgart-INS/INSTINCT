@@ -15,8 +15,6 @@
 #include <iomanip> // std::setprecision
 #include <regex>
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 #include "NodeRegistry.hpp"
 #include "internal/gui/NodeEditorApplication.hpp"
@@ -32,9 +30,9 @@ NAV::CsvLogger::CsvLogger()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 380, 70 };
 
-    nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow,
-                       { NodeData::type() },
-                       &CsvLogger::writeObservation);
+    CreateInputPin("writeObservation", Pin::Type::Flow,
+                   { NodeData::type() },
+                   &CsvLogger::writeObservation);
 }
 
 NAV::CsvLogger::~CsvLogger()

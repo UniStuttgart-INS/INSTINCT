@@ -14,10 +14,9 @@
 #include "util/StringUtil.hpp"
 #include "util/Assert.h"
 
+#include "internal/FlowManager.hpp"
 #include "internal/FlowExecutor.hpp"
 #include "internal/gui/FlowAnimation.hpp"
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "util/Json.hpp"
 #include "internal/gui/NodeEditorApplication.hpp"
 
@@ -107,7 +106,7 @@ void NAV::Node::notifyOutputValueChanged(size_t pinIdx, const InsTime& insTime, 
                 link.dataChangeNotification = true;
                 LOG_DATA("{}: Increasing data access counter on output pin '{}'. Value now {}.", nameId(), outputPin.name, outputPin.dataAccessCounter);
 
-                if (nm::showFlowWhenNotifyingValueChange)
+                if (gui::NodeEditorApplication::showFlowWhenNotifyingValueChange)
                 {
                     FlowAnimation::Add(link.linkId);
                 }
@@ -197,7 +196,7 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NA
             auto* targetPin = link.getConnectedPin();
             if (link.connectedNode->isInitialized() && !targetPin->queueBlocked)
             {
-                if (NodeManager::showFlowWhenNotifyingValueChange)
+                if (gui::NodeEditorApplication::showFlowWhenInvokingCallbacks)
                 {
                     FlowAnimation::Add(link.linkId);
                 }
@@ -248,6 +247,77 @@ size_t NAV::Node::outputPinIndexFromId(ax::NodeEditor::PinId pinId) const
     }
 
     throw std::runtime_error(fmt::format("{}: The Pin {} is not on this node.", nameId(), size_t(pinId)).c_str());
+}
+
+NAV::InputPin* NAV::Node::CreateInputPin(const char* name, NAV::Pin::Type pinType, const std::vector<std::string>& dataIdentifier,
+                                         InputPin::Callback callback, InputPin::FlowFirableCheckFunc firable, int priority, int idx)
+{
+    LOG_TRACE("called for pin ({}) of type ({}) for node [{}]", name, std::string(pinType), nameId());
+    if (idx < 0)
+    {
+        idx = static_cast<int>(inputPins.size());
+    }
+    idx = std::min(idx, static_cast<int>(inputPins.size()));
+    auto iter = std::next(inputPins.begin(), idx);
+
+    inputPins.emplace(iter, flow::GetNextPinId(), name, pinType, this);
+
+    inputPins.at(static_cast<size_t>(idx)).callback = callback;
+    if (firable != nullptr)
+    {
+        inputPins.at(static_cast<size_t>(idx)).firable = firable;
+    }
+    inputPins.at(static_cast<size_t>(idx)).dataIdentifier = dataIdentifier;
+    inputPins.at(static_cast<size_t>(idx)).priority = priority;
+
+    flow::ApplyChanges();
+
+    return &inputPins.at(static_cast<size_t>(idx));
+}
+
+NAV::OutputPin* NAV::Node::CreateOutputPin(const char* name, NAV::Pin::Type pinType, const std::vector<std::string>& dataIdentifier, OutputPin::PinData data, int idx)
+{
+    LOG_TRACE("called for pin ({}) of type ({}) for node [{}]", name, std::string(pinType), nameId());
+    if (idx < 0)
+    {
+        idx = static_cast<int>(outputPins.size());
+    }
+    idx = std::min(idx, static_cast<int>(outputPins.size()));
+    auto iter = std::next(outputPins.begin(), idx);
+
+    outputPins.emplace(iter, flow::GetNextPinId(), name, pinType, this);
+
+    outputPins.at(static_cast<size_t>(idx)).data = data;
+    outputPins.at(static_cast<size_t>(idx)).dataIdentifier = dataIdentifier;
+
+    flow::ApplyChanges();
+
+    return &outputPins.at(static_cast<size_t>(idx));
+}
+
+bool NAV::Node::DeleteOutputPin(size_t pinIndex)
+{
+    auto& pin = outputPins.at(pinIndex);
+    LOG_TRACE("called for pin ({})", size_t(pin.id));
+
+    pin.deleteLinks();
+
+    pin.parentNode->outputPins.erase(pin.parentNode->outputPins.begin() + static_cast<int64_t>(pinIndex));
+
+    return true;
+}
+
+bool NAV::Node::DeleteInputPin(size_t pinIndex)
+{
+    auto& pin = inputPins.at(pinIndex);
+    LOG_TRACE("called for pin ({})", size_t(pin.id));
+
+    pin.deleteLink();
+
+    LOG_DEBUG("Erasing pin at idx {}", pinIndex);
+    pin.parentNode->inputPins.erase(pin.parentNode->inputPins.begin() + static_cast<int64_t>(pinIndex));
+
+    return true;
 }
 
 std::string NAV::Node::nameId() const

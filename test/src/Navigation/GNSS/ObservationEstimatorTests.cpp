@@ -21,8 +21,7 @@
 
 #include "FlowTester.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
 
 #include "Logger.hpp"
 #include "util/Container/STL.hpp"
@@ -68,11 +67,11 @@ void testSkydelData(Frequency filterFreq, Code filterCode, IonosphereModel ionoM
 {
     auto logger = initializeTestLogger();
 
-    nm::RegisterPreInitCallback([&]() {
-        dynamic_cast<RinexObsFile*>(nm::FindNode(65))->_path = rinexObsFile;
-        dynamic_cast<RinexNavFile*>(nm::FindNode(54))->_path = rinexNavFile;
+    flow::RegisterPreInitCallback([&]() {
+        dynamic_cast<RinexObsFile*>(flow::FindNode(65))->_path = rinexObsFile;
+        dynamic_cast<RinexNavFile*>(flow::FindNode(54))->_path = rinexNavFile;
 
-        auto* sppNode = dynamic_cast<SinglePointPositioning*>(nm::FindNode(91));
+        auto* sppNode = dynamic_cast<SinglePointPositioning*>(flow::FindNode(91));
 
         sppNode->_algorithm._obsFilter._filterFreq = filterFreq;
         sppNode->_algorithm._obsFilter._filterCode = filterCode;
@@ -100,7 +99,7 @@ void testSkydelData(Frequency filterFreq, Code filterCode, IonosphereModel ionoM
     std::unordered_map<Frequency, SkydelReference::Margin> marginsMax{};
 
     size_t messageCounter = 0; // Message Counter
-    nm::RegisterWatcherCallbackToInputPin(88, [&](const Node* node, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(88, [&](const Node* node, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         const auto* spp = dynamic_cast<const NAV::SinglePointPositioning*>(node);
         auto gnssObs = std::static_pointer_cast<const GnssObs>(queue.front());
         // Collection of all connected navigation data providers
@@ -254,11 +253,11 @@ void testSpirentData(Frequency filterFreq, Code filterCode, IonosphereModel iono
 {
     auto logger = initializeTestLogger();
 
-    nm::RegisterPreInitCallback([&]() {
-        dynamic_cast<RinexObsFile*>(nm::FindNode(65))->_path = rinexObsFile;
-        dynamic_cast<RinexNavFile*>(nm::FindNode(54))->_path = rinexNavFile;
+    flow::RegisterPreInitCallback([&]() {
+        dynamic_cast<RinexObsFile*>(flow::FindNode(65))->_path = rinexObsFile;
+        dynamic_cast<RinexNavFile*>(flow::FindNode(54))->_path = rinexNavFile;
 
-        auto* sppNode = dynamic_cast<SinglePointPositioning*>(nm::FindNode(91));
+        auto* sppNode = dynamic_cast<SinglePointPositioning*>(flow::FindNode(91));
 
         sppNode->_algorithm._obsFilter._filterFreq = filterFreq;
         sppNode->_algorithm._obsFilter._filterCode = filterCode;
@@ -288,7 +287,7 @@ void testSpirentData(Frequency filterFreq, Code filterCode, IonosphereModel iono
     std::unordered_map<Frequency, SpirentSatDataFile::Margin> marginsMax{};
 
     size_t messageCounter = 0; // Message Counter
-    nm::RegisterWatcherCallbackToInputPin(88, [&](const Node* node, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(88, [&](const Node* node, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         messageCounter++;
         const auto* spp = dynamic_cast<const NAV::SinglePointPositioning*>(node);
         auto gnssObs = std::static_pointer_cast<const GnssObs>(queue.front());

@@ -13,8 +13,6 @@
 
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "NodeData/IMU/ImuObs.hpp"
@@ -28,8 +26,8 @@ NAV::ImuFile::ImuFile()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 377, 201 };
 
-    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type(), NAV::ImuObsWDelta::type() }, &ImuFile::pollData);
-    nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, { "std::vector<std::string>" }, &_headerColumns);
+    CreateOutputPin("ImuObs", Pin::Type::Flow, { NAV::ImuObs::type(), NAV::ImuObsWDelta::type() }, &ImuFile::pollData);
+    CreateOutputPin("Header Columns", Pin::Type::Object, { "std::vector<std::string>" }, &_headerColumns);
 }
 
 NAV::ImuFile::~ImuFile()

@@ -14,8 +14,6 @@
 #include <regex>
 #include <sstream>
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "NodeData/WiFi/WiFiObs.hpp"
@@ -29,7 +27,7 @@ NAV::ArubaSensor::ArubaSensor()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 710, 220 };
 
-    nm::CreateOutputPin(this, "WiFiObs", Pin::Type::Flow, { NAV::WiFiObs::type() });
+    CreateOutputPin("WiFiObs", Pin::Type::Flow, { NAV::WiFiObs::type() });
 }
 
 NAV::ArubaSensor::~ArubaSensor()

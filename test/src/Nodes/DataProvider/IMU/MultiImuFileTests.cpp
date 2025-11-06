@@ -21,8 +21,7 @@
 
 #include "FlowTester.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
 
 #include "Logger.hpp"
 #include "Navigation/Transformations/Units.hpp"
@@ -101,8 +100,8 @@ TEST_CASE("[MultiImuFile][flow] Read 'data/DataProvider/IMU/2023-08-09_Multi-IMU
     //
     // #######################################################################################################
 
-    nm::RegisterPreInitCallback([&]() {
-        dynamic_cast<MultiImuFile*>(nm::FindNode(6))->_path = "DataProvider/IMU/2023-08-09_Multi-IMU_commaDelim.txt";
+    flow::RegisterPreInitCallback([&]() {
+        dynamic_cast<MultiImuFile*>(flow::FindNode(6))->_path = "DataProvider/IMU/2023-08-09_Multi-IMU_commaDelim.txt";
     });
 
     size_t messageCounter = 0;
@@ -111,7 +110,7 @@ TEST_CASE("[MultiImuFile][flow] Read 'data/DataProvider/IMU/2023-08-09_Multi-IMU
 
     for (size_t inputPinId : inputPinIds)
     {
-        nm::RegisterWatcherCallbackToInputPin(inputPinId, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t pinIdx) {
+        flow::RegisterWatcherCallbackToInputPin(inputPinId, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t pinIdx) {
             LOG_TRACE("messageCounter = {}", messageCounter);
 
             compareImuObservation(std::dynamic_pointer_cast<const NAV::ImuObs>(queue.front()), messageCounter, pinIdx);

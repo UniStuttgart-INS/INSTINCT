@@ -10,9 +10,6 @@
 
 #include "util/Json.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
-
 #include <implot.h>
 #include <imgui_node_editor.h>
 namespace ed = ax::NodeEditor;
@@ -43,6 +40,9 @@ namespace NAV::flow
 namespace
 {
 
+std::vector<NAV::Node*> m_nodes;
+size_t m_NextId = 1;
+
 bool unsavedChanges = false;
 
 constexpr int loadingFramesToWait = 2;
@@ -53,12 +53,261 @@ std::filesystem::path programRootPath;
 // The current number for the rotated parent folder
 size_t currentRotatedParentFolderNumber;
 
-} // namespace
-
-bool saveLastActions = true;
 int loadingFrameCount = 0;
 
+size_t GetNextId()
+{
+    return m_NextId++;
+}
+
+} // namespace
+
 } // namespace NAV::flow
+
+const std::vector<NAV::Node*>& NAV::flow::m_Nodes()
+{
+    return m_nodes;
+}
+
+ax::NodeEditor::NodeId NAV::flow::GetNextNodeId()
+{
+    return { GetNextId() };
+}
+
+ax::NodeEditor::LinkId NAV::flow::GetNextLinkId()
+{
+    return { GetNextId() };
+}
+
+ax::NodeEditor::PinId NAV::flow::GetNextPinId()
+{
+    return { GetNextId() };
+}
+
+void NAV::flow::AddNode(NAV::Node* node)
+{
+    if (!node->id)
+    {
+        node->id = GetNextNodeId();
+    }
+    m_nodes.push_back(node);
+    LOG_DEBUG("Creating node: {}", node->nameId());
+
+    for (auto& pin : node->inputPins)
+    {
+        pin.parentNode = node;
+    }
+    for (auto& pin : node->outputPins)
+    {
+        pin.parentNode = node;
+    }
+
+    m_NextId = std::max(m_NextId, size_t(node->id) + 1);
+    for (const auto& pin : node->inputPins)
+    {
+        m_NextId = std::max(m_NextId, size_t(pin.id) + 1);
+    }
+    for (const auto& pin : node->outputPins)
+    {
+        m_NextId = std::max(m_NextId, size_t(pin.id) + 1);
+    }
+
+    flow::ApplyChanges();
+}
+
+void NAV::flow::UpdateNode(Node* node)
+{
+    LOG_TRACE("called for node: {}", node->nameId());
+    for (auto& pin : node->inputPins)
+    {
+        pin.parentNode = node;
+    }
+    for (auto& pin : node->outputPins)
+    {
+        pin.parentNode = node;
+    }
+
+    for (const auto& pin : node->inputPins)
+    {
+        m_NextId = std::max(m_NextId, size_t(pin.id) + 1);
+    }
+    for (const auto& pin : node->outputPins)
+    {
+        m_NextId = std::max(m_NextId, size_t(pin.id) + 1);
+    }
+}
+
+bool NAV::flow::DeleteNode(ax::NodeEditor::NodeId nodeId)
+{
+    LOG_TRACE("called for node with id {}", size_t(nodeId));
+
+    auto it = std::ranges::find_if(m_nodes, [nodeId](const auto& node) { return node->id == nodeId; });
+    if (it != m_nodes.end())
+    {
+        Node* node = *it;
+        m_nodes.erase(it);
+        LOG_DEBUG("Deleting node: {}", node->nameId());
+
+        if (node->isInitialized())
+        {
+            node->doDeinitialize(true);
+        }
+        for (auto& inputPin : node->inputPins)
+        {
+            if (inputPin.isPinLinked())
+            {
+                inputPin.deleteLink();
+            }
+        }
+        for (auto& outputPin : node->outputPins)
+        {
+            if (outputPin.isPinLinked())
+            {
+                outputPin.deleteLinks();
+            }
+        }
+
+        delete node; // NOLINT(cppcoreguidelines-owning-memory)
+
+        flow::ApplyChanges();
+
+        return true;
+    }
+
+    return false;
+}
+
+void NAV::flow::DeleteAllNodes()
+{
+    LOG_TRACE("called");
+
+    while (!m_nodes.empty())
+    {
+        flow::DeleteNode(m_nodes.back()->id);
+    }
+
+    m_NextId = 1;
+
+    flow::ApplyChanges();
+}
+
+void NAV::flow::AddLink(ax::NodeEditor::LinkId linkId)
+{
+    m_NextId = std::max(m_NextId, size_t(linkId) + 1);
+}
+
+NAV::Node* NAV::flow::FindNode(ax::NodeEditor::NodeId id)
+{
+    for (auto& node : m_nodes)
+    {
+        if (node->id == id)
+        {
+            return node;
+        }
+    }
+
+    return nullptr;
+}
+
+NAV::OutputPin* NAV::flow::FindOutputPin(ax::NodeEditor::PinId id)
+{
+    if (!id) { return nullptr; }
+
+    for (auto& node : m_nodes)
+    {
+        if (!node || node->kind == Node::Kind::GroupBox) { continue; }
+        for (auto& pin : node->outputPins)
+        {
+            if (pin.id == id) { return &pin; }
+        }
+    }
+
+    return nullptr;
+}
+
+NAV::InputPin* NAV::flow::FindInputPin(ax::NodeEditor::PinId id)
+{
+    if (!id) { return nullptr; }
+
+    for (auto& node : m_nodes)
+    {
+        if (!node || node->kind == Node::Kind::GroupBox) { continue; }
+        for (auto& pin : node->inputPins)
+        {
+            if (pin.id == id) { return &pin; }
+        }
+    }
+
+    return nullptr;
+}
+
+void NAV::flow::EnableAllCallbacks()
+{
+    LOG_TRACE("called");
+    for (auto* node : m_nodes)
+    {
+        if (node && !node->isDisabled() && node->kind != Node::Kind::GroupBox)
+        {
+            node->callbacksEnabled = true;
+        }
+    }
+}
+
+void NAV::flow::DisableAllCallbacks()
+{
+    LOG_TRACE("called");
+    for (auto* node : m_nodes)
+    {
+        node->callbacksEnabled = false;
+    }
+}
+
+void NAV::flow::ClearAllNodeQueues()
+{
+    LOG_TRACE("called");
+    for (auto* node : m_nodes)
+    {
+        for (auto& inputPin : node->inputPins)
+        {
+            inputPin.queue.clear();
+        }
+    }
+}
+
+bool NAV::flow::InitializeAllNodes()
+{
+    LOG_TRACE("called");
+    bool nodeCouldNotInitialize = false;
+
+    InitializeAllNodesAsync();
+
+    for (auto* node : m_nodes)
+    {
+        if (node && node->kind != Node::Kind::GroupBox && !node->isDisabled() && !node->isInitialized())
+        {
+            if (!node->doInitialize(true))
+            {
+                LOG_ERROR("Node '{}' could not initialize.", node->nameId());
+                nodeCouldNotInitialize = true;
+            }
+        }
+    }
+
+    return !nodeCouldNotInitialize;
+}
+
+void NAV::flow::InitializeAllNodesAsync()
+{
+    LOG_TRACE("called");
+
+    for (auto* node : m_nodes)
+    {
+        if (node && node->kind != Node::Kind::GroupBox && !node->isDisabled() && !node->isInitialized())
+        {
+            node->doInitialize();
+        }
+    }
+}
 
 void NAV::flow::SaveFlow(GlobalActions& globalAction)
 {
@@ -83,7 +332,7 @@ void NAV::flow::SaveFlowAs(const std::string& filepath)
     }
 
     json j;
-    for (const auto& node : nm::m_Nodes())
+    for (const auto& node : m_Nodes())
     {
         j["nodes"]["node-" + std::to_string(size_t(node->id))] = *node;
         j["nodes"]["node-" + std::to_string(size_t(node->id))]["data"] = node->save();
@@ -152,29 +401,27 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
         json j;
         filestream >> j;
 
-        saveLastActions = false;
-
-        nm::DeleteAllNodes();
+        DeleteAllNodes();
 
         if (!j.contains("commonLog")) { CommonLog::restore(json{}); }
         LoadJson(j);
 
 #ifdef TESTING
-        nm::CallPreInitCallback();
+        CallPreInitCallback();
 #endif
 
         if (!ConfigManager::Get<bool>("noinit"))
         {
             if (ConfigManager::Get<bool>("nogui"))
             {
-                if (!nm::InitializeAllNodes())
+                if (!InitializeAllNodes())
                 {
                     loadSuccessful = false;
                 }
             }
             else
             {
-                nm::InitializeAllNodesAsync();
+                InitializeAllNodesAsync();
             }
         }
 
@@ -183,14 +430,7 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
             loadingFrameCount = ImGui::GetFrameCount();
         }
         unsavedChanges = false;
-        saveLastActions = true;
         currentFilename = filepath;
-
-        if (!ConfigManager::Get<bool>("nogui"))
-        {
-            gui::clearLastActionList();
-            gui::saveLastAction();
-        }
 
         std::string path = filepath;
         if (path.find(GetProgramRootPath().string()) != std::string::npos)
@@ -330,7 +570,7 @@ bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
                 continue;
             }
 
-            nm::AddNode(node);
+            AddNode(node);
             auto newNodeId = node->id;
 
             nodeJson.get_to<Node>(*node);
@@ -346,15 +586,15 @@ bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
                 node->id = newNodeId;
                 for (auto& pin : node->inputPins)
                 {
-                    pin.id = nm::GetNextPinId();
+                    pin.id = GetNextPinId();
                 }
                 for (auto& pin : node->outputPins)
                 {
-                    pin.id = nm::GetNextPinId();
+                    pin.id = GetNextPinId();
                 }
             }
 
-            nm::UpdateNode(node);
+            UpdateNode(node);
 
             if (!ConfigManager::Get<bool>("nogui"))
             {
@@ -383,7 +623,7 @@ bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
 
                 InputPin* endPin = nullptr;
                 OutputPin* startPin = nullptr;
-                for (auto* node : nm::m_Nodes())
+                for (auto* node : m_Nodes())
                 {
                     if (!endPin)
                     {
@@ -445,10 +685,6 @@ void NAV::flow::ApplyChanges()
     if (ImGui::GetCurrentContext() && ImGui::GetFrameCount() - loadingFrameCount >= loadingFramesToWait)
     {
         unsavedChanges = true;
-        if (saveLastActions)
-        {
-            gui::saveLastAction();
-        }
     }
 }
 
@@ -564,3 +800,95 @@ std::filesystem::path NAV::flow::GetConfigPath()
 {
     return flow::GetProgramRootPath() / "config";
 }
+
+#ifdef TESTING
+
+namespace
+{
+std::vector<std::pair<ax::NodeEditor::PinId, NAV::InputPin::WatcherCallback>> watcherPinList;
+std::vector<std::pair<ax::NodeEditor::LinkId, NAV::InputPin::WatcherCallback>> watcherLinkList;
+
+std::function<void()> preInitCallback = nullptr;
+std::function<void()> cleanupCallback = nullptr;
+
+} // namespace
+
+void NAV::flow::RegisterWatcherCallbackToInputPin(ax::NodeEditor::PinId id, const InputPin::WatcherCallback& callback)
+{
+    watcherPinList.emplace_back(id, callback);
+}
+
+void NAV::flow::RegisterWatcherCallbackToLink(ax::NodeEditor::LinkId id, const InputPin::WatcherCallback& callback)
+{
+    watcherLinkList.emplace_back(id, callback);
+}
+
+void NAV::flow::ApplyWatcherCallbacks()
+{
+    for (auto& [linkId, callback] : watcherLinkList)
+    {
+        for (auto& node : m_nodes)
+        {
+            for (size_t pinIdx = 0; pinIdx < node->inputPins.size(); pinIdx++)
+            {
+                auto& pin = node->inputPins[pinIdx];
+                if (pin.isPinLinked() && pin.link.linkId == linkId)
+                {
+                    LOG_DEBUG("Adding watcher callback on node '{}' on pin with index {}", pin.parentNode->nameId(), pinIdx);
+                    pin.watcherCallbacks.emplace_back(callback);
+                }
+            }
+        }
+    }
+
+    for (auto& [id, callback] : watcherPinList)
+    {
+        for (auto& node : m_nodes)
+        {
+            for (size_t pinIdx = 0; pinIdx < node->inputPins.size(); pinIdx++)
+            {
+                auto& pin = node->inputPins[pinIdx];
+                if (pin.id == id)
+                {
+                    LOG_DEBUG("Adding watcher callback on node '{}' on pin with index {}", pin.parentNode->nameId(), pinIdx);
+                    pin.watcherCallbacks.emplace_back(callback);
+                }
+            }
+        }
+    }
+}
+
+void NAV::flow::RegisterPreInitCallback(std::function<void()> callback)
+{
+    preInitCallback = std::move(callback);
+}
+
+void NAV::flow::CallPreInitCallback()
+{
+    if (preInitCallback)
+    {
+        preInitCallback();
+    }
+}
+
+void NAV::flow::RegisterCleanupCallback(std::function<void()> callback)
+{
+    cleanupCallback = std::move(callback);
+}
+void NAV::flow::CallCleanupCallback()
+{
+    if (cleanupCallback)
+    {
+        cleanupCallback();
+    }
+}
+
+void NAV::flow::ClearRegisteredCallbacks()
+{
+    watcherPinList.clear();
+    watcherLinkList.clear();
+    preInitCallback = nullptr;
+    cleanupCallback = nullptr;
+}
+
+#endif

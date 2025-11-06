@@ -11,8 +11,6 @@
 #include <bitset>
 #include <fmt/ranges.h>
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "util/StringUtil.hpp"
@@ -35,7 +33,7 @@ RinexNavFile::RinexNavFile()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 517, 87 };
 
-    nm::CreateOutputPin(this, GnssNavInfo::type().c_str(), Pin::Type::Object, { GnssNavInfo::type() }, &_gnssNavInfo);
+    CreateOutputPin(GnssNavInfo::type().c_str(), Pin::Type::Object, { GnssNavInfo::type() }, &_gnssNavInfo);
 }
 
 RinexNavFile::~RinexNavFile()

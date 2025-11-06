@@ -14,15 +14,6 @@
 
 void NAV::gui::menus::ShowEditMenu()
 {
-    if (ImGui::MenuItem("Undo", "CTRL+Z", false, canUndoLastAction()))
-    {
-        undoLastAction();
-    }
-    if (ImGui::MenuItem("Redo", "CTRL+Y", false, canRedoLastAction()))
-    {
-        redoLastAction();
-    }
-    ImGui::Separator();
     if (ImGui::MenuItem("Cut", "CTRL+X", false, canCutOrCopyFlowElements()))
     {
         cutFlowElements();

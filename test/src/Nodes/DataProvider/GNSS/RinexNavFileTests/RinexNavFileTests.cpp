@@ -17,8 +17,7 @@
 #include "FlowTester.hpp"
 #include "Logger.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
 
 #include "NodeData/GNSS/GnssNavInfoComparisons.hpp"
 #include "v2_01/brdc0990_22g.hpp"
@@ -71,12 +70,12 @@ void testRinexNavFileFlow(const std::string& path, const GnssNavInfo& gnssNavInf
 {
     auto logger = initializeTestLogger();
 
-    nm::RegisterPreInitCallback([&]() {
-        dynamic_cast<RinexNavFile*>(nm::FindNode(2))->_path = path;
+    flow::RegisterPreInitCallback([&]() {
+        dynamic_cast<RinexNavFile*>(flow::FindNode(2))->_path = path;
     });
 
-    nm::RegisterCleanupCallback([&]() {
-        auto* pin = nm::FindOutputPin(1);
+    flow::RegisterCleanupCallback([&]() {
+        auto* pin = flow::FindOutputPin(1);
         REQUIRE(pin != nullptr);
         const auto* gnssNavInfo = static_cast<const GnssNavInfo*>(std::get<const void*>(pin->data));
         REQUIRE(*gnssNavInfo == gnssNavInfoRef);

@@ -8,9 +8,6 @@
 
 #include "GlobalActions.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
-
 #include "internal/FlowManager.hpp"
 
 #include "internal/gui/NodeEditorApplication.hpp"
@@ -39,14 +36,6 @@ bool elementsCutted = false;
 /// @brief Clipboard storage
 json clipboard;
 
-// /// @brief Maximum size of the action list
-// constexpr size_t ACTION_LIST_MAX_SIZE = 20;
-
-/// @brief Current action in the action list
-size_t currentAction = 0;
-/// @brief List of actions performed by the user
-std::deque<json> actionList;
-
 } // namespace
 } // namespace NAV::gui
 
@@ -69,11 +58,10 @@ void NAV::gui::cutFlowElements()
     selectedNodeIds.resize(static_cast<size_t>(selectedNodesCount));
 
     clipboard.clear();
-    NAV::flow::saveLastActions = false;
 
     for (const auto& nodeId : selectedNodeIds)
     {
-        const NAV::Node* node = nm::FindNode(nodeId);
+        const NAV::Node* node = flow::FindNode(nodeId);
 
         clipboard["nodes"]["node-" + std::to_string(size_t(node->id))] = *node;
         clipboard["nodes"]["node-" + std::to_string(size_t(node->id))]["data"] = node->save();
@@ -89,13 +77,10 @@ void NAV::gui::cutFlowElements()
             }
         }
 
-        nm::DeleteNode(nodeId);
+        flow::DeleteNode(nodeId);
     }
 
     elementsCutted = true;
-
-    NAV::flow::saveLastActions = true;
-    saveLastAction();
 }
 
 void NAV::gui::copyFlowElements()
@@ -110,7 +95,7 @@ void NAV::gui::copyFlowElements()
 
     for (const auto& nodeId : selectedNodeIds)
     {
-        const NAV::Node* node = nm::FindNode(nodeId);
+        const NAV::Node* node = flow::FindNode(nodeId);
 
         clipboard["nodes"]["node-" + std::to_string(size_t(node->id))] = *node;
         clipboard["nodes"]["node-" + std::to_string(size_t(node->id))]["data"] = node->save();
@@ -133,9 +118,7 @@ void NAV::gui::copyFlowElements()
 void NAV::gui::pasteFlowElements()
 {
     // Store the node count to later iterate over the new nodes
-    auto nodeCountBeforeLoad = nm::m_Nodes().size();
-
-    NAV::flow::saveLastActions = false;
+    auto nodeCountBeforeLoad = flow::m_Nodes().size();
 
     LOG_DEBUG("Pasting clipboard {}", clipboard.dump(4));
 
@@ -167,9 +150,9 @@ void NAV::gui::pasteFlowElements()
     mousePos += viewRect.GetTL();
 
     // Move the Nodes relative to the current mouse position
-    for (size_t i = nodeCountBeforeLoad; i < nm::m_Nodes().size(); i++)
+    for (size_t i = nodeCountBeforeLoad; i < flow::m_Nodes().size(); i++)
     {
-        auto* node = nm::m_Nodes().at(i);
+        auto* node = flow::m_Nodes().at(i);
         ed::SetNodePosition(node->id, mousePos + (ed::GetNodePosition(node->id) - leftTopMostPos));
     }
 
@@ -252,8 +235,8 @@ void NAV::gui::pasteFlowElements()
             {
                 if (startPinKind == Pin::Kind::Output && endPinKind == Pin::Kind::Input)
                 {
-                    auto& startPin = nm::m_Nodes().at(startPinParentNodeIndex)->outputPins.at(startPinIndex);
-                    auto& endPin = nm::m_Nodes().at(endPinParentNodeIndex)->inputPins.at(endPinIndex);
+                    auto& startPin = flow::m_Nodes().at(startPinParentNodeIndex)->outputPins.at(startPinIndex);
+                    auto& endPin = flow::m_Nodes().at(endPinParentNodeIndex)->inputPins.at(endPinIndex);
 
                     if (!endPin.isPinLinked())
                     {
@@ -261,8 +244,8 @@ void NAV::gui::pasteFlowElements()
                     }
                 }
 
-                newlyLinkedNodes[startPinOldParentNodeId] = nm::m_Nodes().at(startPinParentNodeIndex)->id;
-                newlyLinkedNodes[endPinOldParentNodeId] = nm::m_Nodes().at(endPinParentNodeIndex)->id;
+                newlyLinkedNodes[startPinOldParentNodeId] = flow::m_Nodes().at(startPinParentNodeIndex)->id;
+                newlyLinkedNodes[endPinOldParentNodeId] = flow::m_Nodes().at(endPinParentNodeIndex)->id;
             }
         }
     }
@@ -270,11 +253,11 @@ void NAV::gui::pasteFlowElements()
     {
         for (auto [oldId, newId] : newlyLinkedNodes)
         {
-            auto* node = nm::FindNode(newId);
+            auto* node = flow::FindNode(newId);
 
             if (clipboard.at("nodes").contains("node-" + std::to_string(oldId)))
             {
-                [[maybe_unused]] auto* oldNode = nm::FindNode(oldId);
+                [[maybe_unused]] auto* oldNode = flow::FindNode(oldId);
 
                 LOG_DEBUG("Calling restoreAtferLink() for new node '{}', which was copied from node '{}'", node->nameId(), oldNode->nameId());
 
@@ -288,127 +271,4 @@ void NAV::gui::pasteFlowElements()
     }
 
     elementsCutted = false;
-
-    NAV::flow::loadingFrameCount = ImGui::GetFrameCount();
-    NAV::flow::saveLastActions = true;
-    saveLastAction();
-}
-
-bool NAV::gui::canUndoLastAction()
-{
-    return false;
-    // return currentAction > 0;
-}
-
-bool NAV::gui::canRedoLastAction()
-{
-    return false;
-    // return currentAction + 1 < actionList.size();
-}
-
-void NAV::gui::clearLastActionList()
-{
-    actionList.clear();
-    currentAction = 0;
-}
-
-// namespace NAV::gui
-// {
-// namespace
-// {
-// void restoreAction(const json& /* target */)
-// {
-//     // TODO: Compare against current config and only load the nodes/links which were changed
-//     // json current;
-//     // for (const auto& node : nm::m_Nodes())
-//     // {
-//     //     current["nodes"]["node-" + std::to_string(size_t(node->id))] = *node;
-//     //     current["nodes"]["node-" + std::to_string(size_t(node->id))]["data"] = node->save();
-//     // }
-//     // for (const auto& link : nm::m_Links())
-//     // {
-//     //     current["links"]["link-" + std::to_string(size_t(link.id))] = link;
-//     // }
-
-//     NAV::flow::saveLastActions = false;
-//     nm::DeleteAllNodes();
-
-//     NAV::flow::LoadJson(target);
-//     if (!target["unsavedChanges"].get<bool>())
-//     {
-//         NAV::flow::DiscardChanges();
-//     }
-//     else
-//     {
-//         NAV::flow::ApplyChanges();
-//     }
-
-//     NAV::flow::loadingFrameCount = ImGui::GetFrameCount();
-//     NAV::flow::saveLastActions = true;
-
-//     nm::InitializeAllNodesAsync();
-// }
-// } // namespace
-// } // namespace NAV::gui
-
-void NAV::gui::undoLastAction()
-{
-    // LOG_DEBUG("Undoing last action");
-
-    // restoreAction(actionList.at(--currentAction));
-}
-
-void NAV::gui::redoLastAction()
-{
-    // LOG_DEBUG("Redoing last action");
-
-    // restoreAction(actionList.at(++currentAction));
-}
-
-void NAV::gui::saveLastAction()
-{
-    // LOG_DEBUG("Saving last action to action list");
-
-    // // TODO: Check if event was triggered by a slider and discard the save, because it triggers it every step
-
-    // if (actionList.size() > ACTION_LIST_MAX_SIZE) // List is full
-    // {
-    //     LOG_TRACE("Action list full, therefore discarding first element.");
-    //     actionList.pop_front();
-    //     if (currentAction)
-    //     {
-    //         currentAction--;
-    //     }
-    // }
-    // while (currentAction + 1 < actionList.size())
-    // {
-    //     LOG_TRACE("Discarding element which is past the current action");
-    //     actionList.pop_back();
-    // }
-
-    // json j;
-    // for (const auto* node : nm::m_Nodes())
-    // {
-    //     j["nodes"]["node-" + std::to_string(size_t(node->id))] = *node;
-    //     j["nodes"]["node-" + std::to_string(size_t(node->id))]["data"] = node->save();
-
-    //     for (const auto& outputPin : node->outputPins)
-    //     {
-    //         for (const auto& link : outputPin.links)
-    //         {
-    //             auto& j = clipboard["links"]["link-" + std::to_string(size_t(link.linkId))];
-    //             j["id"] = size_t(link.linkId);
-    //             j["startPinId"] = size_t(outputPin.id);
-    //             j["endPinId"] = size_t(link.connectedPinId);
-    //         }
-    //     }
-    // }
-
-    // j["unsavedChanges"] = NAV::flow::HasUnsavedChanges();
-
-    // if (!actionList.empty())
-    // {
-    //     currentAction++;
-    // }
-    // actionList.push_back(j);
 }

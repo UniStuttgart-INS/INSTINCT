@@ -17,9 +17,7 @@
 #include "util/Logger.hpp"
 #include "util/Container/STL.hpp"
 
-#include "internal/NodeManager.hpp"
 #include <fmt/format.h>
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "Navigation/GNSS/Satellite/Ephemeris/GPSEphemeris.hpp"
@@ -35,9 +33,9 @@ NAV::UbloxGnssOrbitCollector::UbloxGnssOrbitCollector()
     LOG_TRACE("{}: called", name);
     _hasConfig = true;
 
-    nm::CreateInputPin(this, "UbloxObs", Pin::Type::Flow, { NAV::UbloxObs::type() }, &UbloxGnssOrbitCollector::receiveObs);
+    CreateInputPin("UbloxObs", Pin::Type::Flow, { NAV::UbloxObs::type() }, &UbloxGnssOrbitCollector::receiveObs);
 
-    nm::CreateOutputPin(this, GnssNavInfo::type().c_str(), Pin::Type::Object, { GnssNavInfo::type() }, &_gnssNavInfo);
+    CreateOutputPin(GnssNavInfo::type().c_str(), Pin::Type::Object, { GnssNavInfo::type() }, &_gnssNavInfo);
 }
 
 NAV::UbloxGnssOrbitCollector::~UbloxGnssOrbitCollector()

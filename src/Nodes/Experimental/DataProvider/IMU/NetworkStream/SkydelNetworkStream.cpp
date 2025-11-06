@@ -16,7 +16,6 @@
 #include <sstream>
 
 #include "util/Logger.hpp"
-#include "internal/NodeManager.hpp"
 #include "internal/FlowManager.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
 #include "util/Time/TimeBase.hpp"
@@ -24,7 +23,6 @@
 #include "NodeData/State/PosVelAtt.hpp"
 #include "internal/gui/widgets/HelpMarker.hpp"
 
-namespace nm = NAV::NodeManager;
 using boost::asio::ip::udp;
 
 namespace NAV::experimental
@@ -37,8 +35,8 @@ SkydelNetworkStream::SkydelNetworkStream()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 305, 70 };
 
-    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() });
-    nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() });
+    CreateOutputPin("ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() });
+    CreateOutputPin("PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() });
 }
 
 SkydelNetworkStream::~SkydelNetworkStream()

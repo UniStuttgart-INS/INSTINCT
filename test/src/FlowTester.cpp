@@ -15,8 +15,7 @@
 #include "internal/Node/Node.hpp"
 #include "internal/AppLogic.hpp"
 #include "internal/ConfigManager.hpp"
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
 
 namespace NAV::TESTS
 {
@@ -53,7 +52,7 @@ bool NAV::TESTS::testFlow(const char* path, bool useTestDirectories, int duratio
 
     int executionFailure = NAV::AppLogic::processCommandLineArguments(static_cast<int>(argv.size() - 1), argv.data());
 
-    nm::ClearRegisteredCallbacks();
+    flow::ClearRegisteredCallbacks();
 
     NAV::ConfigManager::deinitialize();
 
@@ -62,7 +61,7 @@ bool NAV::TESTS::testFlow(const char* path, bool useTestDirectories, int duratio
 
 void NAV::TESTS::runGeneralFlowCleanupChecks()
 {
-    for (const NAV::Node* node : nm::m_Nodes())
+    for (const NAV::Node* node : flow::m_Nodes())
     {
         for (const auto& inputPin : node->inputPins)
         {

@@ -16,8 +16,6 @@
 #include <iomanip> // std::setprecision
 #include <limits>
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include <imgui_internal.h>
@@ -32,7 +30,7 @@ NAV::VectorNavDataLogger::VectorNavDataLogger()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 444, 92 };
 
-    nm::CreateInputPin(this, "BinaryOutput", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() }, &VectorNavDataLogger::writeObservation);
+    CreateInputPin("BinaryOutput", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() }, &VectorNavDataLogger::writeObservation);
 }
 
 NAV::VectorNavDataLogger::~VectorNavDataLogger()

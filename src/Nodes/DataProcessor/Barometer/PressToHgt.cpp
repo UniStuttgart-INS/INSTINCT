@@ -10,8 +10,6 @@
 
 #include "util/Logger.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "NodeData/Baro/BaroPressObs.hpp"
@@ -31,9 +29,9 @@ NAV::PressToHgt::PressToHgt()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 710, 220 };
 
-    nm::CreateInputPin(this, "BaroPressObs", Pin::Type::Flow, { NAV::BaroPressObs::type() }, &PressToHgt::receiveObs);
+    CreateInputPin("BaroPressObs", Pin::Type::Flow, { NAV::BaroPressObs::type() }, &PressToHgt::receiveObs);
 
-    nm::CreateOutputPin(this, "BaroHgt", Pin::Type::Flow, { NAV::BaroHgt::type() });
+    CreateOutputPin("BaroHgt", Pin::Type::Flow, { NAV::BaroHgt::type() });
 }
 
 NAV::PressToHgt::~PressToHgt()

@@ -22,8 +22,7 @@
 #include "FlowTester.hpp"
 #include "Logger.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
 
 #include "RtklibPosObsComparisons.hpp"
 #include "lla/lla_gpst2_111_dd.hpp"
@@ -58,8 +57,8 @@ void testRtklibPosFileFlow(const std::string& path, const std::vector<RtklibPosO
 {
     auto logger = initializeTestLogger();
 
-    nm::RegisterPreInitCallback([&]() {
-        dynamic_cast<RtklibPosFile*>(nm::FindNode(31))->_path = path;
+    flow::RegisterPreInitCallback([&]() {
+        dynamic_cast<RtklibPosFile*>(flow::FindNode(31))->_path = path;
     });
 
     // ###########################################################################################################
@@ -74,7 +73,7 @@ void testRtklibPosFileFlow(const std::string& path, const std::vector<RtklibPosO
 
     size_t msgCounter = 0;
 
-    nm::RegisterWatcherCallbackToInputPin(PIN_ID_GNSS_OBS, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(PIN_ID_GNSS_OBS, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         auto rtklibPosObs = std::dynamic_pointer_cast<const NAV::RtklibPosObs>(queue.front());
         REQUIRE(rtklibPosObs != nullptr);
 
@@ -173,8 +172,8 @@ TEST_CASE("[RtklibPosFile][flow] Read corrupt/header_missing.pos", "[RtklibPosFi
 {
     auto logger = initializeTestLogger();
 
-    nm::RegisterPreInitCallback([&]() {
-        dynamic_cast<RtklibPosFile*>(nm::FindNode(31))->_path = "DataProvider/GNSS/RtklibPosFile/corrupt/header_missing.pos";
+    flow::RegisterPreInitCallback([&]() {
+        dynamic_cast<RtklibPosFile*>(flow::FindNode(31))->_path = "DataProvider/GNSS/RtklibPosFile/corrupt/header_missing.pos";
     });
 
     // ###########################################################################################################

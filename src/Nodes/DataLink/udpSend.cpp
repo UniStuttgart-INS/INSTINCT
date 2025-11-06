@@ -11,8 +11,6 @@
 #include "NodeData/GNSS/GnssObs.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
 #include "internal/Node/Pin.hpp"
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 #include "NodeRegistry.hpp"
 
@@ -48,7 +46,7 @@ NAV::UdpSend::UdpSend()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 202, 96 };
 
-    nm::CreateInputPin(this, "Data", Pin::Type::Flow, supportedDataIdentifier, &UdpSend::receiveData);
+    CreateInputPin("Data", Pin::Type::Flow, supportedDataIdentifier, &UdpSend::receiveData);
 }
 
 NAV::UdpSend::~UdpSend()

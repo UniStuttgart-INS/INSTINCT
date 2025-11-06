@@ -11,8 +11,7 @@
 #include <imgui.h>
 
 #include "internal/FlowExecutor.hpp"
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
 
 #include "util/Logger.hpp"
 
@@ -20,7 +19,7 @@ void NAV::gui::menus::ShowRunMenu()
 {
     bool hasInitializedNodes = false;
     bool hasDeInitializedNodes = false;
-    for (const auto* node : nm::m_Nodes())
+    for (const auto* node : flow::m_Nodes())
     {
         if (node->getState() == Node::State::Initialized)
         {
@@ -33,7 +32,7 @@ void NAV::gui::menus::ShowRunMenu()
     }
     if (ImGui::MenuItem("Initialize all Nodes", nullptr, false, hasDeInitializedNodes))
     {
-        for (auto* node : nm::m_Nodes())
+        for (auto* node : flow::m_Nodes())
         {
             if (node->getState() == Node::State::Deinitialized)
             {
@@ -43,7 +42,7 @@ void NAV::gui::menus::ShowRunMenu()
     }
     if (ImGui::MenuItem("Reinitialize all Nodes", nullptr, false, hasInitializedNodes))
     {
-        for (auto* node : nm::m_Nodes())
+        for (auto* node : flow::m_Nodes())
         {
             if (node->isInitialized())
             {
@@ -57,7 +56,7 @@ void NAV::gui::menus::ShowRunMenu()
     }
     if (ImGui::MenuItem("Deinitialize all Nodes", nullptr, false, hasInitializedNodes))
     {
-        for (auto* node : nm::m_Nodes())
+        for (auto* node : flow::m_Nodes())
         {
             if (node->isInitialized())
             {

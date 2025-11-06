@@ -15,9 +15,7 @@
 
 #include "internal/gui/widgets/HelpMarker.hpp"
 
-#include "internal/NodeManager.hpp"
 #include <vn/types.h>
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include <imgui_internal.h>
@@ -1659,10 +1657,10 @@ NAV::VectorNavSensor::VectorNavSensor()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 954, 783 };
 
-    nm::CreateOutputPin(this, "Ascii Output", Pin::Type::Flow, { NAV::StringObs::type() });
-    nm::CreateOutputPin(this, "Binary Output 1", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() });
-    nm::CreateOutputPin(this, "Binary Output 2", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() });
-    nm::CreateOutputPin(this, "Binary Output 3", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() });
+    CreateOutputPin("Ascii Output", Pin::Type::Flow, { NAV::StringObs::type() });
+    CreateOutputPin("Binary Output 1", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() });
+    CreateOutputPin("Binary Output 2", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() });
+    CreateOutputPin("Binary Output 3", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() });
 
     _dividerFrequency = []() {
         std::map<int, int, std::greater<>> divFreq;
@@ -2073,11 +2071,11 @@ void NAV::VectorNavSensor::guiConfig()
                 flow::ApplyChanges();
                 if (_syncInPin && inputPins.empty())
                 {
-                    nm::CreateInputPin(this, "SyncIn", Pin::Type::Object, { "TimeSync" });
+                    CreateInputPin("SyncIn", Pin::Type::Object, { "TimeSync" });
                 }
                 else if (!_syncInPin && !inputPins.empty())
                 {
-                    nm::DeleteInputPin(inputPins.front());
+                    DeleteInputPin(0);
                 }
             }
 
@@ -2255,12 +2253,12 @@ void NAV::VectorNavSensor::guiConfig()
                         if (_synchronizationControlRegister.syncOutMode == vn::protocol::uart::SyncOutMode::SYNCOUTMODE_GPSPPS
                             && outputPins.size() <= 4)
                         {
-                            nm::CreateOutputPin(this, "SyncOut", Pin::Type::Object, { "TimeSync" }, &_timeSyncOut);
+                            CreateOutputPin("SyncOut", Pin::Type::Object, { "TimeSync" }, &_timeSyncOut);
                         }
                         else if (_synchronizationControlRegister.syncOutMode != vn::protocol::uart::SyncOutMode::SYNCOUTMODE_GPSPPS
                                  && outputPins.size() == 5)
                         {
-                            nm::DeleteOutputPin(outputPins.at(4));
+                            DeleteOutputPin(4);
                         }
 
                         flow::ApplyChanges();
@@ -5630,7 +5628,7 @@ void NAV::VectorNavSensor::restore(json const& j)
         j.at("syncInPin").get_to(_syncInPin);
         if (_syncInPin && inputPins.empty())
         {
-            nm::CreateInputPin(this, "SyncIn", Pin::Type::Object, { "TimeSync" });
+            CreateInputPin("SyncIn", Pin::Type::Object, { "TimeSync" });
         }
     }
     if (j.contains("synchronizationControlRegister"))
@@ -5639,7 +5637,7 @@ void NAV::VectorNavSensor::restore(json const& j)
         if (_synchronizationControlRegister.syncOutMode == vn::protocol::uart::SyncOutMode::SYNCOUTMODE_GPSPPS
             && outputPins.size() <= 4)
         {
-            nm::CreateOutputPin(this, "SyncOut", Pin::Type::Object, { "TimeSync" }, &_timeSyncOut);
+            CreateOutputPin("SyncOut", Pin::Type::Object, { "TimeSync" }, &_timeSyncOut);
         }
     }
     if (j.contains("communicationProtocolControlRegister"))

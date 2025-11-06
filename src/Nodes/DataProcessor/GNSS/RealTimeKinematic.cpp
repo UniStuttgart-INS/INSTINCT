@@ -53,10 +53,8 @@
 #include "internal/gui/widgets/InputWithUnit.hpp"
 #include "internal/gui/widgets/EnumCombo.hpp"
 
-#include "internal/NodeManager.hpp"
 #include <fmt/core.h>
 #include <fmt/format.h>
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "NodeData/State/Pos.hpp"
@@ -81,12 +79,12 @@ RealTimeKinematic::RealTimeKinematic()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 633, 670 };
 
-    nm::CreateInputPin(this, "Base Position", Pin::Type::Flow, { Pos::type() }, &RealTimeKinematic::recvBasePos, nullptr, 1);
-    nm::CreateInputPin(this, "GnssObs (Base)", Pin::Type::Flow, { GnssObs::type() }, &RealTimeKinematic::recvBaseGnssObs);
-    nm::CreateInputPin(this, "GnssObs (Rover)", Pin::Type::Flow, { GnssObs::type() }, &RealTimeKinematic::recvRoverGnssObs);
+    CreateInputPin("Base Position", Pin::Type::Flow, { Pos::type() }, &RealTimeKinematic::recvBasePos, nullptr, 1);
+    CreateInputPin("GnssObs (Base)", Pin::Type::Flow, { GnssObs::type() }, &RealTimeKinematic::recvBaseGnssObs);
+    CreateInputPin("GnssObs (Rover)", Pin::Type::Flow, { GnssObs::type() }, &RealTimeKinematic::recvRoverGnssObs);
     _dynamicInputPins.addPin(this); // GnssNavInfo
 
-    nm::CreateOutputPin(this, RtkSolution::type().c_str(), Pin::Type::Flow, { RtkSolution::type() });
+    CreateOutputPin(RtkSolution::type().c_str(), Pin::Type::Flow, { RtkSolution::type() });
 }
 
 RealTimeKinematic::~RealTimeKinematic()
@@ -659,12 +657,12 @@ void RealTimeKinematic::deinitialize()
 
 void RealTimeKinematic::pinAddCallback(Node* node)
 {
-    nm::CreateInputPin(node, NAV::GnssNavInfo::type().c_str(), Pin::Type::Object, { NAV::GnssNavInfo::type() });
+    node->CreateInputPin(NAV::GnssNavInfo::type().c_str(), Pin::Type::Object, { NAV::GnssNavInfo::type() });
 }
 
 void RealTimeKinematic::pinDeleteCallback(Node* node, size_t pinIdx)
 {
-    nm::DeleteInputPin(node->inputPins.at(pinIdx));
+    node->DeleteInputPin(pinIdx);
 }
 
 void RealTimeKinematic::addEventToGui(const std::shared_ptr<RtkSolution>& rtkSol, const std::string& text)

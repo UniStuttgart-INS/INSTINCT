@@ -12,8 +12,6 @@
     #include "mavlinkSend.hpp"
     #include <array>
 
-    #include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
     #include "internal/FlowManager.hpp"
 
     #include "internal/gui/widgets/imgui_ex.hpp"
@@ -32,7 +30,7 @@ NAV::MavlinkSend::MavlinkSend()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 479.0, 197.0 };
 
-    nm::CreateInputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &MavlinkSend::receivePosVelAtt);
+    CreateInputPin("PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &MavlinkSend::receivePosVelAtt);
 }
 
 NAV::MavlinkSend::~MavlinkSend()

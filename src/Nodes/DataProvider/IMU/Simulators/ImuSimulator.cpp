@@ -21,10 +21,8 @@
 #include "Navigation/Math/Math.hpp"
 #include "Navigation/Transformations/Units.hpp"
 
-#include "internal/NodeManager.hpp"
 #include <Eigen/src/Geometry/AngleAxis.h>
 #include <Eigen/src/Geometry/Quaternion.h>
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
 #include "internal/gui/widgets/HelpMarker.hpp"
@@ -41,8 +39,8 @@ NAV::ImuSimulator::ImuSimulator()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 677, 508 };
 
-    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObsSimulated::type() }, &ImuSimulator::pollImuObs);
-    nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuSimulator::pollPosVelAtt);
+    CreateOutputPin("ImuObs", Pin::Type::Flow, { NAV::ImuObsSimulated::type() }, &ImuSimulator::pollImuObs);
+    CreateOutputPin("PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuSimulator::pollPosVelAtt);
 }
 
 NAV::ImuSimulator::~ImuSimulator()
@@ -152,11 +150,11 @@ void NAV::ImuSimulator::guiConfig()
 
                     if (_trajectoryType == TrajectoryType::Csv && inputPins.empty())
                     {
-                        nm::CreateInputPin(this, CsvData::type().c_str(), Pin::Type::Object, { CsvData::type() });
+                        CreateInputPin(CsvData::type().c_str(), Pin::Type::Object, { CsvData::type() });
                     }
                     else if (_trajectoryType != TrajectoryType::Csv && !inputPins.empty())
                     {
-                        nm::DeleteInputPin(inputPins.front());
+                        DeleteInputPin(0);
                     }
 
                     flow::ApplyChanges();
@@ -731,11 +729,11 @@ void NAV::ImuSimulator::restore(json const& j)
 
         if (_trajectoryType == TrajectoryType::Csv && inputPins.empty())
         {
-            nm::CreateInputPin(this, CsvData::type().c_str(), Pin::Type::Object, { CsvData::type() });
+            CreateInputPin(CsvData::type().c_str(), Pin::Type::Object, { CsvData::type() });
         }
         else if (_trajectoryType != TrajectoryType::Csv && !inputPins.empty())
         {
-            nm::DeleteInputPin(inputPins.front());
+            DeleteInputPin(0);
         }
     }
     if (j.contains("startPosition"))

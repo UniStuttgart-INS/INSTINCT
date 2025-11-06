@@ -14,8 +14,6 @@
 
 #include "internal/gui/widgets/FileDialog.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "util/Vendor/Pixhawk/UlogFileFormat.hpp"
@@ -36,9 +34,9 @@ NAV::UlogFile::UlogFile()
     _guiConfigDefaultWindowSize = { 589, 257 };
 
     // All message types are polled from the first output pin, but then send out on the correct pin over invokeCallbacks
-    nm::CreateOutputPin(this, "ImuObs #1", Pin::Type::Flow, { NAV::ImuObs::type() }, &UlogFile::pollData);
-    nm::CreateOutputPin(this, "ImuObs #2", Pin::Type::Flow, { NAV::ImuObs::type() });
-    nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() });
+    CreateOutputPin("ImuObs #1", Pin::Type::Flow, { NAV::ImuObs::type() }, &UlogFile::pollData);
+    CreateOutputPin("ImuObs #2", Pin::Type::Flow, { NAV::ImuObs::type() });
+    CreateOutputPin("PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() });
 }
 
 NAV::UlogFile::~UlogFile()

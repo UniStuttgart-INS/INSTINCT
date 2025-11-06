@@ -8,8 +8,6 @@
 
 #include "Terminator.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 // ---------------------------------------------------------- Member functions -------------------------------------------------------------
@@ -20,7 +18,7 @@ NAV::Terminator::Terminator() : Node(typeStatic())
     _hasConfig = false;
     kind = Kind::Simple;
 
-    nm::CreateInputPin(this, "", Pin::Type::Flow, { NodeData::type() }, &Terminator::receiveObs);
+    CreateInputPin("", Pin::Type::Flow, { NodeData::type() }, &Terminator::receiveObs);
 }
 
 NAV::Terminator::~Terminator()

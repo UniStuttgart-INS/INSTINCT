@@ -13,8 +13,6 @@
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "Navigation/Transformations/Units.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 #include "internal/gui/widgets/EnumCombo.hpp"
 #include "internal/gui/widgets/HelpMarker.hpp"
@@ -201,7 +199,7 @@ void NAV::MultiImuFile::updateNumberOfOutputPins()
 {
     while (outputPins.size() < _nSensors)
     {
-        nm::CreateOutputPin(this, fmt::format("ImuObs {}", outputPins.size() + 1).c_str(), Pin::Type::Flow, { NAV::ImuObs::type() }, &MultiImuFile::pollData);
+        CreateOutputPin(fmt::format("ImuObs {}", outputPins.size() + 1).c_str(), Pin::Type::Flow, { NAV::ImuObs::type() }, &MultiImuFile::pollData);
         _imuPosAll.resize(_nSensors);
 
         _messages.resize(_nSensors);

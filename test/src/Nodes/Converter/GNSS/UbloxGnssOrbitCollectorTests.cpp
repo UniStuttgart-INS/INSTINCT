@@ -16,8 +16,7 @@
 #include "FlowTester.hpp"
 #include "Logger.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
 
 #include "NodeData/GNSS/GnssNavInfoComparisons.hpp"
 
@@ -60,15 +59,15 @@ TEST_CASE("[UbloxGnssOrbitCollectorTests][flow] Spirent_ublox-F9P_static_duratio
     //
     // ###########################################################################################################
 
-    nm::RegisterPreInitCallback([&]() {
-        dynamic_cast<UbloxFile*>(nm::FindNode(NODE_ID_UBLOX_FILE))->_path = "Converter/GNSS/Ublox/Spirent_ublox-F9P_static_duration-15min_sys-GPS-GAL_iono-Klobuchar_tropo-Saastamoinen.ubx";
-        dynamic_cast<RinexNavFile*>(nm::FindNode(NODE_ID_RINEX_NAV_FILE))->_path = "Converter/GNSS/Ublox/Spirent_ublox-F9P_static_duration-15min_sys-GPS-GAL_iono-Klobuchar_tropo-Saastamoinen.nav";
+    flow::RegisterPreInitCallback([&]() {
+        dynamic_cast<UbloxFile*>(flow::FindNode(NODE_ID_UBLOX_FILE))->_path = "Converter/GNSS/Ublox/Spirent_ublox-F9P_static_duration-15min_sys-GPS-GAL_iono-Klobuchar_tropo-Saastamoinen.ubx";
+        dynamic_cast<RinexNavFile*>(flow::FindNode(NODE_ID_RINEX_NAV_FILE))->_path = "Converter/GNSS/Ublox/Spirent_ublox-F9P_static_duration-15min_sys-GPS-GAL_iono-Klobuchar_tropo-Saastamoinen.nav";
     });
 
-    nm::RegisterCleanupCallback([&]() {
-        auto* ubloxCollectorPin = nm::FindOutputPin(PIN_ID_UBLOX_RINEX_NAV_INFO);
+    flow::RegisterCleanupCallback([&]() {
+        auto* ubloxCollectorPin = flow::FindOutputPin(PIN_ID_UBLOX_RINEX_NAV_INFO);
         REQUIRE(ubloxCollectorPin != nullptr);
-        auto* rinexNavFilePin = nm::FindOutputPin(PIN_ID_RINEX_NAV_INFO);
+        auto* rinexNavFilePin = flow::FindOutputPin(PIN_ID_RINEX_NAV_INFO);
         REQUIRE(rinexNavFilePin != nullptr);
         const auto* gnssNavInfoUblox = static_cast<const GnssNavInfo*>(std::get<const void*>(ubloxCollectorPin->data));
         const auto* gnssNavInfoRinex = static_cast<const GnssNavInfo*>(std::get<const void*>(rinexNavFilePin->data));

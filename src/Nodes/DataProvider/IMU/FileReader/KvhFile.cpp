@@ -10,8 +10,6 @@
 
 #include "util/Logger.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "util/Vendor/KVH/KvhUtilities.hpp"
@@ -26,8 +24,8 @@ NAV::KvhFile::KvhFile()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 380, 70 };
 
-    nm::CreateOutputPin(this, "KvhObs", Pin::Type::Flow, { NAV::KvhObs::type() }, &KvhFile::pollData);
-    nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, { "std::vector<std::string>" }, &_headerColumns);
+    CreateOutputPin("KvhObs", Pin::Type::Flow, { NAV::KvhObs::type() }, &KvhFile::pollData);
+    CreateOutputPin("Header Columns", Pin::Type::Object, { "std::vector<std::string>" }, &_headerColumns);
 }
 
 NAV::KvhFile::~KvhFile()

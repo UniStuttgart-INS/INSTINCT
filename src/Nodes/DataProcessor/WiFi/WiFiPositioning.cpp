@@ -23,8 +23,6 @@
 #include "internal/gui/widgets/imgui_ex.hpp"
 #include "internal/gui/widgets/InputWithUnit.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "NodeData/WiFi/WiFiObs.hpp"
@@ -45,7 +43,7 @@ NAV::WiFiPositioning::WiFiPositioning()
 
     updateNumberOfInputPins();
 
-    nm::CreateOutputPin(this, NAV::WiFiPositioningSolution::type().c_str(), Pin::Type::Flow, { NAV::WiFiPositioningSolution::type() });
+    CreateOutputPin(NAV::WiFiPositioningSolution::type().c_str(), Pin::Type::Flow, { NAV::WiFiPositioningSolution::type() });
 }
 
 NAV::WiFiPositioning::~WiFiPositioning()
@@ -780,11 +778,11 @@ void NAV::WiFiPositioning::updateNumberOfInputPins()
 {
     while (inputPins.size() < _nWifiInputPins)
     {
-        nm::CreateInputPin(this, NAV::WiFiObs::type().c_str(), Pin::Type::Flow, { NAV::WiFiObs::type() }, &WiFiPositioning::recvWiFiObs);
+        CreateInputPin(NAV::WiFiObs::type().c_str(), Pin::Type::Flow, { NAV::WiFiObs::type() }, &WiFiPositioning::recvWiFiObs);
     }
     while (inputPins.size() > _nWifiInputPins)
     {
-        nm::DeleteInputPin(inputPins.back());
+        DeleteInputPin(inputPins.size() - 1);
     }
 }
 

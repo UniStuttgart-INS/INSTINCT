@@ -16,8 +16,6 @@
 
 #include <iomanip> // std::setprecision
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 NAV::WiFiObsLogger::WiFiObsLogger()
@@ -30,7 +28,7 @@ NAV::WiFiObsLogger::WiFiObsLogger()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 380, 70 };
 
-    nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, { WiFiObs::type() }, &WiFiObsLogger::writeObservation);
+    CreateInputPin("writeObservation", Pin::Type::Flow, { WiFiObs::type() }, &WiFiObsLogger::writeObservation);
 }
 
 NAV::WiFiObsLogger::~WiFiObsLogger()

@@ -23,8 +23,7 @@
 
     #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
 
-    #include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
+    #include "internal/FlowManager.hpp"
 
     #include "Logger.hpp"
 
@@ -892,7 +891,7 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
 
     // -------------------------------------------------- IMU ----------------------------------------------------
 
-    nm::RegisterWatcherCallbackToInputPin(PIN_ID_VN_IMU_SRC, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(PIN_ID_VN_IMU_SRC, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         messageCounterImuDataCsv++;
 
         LOG_TRACE("messageCounterImuDataCsv = {}, messageCounterImuLogCsv = {}, messageCounterImuLogVnb = {}",
@@ -906,7 +905,7 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
         compareObservations(data_vn310_imu_csv, logs_vn310_imu_csv, logs_vn310_imu_vnb);
     });
 
-    nm::RegisterWatcherCallbackToInputPin(PIN_ID_VN_IMU_LOG_CSV, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(PIN_ID_VN_IMU_LOG_CSV, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         messageCounterImuLogCsv++;
 
         LOG_TRACE("messageCounterImuDataCsv = {}, messageCounterImuLogCsv = {}, messageCounterImuLogVnb = {}",
@@ -920,7 +919,7 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
         compareObservations(data_vn310_imu_csv, logs_vn310_imu_csv, logs_vn310_imu_vnb);
     });
 
-    nm::RegisterWatcherCallbackToInputPin(PIN_ID_VN_IMU_LOG_BIN, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(PIN_ID_VN_IMU_LOG_BIN, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         messageCounterImuLogVnb++;
 
         LOG_TRACE("messageCounterImuDataCsv = {}, messageCounterImuLogCsv = {}, messageCounterImuLogVnb = {}",
@@ -936,7 +935,7 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
 
     // ------------------------------------------------- GNSS ----------------------------------------------------
 
-    nm::RegisterWatcherCallbackToInputPin(PIN_ID_VN_GNSS_SRC, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(PIN_ID_VN_GNSS_SRC, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         messageCounterGnssDataCsv++;
 
         LOG_TRACE("messageCounterGnssDataCsv = {}, messageCounterGnssLogCsv = {}, messageCounterGnssLogVnb = {}",
@@ -950,7 +949,7 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
         compareObservations(data_vn310_gnss_csv, logs_vn310_gnss_csv, logs_vn310_gnss_vnb);
     });
 
-    nm::RegisterWatcherCallbackToInputPin(PIN_ID_VN_GNSS_LOG_CSV, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(PIN_ID_VN_GNSS_LOG_CSV, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         messageCounterGnssLogCsv++;
 
         LOG_TRACE("messageCounterGnssDataCsv = {}, messageCounterGnssLogCsv = {}, messageCounterGnssLogVnb = {}",
@@ -964,7 +963,7 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
         compareObservations(data_vn310_gnss_csv, logs_vn310_gnss_csv, logs_vn310_gnss_vnb);
     });
 
-    nm::RegisterWatcherCallbackToInputPin(PIN_ID_VN_GNSS_LOG_BIN, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(PIN_ID_VN_GNSS_LOG_BIN, [](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         messageCounterGnssLogVnb++;
 
         LOG_TRACE("messageCounterGnssDataCsv = {}, messageCounterGnssLogCsv = {}, messageCounterGnssLogVnb = {}",

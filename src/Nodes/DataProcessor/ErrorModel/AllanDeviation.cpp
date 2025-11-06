@@ -15,10 +15,8 @@
 
 #include "util/Logger.hpp"
 
-#include "internal/NodeManager.hpp"
 #include <Eigen/src/Core/util/Meta.h>
 #include <fmt/core.h>
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "internal/gui/widgets/HelpMarker.hpp"
@@ -40,7 +38,7 @@ NAV::AllanDeviation::AllanDeviation()
     _lockConfigDuringRun = false;
     _guiConfigDefaultWindowSize = { 630, 530 };
 
-    nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &AllanDeviation::receiveImuObs);
+    CreateInputPin("ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &AllanDeviation::receiveImuObs);
 }
 
 NAV::AllanDeviation::~AllanDeviation()

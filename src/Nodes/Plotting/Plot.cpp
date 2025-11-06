@@ -21,10 +21,8 @@
 #include "util/Container/ScrollingBuffer.hpp"
 #include "util/Logger.hpp"
 
-#include "internal/NodeManager.hpp"
 #include "util/Plot/PlotTooltip.hpp"
 #include <fmt/core.h>
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 #include "internal/ConfigManager.hpp"
 #include "NodeRegistry.hpp"
@@ -1757,7 +1755,7 @@ void NAV::Plot::pinAddCallback(Node* node)
 {
     auto* plotNode = static_cast<Plot*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
 
-    nm::CreateInputPin(node, fmt::format("Pin {}", node->inputPins.size() + 1).c_str(), Pin::Type::Flow, plotNode->_dataIdentifier, &Plot::plotFlowData);
+    node->CreateInputPin(fmt::format("Pin {}", node->inputPins.size() + 1).c_str(), Pin::Type::Flow, plotNode->_dataIdentifier, &Plot::plotFlowData);
     plotNode->_pinData.emplace_back();
     for (auto& plot : plotNode->_plots)
     {
@@ -1793,7 +1791,7 @@ void NAV::Plot::pinDeleteCallback(Node* node, size_t pinIdx)
         plot.selectedXdata.erase(std::next(plot.selectedXdata.begin(), static_cast<int64_t>(pinIdx)));
     }
 
-    nm::DeleteInputPin(node->inputPins.at(pinIdx));
+    node->DeleteInputPin(pinIdx);
     plotNode->_pinData.erase(std::next(plotNode->_pinData.begin(), static_cast<int64_t>(pinIdx)));
 }
 

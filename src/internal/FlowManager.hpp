@@ -16,12 +16,77 @@
 #include <string>
 #include <filesystem>
 #include "internal/gui/GlobalActions.hpp"
+#include "internal/Node/Node.hpp"
+#include "NodeData/NodeData.hpp"
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json; ///< json namespace
 
 namespace NAV::flow
 {
+/// @brief List of all registered Nodes
+const std::vector<Node*>& m_Nodes();
+
+/// @brief Generates a new node id
+ax::NodeEditor::NodeId GetNextNodeId();
+
+/// @brief Generates a new link id
+ax::NodeEditor::LinkId GetNextLinkId();
+
+/// @brief Generates a new pin id
+ax::NodeEditor::PinId GetNextPinId();
+
+/// @brief Add the provided node object to the list of nodes
+/// @param[in] node Node object to add to the list
+void AddNode(Node* node);
+
+/// @brief Update the provided node object
+/// @param[in] node Node object to add to the list
+void UpdateNode(Node* node);
+
+/// @brief Delete the node provided by id
+/// @param[in] nodeId Unique Id of the Node to delete
+/// @return True if delete was successful, false if NodeId does not exist
+bool DeleteNode(ax::NodeEditor::NodeId nodeId);
+
+/// @brief Delete all nodes
+void DeleteAllNodes();
+
+/// @brief Adds the link
+/// @param[in] linkId Unique Id of the link
+void AddLink(ax::NodeEditor::LinkId linkId);
+
+/// @brief Finds the Node for the NodeId
+/// @param[in] id Unique Id of the Node to search for
+/// @return Pointer to the node or nullptr if the NodeId does not exist
+Node* FindNode(ax::NodeEditor::NodeId id);
+
+/// @brief Finds the Pin for the PinId
+/// @param[in] id Unique Id of the Pin to search for
+/// @return Pointer to the pin or nullptr if the PinId does not exist
+OutputPin* FindOutputPin(ax::NodeEditor::PinId id);
+
+/// @brief Finds the Pin for the PinId
+/// @param[in] id Unique Id of the Pin to search for
+/// @return Pointer to the pin or nullptr if the PinId does not exist
+InputPin* FindInputPin(ax::NodeEditor::PinId id);
+
+/// @brief Enables all Node callbacks
+void EnableAllCallbacks();
+
+/// @brief Disables all Node callbacks
+void DisableAllCallbacks();
+
+/// @brief Clears all nodes queues
+void ClearAllNodeQueues();
+
+/// @brief Initializes all nodes.
+/// @return Returns false if one of the nodes could not initialize
+bool InitializeAllNodes();
+
+/// @brief Initializes all nodes in a separate thread
+void InitializeAllNodesAsync();
+
 /// @brief Saves the current flow into a file
 /// @param[out] globalAction If currentfilename is empty this will be returned as GlobalActions::SaveAs
 void SaveFlow(GlobalActions& globalAction);
@@ -82,10 +147,40 @@ std::filesystem::path GetFlowPath();
 /// @brief Get the path where config files are searched
 std::filesystem::path GetConfigPath();
 
-/// @brief Whether actions should be saved to the last actions list
-extern bool saveLastActions;
+#ifdef TESTING
 
-/// @brief Frame Count when changes were loaded to prevent nodes moving from triggering unsaved changes
-extern int loadingFrameCount;
+/// @brief Registers the callback function to the watcher list
+/// @param[in] id Output pin id to add the callback to
+/// @param[in] callback Callback function
+/// @attention ApplyWatcherCallbacks() needs to be called after loading the flow to apply the list to the pins.
+void RegisterWatcherCallbackToInputPin(ax::NodeEditor::PinId id, const InputPin::WatcherCallback& callback);
+
+/// @brief Registers the callback function to the watcher list
+/// @param[in] id Link id to add the callback to
+/// @param[in] callback Callback function
+/// @attention ApplyWatcherCallbacks() needs to be called after loading the flow to apply the list to the pins.
+void RegisterWatcherCallbackToLink(ax::NodeEditor::LinkId id, const InputPin::WatcherCallback& callback);
+
+/// @brief Applies the watcher lists to the node pins
+void ApplyWatcherCallbacks();
+
+/// @brief Registers a callback function which gets called before the nodes are initialized. Used to change node settings.
+/// @param[in] callback Callback function
+void RegisterPreInitCallback(std::function<void()> callback);
+
+/// @brief Calls the pre-init callback
+void CallPreInitCallback();
+
+/// @brief Registers a callback which gets called after flow execution before cleanup
+/// @param[in] callback Callback function
+void RegisterCleanupCallback(std::function<void()> callback);
+
+/// @brief Calls the cleanup callback
+void CallCleanupCallback();
+
+/// @brief Clears the watcher list
+void ClearRegisteredCallbacks();
+
+#endif
 
 } // namespace NAV::flow

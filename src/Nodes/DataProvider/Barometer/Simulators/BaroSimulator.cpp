@@ -12,8 +12,6 @@
 
 #include "util/Logger.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "NodeData/State/Pos.hpp"
@@ -37,9 +35,9 @@ NAV::BaroSimulator::BaroSimulator()
     std::uniform_int_distribution<uint64_t> dist(0, std::numeric_limits<uint64_t>::max() / 2);
     _pressureRng.seed = dist(gen);
 
-    nm::CreateOutputPin(this, "BaroPressObs", Pin::Type::Flow, { NAV::BaroPressObs::type() });
+    CreateOutputPin("BaroPressObs", Pin::Type::Flow, { NAV::BaroPressObs::type() });
 
-    nm::CreateInputPin(this, "Pos", Pin::Type::Flow, { NAV::Pos::type() }, &BaroSimulator::receiveObs);
+    CreateInputPin("Pos", Pin::Type::Flow, { NAV::Pos::type() }, &BaroSimulator::receiveObs);
 }
 
 NAV::BaroSimulator::~BaroSimulator()

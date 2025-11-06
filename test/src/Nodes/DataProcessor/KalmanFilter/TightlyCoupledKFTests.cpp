@@ -25,8 +25,7 @@
 
 // #include "FlowTester.hpp"
 
-// #include "internal/NodeManager.hpp"
-// namespace nm = NAV::NodeManager;
+// #include "internal/FlowManager.hpp"
 
 // #include "Navigation/Ellipsoid/Ellipsoid.hpp"
 // #include "Navigation/Transformations/Units.hpp"
@@ -69,25 +68,25 @@
 
 //     std::array<std::vector<std::function<void()>>, 7> settings = { {
 //         { [&]() { LOG_WARN("Setting ImuIntegrator - _path to: {}", imuFilePath);
-//                   dynamic_cast<VectorNavFile*>(nm::FindNode(324))->_path = imuFilePath; } },
+//                   dynamic_cast<VectorNavFile*>(flow::FindNode(324))->_path = imuFilePath; } },
 //         { [&]() { LOG_WARN("Setting TightlyCoupledKF - _path to: {}", gnssFilePath);
-//                   if (auto* rinexObsFile = dynamic_cast<RinexObsFile*>(nm::FindNode(633))) { rinexObsFile->_path = gnssFilePath; } } },
+//                   if (auto* rinexObsFile = dynamic_cast<RinexObsFile*>(flow::FindNode(633))) { rinexObsFile->_path = gnssFilePath; } } },
 //         { []() { LOG_WARN("Setting TightlyCoupledKF - _integrationFrame to: NED");
-//                  dynamic_cast<TightlyCoupledKF*>(nm::FindNode(591))->_inertialIntegrator._integrationFrame = InertialIntegrator::IntegrationFrame::NED; },
+//                  dynamic_cast<TightlyCoupledKF*>(flow::FindNode(591))->_inertialIntegrator._integrationFrame = InertialIntegrator::IntegrationFrame::NED; },
 //           []() { LOG_WARN("Setting TightlyCoupledKF - _integrationFrame to: ECEF");
-//                  dynamic_cast<TightlyCoupledKF*>(nm::FindNode(591))->_inertialIntegrator._integrationFrame = InertialIntegrator::IntegrationFrame::ECEF; } },
+//                  dynamic_cast<TightlyCoupledKF*>(flow::FindNode(591))->_inertialIntegrator._integrationFrame = InertialIntegrator::IntegrationFrame::ECEF; } },
 //         { []() { LOG_WARN("Setting TightlyCoupledKF - _phiCalculationAlgorithm to: Taylor");
-//                  dynamic_cast<TightlyCoupledKF*>(nm::FindNode(591))->_phiCalculationAlgorithm = TightlyCoupledKF::PhiCalculationAlgorithm::Taylor; },
+//                  dynamic_cast<TightlyCoupledKF*>(flow::FindNode(591))->_phiCalculationAlgorithm = TightlyCoupledKF::PhiCalculationAlgorithm::Taylor; },
 //           []() { LOG_WARN("Setting TightlyCoupledKF - _phiCalculationAlgorithm to: Exponential");
-//                  dynamic_cast<TightlyCoupledKF*>(nm::FindNode(591))->_phiCalculationAlgorithm = TightlyCoupledKF::PhiCalculationAlgorithm::Exponential; } },
+//                  dynamic_cast<TightlyCoupledKF*>(flow::FindNode(591))->_phiCalculationAlgorithm = TightlyCoupledKF::PhiCalculationAlgorithm::Exponential; } },
 //         { []() { LOG_WARN("Setting TightlyCoupledKF - _qCalculationAlgorithm to: Taylor1");
-//                  dynamic_cast<TightlyCoupledKF*>(nm::FindNode(591))->_qCalculationAlgorithm = TightlyCoupledKF::QCalculationAlgorithm::Taylor1; },
+//                  dynamic_cast<TightlyCoupledKF*>(flow::FindNode(591))->_qCalculationAlgorithm = TightlyCoupledKF::QCalculationAlgorithm::Taylor1; },
 //           []() { LOG_WARN("Setting TightlyCoupledKF - _qCalculationAlgorithm to: VanLoan");
-//                  dynamic_cast<TightlyCoupledKF*>(nm::FindNode(591))->_qCalculationAlgorithm = TightlyCoupledKF::QCalculationAlgorithm::VanLoan; } },
+//                  dynamic_cast<TightlyCoupledKF*>(flow::FindNode(591))->_qCalculationAlgorithm = TightlyCoupledKF::QCalculationAlgorithm::VanLoan; } },
 //         { []() { LOG_WARN("Setting TightlyCoupledKF - _randomProcessAccel to: GaussMarkov1");
-//                  dynamic_cast<TightlyCoupledKF*>(nm::FindNode(591))->_randomProcessAccel = TightlyCoupledKF::RandomProcess::GaussMarkov1; } },
+//                  dynamic_cast<TightlyCoupledKF*>(flow::FindNode(591))->_randomProcessAccel = TightlyCoupledKF::RandomProcess::GaussMarkov1; } },
 //         { []() { LOG_WARN("Setting TightlyCoupledKF - _randomProcessGyro to: GaussMarkov1");
-//                  dynamic_cast<TightlyCoupledKF*>(nm::FindNode(591))->_randomProcessGyro = TightlyCoupledKF::RandomProcess::GaussMarkov1; } },
+//                  dynamic_cast<TightlyCoupledKF*>(flow::FindNode(591))->_randomProcessGyro = TightlyCoupledKF::RandomProcess::GaussMarkov1; } },
 //     } };
 
 //     cartesian_product_idx([&](size_t i0, size_t i1, size_t i2, size_t i3, size_t i4, size_t i5, size_t i6) {
@@ -102,7 +101,7 @@
 
 //         auto timeOfFirstGnssObs = imuAfter ? InsTime() : InsTime(2, 220, 385980.783684);
 
-//         nm::RegisterPreInitCallback([&]() {
+//         flow::RegisterPreInitCallback([&]() {
 //             settings[0][i0]();
 //             settings[1][i1]();
 //             settings[2][i2]();
@@ -113,30 +112,30 @@
 //         });
 
 //         // VectorNavBinaryConverter (333) |> Binary Output (332)
-//         nm::RegisterWatcherCallbackToInputPin(332, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+//         flow::RegisterWatcherCallbackToInputPin(332, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
 //             messageCounter_VectorNavBinaryConverterImu_BinaryOutput++;
 //         });
 
 //         if (!gnssRinex)
 //         {
 //             // VectorNavBinaryConverter (624) |> Binary Output (623)
-//             nm::RegisterWatcherCallbackToInputPin(623, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+//             flow::RegisterWatcherCallbackToInputPin(623, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
 //                 messageCounter_VectorNavBinaryConverterGnss_BinaryOutput++;
 //             });
 //         }
 
 //         // ImuIntegrator (163) |> ImuObs (164)
-//         nm::RegisterWatcherCallbackToInputPin(164, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+//         flow::RegisterWatcherCallbackToInputPin(164, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
 //             messageCounter_ImuIntegrator_ImuObs++;
 //         });
 
 //         // ImuIntegrator (163) |> PosVelAttInit (165)
-//         nm::RegisterWatcherCallbackToInputPin(165, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+//         flow::RegisterWatcherCallbackToInputPin(165, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
 //             messageCounter_ImuIntegrator_PosVelAttInit++;
 //         });
 
 //         // ImuIntegrator (163) |> PVAError (224)
-//         nm::RegisterWatcherCallbackToInputPin(224, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+//         flow::RegisterWatcherCallbackToInputPin(224, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
 //             messageCounter_ImuIntegrator_PVAError++;
 
 //             // TODO: Test PVA Error
@@ -144,12 +143,12 @@
 //         });
 
 //         // ImuIntegrator (163) |> Sync (6)
-//         nm::RegisterWatcherCallbackToInputPin(6, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+//         flow::RegisterWatcherCallbackToInputPin(6, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
 //             messageCounter_ImuIntegrator_Sync++;
 //         });
 
 //         // TightlyCoupledKF (591) |> InertialNavSol (586)
-//         nm::RegisterWatcherCallbackToInputPin(586, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+//         flow::RegisterWatcherCallbackToInputPin(586, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
 //             messageCounter_TightlyCoupledKF_InertialNavSol++;
 
 //             auto obs = std::static_pointer_cast<const PosVelAtt>(queue.front());
@@ -220,7 +219,7 @@
 //         });
 
 //         // TightlyCoupledKF (591) |> GnssObs (587)
-//         nm::RegisterWatcherCallbackToInputPin(587, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+//         flow::RegisterWatcherCallbackToInputPin(587, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
 //             messageCounter_TightlyCoupledKF_GnssObs++;
 //         });
 

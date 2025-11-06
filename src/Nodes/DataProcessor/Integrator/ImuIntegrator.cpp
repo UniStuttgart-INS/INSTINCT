@@ -19,9 +19,7 @@
 #include "internal/gui/widgets/HelpMarker.hpp"
 
 #include "NodeRegistry.hpp"
-#include "internal/NodeManager.hpp"
 #include <fmt/format.h>
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "Navigation/Constants.hpp"
@@ -38,14 +36,14 @@ NAV::ImuIntegrator::ImuIntegrator()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 422, 146 };
 
-    nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type(), NAV::ImuObsWDelta::type() }, &ImuIntegrator::recvObservation,
-                       [](const Node* node, const InputPin& inputPin) {
-                           const auto* imuIntegrator = static_cast<const ImuIntegrator*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
-                           return !inputPin.queue.empty() && imuIntegrator->_inertialIntegrator.hasInitialPosition();
-                       });
-    nm::CreateInputPin(this, "PosVelAttInit", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuIntegrator::recvPosVelAttInit, nullptr, 1);
+    CreateInputPin("ImuObs", Pin::Type::Flow, { NAV::ImuObs::type(), NAV::ImuObsWDelta::type() }, &ImuIntegrator::recvObservation,
+                   [](const Node* node, const InputPin& inputPin) {
+                       const auto* imuIntegrator = static_cast<const ImuIntegrator*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
+                       return !inputPin.queue.empty() && imuIntegrator->_inertialIntegrator.hasInitialPosition();
+                   });
+    CreateInputPin("PosVelAttInit", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuIntegrator::recvPosVelAttInit, nullptr, 1);
 
-    nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() });
+    CreateOutputPin("PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() });
 }
 
 NAV::ImuIntegrator::~ImuIntegrator()

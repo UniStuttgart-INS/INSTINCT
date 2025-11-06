@@ -25,9 +25,7 @@
 #include "internal/gui/NodeEditorApplication.hpp"
 
 #include "internal/FlowManager.hpp"
-#include "internal/NodeManager.hpp"
 #include <fmt/format.h>
-namespace nm = NAV::NodeManager;
 #include "NodeRegistry.hpp"
 #include "Navigation/Constants.hpp"
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
@@ -60,8 +58,8 @@ NAV::LooselyCoupledKF::LooselyCoupledKF()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 822, 936 };
 
-    nm::CreateInputPin(
-        this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type(), NAV::ImuObsWDelta::type() }, &LooselyCoupledKF::recvImuObservation,
+    CreateInputPin(
+        "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type(), NAV::ImuObsWDelta::type() }, &LooselyCoupledKF::recvImuObservation,
         [](const Node* node, const InputPin& inputPin) {
             const auto* lckf = static_cast<const LooselyCoupledKF*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
             return !inputPin.queue.empty() && lckf->_inertialIntegrator.hasInitialPosition();
@@ -71,7 +69,7 @@ NAV::LooselyCoupledKF::LooselyCoupledKF()
     _dynamicInputPins.addPin(this); // PosVel
     updateInputPins();
 
-    nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::InsGnssLCKFSolution::type() });
+    CreateOutputPin("PosVelAtt", Pin::Type::Flow, { NAV::InsGnssLCKFSolution::type() });
 }
 
 NAV::LooselyCoupledKF::~LooselyCoupledKF()
@@ -103,13 +101,13 @@ void NAV::LooselyCoupledKF::updateInputPins()
                          auto callback = nullptr, InputPin::FlowFirableCheckFunc firable = nullptr, int priority = 0) {
         if (!pinExists && enabled)
         {
-            nm::CreateInputPin(this, pinName, pinType, dataIdentifier, callback,
-                               firable, priority, static_cast<int>(pinIdx));
+            CreateInputPin(pinName, pinType, dataIdentifier, callback,
+                           firable, priority, static_cast<int>(pinIdx));
             _dynamicInputPins.setFirstDynamicPinIdx(_dynamicInputPins.getFirstDynamicPinIdx() + 1);
         }
         else if (pinExists && !enabled)
         {
-            nm::DeleteInputPin(inputPins.at(pinIdx));
+            DeleteInputPin(pinIdx);
             _dynamicInputPins.setFirstDynamicPinIdx(_dynamicInputPins.getFirstDynamicPinIdx() - 1);
         }
         if (enabled) { pinIdx++; }
@@ -128,8 +126,8 @@ void NAV::LooselyCoupledKF::updateInputPins()
 
 void NAV::LooselyCoupledKF::pinAddCallback(Node* node)
 {
-    nm::CreateInputPin(
-        node, "PosVel", Pin::Type::Flow, { NAV::PosVel::type() }, &LooselyCoupledKF::recvPosVelObservation,
+    node->CreateInputPin(
+        "PosVel", Pin::Type::Flow, { NAV::PosVel::type() }, &LooselyCoupledKF::recvPosVelObservation,
         [](const Node* node, const InputPin& inputPin) {
             const auto* lckf = static_cast<const LooselyCoupledKF*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
             return !inputPin.queue.empty() && (!lckf->_initializeStateOverExternalPin || lckf->_inertialIntegrator.hasInitialPosition());
@@ -139,7 +137,7 @@ void NAV::LooselyCoupledKF::pinAddCallback(Node* node)
 
 void NAV::LooselyCoupledKF::pinDeleteCallback(Node* node, size_t pinIdx)
 {
-    nm::DeleteInputPin(node->inputPins.at(pinIdx));
+    node->DeleteInputPin(pinIdx);
 }
 
 void NAV::LooselyCoupledKF::guiConfig()

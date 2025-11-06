@@ -25,8 +25,6 @@
 #include "internal/gui/NodeEditorApplication.hpp"
 #include "util/Json.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 namespace NAV
@@ -347,7 +345,7 @@ NAV::ImuFusion::ImuFusion()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 991, 1059 };
 
-    nm::CreateOutputPin(this, "Combined ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() });
+    CreateOutputPin("Combined ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() });
     updateNumberOfInputPins();
 }
 
@@ -400,8 +398,8 @@ void NAV::ImuFusion::guiConfig()
                 {
                     if (ImGui::Button(fmt::format("x##{} - {}", size_t(id), pinIndex).c_str()))
                     {
-                        nm::DeleteInputPin(inputPins.at(pinIndex));
-                        nm::DeleteOutputPin(outputPins.at(pinIndex));
+                        DeleteInputPin(pinIndex);
+                        DeleteOutputPin(pinIndex);
                         _pinData.erase(_pinData.begin() + static_cast<int64_t>(pinIndex - 1));
                         --_nInputPins;
                         flow::ApplyChanges();
@@ -1311,18 +1309,18 @@ void NAV::ImuFusion::updateNumberOfInputPins()
 {
     while (inputPins.size() < _nInputPins)
     {
-        nm::CreateInputPin(this, fmt::format("Pin {}", inputPins.size() + 1).c_str(), Pin::Type::Flow,
-                           { NAV::ImuObs::type() }, &ImuFusion::recvSignal);
+        CreateInputPin(fmt::format("Pin {}", inputPins.size() + 1).c_str(), Pin::Type::Flow,
+                       { NAV::ImuObs::type() }, &ImuFusion::recvSignal);
         _pinData.emplace_back();
         if (outputPins.size() < _nInputPins)
         {
-            nm::CreateOutputPin(this, fmt::format("ImuBiases {}1", outputPins.size() + 1).c_str(), Pin::Type::Flow, { NAV::InsGnssLCKFSolution::type() });
+            CreateOutputPin(fmt::format("ImuBiases {}1", outputPins.size() + 1).c_str(), Pin::Type::Flow, { NAV::InsGnssLCKFSolution::type() });
         }
     }
     while (inputPins.size() > _nInputPins) // TODO: while loop still necessary here? guiConfig also deletes pins
     {
-        nm::DeleteInputPin(inputPins.back());
-        nm::DeleteOutputPin(outputPins.back());
+        DeleteInputPin(inputPins.size() - 1);
+        DeleteOutputPin(outputPins.size() - 1);
         _pinData.pop_back();
     }
     _pinData.resize(_nInputPins);

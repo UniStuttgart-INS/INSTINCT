@@ -213,10 +213,10 @@ TEST_CASE("[InsTime_GPSweekTow] Comparisons", "[InsTime]")
     auto time_l_2 = InsTime_GPSweekTow(1, 233, 221058.0L);
     auto time_l_3 = InsTime_GPSweekTow(0, 233, 221158.0L);
     auto time = InsTime_GPSweekTow(1, 233, 221158.0L);
-    auto time_e_1 = InsTime_GPSweekTow(1 - 1, 233 + 1 * 1024, 221158.0L);
+    auto time_e_1 = InsTime_GPSweekTow(0, 233 + 1 * 1024, 221158.0L);
     auto time_e_2 = InsTime_GPSweekTow(1, 233 - 3, 221158.0L + 604800.0L * 3.0L);
     auto time_e_3 = InsTime_GPSweekTow(1, 233 + 2, 221158.0L - 2.0L * InsTimeUtil::SECONDS_PER_WEEK);
-    auto time_e_4 = InsTime_GPSweekTow(1 + 1, 233 - InsTimeUtil::WEEKS_PER_GPS_CYCLE, 221158.0L);
+    auto time_e_4 = InsTime_GPSweekTow(2, 233 - InsTimeUtil::WEEKS_PER_GPS_CYCLE, 221158.0L);
     auto time_g_1 = InsTime_GPSweekTow(1, 234, 221158.0L);
     auto time_g_2 = InsTime_GPSweekTow(1, 233, 231158.0L);
     auto time_g_3 = InsTime_GPSweekTow(2, 233, 221158.0L);
@@ -251,10 +251,10 @@ TEST_CASE("[InsTime_GPSweekTow] Comparisons constexpr", "[InsTime]")
     constexpr auto time_l_2 = InsTime_GPSweekTow(1, 233, 221058.0L);
     constexpr auto time_l_3 = InsTime_GPSweekTow(0, 233, 221158.0L);
     constexpr auto time = InsTime_GPSweekTow(1, 233, 221158.0L);
-    constexpr auto time_e_1 = InsTime_GPSweekTow(1 - 1, 233 + 1 * 1024, 221158.0L);
+    constexpr auto time_e_1 = InsTime_GPSweekTow(0, 233 + 1 * 1024, 221158.0L);
     constexpr auto time_e_2 = InsTime_GPSweekTow(1, 233 - 3, 221158.0L + 604800.0L * 3.0L);
     constexpr auto time_e_3 = InsTime_GPSweekTow(1, 233 + 2, 221158.0L - 2.0L * InsTimeUtil::SECONDS_PER_WEEK);
-    constexpr auto time_e_4 = InsTime_GPSweekTow(1 + 1, 233 - InsTimeUtil::WEEKS_PER_GPS_CYCLE, 221158.0L);
+    constexpr auto time_e_4 = InsTime_GPSweekTow(2, 233 - InsTimeUtil::WEEKS_PER_GPS_CYCLE, 221158.0L);
     constexpr auto time_g_1 = InsTime_GPSweekTow(1, 234, 221158.0L);
     constexpr auto time_g_2 = InsTime_GPSweekTow(1, 233, 231158.0L);
     constexpr auto time_g_3 = InsTime_GPSweekTow(2, 233, 221158.0L);

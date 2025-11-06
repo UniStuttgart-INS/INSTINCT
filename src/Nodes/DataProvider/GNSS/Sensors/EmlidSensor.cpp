@@ -14,8 +14,6 @@
 
 #include "internal/gui/widgets/HelpMarker.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "NodeData/General/UartPacket.hpp"
@@ -32,7 +30,7 @@ NAV::EmlidSensor::EmlidSensor()
     // TODO: Update the library to handle different baudrates
     _selectedBaudrate = baudrate2Selection(Baudrate::BAUDRATE_9600);
 
-    nm::CreateOutputPin(this, "UartPacket", Pin::Type::Flow, { NAV::UartPacket::type() });
+    CreateOutputPin("UartPacket", Pin::Type::Flow, { NAV::UartPacket::type() });
 }
 
 NAV::EmlidSensor::~EmlidSensor()

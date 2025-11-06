@@ -16,8 +16,6 @@
 using namespace fmt::literals; // NOLINT(google-build-using-namespace)
 
 #include "internal/gui/widgets/imgui_ex.hpp"
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "internal/gui/widgets/EnumComboWithTooltip.hpp"
@@ -405,12 +403,12 @@ void NAV::RinexObsLogger::deinitialize()
 
 void NAV::RinexObsLogger::pinAddCallback(Node* node)
 {
-    nm::CreateInputPin(node, GnssObs::type().c_str(), Pin::Type::Flow, { GnssObs::type() }, &RinexObsLogger::writeObservation);
+    node->CreateInputPin(GnssObs::type().c_str(), Pin::Type::Flow, { GnssObs::type() }, &RinexObsLogger::writeObservation);
 }
 
 void NAV::RinexObsLogger::pinDeleteCallback(Node* node, size_t pinIdx)
 {
-    nm::DeleteInputPin(node->inputPins.at(pinIdx));
+    node->DeleteInputPin(pinIdx);
 }
 
 void NAV::RinexObsLogger::updateFileHeader(TimeSystem oldTimeSys)

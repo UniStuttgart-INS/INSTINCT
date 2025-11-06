@@ -14,9 +14,7 @@
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "Navigation/Transformations/Units.hpp"
 
-#include "internal/NodeManager.hpp"
 #include <Eigen/src/Core/DiagonalMatrix.h>
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "NodeData/State/PosVelAtt.hpp"
@@ -29,8 +27,8 @@ NAV::PosVelAttFile::PosVelAttFile()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 488, 248 };
 
-    nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { Pos::type(), PosVel::type(), PosVelAtt::type() }, &PosVelAttFile::pollData);
-    nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, { "std::vector<std::string>" }, &_headerColumns);
+    CreateOutputPin("PosVelAtt", Pin::Type::Flow, { Pos::type(), PosVel::type(), PosVelAtt::type() }, &PosVelAttFile::pollData);
+    CreateOutputPin("Header Columns", Pin::Type::Object, { "std::vector<std::string>" }, &_headerColumns);
 }
 
 NAV::PosVelAttFile::~PosVelAttFile()

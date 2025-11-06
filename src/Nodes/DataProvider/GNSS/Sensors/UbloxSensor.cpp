@@ -14,8 +14,6 @@
 
 #include "internal/gui/widgets/HelpMarker.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "NodeData/General/UartPacket.hpp"
@@ -33,7 +31,7 @@ NAV::UbloxSensor::UbloxSensor()
     _selectedBaudrate = baudrate2Selection(Baudrate::BAUDRATE_9600);
     _sensorPort = "/dev/ttyACM0";
 
-    nm::CreateOutputPin(this, "UartPacket", Pin::Type::Flow, { NAV::UartPacket::type() });
+    CreateOutputPin("UartPacket", Pin::Type::Flow, { NAV::UartPacket::type() });
 }
 
 NAV::UbloxSensor::~UbloxSensor()

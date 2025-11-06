@@ -23,8 +23,6 @@
 
 #include "internal/Node/Node.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/ConfigManager.hpp"
 #include "util/Time/TimeBase.hpp"
 
@@ -157,7 +155,7 @@ void NAV::FlowExecutor::execute()
 
     AntexReader::Get().reset();
 
-    for (Node* node : nm::m_Nodes())
+    for (Node* node : flow::m_Nodes())
     {
         for (auto& inputPin : node->inputPins)
         {
@@ -167,7 +165,7 @@ void NAV::FlowExecutor::execute()
         node->pollEvents.clear();
     }
 
-    if (!nm::InitializeAllNodes()) // This wakes the threads
+    if (!flow::InitializeAllNodes()) // This wakes the threads
     {
         std::scoped_lock<std::mutex> lk(_mutex);
         _state = State::Idle;
@@ -176,7 +174,7 @@ void NAV::FlowExecutor::execute()
     }
 
     LOG_INFO("=====================================================");
-    bool realTimeMode = std::any_of(nm::m_Nodes().begin(), nm::m_Nodes().end(), [](const Node* node) {
+    bool realTimeMode = std::any_of(flow::m_Nodes().begin(), flow::m_Nodes().end(), [](const Node* node) {
         return node && !node->isDisabled() && node->_onlyRealTime;
     });
     LOG_INFO("Executing in {} mode", realTimeMode ? "real-time" : "post-processing");
@@ -184,7 +182,7 @@ void NAV::FlowExecutor::execute()
     util::time::SetMode(realTimeMode ? util::time::Mode::REAL_TIME : util::time::Mode::POST_PROCESSING);
     _activeNodes = 0;
 
-    for (Node* node : nm::m_Nodes())
+    for (Node* node : flow::m_Nodes())
     {
         if (node == nullptr || node->kind == Node::Kind::GroupBox || !node->isInitialized()) { continue; }
 
@@ -239,7 +237,7 @@ void NAV::FlowExecutor::execute()
         std::scoped_lock<std::mutex> lk(_mutex);
         if (_state == State::Starting)
         {
-            nm::EnableAllCallbacks();
+            flow::EnableAllCallbacks();
             _state = State::Running;
         }
     }
@@ -248,7 +246,7 @@ void NAV::FlowExecutor::execute()
     LOG_INFO("Execution started");
 
     bool anyNodeRunning = false;
-    for (Node* node : nm::m_Nodes()) // Search for node pins with data callbacks
+    for (Node* node : flow::m_Nodes()) // Search for node pins with data callbacks
     {
         if (node != nullptr && node->kind != Node::Kind::GroupBox && node->isInitialized())
         {
@@ -287,10 +285,10 @@ void NAV::FlowExecutor::execute()
 
     // Deinitialize
     LOG_DEBUG("Stopping FlowExecutor...");
-    nm::DisableAllCallbacks();
-    nm::ClearAllNodeQueues();
+    flow::DisableAllCallbacks();
+    flow::ClearAllNodeQueues();
 
-    for (Node* node : nm::m_Nodes())
+    for (Node* node : flow::m_Nodes())
     {
         if (node == nullptr || node->kind == Node::Kind::GroupBox || !node->isInitialized()) { continue; }
 

@@ -11,8 +11,6 @@
 
 #include "util/Logger.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "internal/gui/widgets/EnumCombo.hpp"
@@ -39,7 +37,7 @@ NAV::PosVelAttInitializer::PosVelAttInitializer()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 345, 342 };
 
-    nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() });
+    CreateOutputPin("PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() });
 
     updatePins();
 }
@@ -498,13 +496,13 @@ void NAV::PosVelAttInitializer::updatePins()
 {
     if (_overrideRollPitchYaw[0] && _overrideRollPitchYaw[1] && _overrideRollPitchYaw[2] && _inputPinIdxIMU >= 0)
     {
-        nm::DeleteInputPin(inputPins.at(static_cast<size_t>(_inputPinIdxIMU)));
+        DeleteInputPin(static_cast<size_t>(_inputPinIdxIMU));
         _inputPinIdxIMU = -1;
         _inputPinIdxGNSS--;
     }
     else if ((!_overrideRollPitchYaw[0] || !_overrideRollPitchYaw[1] || !_overrideRollPitchYaw[2]) && _inputPinIdxIMU < 0)
     {
-        nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &PosVelAttInitializer::receiveImuObs, nullptr, 0, 0);
+        CreateInputPin("ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &PosVelAttInitializer::receiveImuObs, nullptr, 0, 0);
         _inputPinIdxIMU = 0;
         if (_inputPinIdxGNSS >= 0)
         {
@@ -516,16 +514,16 @@ void NAV::PosVelAttInitializer::updatePins()
         && _overrideVelocity != VelocityOverride::OFF
         && _overrideRollPitchYaw[0] && _overrideRollPitchYaw[1] && _overrideRollPitchYaw[2] && _inputPinIdxGNSS >= 0)
     {
-        nm::DeleteInputPin(inputPins.at(static_cast<size_t>(_inputPinIdxGNSS)));
+        DeleteInputPin(static_cast<size_t>(_inputPinIdxGNSS));
         _inputPinIdxGNSS = -1;
     }
     else if ((!_overridePosition || _overrideVelocity == VelocityOverride::OFF
               || !_overrideRollPitchYaw[0] || !_overrideRollPitchYaw[1] || !_overrideRollPitchYaw[2])
              && _inputPinIdxGNSS < 0)
     {
-        nm::CreateInputPin(this, "PosVelAttInit", Pin::Type::Flow,
-                           { NAV::UbloxObs::type(), NAV::RtklibPosObs::type(), NAV::PosVelAtt::type(), NAV::PosVel::type(), NAV::Pos::type() },
-                           &PosVelAttInitializer::receiveGnssObs, nullptr, 1);
+        CreateInputPin("PosVelAttInit", Pin::Type::Flow,
+                       { NAV::UbloxObs::type(), NAV::RtklibPosObs::type(), NAV::PosVelAtt::type(), NAV::PosVel::type(), NAV::Pos::type() },
+                       &PosVelAttInitializer::receiveGnssObs, nullptr, 1);
         _inputPinIdxGNSS = static_cast<int>(inputPins.size()) - 1;
     }
 

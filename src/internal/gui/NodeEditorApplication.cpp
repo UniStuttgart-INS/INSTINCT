@@ -43,8 +43,6 @@ namespace util = ax::NodeEditor::Utilities;
 #include "internal/Node/Pin.hpp"
 #include "internal/Node/Node.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "NodeRegistry.hpp"
 
 #include "internal/ConfigManager.hpp"
@@ -354,7 +352,7 @@ void NAV::gui::NodeEditorApplication::OnStop()
 
     ConfigManager::SaveGlobalSettings();
 
-    nm::DeleteAllNodes();
+    flow::DeleteAllNodes();
 
     auto releaseTexture = [this](ImTextureID& id) {
         if (id)
@@ -522,7 +520,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
             {
                 flow::SaveFlowAs(flow::GetCurrentFilename());
                 globalAction = GlobalActions::None;
-                nm::DeleteAllNodes();
+                flow::DeleteAllNodes();
                 flow::DiscardChanges();
                 flow::SetCurrentFilename("");
                 ImGui::CloseCurrentPopup();
@@ -537,7 +535,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
                 flow::SaveFlowAs(flow::GetCurrentFilename());
 
                 ImGuiFileDialog::Instance()->Close();
-                nm::DeleteAllNodes();
+                flow::DeleteAllNodes();
                 flow::DiscardChanges();
                 flow::SetCurrentFilename("");
             }
@@ -550,7 +548,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
         if (ImGui::Button("Discard"))
         {
             globalAction = GlobalActions::None;
-            nm::DeleteAllNodes();
+            flow::DeleteAllNodes();
             flow::DiscardChanges();
             flow::SetCurrentFilename("");
             ImGui::CloseCurrentPopup();
@@ -908,7 +906,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                              ? IM_COL32(0, 0, 0, 255)
                              : IM_COL32(255, 255, 255, 255);
 
-        for (auto* node : nm::m_Nodes()) // Blueprint || Simple
+        for (auto* node : flow::m_Nodes()) // Blueprint || Simple
         {
             if (node->kind != Node::Kind::Blueprint && node->kind != Node::Kind::Simple) // NOLINT(misc-redundant-expression) - false positive warning
             {
@@ -1119,7 +1117,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             builder.End();
         }
 
-        for (const auto* node : nm::m_Nodes()) // GroupBox
+        for (const auto* node : flow::m_Nodes()) // GroupBox
         {
             if (node->kind != Node::Kind::GroupBox)
             {
@@ -1147,7 +1145,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ImGui::PopStyleVar();
         }
 
-        for (const auto* node : nm::m_Nodes())
+        for (const auto* node : flow::m_Nodes())
         {
             for (const auto& output : node->outputPins) // Output Pins
             {
@@ -1189,10 +1187,10 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 ed::PinId endPinId = 0;
                 if (ed::QueryNewLink(&startPinId, &endPinId))
                 {
-                    Pin* startPin = nm::FindInputPin(startPinId);
-                    Pin* endPin = nm::FindInputPin(endPinId);
-                    if (!startPin) { startPin = nm::FindOutputPin(startPinId); }
-                    if (!endPin) { endPin = nm::FindOutputPin(endPinId); }
+                    Pin* startPin = flow::FindInputPin(startPinId);
+                    Pin* endPin = flow::FindInputPin(endPinId);
+                    if (!startPin) { startPin = flow::FindOutputPin(startPinId); }
+                    if (!endPin) { endPin = flow::FindOutputPin(endPinId); }
 
                     newLinkPin = startPin ? startPin : endPin;
 
@@ -1277,8 +1275,8 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 ed::PinId pinId = 0;
                 if (ed::QueryNewNode(&pinId))
                 {
-                    newLinkPin = nm::FindInputPin(pinId);
-                    if (!newLinkPin) { newLinkPin = nm::FindOutputPin(pinId); }
+                    newLinkPin = flow::FindInputPin(pinId);
+                    if (!newLinkPin) { newLinkPin = flow::FindOutputPin(pinId); }
 
                     if (newLinkPin && newLinkPin->kind == Pin::Kind::Input && reinterpret_cast<InputPin*>(newLinkPin)->isPinLinked())
                     {
@@ -1295,8 +1293,8 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                         if (ed::AcceptNewItem())
                         {
                             createNewNode = true;
-                            newNodeLinkPin = nm::FindInputPin(pinId);
-                            if (!newNodeLinkPin) { newNodeLinkPin = nm::FindOutputPin(pinId); }
+                            newNodeLinkPin = flow::FindInputPin(pinId);
+                            if (!newNodeLinkPin) { newNodeLinkPin = flow::FindOutputPin(pinId); }
                             newLinkPin = nullptr;
                             ed::Suspend();
                             ImGui::OpenPopup("Create New Node");
@@ -1320,7 +1318,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                     if (ed::AcceptDeletedItem())
                     {
                         bool deleted = false;
-                        for (auto* node : nm::m_Nodes())
+                        for (auto* node : flow::m_Nodes())
                         {
                             if (deleted) { break; }
                             for (auto& output : node->outputPins)
@@ -1343,7 +1341,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 ed::NodeId nodeId = 0;
                 while (ed::QueryDeletedNode(&nodeId))
                 {
-                    if (Node* node = nm::FindNode(nodeId))
+                    if (Node* node = flow::FindNode(nodeId))
                     {
                         if (node->isTransient())
                         {
@@ -1352,7 +1350,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                     }
                     if (ed::AcceptDeletedItem())
                     {
-                        nm::DeleteNode(nodeId);
+                        flow::DeleteNode(nodeId);
                     }
                 }
             }
@@ -1386,7 +1384,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     }
     else if (ed::NodeId doubleClickedNodeId = ed::GetDoubleClickedNode())
     {
-        Node* node = nm::FindNode(doubleClickedNodeId);
+        Node* node = flow::FindNode(doubleClickedNodeId);
         node->_showConfig = true;
         node->_configWindowFocus = true;
     }
@@ -1398,7 +1396,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     static Pin* renamePin = nullptr;
     if (ImGui::BeginPopup("Node Context Menu"))
     {
-        auto* node = nm::FindNode(contextNodeId);
+        auto* node = flow::FindNode(contextNodeId);
 
         ImGui::TextUnformatted("Node Context Menu");
         ImGui::Separator();
@@ -1474,7 +1472,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     {
         ImGui::TextUnformatted("Pin Context Menu");
         ImGui::Separator();
-        if (auto* pin = nm::FindInputPin(contextPinId))
+        if (auto* pin = flow::FindInputPin(contextPinId))
         {
             ImGui::Text("ID: %lu", size_t(pin->id));
             ImGui::Text("Node: %s", pin->parentNode ? std::to_string(size_t(pin->parentNode->id)).c_str() : "<none>");
@@ -1511,7 +1509,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ImGui::Separator();
             if (ImGui::MenuItem("Rename")) { renamePin = pin; }
         }
-        else if (auto* pin = nm::FindOutputPin(contextPinId))
+        else if (auto* pin = flow::FindOutputPin(contextPinId))
         {
             ImGui::Text("ID: %lu", size_t(pin->id));
             ImGui::Text("Node: %s", pin->parentNode ? std::to_string(size_t(pin->parentNode->id)).c_str() : "<none>");
@@ -1565,7 +1563,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     {
         ax::NodeEditor::PinId startPinId = 0;
         ax::NodeEditor::PinId endPinId = 0;
-        for (const auto* node : nm::m_Nodes())
+        for (const auto* node : flow::m_Nodes())
         {
             if (startPinId) { break; }
             for (const auto& output : node->outputPins)
@@ -1665,7 +1663,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                         {
                             filter.Clear();
                             node = constructor();
-                            nm::AddNode(node);
+                            flow::AddNode(node);
                         }
                         ImGui::Unindent();
                     }
@@ -1718,7 +1716,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     }
     ImGui::PopStyleVar();
 
-    for (auto* node : nm::m_Nodes()) // Config Windows for nodes
+    for (auto* node : flow::m_Nodes()) // Config Windows for nodes
     {
         if (node->_hasConfig && node->_showConfig)
         {

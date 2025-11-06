@@ -14,9 +14,7 @@
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 #include "Navigation/Time/InsTime.hpp"
 
-#include "internal/NodeManager.hpp"
 #include "util/Assert.h"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "util/Logger.hpp"
@@ -38,7 +36,7 @@ NAV::UdpRecv::UdpRecv()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 261, 95 };
 
-    nm::CreateOutputPin(this, "Data", Pin::Type::Flow, { NAV::PosVelAtt::type() });
+    CreateOutputPin("Data", Pin::Type::Flow, { NAV::PosVelAtt::type() });
 }
 
 NAV::UdpRecv::~UdpRecv()

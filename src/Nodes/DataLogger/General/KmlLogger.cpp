@@ -23,8 +23,6 @@
 #include <iomanip> // std::setprecision
 #include <memory>
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 #include "NodeRegistry.hpp"
 
@@ -234,9 +232,9 @@ void NAV::KmlLogger::pinAddCallback(Node* node)
 {
     auto* kmlNode = static_cast<KmlLogger*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
 
-    nm::CreateInputPin(node, fmt::format("Pin {}", node->inputPins.size() + 1).c_str(), Pin::Type::Flow,
-                       { Pos::type() },
-                       &KmlLogger::writeObservation);
+    node->CreateInputPin(fmt::format("Pin {}", node->inputPins.size() + 1).c_str(), Pin::Type::Flow,
+                         { Pos::type() },
+                         &KmlLogger::writeObservation);
 
     kmlNode->_positionData.emplace_back();
 }
@@ -247,7 +245,7 @@ void NAV::KmlLogger::pinDeleteCallback(Node* node, size_t pinIdx)
 
     kmlNode->_positionData.erase(std::next(kmlNode->_positionData.begin(), static_cast<int64_t>(pinIdx)));
 
-    nm::DeleteInputPin(node->inputPins.at(pinIdx));
+    node->DeleteInputPin(pinIdx);
 }
 
 void NAV::KmlLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)

@@ -153,6 +153,21 @@ class NodeEditorApplication : public Application
         "GroupOuterBorder", // GROUP_OUTER_BORDER
     };
 
+    /// Flag if invokeCallbacks triggers a GUI Flow event
+    static inline bool showFlowWhenInvokingCallbacks =
+#if !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
+        true;
+#else
+        false;
+#endif
+    /// Flag if notifyOutputValueChanged & notifyInputValueChanged triggers a GUI Flow event
+    static inline bool showFlowWhenNotifyingValueChange =
+#if !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
+        true;
+#else
+        false;
+#endif
+
   private:
     /// @brief Tabs displayed in the bottom view
     enum class BottomViewTabItem : uint8_t

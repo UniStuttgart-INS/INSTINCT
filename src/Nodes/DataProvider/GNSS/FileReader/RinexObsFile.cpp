@@ -12,9 +12,7 @@
 
 #include "util/Eigen.hpp"
 
-#include "internal/NodeManager.hpp"
 #include "util/Logger.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 #include "internal/gui/widgets/HelpMarker.hpp"
 
@@ -37,7 +35,7 @@ RinexObsFile::RinexObsFile()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 517, 118 };
 
-    nm::CreateOutputPin(this, "GnssObs", Pin::Type::Flow, { NAV::GnssObs::type() }, &RinexObsFile::pollData);
+    CreateOutputPin("GnssObs", Pin::Type::Flow, { NAV::GnssObs::type() }, &RinexObsFile::pollData);
 }
 
 RinexObsFile::~RinexObsFile()

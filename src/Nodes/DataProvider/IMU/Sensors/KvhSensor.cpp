@@ -12,8 +12,6 @@
 
 #include "internal/gui/widgets/HelpMarker.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "util/Time/TimeBase.hpp"
@@ -33,7 +31,7 @@ NAV::KvhSensor::KvhSensor()
     // TODO: Update the library to handle different baudrates
     _selectedBaudrate = baudrate2Selection(Baudrate::BAUDRATE_921600);
 
-    nm::CreateOutputPin(this, "KvhObs", Pin::Type::Flow, { NAV::KvhObs::type() });
+    CreateOutputPin("KvhObs", Pin::Type::Flow, { NAV::KvhObs::type() });
 }
 
 NAV::KvhSensor::~KvhSensor()

@@ -36,7 +36,7 @@ std::map<std::string, std::vector<std::string>> _registeredNodeDataTypes;
 /*                                       Private Function Declarations                                      */
 /* -------------------------------------------------------------------------------------------------------- */
 
-/// @brief Registers a Node with the NodeManager
+/// @brief Registers a Node
 /// @tparam T Node Class to register
 template<std::derived_from<Node> T>
 void registerNodeType()
@@ -58,7 +58,7 @@ void registerNodeType()
     _registeredNodes[T::category()].push_back(info);
 }
 
-/// @brief Register a NodeData with the NodeManager
+/// @brief Register a NodeData
 /// @tparam T NodeData Class to register
 template<std::derived_from<NodeData> T>
 void registerNodeDataType()

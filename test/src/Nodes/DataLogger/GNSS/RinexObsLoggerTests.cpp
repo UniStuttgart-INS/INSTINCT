@@ -18,8 +18,7 @@
 #include "NodeData/GNSS/GnssObs.hpp"
 #include "NodeData/GNSS/GnssObsComparisons.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
 #include "internal/Version.hpp"
 #include "util/StringUtil.hpp"
 
@@ -69,9 +68,9 @@ void testFile(const std::string& path, const std::vector<std::string>& expectedH
     //
     // ###########################################################################################################
 
-    nm::RegisterPreInitCallback([&]() {
-        dynamic_cast<RinexObsFile*>(nm::FindNode(NODE_ID_RINEX_OBS_FILE_1))->_path = path;
-        dynamic_cast<RinexObsLogger*>(nm::FindNode(NODE_ID_RINEX_OBS_LOGGER))->_path = "RinexObsLoggerTests/" + path;
+    flow::RegisterPreInitCallback([&]() {
+        dynamic_cast<RinexObsFile*>(flow::FindNode(NODE_ID_RINEX_OBS_FILE_1))->_path = path;
+        dynamic_cast<RinexObsLogger*>(flow::FindNode(NODE_ID_RINEX_OBS_LOGGER))->_path = "RinexObsLoggerTests/" + path;
     });
     REQUIRE(testFlow("test/flow/Nodes/DataLogger/GNSS/RinexObsLogger.flow"));
 
@@ -96,12 +95,12 @@ void testFile(const std::string& path, const std::vector<std::string>& expectedH
     std::deque<std::shared_ptr<const NAV::GnssObs>> data2;
     std::mutex comparisonMutex;
 
-    nm::RegisterPreInitCallback([&]() {
-        dynamic_cast<RinexObsFile*>(nm::FindNode(NODE_ID_RINEX_OBS_FILE_1))->_path = path;
-        dynamic_cast<RinexObsFile*>(nm::FindNode(NODE_ID_RINEX_OBS_FILE_2))->_path = "../logs/RinexObsLoggerTests/" + path;
+    flow::RegisterPreInitCallback([&]() {
+        dynamic_cast<RinexObsFile*>(flow::FindNode(NODE_ID_RINEX_OBS_FILE_1))->_path = path;
+        dynamic_cast<RinexObsFile*>(flow::FindNode(NODE_ID_RINEX_OBS_FILE_2))->_path = "../logs/RinexObsLoggerTests/" + path;
     });
 
-    nm::RegisterWatcherCallbackToInputPin(PIN_ID_TERM_1, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(PIN_ID_TERM_1, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         messageCounterTerminator1++;
         LOG_TRACE("messageCounterTerminator1 = {}", fmt::streamed(messageCounterTerminator1));
 
@@ -110,7 +109,7 @@ void testFile(const std::string& path, const std::vector<std::string>& expectedH
         std::scoped_lock lk(comparisonMutex);
         compareObservations(data1, data2);
     });
-    nm::RegisterWatcherCallbackToInputPin(PIN_ID_TERM_2, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(PIN_ID_TERM_2, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         messageCounterTerminator2++;
         LOG_TRACE("messageCounterTerminator2 = {}", fmt::streamed(messageCounterTerminator2));
 

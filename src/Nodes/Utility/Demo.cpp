@@ -13,8 +13,6 @@
 
 #include "util/Logger.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "internal/gui/widgets/HelpMarker.hpp"
@@ -83,8 +81,8 @@ NAV::Demo::Demo()
     _guiConfigDefaultWindowSize = { 630, 410 };
 
     // Pins are usually created by calling the following functions in the constructor
-    nm::CreateInputPin(this, "Flow", Pin::Type::Flow, { NAV::NodeData::type() }, &Demo::receiveData);
-    nm::CreateOutputPin(this, "Sensor\nData", Pin::Type::Flow, { NAV::ImuObs::type() });
+    CreateInputPin("Flow", Pin::Type::Flow, { NAV::NodeData::type() }, &Demo::receiveData);
+    CreateOutputPin("Sensor\nData", Pin::Type::Flow, { NAV::ImuObs::type() });
 
     // To create or delete pins depending on GUI options we use a function as it needs to be called from multiple places
     updatePins();
@@ -516,71 +514,71 @@ void NAV::Demo::updatePins()
                          void(NAV::Demo::*notifyFunc)(const InsTime&, size_t) = nullptr) {                                 // clang-format on
         if (!pinExists && enabled)
         {
-            nm::CreateInputPin(this, pinName, pinType, dataIdentifier, notifyFunc, static_cast<int>(pinIdx));
-            nm::CreateOutputPin(this, pinName, pinType, dataIdentifier, data, static_cast<int>(pinIdx));
+            CreateInputPin(pinName, pinType, dataIdentifier, notifyFunc, static_cast<int>(pinIdx));
+            CreateOutputPin(pinName, pinType, dataIdentifier, data, static_cast<int>(pinIdx));
         }
         else if (pinExists && !enabled)
         {
-            nm::DeleteInputPin(inputPins.at(pinIdx));
-            nm::DeleteOutputPin(outputPins.at(pinIdx));
+            DeleteInputPin(pinIdx);
+            DeleteOutputPin(pinIdx);
         }
         if (enabled) { pinIdx++; }
     };
 
     updatePin(getPinIdx(DemoPins::Delegate) && inputPins.at(*getPinIdx(DemoPins::Delegate)).type == Pin::Type::Delegate, _enableDelegate,
               "Demo Node", Pin::Type::Delegate, { typeStatic() }, this);
-    // nm::CreateInputPin(this, "Demo Node", Pin::Type::Delegate, { typeStatic() });
-    // nm::CreateOutputPin(this, "", Pin::Type::Delegate, { typeStatic() }, this, 0);
+    // CreateInputPin("Demo Node", Pin::Type::Delegate, { typeStatic() });
+    // CreateOutputPin("", Pin::Type::Delegate, { typeStatic() }, this, 0);
 
     {
         bool pinExists = getPinIdx(DemoPins::Flow) && inputPins.at(*getPinIdx(DemoPins::Flow)).type == Pin::Type::Flow;
         if (!pinExists && _enableFlow)
         {
-            nm::CreateInputPin(this, "Flow", Pin::Type::Flow, { NAV::NodeData::type() }, &Demo::receiveData);
-            nm::CreateOutputPin(this, "Sensor\nData", Pin::Type::Flow, { NAV::ImuObs::type() });
+            CreateInputPin("Flow", Pin::Type::Flow, { NAV::NodeData::type() }, &Demo::receiveData);
+            CreateOutputPin("Sensor\nData", Pin::Type::Flow, { NAV::ImuObs::type() });
         }
         else if (pinExists && !_enableFlow)
         {
-            nm::DeleteInputPin(inputPins.at(pinIdx));
-            nm::DeleteOutputPin(outputPins.at(pinIdx));
+            DeleteInputPin(pinIdx);
+            DeleteOutputPin(pinIdx);
         }
         if (_enableFlow) { pinIdx++; }
     }
 
     updatePin(getPinIdx(DemoPins::Bool) && inputPins.at(*getPinIdx(DemoPins::Bool)).type == Pin::Type::Bool, _enableBool,
               "Bool", Pin::Type::Bool, { "" }, &_valueBool);
-    // nm::CreateInputPin(this, "Bool", Pin::Type::Bool);
-    // nm::CreateOutputPin(this, "Bool", Pin::Type::Bool, { "" }, &_valueBool);
+    // CreateInputPin("Bool", Pin::Type::Bool);
+    // CreateOutputPin("Bool", Pin::Type::Bool, { "" }, &_valueBool);
 
     updatePin(getPinIdx(DemoPins::Int) && inputPins.at(*getPinIdx(DemoPins::Int)).type == Pin::Type::Int, _enableInt,
               "Int", Pin::Type::Int, { "" }, &_valueInt);
-    // nm::CreateInputPin(this, "Int", Pin::Type::Int);
-    // nm::CreateOutputPin(this, "Int", Pin::Type::Int, { "" }, &_valueInt);
+    // CreateInputPin("Int", Pin::Type::Int);
+    // CreateOutputPin("Int", Pin::Type::Int, { "" }, &_valueInt);
 
     updatePin(getPinIdx(DemoPins::Float) && inputPins.at(*getPinIdx(DemoPins::Float)).type == Pin::Type::Float, _enableFloat,
               "Float", Pin::Type::Float, { "Float" }, &_valueFloat);
-    // nm::CreateInputPin(this, "Float", Pin::Type::Float);
-    // nm::CreateOutputPin(this, "Float", Pin::Type::Float, { "" }, &_valueFloat);
+    // CreateInputPin("Float", Pin::Type::Float);
+    // CreateOutputPin("Float", Pin::Type::Float, { "" }, &_valueFloat);
 
     updatePin(getPinIdx(DemoPins::Double) && inputPins.at(*getPinIdx(DemoPins::Double)).type == Pin::Type::Float, _enableDouble,
               "Double", Pin::Type::Float, { "Double" }, &_valueDouble);
-    // nm::CreateInputPin(this, "Double", Pin::Type::Float);
-    // nm::CreateOutputPin(this, "Double", Pin::Type::Float, { "" }, &_valueDouble);
+    // CreateInputPin("Double", Pin::Type::Float);
+    // CreateOutputPin("Double", Pin::Type::Float, { "" }, &_valueDouble);
 
     updatePin(getPinIdx(DemoPins::String) && inputPins.at(*getPinIdx(DemoPins::String)).type == Pin::Type::String, _enableString,
               "String", Pin::Type::String, { "" }, &_valueString, &Demo::stringUpdatedNotifyFunction);
-    // nm::CreateInputPin(this, "String", Pin::Type::String, {}, &Demo::stringUpdatedNotifyFunction);
-    // nm::CreateOutputPin(this, "String", Pin::Type::String, { "" }, &_valueString);
+    // CreateInputPin("String", Pin::Type::String, {}, &Demo::stringUpdatedNotifyFunction);
+    // CreateOutputPin("String", Pin::Type::String, { "" }, &_valueString);
 
     updatePin(getPinIdx(DemoPins::Object) && inputPins.at(*getPinIdx(DemoPins::Object)).type == Pin::Type::Object, _enableObject,
               "Object", Pin::Type::Object, { "Demo::DemoData" }, &_valueObject);
-    // nm::CreateInputPin(this, "Object", Pin::Type::Object, { "Demo::DemoData" });
-    // nm::CreateOutputPin(this, "Object", Pin::Type::Object, { "Demo::DemoData" }, &_valueObject);
+    // CreateInputPin("Object", Pin::Type::Object, { "Demo::DemoData" });
+    // CreateOutputPin("Object", Pin::Type::Object, { "Demo::DemoData" }, &_valueObject);
 
     updatePin(getPinIdx(DemoPins::Matrix) && inputPins.at(*getPinIdx(DemoPins::Matrix)).type == Pin::Type::Matrix, _enableMatrix,
               "Matrix", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_valueMatrix);
-    // nm::CreateInputPin(this, "Matrix", Pin::Type::Matrix, { "Eigen::MatrixXd" });
-    // nm::CreateOutputPin(this, "Matrix", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_valueMatrix);
+    // CreateInputPin("Matrix", Pin::Type::Matrix, { "Eigen::MatrixXd" });
+    // CreateOutputPin("Matrix", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_valueMatrix);
 }
 
 std::optional<size_t> NAV::Demo::getPinIdx(DemoPins pinType) const
@@ -640,18 +638,18 @@ void NAV::Demo::updateOutputFlowPin()
     {
         connectedPins.push_back(link.connectedPinId);
     }
-    nm::DeleteOutputPin(outputPins.at(flowPinIdx));
+    DeleteOutputPin(flowPinIdx);
     if (_fileReaderInsteadSensor)
     {
-        nm::CreateOutputPin(this, "FileReader\n Data", Pin::Type::Flow, { NAV::NodeData::type() }, &Demo::pollData, static_cast<int>(flowPinIdx));
+        CreateOutputPin("FileReader\n Data", Pin::Type::Flow, { NAV::NodeData::type() }, &Demo::pollData, static_cast<int>(flowPinIdx));
     }
     else
     {
-        nm::CreateOutputPin(this, "Sensor\nData", Pin::Type::Flow, { NAV::ImuObs::type() }, static_cast<void*>(nullptr), static_cast<int>(flowPinIdx));
+        CreateOutputPin("Sensor\nData", Pin::Type::Flow, { NAV::ImuObs::type() }, static_cast<void*>(nullptr), static_cast<int>(flowPinIdx));
     }
     for (const auto& pinId : connectedPins)
     {
-        if (auto* targetPin = nm::FindInputPin(pinId))
+        if (auto* targetPin = flow::FindInputPin(pinId))
         {
             if (outputPins.at(flowPinIdx).canCreateLink(*targetPin))
             {

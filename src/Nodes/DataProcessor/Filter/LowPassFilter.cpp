@@ -12,8 +12,6 @@
 #include <algorithm>
 #include <imgui.h>
 #include "Navigation/INS/Units.hpp"
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "NodeData/IMU/ImuObsSimulated.hpp"
@@ -44,9 +42,9 @@ NAV::LowPassFilter::LowPassFilter()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 500, 300 };
 
-    nm::CreateInputPin(this, "Original", Pin::Type::Flow, { NAV::NodeData::type() }, &LowPassFilter::receiveObs);
+    CreateInputPin("Original", Pin::Type::Flow, { NAV::NodeData::type() }, &LowPassFilter::receiveObs);
 
-    nm::CreateOutputPin(this, "Filtered", Pin::Type::Flow, { NAV::NodeData::type() });
+    CreateOutputPin("Filtered", Pin::Type::Flow, { NAV::NodeData::type() });
 }
 
 NAV::LowPassFilter::~LowPassFilter()

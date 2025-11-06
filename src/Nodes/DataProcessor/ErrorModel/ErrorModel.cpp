@@ -19,8 +19,6 @@
 #include "NodeRegistry.hpp"
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 #include "Navigation/INS/Units.hpp"
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "NodeData/IMU/ImuObsSimulated.hpp"
@@ -60,9 +58,9 @@ NAV::ErrorModel::ErrorModel()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 812, 530 };
 
-    nm::CreateInputPin(this, "True", Pin::Type::Flow, supportedDataIdentifier, &ErrorModel::receiveObs);
+    CreateInputPin("True", Pin::Type::Flow, supportedDataIdentifier, &ErrorModel::receiveObs);
 
-    nm::CreateOutputPin(this, "Biased", Pin::Type::Flow, supportedDataIdentifier);
+    CreateOutputPin("Biased", Pin::Type::Flow, supportedDataIdentifier);
 
     std::mt19937_64 gen(static_cast<uint64_t>(std::chrono::system_clock::now().time_since_epoch().count()));
     std::uniform_int_distribution<uint64_t> dist(0, std::numeric_limits<uint64_t>::max() / 2);

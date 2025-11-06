@@ -21,8 +21,7 @@
 
 #include "FlowTester.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
 
 #include "Logger.hpp"
 #include "util/Container/STL.hpp"
@@ -61,11 +60,11 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - no 
 {
     auto logger = initializeTestLogger();
 
-    nm::RegisterPreInitCallback([&]() {
-        dynamic_cast<RinexObsFile*>(nm::FindNode(65))->_path = "GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/Iono-none_tropo-none/SkydelRINEX_S_20230080000_04H_MO.rnx";
-        dynamic_cast<RinexNavFile*>(nm::FindNode(54))->_path = "GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/SkydelRINEX_S_20238959_7200S_GN.rnx";
+    flow::RegisterPreInitCallback([&]() {
+        dynamic_cast<RinexObsFile*>(flow::FindNode(65))->_path = "GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/Iono-none_tropo-none/SkydelRINEX_S_20230080000_04H_MO.rnx";
+        dynamic_cast<RinexNavFile*>(flow::FindNode(54))->_path = "GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/SkydelRINEX_S_20238959_7200S_GN.rnx";
 
-        auto* sppNode = dynamic_cast<SinglePointPositioning*>(nm::FindNode(91));
+        auto* sppNode = dynamic_cast<SinglePointPositioning*>(flow::FindNode(91));
 
         sppNode->_algorithm._obsFilter._filterFreq = G01;
         sppNode->_algorithm._obsFilter._filterCode = Code::G1C;
@@ -119,7 +118,7 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - no 
     sppReference.emplace_back(SatSigId(Code::G1C, 30), folder + "L1CA 30.csv");
 
     size_t messageCounter = 0; // Message Counter
-    nm::RegisterWatcherCallbackToInputPin(95, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(95, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         auto sppSol = std::dynamic_pointer_cast<const NAV::SppSolution>(queue.front());
 
         LOG_DEBUG("    e_refRecvPos         {} [m]", e_refRecvPos.transpose());
@@ -202,11 +201,11 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Spirent data (GPS L1 C/A - no
     Frequency filterFreq = G01;
     Code filterCode = Code::G1C;
 
-    nm::RegisterPreInitCallback([&]() {
-        dynamic_cast<RinexObsFile*>(nm::FindNode(65))->_path = "GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Iono-none_tropo-none/Spirent_RINEX_MO.obs";
-        dynamic_cast<RinexNavFile*>(nm::FindNode(54))->_path = "GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Spirent_RINEX_GN.23N";
+    flow::RegisterPreInitCallback([&]() {
+        dynamic_cast<RinexObsFile*>(flow::FindNode(65))->_path = "GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Iono-none_tropo-none/Spirent_RINEX_MO.obs";
+        dynamic_cast<RinexNavFile*>(flow::FindNode(54))->_path = "GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Spirent_RINEX_GN.23N";
 
-        auto* sppNode = dynamic_cast<SinglePointPositioning*>(nm::FindNode(91));
+        auto* sppNode = dynamic_cast<SinglePointPositioning*>(flow::FindNode(91));
 
         sppNode->_algorithm._obsFilter._filterFreq = filterFreq;
         sppNode->_algorithm._obsFilter._filterCode = filterCode;
@@ -246,7 +245,7 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Spirent data (GPS L1 C/A - no
     REQUIRE(spirentSatelliteData.refData.size() == 2114);
 
     size_t messageCounter = 0; // Message Counter
-    nm::RegisterWatcherCallbackToInputPin(95, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(95, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         messageCounter++;
         auto sppSol = std::dynamic_pointer_cast<const NAV::SppSolution>(queue.front());
 

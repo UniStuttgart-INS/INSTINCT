@@ -76,7 +76,7 @@ The pins seen in the yellow node are:
 7. *Object*: Pointer to a custom object
 8. *Matrix*: Pointer to a matrix
 
-In order to create pins, one calls functions from the NodeManager namespace like NAV::NodeManager::CreateInputPin() and NAV::NodeManager::CreateOutputPin(). There are multiple overloads of both functions depending what purpose the pin serves. More can be read in the code documentation.
+In order to create pins, one calls functions from the Node class like NAV::Node::CreateInputPin() and NAV::Node::CreateOutputPin(). There are multiple overloads of both functions depending what purpose the pin serves. More can be read in the code documentation.
 
 All pins from the yellow node are connected to the teal node. We can see in the configuration window, that the input values of teal coincide with the output values of the yellow node. When changing the GUI, you could instantaneously see the changes in the connected node.
 

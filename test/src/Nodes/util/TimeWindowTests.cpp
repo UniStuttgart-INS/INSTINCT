@@ -15,8 +15,7 @@
 
 #include "FlowTester.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
 
 #include "Logger.hpp"
 
@@ -53,12 +52,12 @@ TEST_CASE("[TimeWindow][flow] Simulate IMU and cut off start and end time", "[Ti
     // ###########################################################################################################
 
     size_t messageCounterInput = 0;
-    nm::RegisterWatcherCallbackToInputPin(15, [&messageCounterInput](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(15, [&messageCounterInput](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
         messageCounterInput++;
     });
 
     size_t messageCounterOutput = 0;
-    nm::RegisterWatcherCallbackToInputPin(8, [&messageCounterOutput](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(8, [&messageCounterOutput](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         REQUIRE(queue.front()->insTime >= InsTime(2000, 1, 1, 0, 0, 1.5)); // Start time
         REQUIRE(queue.front()->insTime <= InsTime(2000, 1, 1, 0, 0, 8.5)); // End time
 
@@ -85,17 +84,17 @@ TEST_CASE("[TimeWindow][flow] Simulate IMU and cut off middle part", "[TimeWindo
     //
     // ###########################################################################################################
 
-    nm::RegisterPreInitCallback([&]() {
-        dynamic_cast<TimeWindow*>(nm::FindNode(3))->_inverseWindow = true;
+    flow::RegisterPreInitCallback([&]() {
+        dynamic_cast<TimeWindow*>(flow::FindNode(3))->_inverseWindow = true;
     });
 
     size_t messageCounterInput = 0;
-    nm::RegisterWatcherCallbackToInputPin(1, [&messageCounterInput](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(1, [&messageCounterInput](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
         messageCounterInput++;
     });
 
     size_t messageCounterOutput = 0;
-    nm::RegisterWatcherCallbackToInputPin(8, [&messageCounterOutput](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(8, [&messageCounterOutput](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         CAPTURE(messageCounterOutput);
         if (messageCounterOutput < 15)
         {

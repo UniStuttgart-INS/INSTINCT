@@ -10,8 +10,6 @@
 
 #include "util/Logger.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "util/Vendor/Emlid/EmlidUtilities.hpp"
@@ -27,7 +25,7 @@ NAV::EmlidFile::EmlidFile()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 380, 70 };
 
-    nm::CreateOutputPin(this, "EmlidObs", Pin::Type::Flow, { NAV::EmlidObs::type() }, &EmlidFile::pollData);
+    CreateOutputPin("EmlidObs", Pin::Type::Flow, { NAV::EmlidObs::type() }, &EmlidFile::pollData);
 }
 
 NAV::EmlidFile::~EmlidFile()

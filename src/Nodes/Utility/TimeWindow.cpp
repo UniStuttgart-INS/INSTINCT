@@ -8,8 +8,6 @@
 
 #include "TimeWindow.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "internal/gui/widgets/imgui_ex.hpp"
@@ -24,9 +22,9 @@ NAV::TimeWindow::TimeWindow() : Node(typeStatic())
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 500, 290 };
 
-    nm::CreateInputPin(this, "Input", Pin::Type::Flow, { NodeData::type() }, &TimeWindow::receiveObs);
+    CreateInputPin("Input", Pin::Type::Flow, { NodeData::type() }, &TimeWindow::receiveObs);
 
-    nm::CreateOutputPin(this, "Output", Pin::Type::Flow, { NodeData::type() });
+    CreateOutputPin("Output", Pin::Type::Flow, { NodeData::type() });
 }
 
 NAV::TimeWindow::~TimeWindow()

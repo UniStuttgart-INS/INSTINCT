@@ -14,8 +14,6 @@
 
 #include <iomanip> // std::setprecision
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 NAV::UartDataLogger::UartDataLogger()
@@ -28,7 +26,7 @@ NAV::UartDataLogger::UartDataLogger()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 380, 70 };
 
-    nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, { NAV::UartPacket::type() }, &UartDataLogger::writeObservation);
+    CreateInputPin("writeObservation", Pin::Type::Flow, { NAV::UartPacket::type() }, &UartDataLogger::writeObservation);
 }
 
 NAV::UartDataLogger::~UartDataLogger()

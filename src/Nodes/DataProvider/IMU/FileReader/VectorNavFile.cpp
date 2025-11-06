@@ -21,8 +21,6 @@
 #include "util/StringUtil.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
@@ -36,7 +34,7 @@ NAV::VectorNavFile::VectorNavFile()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 630, 466 };
 
-    nm::CreateOutputPin(this, "Binary Output", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() }, &VectorNavFile::pollData);
+    CreateOutputPin("Binary Output", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() }, &VectorNavFile::pollData);
 }
 
 NAV::VectorNavFile::~VectorNavFile()

@@ -12,8 +12,6 @@
 
 #include "util/Time/TimeBase.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "NodeData/WiFi/WiFiObs.hpp"
@@ -26,8 +24,8 @@ NAV::WiFiObsFile::WiFiObsFile()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 488, 248 };
 
-    nm::CreateOutputPin(this, "WiFiObs", Pin::Type::Flow, { NAV::WiFiObs::type() }, &WiFiObsFile::pollData);
-    // nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, { "std::vector<std::string>" }, &_headerColumns);
+    CreateOutputPin("WiFiObs", Pin::Type::Flow, { NAV::WiFiObs::type() }, &WiFiObsFile::pollData);
+    // CreateOutputPin("Header Columns", Pin::Type::Object, { "std::vector<std::string>" }, &_headerColumns);
 }
 
 NAV::WiFiObsFile::~WiFiObsFile()

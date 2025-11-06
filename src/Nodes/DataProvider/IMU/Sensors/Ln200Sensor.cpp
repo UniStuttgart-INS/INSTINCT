@@ -9,8 +9,6 @@
 #include "Ln200Sensor.hpp"
 
 #include "internal/gui/widgets/HelpMarker.hpp"
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "util/Logger.hpp"
@@ -30,7 +28,7 @@ NAV::Ln200Sensor::Ln200Sensor()
 
     _selectedBaudrate = baudrate2Selection(Baudrate::BAUDRATE_2000000);
 
-    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObsWDelta::type() });
+    CreateOutputPin("ImuObs", Pin::Type::Flow, { NAV::ImuObsWDelta::type() });
 }
 
 NAV::Ln200Sensor::~Ln200Sensor()

@@ -17,8 +17,7 @@
 
 #include "FlowTester.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
 
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
 #include "Navigation/Transformations/Units.hpp"
@@ -56,30 +55,30 @@ void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
 
     std::array<std::vector<std::function<void()>>, 6> settings = { {
         { [&]() { LOG_WARN("Setting ImuIntegrator - _path to: {}", imuFilePath);
-                  dynamic_cast<VectorNavFile*>(nm::FindNode(2))->_path = imuFilePath; } },
+                  dynamic_cast<VectorNavFile*>(flow::FindNode(2))->_path = imuFilePath; } },
         { []() { LOG_WARN("Setting LooselyCoupledKF - _integrationFrame to: NED");
-                 dynamic_cast<LooselyCoupledKF*>(nm::FindNode(10))->_inertialIntegrator._integrationFrame = InertialIntegrator::IntegrationFrame::NED; },
+                 dynamic_cast<LooselyCoupledKF*>(flow::FindNode(10))->_inertialIntegrator._integrationFrame = InertialIntegrator::IntegrationFrame::NED; },
           []() { LOG_WARN("Setting LooselyCoupledKF - _integrationFrame to: ECEF");
-                 dynamic_cast<LooselyCoupledKF*>(nm::FindNode(10))->_inertialIntegrator._integrationFrame = InertialIntegrator::IntegrationFrame::ECEF; } },
+                 dynamic_cast<LooselyCoupledKF*>(flow::FindNode(10))->_inertialIntegrator._integrationFrame = InertialIntegrator::IntegrationFrame::ECEF; } },
         { []() { LOG_WARN("Setting LooselyCoupledKF - _phiCalculationAlgorithm to: Taylor");
-                 dynamic_cast<LooselyCoupledKF*>(nm::FindNode(10))->_phiCalculationAlgorithm = LooselyCoupledKF::PhiCalculationAlgorithm::Taylor; },
+                 dynamic_cast<LooselyCoupledKF*>(flow::FindNode(10))->_phiCalculationAlgorithm = LooselyCoupledKF::PhiCalculationAlgorithm::Taylor; },
           []() { LOG_WARN("Setting LooselyCoupledKF - _phiCalculationAlgorithm to: Exponential");
-                 dynamic_cast<LooselyCoupledKF*>(nm::FindNode(10))->_phiCalculationAlgorithm = LooselyCoupledKF::PhiCalculationAlgorithm::Exponential; } },
+                 dynamic_cast<LooselyCoupledKF*>(flow::FindNode(10))->_phiCalculationAlgorithm = LooselyCoupledKF::PhiCalculationAlgorithm::Exponential; } },
         { []() { LOG_WARN("Setting LooselyCoupledKF - _qCalculationAlgorithm to: Taylor1");
-                 dynamic_cast<LooselyCoupledKF*>(nm::FindNode(10))->_qCalculationAlgorithm = LooselyCoupledKF::QCalculationAlgorithm::Taylor1; },
+                 dynamic_cast<LooselyCoupledKF*>(flow::FindNode(10))->_qCalculationAlgorithm = LooselyCoupledKF::QCalculationAlgorithm::Taylor1; },
           []() { LOG_WARN("Setting LooselyCoupledKF - _qCalculationAlgorithm to: VanLoan");
-                 dynamic_cast<LooselyCoupledKF*>(nm::FindNode(10))->_qCalculationAlgorithm = LooselyCoupledKF::QCalculationAlgorithm::VanLoan; } },
+                 dynamic_cast<LooselyCoupledKF*>(flow::FindNode(10))->_qCalculationAlgorithm = LooselyCoupledKF::QCalculationAlgorithm::VanLoan; } },
         {
             []() { LOG_WARN("Setting LooselyCoupledKF - _randomProcessAccel to: GaussMarkov1");
-                 dynamic_cast<LooselyCoupledKF*>(nm::FindNode(10))->_randomProcessAccel = LooselyCoupledKF::RandomProcess::GaussMarkov1; },
+                 dynamic_cast<LooselyCoupledKF*>(flow::FindNode(10))->_randomProcessAccel = LooselyCoupledKF::RandomProcess::GaussMarkov1; },
             //   []() { LOG_WARN("Setting LooselyCoupledKF - _randomProcessAccel to: RandomWalk");
-            //          dynamic_cast<LooselyCoupledKF*>(nm::FindNode(10))->_randomProcessAccel = LooselyCoupledKF::RandomProcess::RandomWalk; }
+            //          dynamic_cast<LooselyCoupledKF*>(flow::FindNode(10))->_randomProcessAccel = LooselyCoupledKF::RandomProcess::RandomWalk; }
         },
         {
             []() { LOG_WARN("Setting LooselyCoupledKF - _randomProcessGyro to: GaussMarkov1");
-                 dynamic_cast<LooselyCoupledKF*>(nm::FindNode(10))->_randomProcessGyro = LooselyCoupledKF::RandomProcess::GaussMarkov1; },
+                 dynamic_cast<LooselyCoupledKF*>(flow::FindNode(10))->_randomProcessGyro = LooselyCoupledKF::RandomProcess::GaussMarkov1; },
             //   []() { LOG_WARN("Setting LooselyCoupledKF - _randomProcessGyro to: RandomWalk");
-            //          dynamic_cast<LooselyCoupledKF*>(nm::FindNode(10))->_randomProcessGyro = LooselyCoupledKF::RandomProcess::RandomWalk; }
+            //          dynamic_cast<LooselyCoupledKF*>(flow::FindNode(10))->_randomProcessGyro = LooselyCoupledKF::RandomProcess::RandomWalk; }
         },
     } };
 
@@ -92,7 +91,7 @@ void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
 
         auto timeOfFirstGnssObs = imuAfter ? InsTime() : InsTime(2, 255, 403575.870125);
 
-        nm::RegisterPreInitCallback([&]() {
+        flow::RegisterPreInitCallback([&]() {
             settings[0][i0]();
             settings[1][i1]();
             settings[2][i2]();
@@ -102,31 +101,31 @@ void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
         });
 
         // VectorNavBinaryConverter (5) |> Binary Output (4)
-        nm::RegisterWatcherCallbackToInputPin(4, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+        flow::RegisterWatcherCallbackToInputPin(4, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
             messageCounter_VectorNavBinaryConverterImu_BinaryOutput++;
         });
 
         // VectorNavBinaryConverter (16) |> Binary Output (15)
-        nm::RegisterWatcherCallbackToInputPin(15, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+        flow::RegisterWatcherCallbackToInputPin(15, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
             messageCounter_VectorNavBinaryConverterGnss_BinaryOutput++;
         });
 
         // INS/GNSS LCKF (10) |> ImuObsIn (7)
-        nm::RegisterWatcherCallbackToInputPin(7, [&]([[maybe_unused]] const Node* node, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+        flow::RegisterWatcherCallbackToInputPin(7, [&]([[maybe_unused]] const Node* node, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
             LOG_DEBUG("ImuObsIn [{}]: ImuObsIn: {}", messageCounter_LCKF_ImuObs, node->inputPins[0].queue.size());
             LOG_DEBUG("ImuObsIn [{}]: PosVel:   {}", messageCounter_LCKF_ImuObs, node->inputPins[1].queue.size());
             messageCounter_LCKF_ImuObs++;
         });
 
         // INS/GNSS LCKF (10) |> Init PVA (45)
-        nm::RegisterWatcherCallbackToInputPin(45, [&]([[maybe_unused]] const Node* node, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+        flow::RegisterWatcherCallbackToInputPin(45, [&]([[maybe_unused]] const Node* node, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
             LOG_DEBUG("Init PVA [{}]: ImuObsIn: {}", messageCounter_LCKF_InitPVA, node->inputPins[0].queue.size());
             LOG_DEBUG("Init PVA [{}]: PosVel:   {}", messageCounter_LCKF_InitPVA, node->inputPins[1].queue.size());
             messageCounter_LCKF_InitPVA++;
         });
 
         // INS/GNSS LCKF (10) |> PosVel (44)
-        nm::RegisterWatcherCallbackToInputPin(44, [&]([[maybe_unused]] const Node* node, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+        flow::RegisterWatcherCallbackToInputPin(44, [&]([[maybe_unused]] const Node* node, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
             LOG_DEBUG("PosVel   [{}]: ImuObsIn: {}", messageCounter_LCKF_PosVel, node->inputPins[0].queue.size());
             LOG_DEBUG("PosVel   [{}]: PosVel:   {}", messageCounter_LCKF_PosVel, node->inputPins[1].queue.size());
             messageCounter_LCKF_PosVel++;

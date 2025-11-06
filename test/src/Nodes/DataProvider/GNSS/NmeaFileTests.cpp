@@ -22,8 +22,7 @@
 
 #include "FlowTester.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
 
 #include "Logger.hpp"
 
@@ -94,7 +93,7 @@ TEST_CASE("[NMEAFile][flow] Read 'test.nmea'", "[NMEAFile][flow]")
     // ###########################################################################################################
 
     size_t messageCounter = 0;
-    nm::RegisterWatcherCallbackToInputPin(103, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(103, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         LOG_TRACE("messageCounter = {}", messageCounter);
 
         compareNMEAData(std::dynamic_pointer_cast<const NAV::PosVel>(queue.front()), messageCounter);

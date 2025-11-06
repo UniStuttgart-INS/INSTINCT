@@ -10,8 +10,6 @@
 
 #include "util/Logger.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "util/Vendor/Ublox/UbloxUtilities.hpp"
@@ -27,7 +25,7 @@ NAV::UbloxFile::UbloxFile()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 380, 70 };
 
-    nm::CreateOutputPin(this, "UbloxObs", Pin::Type::Flow, { NAV::UbloxObs::type() }, &UbloxFile::pollData);
+    CreateOutputPin("UbloxObs", Pin::Type::Flow, { NAV::UbloxObs::type() }, &UbloxFile::pollData);
 }
 
 NAV::UbloxFile::~UbloxFile()

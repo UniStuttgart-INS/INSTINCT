@@ -11,9 +11,7 @@
 
 #include "Navigation/GNSS/Positioning/SPP/Algorithm.hpp"
 #include "NodeData/State/PosVel.hpp"
-#include "internal/NodeManager.hpp"
 #include <fmt/core.h>
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 #include "internal/gui/NodeEditorApplication.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
@@ -35,10 +33,10 @@ NAV::SinglePointPositioning::SinglePointPositioning()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 538, 536 };
 
-    nm::CreateInputPin(this, NAV::GnssObs::type().c_str(), Pin::Type::Flow, { NAV::GnssObs::type() }, &SinglePointPositioning::recvGnssObs);
+    CreateInputPin(NAV::GnssObs::type().c_str(), Pin::Type::Flow, { NAV::GnssObs::type() }, &SinglePointPositioning::recvGnssObs);
     _dynamicInputPins.addPin(this); // GnssNavInfo
 
-    nm::CreateOutputPin(this, NAV::SppSolution::type().c_str(), Pin::Type::Flow, { NAV::SppSolution::type() });
+    CreateOutputPin(NAV::SppSolution::type().c_str(), Pin::Type::Flow, { NAV::SppSolution::type() });
 }
 
 NAV::SinglePointPositioning::~SinglePointPositioning()
@@ -151,12 +149,12 @@ void NAV::SinglePointPositioning::deinitialize()
 
 void NAV::SinglePointPositioning::pinAddCallback(Node* node)
 {
-    nm::CreateInputPin(node, NAV::GnssNavInfo::type().c_str(), Pin::Type::Object, { NAV::GnssNavInfo::type() });
+    node->CreateInputPin(NAV::GnssNavInfo::type().c_str(), Pin::Type::Object, { NAV::GnssNavInfo::type() });
 }
 
 void NAV::SinglePointPositioning::pinDeleteCallback(Node* node, size_t pinIdx)
 {
-    nm::DeleteInputPin(node->inputPins.at(pinIdx));
+    node->DeleteInputPin(pinIdx);
 }
 
 void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)

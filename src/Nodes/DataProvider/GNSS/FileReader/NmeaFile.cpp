@@ -14,8 +14,6 @@
 #include "util/Time/TimeBase.hpp"
 #include "util/StringUtil.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 #include "NodeData/State/PosVel.hpp"
 
@@ -27,7 +25,7 @@ NAV::NmeaFile::NmeaFile()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 517, 87 };
 
-    nm::CreateOutputPin(this, "PosVel", Pin::Type::Flow, { NAV::PosVel::type() }, &NmeaFile::pollData);
+    CreateOutputPin("PosVel", Pin::Type::Flow, { NAV::PosVel::type() }, &NmeaFile::pollData);
 }
 
 NAV::NmeaFile::~NmeaFile()

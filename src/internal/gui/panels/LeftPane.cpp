@@ -11,8 +11,7 @@
 #include <imgui_node_editor.h>
 #include <imgui_internal.h>
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
 
 #include "internal/gui/TouchTracker.hpp"
 #include "internal/gui/NodeEditorApplication.hpp"
@@ -83,7 +82,7 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
         ImGui::SameLine();
         ImGui::TextUnformatted("Nodes");
         ImGui::Indent();
-        for (const auto* node : nm::m_Nodes())
+        for (const auto* node : flow::m_Nodes())
         {
             ImGui::PushID(node->id.AsPointer());
             auto start = ImGui::GetCursorScreenPos();
@@ -196,7 +195,7 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
         ImGui::Indent();
         for (size_t i = 0; i < nodeCount; ++i)
         {
-            auto* node = nm::FindNode(selectedNodes[i]);
+            auto* node = flow::FindNode(selectedNodes[i]);
             ImGui::Text("%s (%lu)", node != nullptr ? node->name.c_str() : "", size_t(selectedNodes[i]));
         }
         for (size_t i = 0; i < linkCount; ++i)

@@ -20,8 +20,6 @@
 #include "internal/gui/NodeEditorApplication.hpp"
 
 #include "internal/FlowManager.hpp"
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "NodeRegistry.hpp"
 #include "Navigation/Constants.hpp"
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
@@ -61,15 +59,15 @@ NAV::TightlyCoupledKF::TightlyCoupledKF()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 866, 938 };
 
-    nm::CreateInputPin(
-        this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type(), NAV::ImuObsWDelta::type() }, &TightlyCoupledKF::recvImuObservation,
+    CreateInputPin(
+        "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type(), NAV::ImuObsWDelta::type() }, &TightlyCoupledKF::recvImuObservation,
         [](const Node* node, const InputPin& inputPin) {
             const auto* tckf = static_cast<const TightlyCoupledKF*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
             return !inputPin.queue.empty() && tckf->_inertialIntegrator.hasInitialPosition();
         },
         1); // Priority 1 ensures, that the IMU obs (prediction) is evaluated before the PosVel obs (update)
-    nm::CreateInputPin(
-        this, "GnssObs", Pin::Type::Flow, { NAV::GnssObs::type() }, &TightlyCoupledKF::recvGnssObs,
+    CreateInputPin(
+        "GnssObs", Pin::Type::Flow, { NAV::GnssObs::type() }, &TightlyCoupledKF::recvGnssObs,
         [](const Node* node, const InputPin& inputPin) {
             const auto* tckf = static_cast<const TightlyCoupledKF*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
             return !inputPin.queue.empty() && (!tckf->_initializeStateOverExternalPin || tckf->_inertialIntegrator.hasInitialPosition());
@@ -77,7 +75,7 @@ NAV::TightlyCoupledKF::TightlyCoupledKF()
         2); // Initially this has higher priority than the IMU obs, to initialize the position from it
 
     updateNumberOfInputPins();
-    nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::InsGnssTCKFSolution::type() });
+    CreateOutputPin("PosVelAtt", Pin::Type::Flow, { NAV::InsGnssTCKFSolution::type() });
 }
 
 NAV::TightlyCoupledKF::~TightlyCoupledKF()
@@ -106,14 +104,14 @@ void NAV::TightlyCoupledKF::addKalmanMatricesPins()
 
     if (outputPins.size() == OUTPUT_PORT_INDEX_x)
     {
-        nm::CreateOutputPin(this, "x", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.x);
-        nm::CreateOutputPin(this, "P", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.P);
-        nm::CreateOutputPin(this, "Phi", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.Phi);
-        nm::CreateOutputPin(this, "Q", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.Q);
-        nm::CreateOutputPin(this, "z", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.z);
-        nm::CreateOutputPin(this, "H", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.H);
-        nm::CreateOutputPin(this, "R", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.R);
-        nm::CreateOutputPin(this, "K", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.K);
+        CreateOutputPin("x", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.x);
+        CreateOutputPin("P", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.P);
+        CreateOutputPin("Phi", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.Phi);
+        CreateOutputPin("Q", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.Q);
+        CreateOutputPin("z", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.z);
+        CreateOutputPin("H", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.H);
+        CreateOutputPin("R", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.R);
+        CreateOutputPin("K", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.K);
     }
 }
 
@@ -122,7 +120,7 @@ void NAV::TightlyCoupledKF::removeKalmanMatricesPins()
     LOG_TRACE("{}: called", nameId());
     while (outputPins.size() > OUTPUT_PORT_INDEX_x)
     {
-        nm::DeleteOutputPin(outputPins.back());
+        flow::DeleteOutputPin(outputPins.back());
     }
 }
 
@@ -131,15 +129,15 @@ void NAV::TightlyCoupledKF::updateExternalPvaInitPin()
     if (_initializeStateOverExternalPin
         && inputPins.size() - INPUT_PORT_INDEX_GNSS_NAV_INFO - _nNavInfoPins == 0)
     {
-        nm::CreateInputPin(
-            this, "Init PVA", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &TightlyCoupledKF::recvPosVelAttInit,
+        CreateInputPin(
+            "Init PVA", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &TightlyCoupledKF::recvPosVelAttInit,
             nullptr,
             3,
             INPUT_PORT_INDEX_POS_VEL_ATT_INIT);
     }
     else if (!_initializeStateOverExternalPin && inputPins.size() - INPUT_PORT_INDEX_GNSS_NAV_INFO - _nNavInfoPins > 0)
     {
-        nm::DeleteInputPin(inputPins[INPUT_PORT_INDEX_POS_VEL_ATT_INIT]);
+        flow::DeleteInputPin(inputPins[INPUT_PORT_INDEX_POS_VEL_ATT_INIT]);
     }
 }
 
@@ -147,11 +145,11 @@ void NAV::TightlyCoupledKF::updateNumberOfInputPins()
 {
     while (inputPins.size() - static_cast<size_t>(_initializeStateOverExternalPin) - INPUT_PORT_INDEX_GNSS_NAV_INFO < _nNavInfoPins)
     {
-        nm::CreateInputPin(this, NAV::GnssNavInfo::type().c_str(), Pin::Type::Object, { NAV::GnssNavInfo::type() });
+        CreateInputPin(NAV::GnssNavInfo::type().c_str(), Pin::Type::Object, { NAV::GnssNavInfo::type() });
     }
     while (inputPins.size() - static_cast<size_t>(_initializeStateOverExternalPin) - INPUT_PORT_INDEX_GNSS_NAV_INFO > _nNavInfoPins)
     {
-        nm::DeleteInputPin(inputPins.back());
+        flow::DeleteInputPin(inputPins.back());
     }
 }
 
@@ -328,7 +326,7 @@ void NAV::TightlyCoupledKF::guiConfig()
                         if (ImGui::Button(fmt::format("x##{} - {}", size_t(id), pinIndex).c_str()))
                         {
                             _nNavInfoPins--;
-                            nm::DeleteInputPin(inputPins.at(pinIndex));
+                            flow::DeleteInputPin(inputPins.at(pinIndex));
                             flow::ApplyChanges();
                         }
                         if (ImGui::IsItemHovered())

@@ -16,8 +16,6 @@
     #include "Navio/Common/Util.h"
 #endif
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "NodeData/IMU/ImuObs.hpp"
@@ -33,7 +31,7 @@ NAV::Navio2Sensor::Navio2Sensor()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 295, 92 };
 
-    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() });
+    CreateOutputPin("ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() });
 }
 
 NAV::Navio2Sensor::~Navio2Sensor()

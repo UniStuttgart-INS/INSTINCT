@@ -10,8 +10,6 @@
 
 #include "util/Logger.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 #include "util/Eigen.hpp"
 #include <iterator>
@@ -24,9 +22,9 @@ NAV::experimental::ARMA::ARMA()
 
     _hasConfig = true;
 
-    nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ARMA::receiveImuObs);
+    CreateInputPin("ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ARMA::receiveImuObs);
 
-    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() });
+    CreateOutputPin("ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() });
 }
 
 NAV::experimental::ARMA::~ARMA()

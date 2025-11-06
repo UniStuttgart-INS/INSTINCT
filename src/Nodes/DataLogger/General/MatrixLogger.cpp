@@ -15,8 +15,6 @@
 
 #include "util/Time/TimeBase.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 NAV::MatrixLogger::MatrixLogger()
@@ -29,7 +27,7 @@ NAV::MatrixLogger::MatrixLogger()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 380, 70 };
 
-    nm::CreateInputPin(this, "write", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &MatrixLogger::writeMatrix);
+    CreateInputPin("write", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &MatrixLogger::writeMatrix);
 }
 
 NAV::MatrixLogger::~MatrixLogger()

@@ -11,9 +11,6 @@
 #include <imgui.h>
 
 #include "internal/gui/windows/Global.hpp"
-
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/gui/NodeEditorApplication.hpp"
 
 void NAV::gui::menus::ShowDebugMenu()
@@ -26,9 +23,9 @@ void NAV::gui::menus::ShowDebugMenu()
     ImGui::BeginDisabled();
 #endif
 
-    ImGui::Checkbox("Show Callback Flow", &nm::showFlowWhenInvokingCallbacks);
+    ImGui::Checkbox("Show Callback Flow", &NodeEditorApplication::showFlowWhenInvokingCallbacks);
 
-    ImGui::Checkbox("Show Notify Flow", &nm::showFlowWhenNotifyingValueChange);
+    ImGui::Checkbox("Show Notify Flow", &NodeEditorApplication::showFlowWhenNotifyingValueChange);
 
     ImGui::Checkbox("Show Queue size on pins", &NodeEditorApplication::_showQueueSizeOnPins);
 

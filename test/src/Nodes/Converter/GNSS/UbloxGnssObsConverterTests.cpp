@@ -17,8 +17,7 @@
 #include "FlowTester.hpp"
 #include "Logger.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
 
 #include "NodeData/GNSS/GnssObs.hpp"
 #include "NodeData/GNSS/GnssObsComparisons.hpp"
@@ -86,9 +85,9 @@ TEST_CASE("[UbloxGnssObsConverterTests][flow] Spirent_ublox-F9P_static_duration-
     //
     // ###########################################################################################################
 
-    nm::RegisterPreInitCallback([&]() {
-        dynamic_cast<UbloxFile*>(nm::FindNode(NODE_ID_UBLOX_FILE))->_path = "Converter/GNSS/Ublox/Spirent_ublox-F9P_static_duration-15min_sys-GPS-GAL_iono-Klobuchar_tropo-Saastamoinen.ubx";
-        dynamic_cast<RinexObsFile*>(nm::FindNode(NODE_ID_RINEX_OBS_FILE))->_path = "Converter/GNSS/Ublox/Spirent_ublox-F9P_static_duration-15min_sys-GPS-GAL_iono-Klobuchar_tropo-Saastamoinen.obs";
+    flow::RegisterPreInitCallback([&]() {
+        dynamic_cast<UbloxFile*>(flow::FindNode(NODE_ID_UBLOX_FILE))->_path = "Converter/GNSS/Ublox/Spirent_ublox-F9P_static_duration-15min_sys-GPS-GAL_iono-Klobuchar_tropo-Saastamoinen.ubx";
+        dynamic_cast<RinexObsFile*>(flow::FindNode(NODE_ID_RINEX_OBS_FILE))->_path = "Converter/GNSS/Ublox/Spirent_ublox-F9P_static_duration-15min_sys-GPS-GAL_iono-Klobuchar_tropo-Saastamoinen.obs";
     });
 
     std::atomic<size_t> messageCounterTerminator1 = 0;
@@ -97,7 +96,7 @@ TEST_CASE("[UbloxGnssObsConverterTests][flow] Spirent_ublox-F9P_static_duration-
     std::deque<std::shared_ptr<const NAV::GnssObs>> data2;
     std::mutex comparisonMutex;
 
-    nm::RegisterWatcherCallbackToInputPin(PIN_ID_UBLOX_TERMINATOR, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(PIN_ID_UBLOX_TERMINATOR, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         messageCounterTerminator1++;
 
         data1.push_back(std::dynamic_pointer_cast<const NAV::GnssObs>(queue.front()));
@@ -106,7 +105,7 @@ TEST_CASE("[UbloxGnssObsConverterTests][flow] Spirent_ublox-F9P_static_duration-
         compareObservations(data1, data2);
     });
     std::shared_ptr<const NAV::GnssObs> lastObs = nullptr;
-    nm::RegisterWatcherCallbackToInputPin(PIN_ID_RINEX_TERMINATOR, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(PIN_ID_RINEX_TERMINATOR, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         messageCounterTerminator2++;
 
         // Make a copy, because we need to modify the data

@@ -14,8 +14,6 @@
 #include "util/Logger.hpp"
 #include "util/StringUtil.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
 
@@ -27,7 +25,7 @@ NAV::CsvFile::CsvFile()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 530, 271 };
 
-    nm::CreateOutputPin(this, CsvData::type().c_str(), Pin::Type::Object, { CsvData::type() }, &_data);
+    CreateOutputPin(CsvData::type().c_str(), Pin::Type::Object, { CsvData::type() }, &_data);
 }
 
 NAV::CsvFile::~CsvFile()

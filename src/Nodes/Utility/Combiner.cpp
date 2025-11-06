@@ -26,9 +26,7 @@
 #include "util/Assert.h"
 #include "util/Logger.hpp"
 
-#include "internal/NodeManager.hpp"
 #include <fmt/core.h>
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "internal/gui/widgets/HelpMarker.hpp"
@@ -86,7 +84,7 @@ Combiner::Combiner()
 
     _dynamicInputPins.addPin(this);
     _dynamicInputPins.addPin(this);
-    nm::CreateOutputPin(this, "Comb", Pin::Type::Flow, { DynamicData::type() });
+    CreateOutputPin("Comb", Pin::Type::Flow, { DynamicData::type() });
 }
 
 Combiner::~Combiner()
@@ -431,7 +429,7 @@ void Combiner::pinAddCallback(Node* node)
 {
     auto* combiner = static_cast<Combiner*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
     combiner->_pinData.emplace_back();
-    nm::CreateInputPin(node, fmt::format("Pin {}", node->inputPins.size() + 1).c_str(), Pin::Type::Flow, _dataIdentifier, &Combiner::receiveData);
+    node->CreateInputPin(fmt::format("Pin {}", node->inputPins.size() + 1).c_str(), Pin::Type::Flow, _dataIdentifier, &Combiner::receiveData);
 }
 
 void Combiner::pinDeleteCallback(Node* node, size_t pinIdx)
@@ -439,7 +437,7 @@ void Combiner::pinDeleteCallback(Node* node, size_t pinIdx)
     auto* combiner = static_cast<Combiner*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
     if (pinIdx == combiner->_refPinIdx && combiner->_refPinIdx && combiner->_refPinIdx >= combiner->inputPins.size()) { combiner->_refPinIdx--; }
     combiner->_pinData.erase(std::next(combiner->_pinData.begin(), static_cast<int64_t>(pinIdx)));
-    nm::DeleteInputPin(node->inputPins.at(pinIdx));
+    node->DeleteInputPin(pinIdx);
 
     for (auto& comb : combiner->_combinations)
     {

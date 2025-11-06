@@ -24,8 +24,7 @@
 
 #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
 
 #include "Logger.hpp"
 
@@ -203,10 +202,10 @@ TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/FixedSize/vn310-imu.csv' a
     //
     // ##########################################################################################################
 
-    nm::RegisterPreInitCallback([&]() { dynamic_cast<VectorNavFile*>(nm::FindNode(2))->_path = "VectorNav/FixedSize/vn310-imu.csv"; });
+    flow::RegisterPreInitCallback([&]() { dynamic_cast<VectorNavFile*>(flow::FindNode(2))->_path = "VectorNav/FixedSize/vn310-imu.csv"; });
 
     size_t messageCounter = 0;
-    nm::RegisterWatcherCallbackToInputPin(3, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(3, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         LOG_TRACE("messageCounter = {}", messageCounter);
 
         compareImuObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()), messageCounter);
@@ -232,10 +231,10 @@ TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/FixedSize/vn310-imu.vnb' a
     //
     // ##########################################################################################################
 
-    nm::RegisterPreInitCallback([&]() { dynamic_cast<VectorNavFile*>(nm::FindNode(2))->_path = "VectorNav/FixedSize/vn310-imu.vnb"; });
+    flow::RegisterPreInitCallback([&]() { dynamic_cast<VectorNavFile*>(flow::FindNode(2))->_path = "VectorNav/FixedSize/vn310-imu.vnb"; });
 
     size_t messageCounter = 0;
-    nm::RegisterWatcherCallbackToInputPin(3, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(3, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         LOG_TRACE("messageCounter = {}", messageCounter);
 
         compareImuObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()), messageCounter);
@@ -530,10 +529,10 @@ TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/FixedSize/vn310-gnss.csv' 
     //
     // ##########################################################################################################
 
-    nm::RegisterPreInitCallback([&]() { dynamic_cast<VectorNavFile*>(nm::FindNode(2))->_path = "VectorNav/FixedSize/vn310-gnss.csv"; });
+    flow::RegisterPreInitCallback([&]() { dynamic_cast<VectorNavFile*>(flow::FindNode(2))->_path = "VectorNav/FixedSize/vn310-gnss.csv"; });
 
     size_t messageCounter = 0;
-    nm::RegisterWatcherCallbackToInputPin(3, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(3, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         LOG_TRACE("messageCounter = {}", messageCounter);
 
         CAPTURE(messageCounter);
@@ -560,10 +559,10 @@ TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/FixedSize/vn310-gnss.vnb' 
     //
     // ##########################################################################################################
 
-    nm::RegisterPreInitCallback([&]() { dynamic_cast<VectorNavFile*>(nm::FindNode(2))->_path = "VectorNav/FixedSize/vn310-gnss.vnb"; });
+    flow::RegisterPreInitCallback([&]() { dynamic_cast<VectorNavFile*>(flow::FindNode(2))->_path = "VectorNav/FixedSize/vn310-gnss.vnb"; });
 
     size_t messageCounter = 0;
-    nm::RegisterWatcherCallbackToInputPin(3, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(3, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         LOG_TRACE("messageCounter = {}", messageCounter);
 
         CAPTURE(messageCounter);
@@ -872,10 +871,10 @@ TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/DynamicSize/vn310-gnss.csv
     //
     // ##########################################################################################################
 
-    nm::RegisterPreInitCallback([&]() { dynamic_cast<VectorNavFile*>(nm::FindNode(2))->_path = "VectorNav/DynamicSize/vn310-gnss.csv"; });
+    flow::RegisterPreInitCallback([&]() { dynamic_cast<VectorNavFile*>(flow::FindNode(2))->_path = "VectorNav/DynamicSize/vn310-gnss.csv"; });
 
     size_t messageCounter = 0;
-    nm::RegisterWatcherCallbackToInputPin(3, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(3, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         LOG_TRACE("messageCounter = {}", messageCounter);
 
         CAPTURE(messageCounter);
@@ -902,10 +901,10 @@ TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/DynamicSize/vn310-gnss.vnb
     //
     // ##########################################################################################################
 
-    nm::RegisterPreInitCallback([&]() { dynamic_cast<VectorNavFile*>(nm::FindNode(2))->_path = "VectorNav/DynamicSize/vn310-gnss.vnb"; });
+    flow::RegisterPreInitCallback([&]() { dynamic_cast<VectorNavFile*>(flow::FindNode(2))->_path = "VectorNav/DynamicSize/vn310-gnss.vnb"; });
 
     size_t messageCounter = 0;
-    nm::RegisterWatcherCallbackToInputPin(3, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(3, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         LOG_TRACE("messageCounter = {}", messageCounter);
 
         CAPTURE(messageCounter);
@@ -1123,10 +1122,10 @@ TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/DynamicSize/vn310-gnss-new
     //
     // ##########################################################################################################
 
-    nm::RegisterPreInitCallback([&]() { dynamic_cast<VectorNavFile*>(nm::FindNode(2))->_path = "VectorNav/DynamicSize/vn310-gnss-new.csv"; });
+    flow::RegisterPreInitCallback([&]() { dynamic_cast<VectorNavFile*>(flow::FindNode(2))->_path = "VectorNav/DynamicSize/vn310-gnss-new.csv"; });
 
     size_t messageCounter = 0;
-    nm::RegisterWatcherCallbackToInputPin(3, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(3, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         LOG_TRACE("messageCounter = {}", messageCounter);
 
         CAPTURE(messageCounter);

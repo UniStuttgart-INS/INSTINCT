@@ -8,8 +8,6 @@
 
 #include "Delay.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "NodeData/NodeData.hpp"
@@ -26,8 +24,8 @@ Delay::Delay()
     _guiConfigDefaultWindowSize = { 305, 70 };
     kind = Kind::Simple;
 
-    nm::CreateInputPin(this, "", Pin::Type::Flow, { NodeData::type() }, &Delay::delayObs);
-    nm::CreateOutputPin(this, "", Pin::Type::Flow, { NodeData::type() });
+    CreateInputPin("", Pin::Type::Flow, { NodeData::type() }, &Delay::delayObs);
+    CreateOutputPin("", Pin::Type::Flow, { NodeData::type() });
 }
 
 Delay::~Delay()

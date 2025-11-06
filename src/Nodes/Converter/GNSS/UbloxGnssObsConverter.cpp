@@ -12,8 +12,6 @@
 
 #include "util/Logger.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "NodeData/GNSS/UbloxObs.hpp"
@@ -25,9 +23,9 @@ NAV::UbloxGnssObsConverter::UbloxGnssObsConverter()
     LOG_TRACE("{}: called", name);
     _hasConfig = false;
 
-    nm::CreateInputPin(this, "UbloxObs", Pin::Type::Flow, { NAV::UbloxObs::type() }, &UbloxGnssObsConverter::receiveObs);
+    CreateInputPin("UbloxObs", Pin::Type::Flow, { NAV::UbloxObs::type() }, &UbloxGnssObsConverter::receiveObs);
 
-    nm::CreateOutputPin(this, "GnssObs", Pin::Type::Flow, { NAV::GnssObs::type() });
+    CreateOutputPin("GnssObs", Pin::Type::Flow, { NAV::GnssObs::type() });
 }
 
 NAV::UbloxGnssObsConverter::~UbloxGnssObsConverter()

@@ -44,22 +44,4 @@ void copyFlowElements();
 /// @brief Pastes the copied/cutted elements
 void pasteFlowElements();
 
-/// @brief Checks if an action can be undone
-bool canUndoLastAction();
-
-/// @brief Checks if an action can be redone
-bool canRedoLastAction();
-
-/// @brief Clears the list of last actions
-void clearLastActionList();
-
-/// @brief Undo the last action
-void undoLastAction();
-
-/// @brief Redo the last action
-void redoLastAction();
-
-/// @brief Saves the last action to the action list
-void saveLastAction();
-
 } // namespace NAV::gui

@@ -21,8 +21,7 @@
 #include "FlowTester.hpp"
 #include "Logger.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
 
 #include "NodeData/GNSS/GnssObsComparisons.hpp"
 #include "v3_02/INSA11DEU_R_MO_rnx.hpp"
@@ -54,8 +53,8 @@ void testRinexObsFileFlow(const std::string& path, const std::vector<GnssObs>& g
 {
     auto logger = initializeTestLogger();
 
-    nm::RegisterPreInitCallback([&]() {
-        dynamic_cast<RinexObsFile*>(nm::FindNode(2))->_path = path;
+    flow::RegisterPreInitCallback([&]() {
+        dynamic_cast<RinexObsFile*>(flow::FindNode(2))->_path = path;
     });
 
     // ###########################################################################################################
@@ -70,7 +69,7 @@ void testRinexObsFileFlow(const std::string& path, const std::vector<GnssObs>& g
 
     size_t msgCounter = 0;
 
-    nm::RegisterWatcherCallbackToInputPin(PIN_ID_GNSS_OBS, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    flow::RegisterWatcherCallbackToInputPin(PIN_ID_GNSS_OBS, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         auto gnssObs = std::dynamic_pointer_cast<const NAV::GnssObs>(queue.front());
         REQUIRE(gnssObs != nullptr);
 

@@ -11,9 +11,6 @@
 #include <imgui.h>
 #include <imgui_node_editor.h>
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
-
 #include "internal/FlowManager.hpp"
 
 #include <iostream>
@@ -28,7 +25,7 @@ void NAV::gui::menus::ShowFileMenu(GlobalActions& globalAction)
         }
         else
         {
-            nm::DeleteAllNodes();
+            flow::DeleteAllNodes();
             flow::DiscardChanges();
             flow::SetCurrentFilename("");
         }

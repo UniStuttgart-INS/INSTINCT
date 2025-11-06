@@ -325,6 +325,118 @@ class Node
     /// @return The index of the pin
     [[nodiscard]] size_t outputPinIndexFromId(ax::NodeEditor::PinId pinId) const;
 
+    /// @brief Create an Input Pin object
+    /// @param[in] name Display name of the Pin
+    /// @param[in] pinType Type of the pin
+    /// @param[in] dataIdentifier Identifier of the data which is represented by the pin
+    /// @param[in] callback Callback to register with the pin
+    /// @param[in] firable Function to check whether the callback is firable
+    /// @param[in] priority Priority when checking firable condition related to other pins (higher priority gets triggered first)
+    /// @param[in] idx Index where to put the new pin (-1 means at the end)
+    /// @return Pointer to the created pin
+    InputPin* CreateInputPin(const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier = {},
+                             InputPin::Callback callback = static_cast<InputPin::FlowFirableCallbackFunc>(nullptr),
+                             InputPin::FlowFirableCheckFunc firable = nullptr,
+                             int priority = 0, int idx = -1);
+
+    /// @brief Create an Input Pin object
+    /// @tparam T Node Class where the function is member of
+    /// @param[in] name Display name of the Pin
+    /// @param[in] pinType Type of the pin
+    /// @param[in] dataIdentifier Identifier of the data which is represented by the pin
+    /// @param[in] callback Flow firable callback function to register with the pin
+    /// @param[in] firable Function to check whether the callback is firable
+    /// @param[in] priority Priority when checking firable condition related to other pins (higher priority gets triggered first)
+    /// @param[in] idx Index where to put the new pin (-1 means at the end)
+    /// @return Pointer to the created pin
+    template<std::derived_from<Node> T>
+    InputPin* CreateInputPin(const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier = {},
+                             void (T::*callback)(InputPin::NodeDataQueue&, size_t) = nullptr,
+                             InputPin::FlowFirableCheckFunc firable = nullptr,
+                             int priority = 0, int idx = -1)
+    {
+        assert(pinType == Pin::Type::Flow);
+
+        return CreateInputPin(name, pinType, dataIdentifier, InputPin::Callback(static_cast<InputPin::FlowFirableCallbackFunc>(callback)), firable, priority, idx);
+    }
+
+    /// @brief Create an Input Pin object for data pins. The additional notify function gets called when the connected data was changed and the connected node calls NAV::Node::notifyOutputValueChanged
+    /// @tparam T Node Class where the function is member of
+    /// @param[in] name Display name of the Pin
+    /// @param[in] pinType Type of the pin
+    /// @param[in] dataIdentifier Identifier of the data which is represented by the pin
+    /// @param[in] notifyFunc Function to call when the data is updated
+    /// @param[in] idx Index where to put the new pin (-1 means at the end)
+    /// @return Pointer to the created pin
+    template<std::derived_from<Node> T>
+    InputPin* CreateInputPin(const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier,
+                             void (T::*notifyFunc)(const InsTime&, size_t), int idx = -1)
+    {
+        assert(pinType != Pin::Type::Flow);
+
+        return CreateInputPin(name, pinType, dataIdentifier, InputPin::Callback(static_cast<InputPin::DataChangedNotifyFunc>(notifyFunc)), nullptr, 0, idx);
+    }
+
+    /// @brief Create an Output Pin object
+    /// @param[in] name Display name of the Pin
+    /// @param[in] pinType Type of the pin
+    /// @param[in] dataIdentifier Identifier of the data which is represented by the pin
+    /// @param[in] data Pointer to data which is represented by the pin
+    /// @param[in] idx Index where to put the new pin (-1 means at the end)
+    /// @return Pointer to the created pin
+    OutputPin* CreateOutputPin(const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier, OutputPin::PinData data = static_cast<void*>(nullptr), int idx = -1);
+
+    /// @brief Create an Output Pin object for Flow Pins
+    /// @tparam T Class where the function is member of
+    /// @param[in] name Display name of the Pin
+    /// @param[in] pinType Type of the pin
+    /// @param[in] dataIdentifier Identifier of the data which is represented by the pin
+    /// @param[in] peekPollDataFunc Function to poll for data on this pin
+    /// @param[in] idx Index where to put the new pin (-1 means at the end)
+    /// @return Pointer to the created pin
+    template<std::derived_from<Node> T>
+    OutputPin* CreateOutputPin(const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier,
+                               std::shared_ptr<const NAV::NodeData> (T::*peekPollDataFunc)(size_t, bool) = nullptr, int idx = -1)
+    {
+        assert(pinType == Pin::Type::Flow);
+        INS_ASSERT_USER_ERROR(std::none_of(outputPins.begin(), outputPins.end(),
+                                           [](const OutputPin& outputPin) { return std::holds_alternative<OutputPin::PollDataFunc>(outputPin.data); }),
+                              "You cannot mix PollDataFunc and PeekPollDataFunc output pins. Use only PeekPollDataFunc pins if multiple pins are needed.");
+
+        return CreateOutputPin(name, pinType, dataIdentifier, OutputPin::PinData(static_cast<OutputPin::PeekPollDataFunc>(peekPollDataFunc)), idx);
+    }
+
+    /// @brief Create an Output Pin object for Flow Pins
+    /// @tparam T Class where the function is member of
+    /// @param[in] name Display name of the Pin
+    /// @param[in] pinType Type of the pin
+    /// @param[in] dataIdentifier Identifier of the data which is represented by the pin
+    /// @param[in] pollDataFunc Function to poll for data on this pin
+    /// @param[in] idx Index where to put the new pin (-1 means at the end)
+    /// @return Pointer to the created pin
+    template<std::derived_from<Node> T>
+    OutputPin* CreateOutputPin(const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier,
+                               std::shared_ptr<const NAV::NodeData> (T::*pollDataFunc)() = nullptr, int idx = -1)
+    {
+        assert(pinType == Pin::Type::Flow);
+        INS_ASSERT_USER_ERROR(std::none_of(outputPins.begin(), outputPins.end(),
+                                           [](const OutputPin& outputPin) { return std::holds_alternative<OutputPin::PeekPollDataFunc>(outputPin.data)
+                                                                                   || std::holds_alternative<OutputPin::PollDataFunc>(outputPin.data); }),
+                              "There can only be one poll pin if the poll only data function is chosen. If multiple are needed, create PeekPollDataFunc pins.");
+
+        return CreateOutputPin(name, pinType, dataIdentifier, OutputPin::PinData(static_cast<OutputPin::PollDataFunc>(pollDataFunc)), idx);
+    }
+
+    /// @brief Deletes the output pin. Invalidates the pin reference given.
+    /// @param[in] pinIndex Index of the pin to delete
+    /// @return True if the pin was delete
+    bool DeleteOutputPin(size_t pinIndex);
+
+    /// @brief Deletes the input pin. Invalidates the pin reference given.
+    /// @param[in] pinIndex Index of the pin to delete
+    /// @return True if the pin was delete
+    bool DeleteInputPin(size_t pinIndex);
+
     /// @brief Node name and id
     [[nodiscard]] std::string nameId() const;
 

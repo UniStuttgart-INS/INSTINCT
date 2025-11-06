@@ -12,8 +12,6 @@
 
 #include "util/Logger.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "internal/gui/widgets/HelpMarker.hpp"
@@ -105,9 +103,9 @@ NAV::GnssAnalyzer::GnssAnalyzer()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 630, 410 };
 
-    nm::CreateOutputPin(this, "GnssComb", Pin::Type::Flow, { NAV::GnssCombination::type() });
+    CreateOutputPin("GnssComb", Pin::Type::Flow, { NAV::GnssCombination::type() });
 
-    nm::CreateInputPin(this, "GnssObs", Pin::Type::Flow, { NAV::GnssObs::type() }, &GnssAnalyzer::receiveGnssObs);
+    CreateInputPin("GnssObs", Pin::Type::Flow, { NAV::GnssObs::type() }, &GnssAnalyzer::receiveGnssObs);
 }
 
 NAV::GnssAnalyzer::~GnssAnalyzer()

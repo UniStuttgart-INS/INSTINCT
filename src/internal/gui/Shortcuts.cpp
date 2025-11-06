@@ -12,9 +12,6 @@
 #include <imgui_node_editor.h>
 namespace ed = ax::NodeEditor;
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
-
 #include "internal/FlowManager.hpp"
 #include "internal/FlowExecutor.hpp"
 
@@ -45,8 +42,8 @@ void NAV::gui::checkShortcuts(GlobalActions& globalAction)
         }
         else if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
         {
-            nm::DisableAllCallbacks();
-            nm::ClearAllNodeQueues();
+            flow::DisableAllCallbacks();
+            flow::ClearAllNodeQueues();
             if (FlowExecutor::isRunning())
             {
                 LOG_INFO("Canceling Execution...");
@@ -65,7 +62,7 @@ void NAV::gui::checkShortcuts(GlobalActions& globalAction)
             }
             else
             {
-                nm::DeleteAllNodes();
+                flow::DeleteAllNodes();
                 flow::DiscardChanges();
                 flow::SetCurrentFilename("");
             }
@@ -96,16 +93,6 @@ void NAV::gui::checkShortcuts(GlobalActions& globalAction)
                  && canPasteFlowElements())
         {
             pasteFlowElements();
-        }
-        else if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Z)) // Undo
-                 && canUndoLastAction())
-        {
-            undoLastAction();
-        }
-        else if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Y)) // Redo
-                 && canRedoLastAction())
-        {
-            redoLastAction();
         }
     }
     else if (io.KeyCtrl && !io.KeyAlt && io.KeyShift && !io.KeySuper)
