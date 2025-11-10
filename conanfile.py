@@ -9,15 +9,15 @@ class InstinctRecipe(ConanFile):
         cmake_layout(self)
 
     def requirements(self):
-        self.requires("spdlog/1.15.1")
-        self.requires("fmt/11.1.3")
-        self.requires("boost/1.88.0")
+        self.requires("spdlog/1.16.0")
+        self.requires("fmt/12.1.0", override=True)
+        self.requires("boost/1.89.0")
         self.requires("eigen/3.4.0")
-        self.requires("catch2/3.8.1")
+        self.requires("catch2/3.11.0")
         self.requires("nlohmann_json/3.12.0")
-        self.requires("unordered_dense/4.4.0")
+        self.requires("unordered_dense/4.8.1")
         self.requires("muparser/2.3.5")
-        self.requires("libssh/0.11.1")
+        self.requires("libssh/0.11.2")
 
     def configure(self):
         self.options["boost*"].without_atomic = False

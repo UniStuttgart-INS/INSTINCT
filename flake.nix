@@ -28,10 +28,10 @@
               lldb
               gcovr
               mold
-              # clang-tools # clang-format, clang-tidy
-              llvmPackages_20.clang-tools
               gcc
               gccStdenv
+              #llvmPackages.libcxxClang # Comment this to compile with gcc
+              libclang # clangd, clang-format, clang-tidy
               doxygen
               texliveFull
               graphviz
@@ -42,7 +42,6 @@
 
               ccache
               ccacheStdenv
-              llvmPackages.libcxxClang
               gv
               valgrind
               kdePackages.kcachegrind

@@ -78,6 +78,13 @@ function(set_project_warnings project_name)
       -Qunused-arguments # suppress clang-16: warning: argument unused during compilation: '-stdlib=libstdc++' [-Wunused-command-line-argument]
   )
 
+  if(NOT APPLE)
+    set(CLANG_WARNINGS
+      ${CLANG_WARNINGS}
+      -Wno-deprecated-literal-operator
+    )
+  endif()
+
   if(MSVC)
     set(PROJECT_WARNINGS ${MSVC_WARNINGS})
   elseif(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")

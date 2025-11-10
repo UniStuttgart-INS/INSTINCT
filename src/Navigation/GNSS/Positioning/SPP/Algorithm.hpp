@@ -193,9 +193,6 @@ class Algorithm
     /// Time of last update
     InsTime _lastUpdate;
 
-    Eigen::Matrix3d _e_lastPositionCovarianceMatrix; ///< Last position covariance matrix
-    Eigen::Matrix3d _e_lastVelocityCovarianceMatrix; ///< Last velocity covariance matrix
-
     friend void to_json(json& j, const Algorithm& obj);
     friend void from_json(const json& j, Algorithm& obj);
 };

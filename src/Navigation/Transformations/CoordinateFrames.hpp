@@ -154,6 +154,10 @@ template<typename Derived>
     }
 
     return XYZ;
+
+    // TODO: When Eigen 5.0.0 is usable (conflict with ceres 2.2.0)
+    // For Tait-Bryan angle configurations (a0 != a2), the returned angles are in the ranges [-pi:pi]x[-pi/2:pi/2]x[-pi:pi].
+    // return q.toRotationMatrix().canonicalEulerAngles(2, 1, 0).reverse();
 }
 
 /// @brief Calculates the Jacobian to convert an attitude represented in Euler angels (roll, pitch, yaw) into a covariance for a quaternion
