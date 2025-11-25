@@ -25,13 +25,20 @@
               cmake
               conan
               gdb
-              lldb
               gcovr
               mold
+
+              lldb
+              libcxx
+              clang-tools
+              clang
+
               gcc
-              gccStdenv
-              #llvmPackages.libcxxClang # Comment this to compile with gcc
-              libclang # clangd, clang-format, clang-tidy
+
+              # ccache is currently incompatible with clang
+              # ccache
+              # ccacheStdenv
+
               doxygen
               texliveFull
               graphviz
@@ -40,8 +47,6 @@
               ghostscript
               pdf2svg
 
-              ccache
-              ccacheStdenv
               gv
               valgrind
               kdePackages.kcachegrind
@@ -57,14 +62,14 @@
               libunwind
               gperftools
             ];
-            LD_LIBRARY_PATH =
-              with pkgs;
-              "${libGL}/lib"
-              + ":${glfw}/lib"
-              + ":${libGLU}/lib"
-              + ":${stdenv.cc.cc.lib}/lib"
-              + ":${llvmPackages.libcxx}/lib"
-              + ":${gperftools}/lib";
+            LD_LIBRARY_PATH = with pkgs;
+              lib.makeLibraryPath [
+                libGL
+                glfw
+                libGLU
+                stdenv.cc.cc.lib
+                gperftools
+              ];
           };
         }
       );

@@ -42,7 +42,6 @@ target_link_libraries(
           Boost::program_options
           Eigen3::Eigen
           nlohmann_json::nlohmann_json
-          unordered_dense::unordered_dense
           muparser::muparser
           Threads::Threads
           imgui

@@ -13,17 +13,17 @@
 
 #pragma once
 
-#ifdef protected
-    #define protectedTmp
-    #undef protected
-    #undef private
-#endif
-#include <ankerl/unordered_dense.h>
-#ifdef protectedTmp
-    #define protected public
-    #define private public
-    #undef protectedTmp
-#endif
+// #ifdef protected
+//     #define protectedTmp
+//     #undef protected
+//     #undef private
+// #endif
+// #include <ankerl/unordered_dense.h>
+// #ifdef protectedTmp
+//     #define protected public
+//     #define private public
+//     #undef protectedTmp
+// #endif
 
 /// @brief Unordered map type
 /// @tparam Key Key
@@ -31,4 +31,5 @@
 template<
     class Key,
     class T>
-using unordered_map = ankerl::unordered_dense::map<Key, T>;
+// using unordered_map = ankerl::unordered_dense::map<Key, T>;
+using unordered_map = std::unordered_map<Key, T>;

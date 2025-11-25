@@ -15,7 +15,6 @@ class InstinctRecipe(ConanFile):
         self.requires("eigen/3.4.0")
         self.requires("catch2/3.11.0")
         self.requires("nlohmann_json/3.12.0")
-        self.requires("unordered_dense/4.8.1")
         self.requires("muparser/2.3.5")
         self.requires("libssh/0.11.2")
 

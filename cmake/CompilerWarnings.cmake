@@ -55,6 +55,13 @@ function(set_project_warnings project_name)
     set(MSVC_WARNINGS ${MSVC_WARNINGS} /WX)
   endif()
 
+  if(NOT APPLE)
+    set(CLANG_WARNINGS
+      ${CLANG_WARNINGS}
+      -Wno-deprecated-literal-operator
+    )
+  endif()
+
   # Gcc only warnings
   set(GCC_WARNINGS
       ${CLANG_WARNINGS}
@@ -77,13 +84,6 @@ function(set_project_warnings project_name)
       -Wnull-dereference # warn if a null dereference is detected
       -Qunused-arguments # suppress clang-16: warning: argument unused during compilation: '-stdlib=libstdc++' [-Wunused-command-line-argument]
   )
-
-  if(NOT APPLE)
-    set(CLANG_WARNINGS
-      ${CLANG_WARNINGS}
-      -Wno-deprecated-literal-operator
-    )
-  endif()
 
   if(MSVC)
     set(PROJECT_WARNINGS ${MSVC_WARNINGS})

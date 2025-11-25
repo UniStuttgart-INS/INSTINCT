@@ -118,7 +118,6 @@ find_package(Boost REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(Catch2 3 REQUIRED)
 find_package(nlohmann_json REQUIRED)
-find_package(unordered_dense CONFIG REQUIRED)
 find_package(muparser REQUIRED)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
