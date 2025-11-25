@@ -52,17 +52,25 @@ constexpr T round(const T& value, size_t digits)
 template<std::floating_point T>
 constexpr T roundSignificantDigits(T value, size_t digits)
 {
-    if (value == 0.0) { return 0.0; }
-    // LOG_DEBUG("value = {:.13e} --> Round to {} digits", value, digits);
-    auto absVal = gcem::abs(value);
-    auto log10 = static_cast<int32_t>(gcem::log10(absVal));
-    auto exp = log10 + (log10 > 0 || (log10 == 0 && absVal >= 1.0));
-    auto fac = static_cast<T>(digits) - static_cast<T>(exp);
-    // LOG_DEBUG("  log10  = {}, exp = {}, fac = {}", log10, exp, fac);
-    auto factor = static_cast<T>(gcem::pow(10.0, fac));
-    // LOG_DEBUG("  factor = {:.0e} --> value * factor = {}", factor, value * factor);
-    // LOG_DEBUG("  round = {} --> ... / factor = {}", gcem::round(value * factor), gcem::round(value * factor) / factor);
-    return static_cast<T>(gcem::round(value * factor) / factor);
+    if (value == T(0) || digits == 0)
+    {
+        return T(0);
+    }
+
+    if (!std::isfinite(value))
+    {
+        return value; // pass through inf / NaN
+    }
+
+    // Determine the magnitude (base-10 exponent)
+    T absValue = std::fabs(value);
+    T exponent = std::floor(std::log10(absValue));
+
+    // Scale so rounding applies to the requested significant digits
+    T scale = std::pow(T(10), exponent - T(digits - 1));
+
+    // Round and rescale
+    return std::round(value / scale) * scale;
 }
 
 /// @brief Interprets the input integer with certain amount of Bits as Output type. Takes care of sign extension
@@ -286,7 +294,10 @@ std::optional<std::pair<Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtC
     double cmin = 1;
 
     if constexpr (Derived::RowsAtCompileTime == Eigen::Dynamic) { D.setZero(n); }
-    else { D.setZero(); }
+    else
+    {
+        D.setZero();
+    }
 
     for (Eigen::Index j = n - 1; j >= 0; j--)
     {

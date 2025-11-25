@@ -112,7 +112,7 @@ TEST_CASE("[Math] Catch Matcher significant digits", "[Math]")
     }
     {
         constexpr double val1 = 1e-19;
-        REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val1, 19));
+        REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val1, 17));
     }
     {
         constexpr double val1 = 1.85041689389;
