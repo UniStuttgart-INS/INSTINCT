@@ -48,7 +48,7 @@
               <td id="projectlogo"><img alt="Logo" src="INSTINCT_Logo_Text.png"  /></td>
               <td id="projectalign">
                 <div id="projectname"><span
-                    id="projectnumber">&#160;0.5.0</span>
+                    id="projectnumber">&#160;0.5.1</span>
                 </div>
               </td>
             </tr>
@@ -387,7 +387,7 @@ Random Walk</h2>
   \dotup{x} = 0 + W(t)
 \end{equation}" src="form_395.svg" width="544" height="19"/>
 </p>
-<p>In general, the noise can have an arbitrary characteristic. In a Kalman filter, however, it must be normally distributed and is therefore limited to a Wiener Process. The terms in the noise input matrix <img class="formulaInl" alt="$ \mathbf{G} $" src="form_393.svg" width="16" height="14"/> are not scaled and therefore need to be compensated with a noise scale matrix <img class="formulaInl" alt="$ \mathbf{W} $" src="form_109.svg" width="21" height="14"/> depending on the amplitude of the noise process. The amplitude is defined by the standard deviation <img class="formulaInl" alt="$\sigma$" src="form_208.svg" width="11" height="11"/>. This parameter can be chosen by the user for the accel and gyro measurements:</p>
+<p>In general, the noise can have an arbitrary characteristic. In a Kalman filter, however, it must be normally distributed and is therefore limited to a Wiener Process. The terms in the noise input matrix <img class="formulaInl" alt="$ \mathbf{G} $" src="form_393.svg" width="16" height="14"/> are not scaled and therefore need to be compensated with a noise scale matrix <img class="formulaInl" alt="$ \mathbf{W} $" src="form_109.svg" width="21" height="14"/> depending on the amplitude of the noise process. The amplitude is defined by the standard deviation <img class="formulaInl" alt="$\sigma$" src="form_267.svg" width="11" height="11"/>. This parameter can be chosen by the user for the accel and gyro measurements:</p>
 <p><a class="anchor" id="eq-LCKF_e-random-walk-S-noise"></a>   </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-random-walk-S-noise}
   \highlight[darkgray!20]{S_{ra,j}} = \sigma_{ra,j}, \qquad
@@ -477,7 +477,7 @@ Groves' process noise definition</h2>
 <li><img class="formulaInl" alt="$ \tau_{bad} $" src="form_408.svg" width="30" height="12"/> and <img class="formulaInl" alt="$ \tau_{bgd} $" src="form_409.svg" width="28" height="14"/> are the correlation times of the dynamic accelerometer and gyro biases</li>
 </ul>
 <p>see <a class="el" href="citelist.html#CITEREF_groves2013">[18]</a> Groves, ch. 14.2.6, eq. 14.84, p. 592</p>
-<p>Although correlation lengths <img class="formulaInl" alt="$\tau_{bad} $" src="form_421.svg" width="30" height="12"/> and <img class="formulaInl" alt="$ \tau_{bgd} $" src="form_409.svg" width="28" height="14"/> are considered, this process is rather a random walk than a Gauss-Markov 1. order process, because of the missing deterministic part in <img class="formulaInl" alt="$\mathbf{F}$" src="form_192.svg" width="12" height="14"/>.</p>
+<p>Although correlation lengths <img class="formulaInl" alt="$\tau_{bad} $" src="form_421.svg" width="30" height="12"/> and <img class="formulaInl" alt="$ \tau_{bgd} $" src="form_409.svg" width="28" height="14"/> are considered, this process is rather a random walk than a Gauss-Markov 1. order process, because of the missing deterministic part in <img class="formulaInl" alt="$\mathbf{F}$" src="form_237.svg" width="12" height="14"/>.</p>
 <p>In INSTINCT, Groves' method <a class="el" href="#eq-LCKF_e-random-walk-S-bias"><img class="formulaInl" alt="\eqref{eq:eq-LCKF_e-random-walk-S-bias}" src="form_413.svg" width="44" height="19"/> </a> is not altered from its reference <a class="el" href="citelist.html#CITEREF_groves2013">[18]</a> to avoid confusion.</p>
 <h1 class="doxsection"><a class="anchor" id="LooselyCoupledKF_e-KF-Matrices"></a>
 Kalman-Filter Matrices</h1>

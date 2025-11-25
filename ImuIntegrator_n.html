@@ -48,7 +48,7 @@
               <td id="projectlogo"><img alt="Logo" src="INSTINCT_Logo_Text.png"  /></td>
               <td id="projectalign">
                 <div id="projectname"><span
-                    id="projectnumber">&#160;0.5.0</span>
+                    id="projectnumber">&#160;0.5.1</span>
                 </div>
               </td>
             </tr>
@@ -149,7 +149,7 @@ Propagation of direction cosine matrix with time</h3>
 </p>
 <h3 class="doxsection"><a class="anchor" id="ImuIntegrator-Mechanization-n-Attitude-Euler"></a>
 Propagation of Euler angles with time</h3>
-<p>The gimbal angles <img class="formulaInl" alt="$ R $" src="form_353.svg" width="14" height="14"/> (roll), <img class="formulaInl" alt="$ P $" src="form_312.svg" width="14" height="14"/> (pitch), <img class="formulaInl" alt="$ Y $" src="form_354.svg" width="14" height="14"/> (yaw) are related to the body rates as follows: <a class="anchor" id="eq-ImuIntegrator-Mechanization-n-Attitude-Euler-relation"></a>     </p><p class="formulaDsp">
+<p>The gimbal angles <img class="formulaInl" alt="$ R $" src="form_353.svg" width="14" height="14"/> (roll), <img class="formulaInl" alt="$ P $" src="form_261.svg" width="14" height="14"/> (pitch), <img class="formulaInl" alt="$ Y $" src="form_354.svg" width="14" height="14"/> (yaw) are related to the body rates as follows: <a class="anchor" id="eq-ImuIntegrator-Mechanization-n-Attitude-Euler-relation"></a>     </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuIntegrator-Mechanization-n-Attitude-Euler-relation}
   \begin{bmatrix} \omega_{nb,x}^b \\ \omega_{nb,y}^b \\ \omega_{nb,z}^b \end{bmatrix}
       = \begin{bmatrix} \dotup{R} \\ 0 \\ 0 \end{bmatrix}
@@ -163,7 +163,7 @@ Propagation of Euler angles with time</h3>
                                      0 &amp; -\sin{R} &amp; \cos{R} \end{bmatrix} $" src="form_356.svg" width="203" height="63"/> is the rotation <img class="formulaInl" alt="$ R $" src="form_353.svg" width="14" height="14"/> about the x-axis (see <a class="el" href="citelist.html#CITEREF_titterton2004">[50]</a> Titterton, ch. 3.6.3.2, eq. 3.46, p. 41)</li>
 <li><img class="formulaInl" alt="$ \mathbf{C_2} = \begin{bmatrix} \cos{P} &amp; 0 &amp; -\sin{P} \\
                                         0    &amp; 1 &amp;     0    \\
-                                     \sin{P} &amp; 0 &amp;  \cos{P} \end{bmatrix} $" src="form_357.svg" width="203" height="63"/> is the rotation <img class="formulaInl" alt="$ P $" src="form_312.svg" width="14" height="14"/> about the y-axis (see <a class="el" href="citelist.html#CITEREF_titterton2004">[50]</a> Titterton, ch. 3.6.3.2, eq. 3.45, p. 41)</li>
+                                     \sin{P} &amp; 0 &amp;  \cos{P} \end{bmatrix} $" src="form_357.svg" width="203" height="63"/> is the rotation <img class="formulaInl" alt="$ P $" src="form_261.svg" width="14" height="14"/> about the y-axis (see <a class="el" href="citelist.html#CITEREF_titterton2004">[50]</a> Titterton, ch. 3.6.3.2, eq. 3.45, p. 41)</li>
 <li><img class="formulaInl" alt="$ \boldsymbol{\omega}_{nb}^b = \begin{pmatrix} \omega_{nb,x}^b &amp; \omega_{nb,y}^b &amp; \omega_{nb,z}^b \end{pmatrix}^T $" src="form_358.svg" width="228" height="28"/> is the body rate with respect to the navigation frame, expressed in the body frame</li>
 </ul>
 <p>This can be rearranged into: <a class="anchor" id="eq-ImuIntegrator-Mechanization-n-Attitude-Euler"></a>      </p><p class="formulaDsp">

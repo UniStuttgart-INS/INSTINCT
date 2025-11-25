@@ -34,7 +34,7 @@ var searchData=
   ['markerweight_31',['markerWeight',['../structNAV_1_1PlotItemStyle.html#a46f5178048ba01b7dfed69eac0d4d258',1,'NAV::PlotItemStyle']]],
   ['mask_32',['mask',['../classNAV_1_1SNRMask.html#a9f219fd07a16e8cfd4e8dff0a5659be6',1,'NAV::SNRMask']]],
   ['matrix_33',['matrix',['../classNAV_1_1internal_1_1KeyedMatrixStorage.html#a63421dea5ac4389fb191e76af3102584',1,'NAV::internal::KeyedMatrixStorage']]],
-  ['max_5fsize_5fascii_5fpacket_34',['MAX_SIZE_ASCII_PACKET',['../classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html#ab227af263048c2bdc45e209e780f1e49',1,'NAV::vendor::kvh::KvhUartSensor']]],
+  ['max_5fsize_5fascii_5fpacket_34',['MAX_SIZE_ASCII_PACKET',['../classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html#ab227af263048c2bdc45e209e780f1e49',1,'NAV::vendor::kvh::KvhUartSensor::MAX_SIZE_ASCII_PACKET'],['../classNAV_1_1vendor_1_1ln_1_1Ln200UartSensor.html#a3c6bf5401506a1486868aef4458ce60d',1,'NAV::vendor::ln::Ln200UartSensor::MAX_SIZE_ASCII_PACKET']]],
   ['maximum_5fbytes_35',['MAXIMUM_BYTES',['../namespaceNAV_1_1UdpUtil.html#a197679101ce9e76d683c7f77cbf31258',1,'NAV::UdpUtil']]],
   ['meas_36',['Meas',['../classNAV_1_1LooselyCoupledKF.html#a377b63d81af061ebbbda148bab757fde',1,'NAV::LooselyCoupledKF']]],
   ['meas_37',['meas',['../structNAV_1_1InertialPreIntegrator_1_1GenericMeasurement.html#a907c7672f03fa21b21cac46fa8d33dd3',1,'NAV::InertialPreIntegrator::GenericMeasurement']]],

@@ -48,7 +48,7 @@
               <td id="projectlogo"><img alt="Logo" src="INSTINCT_Logo_Text.png"  /></td>
               <td id="projectalign">
                 <div id="projectname"><span
-                    id="projectnumber">&#160;0.5.0</span>
+                    id="projectnumber">&#160;0.5.1</span>
                 </div>
               </td>
             </tr>
@@ -145,8 +145,28 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a3202b69b1a2fd8325e6a0d66db70c8e3" id="r_a3202b69b1a2fd8325e6a0d66db70c8e3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3202b69b1a2fd8325e6a0d66db70c8e3">~ErrorModel</a> () override</td></tr>
 <tr class="memdesc:a3202b69b1a2fd8325e6a0d66db70c8e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <br /></td></tr>
 <tr class="inherit_header pub_methods_classNAV_1_1Node"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classNAV_1_1Node')"><span class="dynarrow"><span class="arrowhead closed"></span></span>Public Member Functions inherited from <a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td></tr>
+<tr class="memitem:a76b0feda72acc7d11c91ecbf163c53f1 inherit pub_methods_classNAV_1_1Node" id="r_a76b0feda72acc7d11c91ecbf163c53f1"><td class="memTemplParams" colspan="2">template&lt;std::derived_from&lt; <a class="el" href="classNAV_1_1Node.html">Node</a> &gt; T&gt; </td></tr>
+<tr class="memitem:a76b0feda72acc7d11c91ecbf163c53f1 inherit pub_methods_classNAV_1_1Node template"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1InputPin.html">InputPin</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#a76b0feda72acc7d11c91ecbf163c53f1">CreateInputPin</a> (const char *<a class="el" href="classNAV_1_1Node.html#aa175adec8045649de2cba57eefb184b8">name</a>, <a class="el" href="structNAV_1_1Pin_1_1Type.html">Pin::Type</a> pinType, const std::vector&lt; std::string &gt; &amp;dataIdentifier, void(T::*notifyFunc)(const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;, size_t), int idx=-1)</td></tr>
+<tr class="memdesc:a76b0feda72acc7d11c91ecbf163c53f1 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Input <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> object for data pins. The additional notify function gets called when the connected data was changed and the connected node calls <a class="el" href="classNAV_1_1Node.html#a2c20975b5f51c95a837cdd8e6b45b7bd" title="Notifies connected nodes about the change.">NAV::Node::notifyOutputValueChanged</a>.  <br /></td></tr>
+<tr class="memitem:ab68a7dee11448defa3ce9c5c6ffe39c1 inherit pub_methods_classNAV_1_1Node" id="r_ab68a7dee11448defa3ce9c5c6ffe39c1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1InputPin.html">InputPin</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#ab68a7dee11448defa3ce9c5c6ffe39c1">CreateInputPin</a> (const char *<a class="el" href="classNAV_1_1Node.html#aa175adec8045649de2cba57eefb184b8">name</a>, <a class="el" href="structNAV_1_1Pin_1_1Type.html">Pin::Type</a> pinType, const std::vector&lt; std::string &gt; &amp;dataIdentifier={}, <a class="el" href="classNAV_1_1InputPin.html#aa0c3c5cfa65d98c5939883adcaec1b0c">InputPin::Callback</a> callback=static_cast&lt; <a class="el" href="classNAV_1_1InputPin.html#a933affe0a3685865240d799bf5448f89">InputPin::FlowFirableCallbackFunc</a> &gt;(nullptr), <a class="el" href="classNAV_1_1InputPin.html#aa6d4352ff2778ef7ebf054227bf4be3f">InputPin::FlowFirableCheckFunc</a> firable=nullptr, int priority=0, int idx=-1)</td></tr>
+<tr class="memdesc:ab68a7dee11448defa3ce9c5c6ffe39c1 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Input <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> object.  <br /></td></tr>
+<tr class="memitem:a16dd132debc12b3dc25531be83662a4c inherit pub_methods_classNAV_1_1Node" id="r_a16dd132debc12b3dc25531be83662a4c"><td class="memTemplParams" colspan="2">template&lt;std::derived_from&lt; <a class="el" href="classNAV_1_1Node.html">Node</a> &gt; T&gt; </td></tr>
+<tr class="memitem:a16dd132debc12b3dc25531be83662a4c inherit pub_methods_classNAV_1_1Node template"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1InputPin.html">InputPin</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#a16dd132debc12b3dc25531be83662a4c">CreateInputPin</a> (const char *<a class="el" href="classNAV_1_1Node.html#aa175adec8045649de2cba57eefb184b8">name</a>, <a class="el" href="structNAV_1_1Pin_1_1Type.html">Pin::Type</a> pinType, const std::vector&lt; std::string &gt; &amp;dataIdentifier={}, void(T::*callback)(<a class="el" href="classNAV_1_1InputPin.html#a47683b163e79b13098f38627d8f4d87b">InputPin::NodeDataQueue</a> &amp;, size_t)=nullptr, <a class="el" href="classNAV_1_1InputPin.html#aa6d4352ff2778ef7ebf054227bf4be3f">InputPin::FlowFirableCheckFunc</a> firable=nullptr, int priority=0, int idx=-1)</td></tr>
+<tr class="memdesc:a16dd132debc12b3dc25531be83662a4c inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Input <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> object.  <br /></td></tr>
+<tr class="memitem:a63a474fe4a0bd42fb2e7fcc500a9b76b inherit pub_methods_classNAV_1_1Node" id="r_a63a474fe4a0bd42fb2e7fcc500a9b76b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1OutputPin.html">OutputPin</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#a63a474fe4a0bd42fb2e7fcc500a9b76b">CreateOutputPin</a> (const char *<a class="el" href="classNAV_1_1Node.html#aa175adec8045649de2cba57eefb184b8">name</a>, <a class="el" href="structNAV_1_1Pin_1_1Type.html">Pin::Type</a> pinType, const std::vector&lt; std::string &gt; &amp;dataIdentifier, <a class="el" href="classNAV_1_1OutputPin.html#a746f45d83fa13fc24ea8db7724ead64b">OutputPin::PinData</a> data=static_cast&lt; void * &gt;(nullptr), int idx=-1)</td></tr>
+<tr class="memdesc:a63a474fe4a0bd42fb2e7fcc500a9b76b inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Output <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> object.  <br /></td></tr>
+<tr class="memitem:aed5ad3c978991b001a4d9cd9dad4c1ba inherit pub_methods_classNAV_1_1Node" id="r_aed5ad3c978991b001a4d9cd9dad4c1ba"><td class="memTemplParams" colspan="2">template&lt;std::derived_from&lt; <a class="el" href="classNAV_1_1Node.html">Node</a> &gt; T&gt; </td></tr>
+<tr class="memitem:aed5ad3c978991b001a4d9cd9dad4c1ba inherit pub_methods_classNAV_1_1Node template"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1OutputPin.html">OutputPin</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#aed5ad3c978991b001a4d9cd9dad4c1ba">CreateOutputPin</a> (const char *<a class="el" href="classNAV_1_1Node.html#aa175adec8045649de2cba57eefb184b8">name</a>, <a class="el" href="structNAV_1_1Pin_1_1Type.html">Pin::Type</a> pinType, const std::vector&lt; std::string &gt; &amp;dataIdentifier, std::shared_ptr&lt; const <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a> &gt;(T::*peekPollDataFunc)(size_t, bool)=nullptr, int idx=-1)</td></tr>
+<tr class="memdesc:aed5ad3c978991b001a4d9cd9dad4c1ba inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Output <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> object for Flow Pins.  <br /></td></tr>
+<tr class="memitem:abca83b43d9b8ba9bc0f0c41c269efe59 inherit pub_methods_classNAV_1_1Node" id="r_abca83b43d9b8ba9bc0f0c41c269efe59"><td class="memTemplParams" colspan="2">template&lt;std::derived_from&lt; <a class="el" href="classNAV_1_1Node.html">Node</a> &gt; T&gt; </td></tr>
+<tr class="memitem:abca83b43d9b8ba9bc0f0c41c269efe59 inherit pub_methods_classNAV_1_1Node template"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1OutputPin.html">OutputPin</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#abca83b43d9b8ba9bc0f0c41c269efe59">CreateOutputPin</a> (const char *<a class="el" href="classNAV_1_1Node.html#aa175adec8045649de2cba57eefb184b8">name</a>, <a class="el" href="structNAV_1_1Pin_1_1Type.html">Pin::Type</a> pinType, const std::vector&lt; std::string &gt; &amp;dataIdentifier, std::shared_ptr&lt; const <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a> &gt;(T::*pollDataFunc)()=nullptr, int idx=-1)</td></tr>
+<tr class="memdesc:abca83b43d9b8ba9bc0f0c41c269efe59 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Output <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> object for Flow Pins.  <br /></td></tr>
 <tr class="memitem:a672f89aaab8b8a18998d994e8e05b7f2 inherit pub_methods_classNAV_1_1Node" id="r_a672f89aaab8b8a18998d994e8e05b7f2"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#a672f89aaab8b8a18998d994e8e05b7f2">deinitialize</a> ()</td></tr>
 <tr class="memdesc:a672f89aaab8b8a18998d994e8e05b7f2 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deinitialize the <a class="el" href="classNAV_1_1Node.html" title="Abstract parent class for all nodes.">Node</a>.  <br /></td></tr>
+<tr class="memitem:acec461ed1348362c5592c1978b879783 inherit pub_methods_classNAV_1_1Node" id="r_acec461ed1348362c5592c1978b879783"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#acec461ed1348362c5592c1978b879783">DeleteInputPin</a> (size_t pinIndex)</td></tr>
+<tr class="memdesc:acec461ed1348362c5592c1978b879783 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deletes the input pin. Invalidates the pin reference given.  <br /></td></tr>
+<tr class="memitem:a4110b820d14596dfb36d3315feb634d5 inherit pub_methods_classNAV_1_1Node" id="r_a4110b820d14596dfb36d3315feb634d5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#a4110b820d14596dfb36d3315feb634d5">DeleteOutputPin</a> (size_t pinIndex)</td></tr>
+<tr class="memdesc:a4110b820d14596dfb36d3315feb634d5 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deletes the output pin. Invalidates the pin reference given.  <br /></td></tr>
 <tr class="memitem:a05d65fed1964daf2e8e588de7bbbe136 inherit pub_methods_classNAV_1_1Node" id="r_a05d65fed1964daf2e8e588de7bbbe136"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#a05d65fed1964daf2e8e588de7bbbe136">doDeinitialize</a> (bool wait=false)</td></tr>
 <tr class="memdesc:a05d65fed1964daf2e8e588de7bbbe136 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the node worker to deinitialize the node.  <br /></td></tr>
 <tr class="memitem:a15e8cdd4b182aa39bdd4e62897a744cf inherit pub_methods_classNAV_1_1Node" id="r_a15e8cdd4b182aa39bdd4e62897a744cf"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#a15e8cdd4b182aa39bdd4e62897a744cf">doDisable</a> (bool wait=false)</td></tr>
@@ -424,6 +444,18 @@ Private Attributes</h2></td></tr>
 <tr class="memdesc:a64e73e7d3df1a1367ee6adba4b81937c"><td class="mdescLeft">&#160;</td><td class="mdescRight">3D array which allow to accumulate IRW veloctiy noise for gyro  <br /></td></tr>
 <tr class="memitem:a612127ca0fdb7437bcb33ba73d6d0fc2" id="r_a612127ca0fdb7437bcb33ba73d6d0fc2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1InsTime.html">InsTime</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a612127ca0fdb7437bcb33ba73d6d0fc2">_lastObservationTime</a></td></tr>
 <tr class="memdesc:a612127ca0fdb7437bcb33ba73d6d0fc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last observation time.  <br /></td></tr>
+<tr class="memitem:afc7d09eadbe99ca0f9f0501658fde1a7" id="r_afc7d09eadbe99ca0f9f0501658fde1a7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afc7d09eadbe99ca0f9f0501658fde1a7">_manualCycleSlipAmbiguity</a></td></tr>
+<tr class="memdesc:afc7d09eadbe99ca0f9f0501658fde1a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">GUI input for new manual cycle-slips.  <br /></td></tr>
+<tr class="memitem:a900202c4f192758d73ae396eefe9fb5f" id="r_a900202c4f192758d73ae396eefe9fb5f"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::pair&lt; <a class="el" href="classNAV_1_1InsTime.html">InsTime</a>, <a class="el" href="structNAV_1_1SatSigId.html">SatSigId</a> &gt;, std::pair&lt; int, bool &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a900202c4f192758d73ae396eefe9fb5f">_manualCycleSlips</a></td></tr>
+<tr class="memdesc:a900202c4f192758d73ae396eefe9fb5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cycle-slips set by the user.  <br /></td></tr>
+<tr class="memitem:a22ea9dc5650934b67d2f644385a31d10" id="r_a22ea9dc5650934b67d2f644385a31d10"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a22ea9dc5650934b67d2f644385a31d10">_manualCycleSlipSetLLI</a></td></tr>
+<tr class="memdesc:a22ea9dc5650934b67d2f644385a31d10"><td class="mdescLeft">&#160;</td><td class="mdescRight">GUI input for new manual cycle-slips.  <br /></td></tr>
+<tr class="memitem:a0ea070effd40fe5796e0105d3592bed7" id="r_a0ea070effd40fe5796e0105d3592bed7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1SatSigId.html">SatSigId</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ea070effd40fe5796e0105d3592bed7">_manualCycleSlipSignal</a></td></tr>
+<tr class="memdesc:a0ea070effd40fe5796e0105d3592bed7"><td class="mdescLeft">&#160;</td><td class="mdescRight">GUI input for new manual cycle-slips.  <br /></td></tr>
+<tr class="memitem:a6d6291555931a90f653ffddb408e362f" id="r_a6d6291555931a90f653ffddb408e362f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1InsTime.html">InsTime</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6d6291555931a90f653ffddb408e362f">_manualCycleSlipTime</a></td></tr>
+<tr class="memdesc:a6d6291555931a90f653ffddb408e362f"><td class="mdescLeft">&#160;</td><td class="mdescRight">GUI input for new manual cycle-slips.  <br /></td></tr>
+<tr class="memitem:aa5927c806c33faab5a3bc8fa06fd652c" id="r_aa5927c806c33faab5a3bc8fa06fd652c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1gui_1_1widgets_1_1TimeEditFormat.html">gui::widgets::TimeEditFormat</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa5927c806c33faab5a3bc8fa06fd652c">_manualCycleSlipTimeEditFormat</a></td></tr>
+<tr class="memdesc:aa5927c806c33faab5a3bc8fa06fd652c"><td class="mdescLeft">&#160;</td><td class="mdescRight">GUI input for new manual cycle-slips.  <br /></td></tr>
 <tr class="memitem:aa07cea3fe3341a99d5dbd391896b2a97" id="r_aa07cea3fe3341a99d5dbd391896b2a97"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa07cea3fe3341a99d5dbd391896b2a97">_positionBias</a></td></tr>
 <tr class="memdesc:aa07cea3fe3341a99d5dbd391896b2a97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bias of the position (Unit as selected)  <br /></td></tr>
 <tr class="memitem:acdc96c76428dbb0f6d258f8c40f431b7" id="r_acdc96c76428dbb0f6d258f8c40f431b7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a12d450f6da7a033779c423f08dd42a7c">PositionBiasUnits</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acdc96c76428dbb0f6d258f8c40f431b7">_positionBiasUnit</a></td></tr>
@@ -514,7 +546,7 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Adds errors (biases and noise) to measurements. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00033">33</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00035">35</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 </div><a name="doc-enum-members" id="doc-enum-members"></a><h2 id="header-doc-enum-members" class="groupheader">Member Enumeration Documentation</h2>
 <a id="afa361ad4c7c267dc125b55fb65a7319b" name="afa361ad4c7c267dc125b55fb65a7319b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afa361ad4c7c267dc125b55fb65a7319b">&#9670;&#160;</a></span>AttitudeBiasUnits</h2>
@@ -544,7 +576,7 @@ Additional Inherited Members</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00238">238</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00240">240</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -580,7 +612,7 @@ Additional Inherited Members</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00277">277</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00279">279</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -610,7 +642,7 @@ Additional Inherited Members</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00310">310</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00312">312</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -640,7 +672,7 @@ Additional Inherited Members</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00361">361</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00371">371</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -674,7 +706,7 @@ Additional Inherited Members</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00345">345</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00355">355</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -704,7 +736,7 @@ Additional Inherited Members</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00322">322</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00324">324</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -734,7 +766,7 @@ Additional Inherited Members</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00218">218</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00220">220</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -766,7 +798,7 @@ Additional Inherited Members</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00251">251</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00253">253</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -796,7 +828,7 @@ Additional Inherited Members</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00298">298</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00300">300</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -826,7 +858,7 @@ Additional Inherited Members</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00228">228</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00230">230</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -858,7 +890,7 @@ Additional Inherited Members</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00264">264</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00266">266</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -1006,7 +1038,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1Node.html#a87e8fd98eb83d56fce486747a78a2d54">NAV::Node</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8cpp_source.html#l00591">591</a> of file <a class="el" href="ErrorModel_8cpp_source.html">ErrorModel.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8cpp_source.html#l00730">730</a> of file <a class="el" href="ErrorModel_8cpp_source.html">ErrorModel.cpp</a>.</p>
 
 </div>
 </div>
@@ -1048,7 +1080,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1Node.html#abd363d0fb6118e4574c7f8e9a2d0dbc9">NAV::Node</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8cpp_source.html#l00634">634</a> of file <a class="el" href="ErrorModel_8cpp_source.html">ErrorModel.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8cpp_source.html#l00773">773</a> of file <a class="el" href="ErrorModel_8cpp_source.html">ErrorModel.cpp</a>.</p>
 
 </div>
 </div>
@@ -1198,7 +1230,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8cpp_source.html#l01151">1151</a> of file <a class="el" href="ErrorModel_8cpp_source.html">ErrorModel.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8cpp_source.html#l01290">1290</a> of file <a class="el" href="ErrorModel_8cpp_source.html">ErrorModel.cpp</a>.</p>
 
 </div>
 </div>
@@ -1256,7 +1288,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8cpp_source.html#l00718">718</a> of file <a class="el" href="ErrorModel_8cpp_source.html">ErrorModel.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8cpp_source.html#l00857">857</a> of file <a class="el" href="ErrorModel_8cpp_source.html">ErrorModel.cpp</a>.</p>
 
 </div>
 </div>
@@ -1314,7 +1346,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8cpp_source.html#l00804">804</a> of file <a class="el" href="ErrorModel_8cpp_source.html">ErrorModel.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8cpp_source.html#l00943">943</a> of file <a class="el" href="ErrorModel_8cpp_source.html">ErrorModel.cpp</a>.</p>
 
 </div>
 </div>
@@ -1354,7 +1386,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8cpp_source.html#l00647">647</a> of file <a class="el" href="ErrorModel_8cpp_source.html">ErrorModel.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8cpp_source.html#l00786">786</a> of file <a class="el" href="ErrorModel_8cpp_source.html">ErrorModel.cpp</a>.</p>
 
 </div>
 </div>
@@ -1389,7 +1421,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8cpp_source.html#l00831">831</a> of file <a class="el" href="ErrorModel_8cpp_source.html">ErrorModel.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8cpp_source.html#l00970">970</a> of file <a class="el" href="ErrorModel_8cpp_source.html">ErrorModel.cpp</a>.</p>
 
 </div>
 </div>
@@ -1424,7 +1456,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8cpp_source.html#l00914">914</a> of file <a class="el" href="ErrorModel_8cpp_source.html">ErrorModel.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8cpp_source.html#l01053">1053</a> of file <a class="el" href="ErrorModel_8cpp_source.html">ErrorModel.cpp</a>.</p>
 
 </div>
 </div>
@@ -1459,7 +1491,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8cpp_source.html#l01009">1009</a> of file <a class="el" href="ErrorModel_8cpp_source.html">ErrorModel.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8cpp_source.html#l01148">1148</a> of file <a class="el" href="ErrorModel_8cpp_source.html">ErrorModel.cpp</a>.</p>
 
 </div>
 </div>
@@ -1490,7 +1522,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1Node.html#a84fea0433f26f6f3e15d9c1a4436dd57">NAV::Node</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8cpp_source.html#l00552">552</a> of file <a class="el" href="ErrorModel_8cpp_source.html">ErrorModel.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8cpp_source.html#l00691">691</a> of file <a class="el" href="ErrorModel_8cpp_source.html">ErrorModel.cpp</a>.</p>
 
 </div>
 </div>
@@ -1527,7 +1559,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1Node.html#a0c9bc29a2df267ea6a857bde1e1c3beb">NAV::Node</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8cpp_source.html#l00482">482</a> of file <a class="el" href="ErrorModel_8cpp_source.html">ErrorModel.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8cpp_source.html#l00615">615</a> of file <a class="el" href="ErrorModel_8cpp_source.html">ErrorModel.cpp</a>.</p>
 
 </div>
 </div>
@@ -1558,7 +1590,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1Node.html#ac76f6bb65e90f01fd78f1d63b9cf2af8">NAV::Node</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8cpp_source.html#l00411">411</a> of file <a class="el" href="ErrorModel_8cpp_source.html">ErrorModel.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8cpp_source.html#l00538">538</a> of file <a class="el" href="ErrorModel_8cpp_source.html">ErrorModel.cpp</a>.</p>
 
 </div>
 </div>
@@ -1645,7 +1677,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p><a class="el" href="namespaceNAV_1_1Ambiguity.html">Ambiguity</a> map. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00340">340</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00342">342</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -1671,7 +1703,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Random number generator for the ambiguity. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00338">338</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00340">340</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -1697,7 +1729,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Bias of the attitude (Unit as selected) </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00246">246</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00248">248</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -1723,7 +1755,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Selected unit for the attitude bias in the GUI. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00244">244</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00246">246</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -1749,7 +1781,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Noise of the attitude (Unit as selected) </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00287">287</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00289">289</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -1775,7 +1807,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Selected unit for the attitude noise in the GUI. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00285">285</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00287">287</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -1801,7 +1833,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Random number generator for the attitude noise. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00289">289</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00291">291</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -1827,7 +1859,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Random number generator for the carrier-phase noise. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00319">319</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00321">321</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -1853,7 +1885,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Random number generator for the cycle-slip. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00371">371</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00381">381</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -1879,7 +1911,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>List of produced cycle-slips. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00381">381</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00391">391</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -1905,7 +1937,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>The time frame which is considered for a cycle slip. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00358">358</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00368">368</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -1931,7 +1963,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Random number generator for the range-rate noise. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00331">331</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00333">333</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -1957,7 +1989,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Time interval of the messages [s]. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00131">131</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00133">133</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -1983,7 +2015,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Codes used for calculation (GUI filter) </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00386">386</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00396">396</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2009,7 +2041,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Frequencies used for calculation (GUI filter) </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00384">384</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00394">394</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2035,7 +2067,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p><a class="el" href="namespaceNAV_1_1Ambiguity.html">Ambiguity</a> limits. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00336">336</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00338">338</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2061,7 +2093,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Noise of the carrier-phase (Unit as selected) </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00317">317</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00319">319</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2087,7 +2119,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Selected unit for the carrier-phase noise in the GUI. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00315">315</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00317">317</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2113,7 +2145,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>The chance to detect a cycle slip and set the Loss-of-Lock indicator. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00368">368</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00378">378</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2139,7 +2171,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Selected unit for the cycle-slip detection probability in the GUI. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00366">366</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00376">376</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2165,7 +2197,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>The cycle-slip frequency (Unit as selected) </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00354">354</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00364">364</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2191,7 +2223,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Selected unit for the cycle-slip frequency in the GUI. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00352">352</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00362">362</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2217,7 +2249,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p><a class="el" href="namespaceNAV_1_1Ambiguity.html">Ambiguity</a> limits cycle-slip. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00356">356</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00366">366</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2243,7 +2275,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Noise of the range-rate (Unit as selected) </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00329">329</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00331">331</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2269,7 +2301,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Selected unit for the range-rate noise in the GUI. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00327">327</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00329">329</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2295,7 +2327,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Noise of the pseudorange (Unit as selected) </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00305">305</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00307">307</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2321,7 +2353,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Selected unit for the pseudorange noise in the GUI. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00303">303</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00305">305</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2347,7 +2379,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Bias of the accelerometer in platform coordinates (Unit as selected) </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00160">160</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00162">162</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2373,7 +2405,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Selected unit for the accelerometer bias in the GUI. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00158">158</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00160">160</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2399,7 +2431,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>IRW noise of the accelerometer (Unit as selected) </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00200">200</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00202">202</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2425,7 +2457,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Random number generator for the accelerometer IRW noise. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00202">202</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00204">204</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2451,7 +2483,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Selected unit for the accelerometer IRW noise in the GUI. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00198">198</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00200">200</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2477,7 +2509,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Noise of the accelerometer (Unit as selected) </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00172">172</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00174">174</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2503,7 +2535,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Selected unit for the accelerometer noise in the GUI. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00170">170</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00172">172</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2529,7 +2561,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Random number generator for the accelerometer noise. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00174">174</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00176">176</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2555,7 +2587,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>RW noise of the accelerometer (Unit as selected) </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00186">186</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00188">188</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2581,7 +2613,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Random number generator for the accelerometer RW noise. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00188">188</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00190">190</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2607,7 +2639,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Selected unit for the accelerometer RW noise in the GUI. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00184">184</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00186">186</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2633,7 +2665,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Bias of the gyroscope in platform coordinates (Unit as selected) </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00165">165</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00167">167</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2659,7 +2691,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Selected unit for the gyroscope bias in the GUI. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00163">163</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00165">165</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2685,7 +2717,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>RW noise of the accelerometer (Unit as selected) </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00207">207</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00209">209</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2711,7 +2743,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Random number generator for the accelerometer RW noise. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00209">209</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00211">211</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2737,7 +2769,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Selected unit for the accelerometer IRW noise in the GUI. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00205">205</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00207">207</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2763,7 +2795,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Noise of the gyroscope (Unit as selected) </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00179">179</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00181">181</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2789,7 +2821,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Selected unit for the gyroscope noise in the GUI. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00177">177</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00179">179</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2815,7 +2847,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Random number generator for the gyroscope noise. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00181">181</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00183">183</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2841,7 +2873,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>RW noise of the accelerometer (Unit as selected) </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00193">193</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00195">195</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2867,7 +2899,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Random number generator for the accelerometer RW noise. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00195">195</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00197">197</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2893,7 +2925,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Selected unit for the accelerometer RW noise in the GUI. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00191">191</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00193">193</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2919,7 +2951,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>3D array which allow to accumulate IRW for accelerometer </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00147">147</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00149">149</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2945,7 +2977,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>3D array which allow to accumulate IRW veloctiy noise for accelerometer </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00144">144</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00146">146</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2971,7 +3003,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>3D array which allow to accumulate IRW for gyro </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00153">153</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00155">155</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -2997,7 +3029,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>3D array which allow to accumulate IRW veloctiy noise for gyro </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00150">150</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00152">152</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -3023,7 +3055,163 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Last observation time. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00129">129</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00131">131</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+
+</div>
+</div>
+<a id="afc7d09eadbe99ca0f9f0501658fde1a7" name="afc7d09eadbe99ca0f9f0501658fde1a7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afc7d09eadbe99ca0f9f0501658fde1a7">&#9670;&#160;</a></span>_manualCycleSlipAmbiguity</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int NAV::ErrorModel::_manualCycleSlipAmbiguity</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>GUI input for new manual cycle-slips. </p>
+
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00349">349</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a900202c4f192758d73ae396eefe9fb5f" name="a900202c4f192758d73ae396eefe9fb5f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a900202c4f192758d73ae396eefe9fb5f">&#9670;&#160;</a></span>_manualCycleSlips</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::map&lt;std::pair&lt;<a class="el" href="classNAV_1_1InsTime.html">InsTime</a>, <a class="el" href="structNAV_1_1SatSigId.html">SatSigId</a>&gt;, std::pair&lt;int, bool&gt; &gt; NAV::ErrorModel::_manualCycleSlips</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Cycle-slips set by the user. </p>
+
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00344">344</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a22ea9dc5650934b67d2f644385a31d10" name="a22ea9dc5650934b67d2f644385a31d10"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a22ea9dc5650934b67d2f644385a31d10">&#9670;&#160;</a></span>_manualCycleSlipSetLLI</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool NAV::ErrorModel::_manualCycleSlipSetLLI</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>GUI input for new manual cycle-slips. </p>
+
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00350">350</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a0ea070effd40fe5796e0105d3592bed7" name="a0ea070effd40fe5796e0105d3592bed7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ea070effd40fe5796e0105d3592bed7">&#9670;&#160;</a></span>_manualCycleSlipSignal</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structNAV_1_1SatSigId.html">SatSigId</a> NAV::ErrorModel::_manualCycleSlipSignal</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>GUI input for new manual cycle-slips. </p>
+
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00348">348</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a6d6291555931a90f653ffddb408e362f" name="a6d6291555931a90f653ffddb408e362f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6d6291555931a90f653ffddb408e362f">&#9670;&#160;</a></span>_manualCycleSlipTime</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classNAV_1_1InsTime.html">InsTime</a> NAV::ErrorModel::_manualCycleSlipTime</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>GUI input for new manual cycle-slips. </p>
+
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00346">346</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aa5927c806c33faab5a3bc8fa06fd652c" name="aa5927c806c33faab5a3bc8fa06fd652c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa5927c806c33faab5a3bc8fa06fd652c">&#9670;&#160;</a></span>_manualCycleSlipTimeEditFormat</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structNAV_1_1gui_1_1widgets_1_1TimeEditFormat.html">gui::widgets::TimeEditFormat</a> NAV::ErrorModel::_manualCycleSlipTimeEditFormat</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>GUI input for new manual cycle-slips. </p>
+
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00347">347</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -3049,7 +3237,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Bias of the position (Unit as selected) </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00225">225</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00227">227</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -3075,7 +3263,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Selected unit for the position bias in the GUI. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00223">223</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00225">225</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -3101,7 +3289,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Noise of the position (Unit as selected) </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00260">260</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00262">262</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -3127,7 +3315,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Selected unit for the position noise in the GUI. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00258">258</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00260">260</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -3153,7 +3341,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Random number generator for the position noise. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00262">262</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00264">264</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -3179,7 +3367,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Random number generator for the pseudorange noise. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00307">307</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00309">309</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -3205,7 +3393,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>3D array which allow to accumulate RW noise for accelerometer </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00138">138</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00140">140</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -3231,7 +3419,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>3D array which allow to accumulate RW noise for gyro </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00141">141</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00143">143</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -3257,7 +3445,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Bias of the velocity (Unit as selected) </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00235">235</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00237">237</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -3283,7 +3471,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Selected unit for the velocity bias in the GUI. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00233">233</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00235">235</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -3309,7 +3497,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Noise of the velocity (Unit as selected) </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00272">272</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00274">274</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -3335,7 +3523,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Selected unit for the velocity noise in the GUI. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00270">270</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00272">272</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -3361,7 +3549,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Random number generator for the velocity noise. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00274">274</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00276">276</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -3387,7 +3575,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Flow. </p>
 
-<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00070">70</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ErrorModel_8hpp_source.html#l00072">72</a> of file <a class="el" href="ErrorModel_8hpp_source.html">ErrorModel.hpp</a>.</p>
 
 </div>
 </div>

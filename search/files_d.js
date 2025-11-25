@@ -18,10 +18,8 @@ var searchData=
   ['nodeeditorapplication_2ehpp_15',['NodeEditorApplication.hpp',['../NodeEditorApplication_8hpp.html',1,'']]],
   ['nodeeditorstyleeditor_2ecpp_16',['NodeEditorStyleEditor.cpp',['../NodeEditorStyleEditor_8cpp.html',1,'']]],
   ['nodeeditorstyleeditor_2ehpp_17',['NodeEditorStyleEditor.hpp',['../NodeEditorStyleEditor_8hpp.html',1,'']]],
-  ['nodemanager_2ecpp_18',['NodeManager.cpp',['../NodeManager_8cpp.html',1,'']]],
-  ['nodemanager_2ehpp_19',['NodeManager.hpp',['../NodeManager_8hpp.html',1,'']]],
-  ['noderegistry_2ecpp_20',['NodeRegistry.cpp',['../NodeRegistry_8cpp.html',1,'']]],
-  ['noderegistry_2ehpp_21',['NodeRegistry.hpp',['../NodeRegistry_8hpp.html',1,'']]],
-  ['nodes_2edox_22',['Nodes.dox',['../Nodes_8dox.html',1,'']]],
-  ['numericalintegration_2ehpp_23',['NumericalIntegration.hpp',['../NumericalIntegration_8hpp.html',1,'']]]
+  ['noderegistry_2ecpp_18',['NodeRegistry.cpp',['../NodeRegistry_8cpp.html',1,'']]],
+  ['noderegistry_2ehpp_19',['NodeRegistry.hpp',['../NodeRegistry_8hpp.html',1,'']]],
+  ['nodes_2edox_20',['Nodes.dox',['../Nodes_8dox.html',1,'']]],
+  ['numericalintegration_2ehpp_21',['NumericalIntegration.hpp',['../NumericalIntegration_8hpp.html',1,'']]]
 ];

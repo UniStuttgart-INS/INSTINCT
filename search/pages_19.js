@@ -9,7 +9,7 @@ var searchData=
   ['ulogfile_20node_6',['UlogFile Node',['../ulog_file_node.html',1,'node_guide_landing_page']]],
   ['uncorrelated_20measurement_20error_7',['Uncorrelated Measurement Error',['../RealTimeKinematics.html#autotoc_md44',1,'']]],
   ['unit_20discussion_8',['Unit discussion',['../LooselyCoupledKF_n.html#LooselyCoupledKF_n-Units',1,'']]],
-  ['unknowns_9',['Unknowns',['../SppLSE.html#SppLSE-unknowns',1,'Unknowns'],['../SppKF.html#SppKF-unknowns',1,'Unknowns']]],
+  ['unknowns_9',['Unknowns',['../SppKF.html#SppKF-unknowns',1,'Unknowns'],['../SppLSE.html#SppLSE-unknowns',1,'Unknowns']]],
   ['until_20data_20rate_20is_20shown_10',['of packages that are skipped until data rate is shown',['../classNAV_1_1experimental_1_1SkydelNetworkStream.html#autotoc_md22',1,'']]],
   ['update_20correction_11',['Using Bayes&apos; Theorem for Update/Correction',['../KalmanFilterBasics.html#KalmanFilterBasics-Update',1,'']]],
   ['update_20description_12',['IODEC range | Update | Description',['../classNAV_1_1IRNSSEphemeris.html#autotoc_md4',1,'']]],

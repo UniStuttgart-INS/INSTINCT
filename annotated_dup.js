@@ -98,6 +98,9 @@ var annotated_dup =
         [ "kvh", "namespaceNAV_1_1vendor_1_1kvh.html", [
           [ "KvhUartSensor", "classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html", "classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor" ]
         ] ],
+        [ "ln", "namespaceNAV_1_1vendor_1_1ln.html", [
+          [ "Ln200UartSensor", "classNAV_1_1vendor_1_1ln_1_1Ln200UartSensor.html", "classNAV_1_1vendor_1_1ln_1_1Ln200UartSensor" ]
+        ] ],
         [ "pixhawk", "namespaceNAV_1_1vendor_1_1pixhawk.html", [
           [ "message_add_logged_s", "structNAV_1_1vendor_1_1pixhawk_1_1message__add__logged__s.html", "structNAV_1_1vendor_1_1pixhawk_1_1message__add__logged__s" ],
           [ "message_data_s", "structNAV_1_1vendor_1_1pixhawk_1_1message__data__s.html", "structNAV_1_1vendor_1_1pixhawk_1_1message__data__s" ],
@@ -233,6 +236,7 @@ var annotated_dup =
       [ "KvhSensor", "classNAV_1_1KvhSensor.html", "classNAV_1_1KvhSensor" ],
       [ "LeastSquares", "classNAV_1_1LeastSquares.html", "classNAV_1_1LeastSquares" ],
       [ "LeastSquaresResult", "structNAV_1_1LeastSquaresResult.html", "structNAV_1_1LeastSquaresResult" ],
+      [ "Ln200Sensor", "classNAV_1_1Ln200Sensor.html", "classNAV_1_1Ln200Sensor" ],
       [ "LooselyCoupledKF", "classNAV_1_1LooselyCoupledKF.html", "classNAV_1_1LooselyCoupledKF" ],
       [ "LowPassFilter", "classNAV_1_1LowPassFilter.html", "classNAV_1_1LowPassFilter" ],
       [ "MatrixLogger", "classNAV_1_1MatrixLogger.html", "classNAV_1_1MatrixLogger" ],

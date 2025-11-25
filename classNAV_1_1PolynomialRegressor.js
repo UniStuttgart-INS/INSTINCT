@@ -9,7 +9,7 @@ var classNAV_1_1PolynomialRegressor =
       [ "COUNT", "classNAV_1_1PolynomialRegressor.html#a8aa78507e36f374ba2d370ceffbaa8fca4905ac9d6a22bdfc1ae096094ce6248d", null ]
     ] ],
     [ "PolynomialRegressor", "classNAV_1_1PolynomialRegressor.html#a2938d44c51f8c6e78498314b4bc82b37", null ],
-    [ "calcPolynomial", "classNAV_1_1PolynomialRegressor.html#ab795e09a49a1e107d41d8b60d7212d53", null ],
+    [ "calcPolynomial", "classNAV_1_1PolynomialRegressor.html#a2ef9524575e796c4745ffe9f67677e72", null ],
     [ "data", "classNAV_1_1PolynomialRegressor.html#a68ed95598c21c6649d8f9a5d380ffa36", null ],
     [ "empty", "classNAV_1_1PolynomialRegressor.html#a79b6b6db3376a35431c032f44b078d46", null ],
     [ "pop_front", "classNAV_1_1PolynomialRegressor.html#ac212e43348e0ab210b53f62424b2c89c", null ],

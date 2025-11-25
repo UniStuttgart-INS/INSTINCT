@@ -9,7 +9,7 @@ var searchData=
   ['solutiontype_6',['SolutionType',['../classNAV_1_1RtkSolution.html#a76769b402587acc7793ae1a599e5d2f0',1,'NAV::RtkSolution']]],
   ['stage_7',['Stage',['../classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a94c6ebc80369f13f1cce817e71e92ca1',1,'ax::NodeEditor::Utilities::BlueprintNodeBuilder']]],
   ['starttimesource_8',['StartTimeSource',['../classNAV_1_1ImuSimulator.html#a2cd0efeeccace81e31af683dbd976889',1,'NAV::ImuSimulator']]],
-  ['state_9',['State',['../classNAV_1_1Node.html#a174753f74e1f2eb8d4f16b8c82ddbea3',1,'NAV::Node']]],
+  ['state_9',['State',['../classNAV_1_1Node.html#a174753f74e1f2eb8d4f16b8c82ddbea3',1,'NAV::Node::State'],['../classNAV_1_1vendor_1_1ln_1_1Ln200UartSensor.html#a0e968dafbbf89a94e1703126834606c3',1,'NAV::vendor::ln::Ln200UartSensor::State']]],
   ['stdevaccelunits_10',['StdevAccelUnits',['../classNAV_1_1RealTimeKinematic.html#ad15fa4dc2ca129da8c0d0baeee2eba60',1,'NAV::RealTimeKinematic']]],
   ['stdevambiguityunits_11',['StdevAmbiguityUnits',['../classNAV_1_1RealTimeKinematic.html#a1c6e86f09d51e7e5f839e65717888852',1,'NAV::RealTimeKinematic']]],
   ['stdevbaroheightbiasunits_12',['StdevBaroHeightBiasUnits',['../classNAV_1_1LooselyCoupledKF.html#a65af58a3f05b06031d3a2c406d2013b7',1,'NAV::LooselyCoupledKF']]],

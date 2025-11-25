@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-07-19 10:51:51</td>
+      <td>2025-11-25 23:34:18</td>
     </tr>
   </table>
 </div>
@@ -71,12 +71,12 @@
       <th>Block coverage</th>
     </tr>
     <tr><td><a href="#l296">NAV::Code::Code() (line 296)</a></td><td>called 564800 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l316">NAV::Code::Code(NAV::Code::Enum) (line 316)</a></td><td>called 854612516 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l304">NAV::Code::Code(std::bitset&lt;108ul&gt; const&amp;) (line 304)</a></td><td>called 73813067 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l319">NAV::Code::operator bool() const (line 319)</a></td><td>called 72605426 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l323">NAV::Code::operator std::bitset&lt;108ul&gt;() const (line 323)</a></td><td>called 1348356 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l708">auto fmt::v11::formatter&lt;NAV::Code, char, void&gt;::format&lt;fmt::v11::context&gt;(NAV::Code const&amp;, fmt::v11::context&amp;) const (line 708)</a></td><td>called 675850 times</td><td>73.0%</td></tr>
-    <tr><td><a href="#l690">std::hash&lt;NAV::Code&gt;::operator()(NAV::Code const&amp;) const (line 690)</a></td><td>called 2508668 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l316">NAV::Code::Code(NAV::Code::Enum) (line 316)</a></td><td>called 806871309 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l304">NAV::Code::Code(std::bitset&lt;108ul&gt; const&amp;) (line 304)</a></td><td>called 73828977 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l319">NAV::Code::operator bool() const (line 319)</a></td><td>called 72608727 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l323">NAV::Code::operator std::bitset&lt;108ul&gt;() const (line 323)</a></td><td>called 1164660 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l708">auto fmt::v12::formatter&lt;NAV::Code, char, void&gt;::format&lt;fmt::v12::context&gt;(NAV::Code const&amp;, fmt::v12::context&amp;) const (line 708)</a></td><td>called 675878 times</td><td>73.0%</td></tr>
+    <tr><td><a href="#l690">std::hash&lt;NAV::Code&gt;::operator()(NAV::Code const&amp;) const (line 690)</a></td><td>called 2508480 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -2215,7 +2215,7 @@
       <td class="lineno"><a id="l304" href="#l304">304</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">73813067</td>
+      <td class="linecount coveredLine">73828977</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">constexpr</span><span class="w"> </span><span class="k">explicit</span><span class="w"> </span><span class="n">Code</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Set</span><span class="o">&amp;</span><span class="w"> </span><span class="n">set</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">value</span><span class="p">(</span><span class="n">set</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
@@ -2299,7 +2299,7 @@
       <td class="lineno"><a id="l316" href="#l316">316</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">854612516</td>
+      <td class="linecount coveredLine">806871309</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Code</span><span class="p">(</span><span class="n">Enum</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">value</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="n">e</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="c1">// NOLINT(hicpp-explicit-conversions, google-explicit-constructor)</span></td>
     </tr>
     <tr class="source-line">
@@ -2320,7 +2320,7 @@
       <td class="lineno"><a id="l319" href="#l319">319</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">72605426</td>
+      <td class="linecount coveredLine">72608727</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">explicit</span><span class="w"> </span><span class="k">operator</span><span class="w"> </span><span class="kt">bool</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">value</span><span class="p">.</span><span class="n">any</span><span class="p">();</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -2348,7 +2348,7 @@
       <td class="lineno"><a id="l323" href="#l323">323</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1348356</td>
+      <td class="linecount coveredLine">1164660</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">constexpr</span><span class="w"> </span><span class="k">explicit</span><span class="w"> </span><span class="k">operator</span><span class="w"> </span><span class="n">Set</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">value</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -4917,7 +4917,7 @@
       <td class="lineno"><a id="l690" href="#l690">690</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2508668</td>
+      <td class="linecount coveredLine">2508480</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="nf">operator</span><span class="p">()(</span><span class="k">const</span><span class="w"> </span><span class="n">NAV</span><span class="o">::</span><span class="n">Code</span><span class="o">&amp;</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="k">const</span></td>
     </tr>
     <tr class="source-line">
@@ -4931,7 +4931,7 @@
       <td class="lineno"><a id="l692" href="#l692">692</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2508668</td>
+      <td class="linecount coveredLine">2508480</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="n">getEnumValue</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
@@ -5043,7 +5043,7 @@
       <td class="lineno"><a id="l708" href="#l708">708</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">675850</td>
+      <td class="linecount coveredLine">675878</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">format</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">NAV</span><span class="o">::</span><span class="n">Code</span><span class="o">&amp;</span><span class="w"> </span><span class="n">code</span><span class="p">,</span><span class="w"> </span><span class="n">FormatContext</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ctx</span><span class="p">)</span><span class="w"> </span><span class="k">const</span></td>
     </tr>
     <tr class="source-line">
@@ -5059,14 +5059,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 675882 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 675889 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 5 taken 675872 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 675881 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">675850</td>
+      <td class="linecount partialCoveredLine">675878</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">fmt</span><span class="o">::</span><span class="n">formatter</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;::</span><span class="n">format</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="n">code</span><span class="p">),</span><span class="w"> </span><span class="n">ctx</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">

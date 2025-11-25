@@ -48,7 +48,7 @@
               <td id="projectlogo"><img alt="Logo" src="INSTINCT_Logo_Text.png"  /></td>
               <td id="projectalign">
                 <div id="projectname"><span
-                    id="projectnumber">&#160;0.5.0</span>
+                    id="projectnumber">&#160;0.5.1</span>
                 </div>
               </td>
             </tr>
@@ -118,27 +118,27 @@ Acceleration Measurements</h1>
 <p>The navigation equation for a local-navigation frame is (see <a class="el" href="citelist.html#CITEREF_titterton2004">[50]</a> Titterton, ch. 3.7.1, eq. 3.69, p. 47f) <a class="anchor" id="eq-ImuSimulator-VelocityNav-equation-pre"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuSimulator-VelocityNav-equation-pre}
   \boldsymbol{\dotup{v}}^n = \boldsymbol{f}^n - \underbrace{(2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n}_{\text{coriolis acceleration}} +\ \mathbf{g}_l^n
-\end{equation}" src="form_736.svg" width="628" height="44"/>
+\end{equation}" src="form_588.svg" width="628" height="44"/>
 </p>
 <p> where</p><ul>
 <li><img class="formulaInl" alt="$ \boldsymbol{v}^n = \begin{pmatrix} v_N &amp; v_E &amp; v_D \end{pmatrix}^T $" src="form_368.svg" width="168" height="26"/> is the velocity with respect to the Earth in local-navigation frame coordinates,</li>
 <li><img class="formulaInl" alt="$ \boldsymbol{f}^n = \begin{pmatrix} f_N &amp; f_E &amp; f_D \end{pmatrix}^T $" src="form_369.svg" width="170" height="26"/> is the specific force vector as measured by a triad of accelerometers and resolved into local-navigation frame coordinates</li>
 <li><img class="formulaInl" alt="$ \boldsymbol{\omega}_{ie}^n $" src="form_370.svg" width="25" height="18"/> is the turn rate of the Earth expressed in local-navigation frame coordinates</li>
 <li><img class="formulaInl" alt="$ \boldsymbol{\omega}_{en}^n $" src="form_371.svg" width="28" height="18"/> is the turn rate of the local frame with respect to the Earth-fixed frame, called the transport rate, expressed in local-navigation frame coordinates</li>
-<li><img class="formulaInl" alt="$ \mathbf{g}_l^n $" src="form_737.svg" width="19" height="18"/> is the local gravity vector which is a combination of (see <a class="el" href="citelist.html#CITEREF_titterton2004">[50]</a> Titterton, ch. 3.71, eq. 3.75, p. 48)<ul>
-<li><img class="formulaInl" alt="$ \mathbf{g}^n $" src="form_605.svg" width="19" height="18"/> the local gravitation vector (caused by effects of mass attraction)</li>
-<li><img class="formulaInl" alt="$ \boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] $" src="form_738.svg" width="121" height="19"/> the centrifugal acceleration caused by the Earth's rotation</li>
+<li><img class="formulaInl" alt="$ \mathbf{g}_l^n $" src="form_589.svg" width="19" height="18"/> is the local gravity vector which is a combination of (see <a class="el" href="citelist.html#CITEREF_titterton2004">[50]</a> Titterton, ch. 3.71, eq. 3.75, p. 48)<ul>
+<li><img class="formulaInl" alt="$ \mathbf{g}^n $" src="form_590.svg" width="19" height="18"/> the local gravitation vector (caused by effects of mass attraction)</li>
+<li><img class="formulaInl" alt="$ \boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] $" src="form_591.svg" width="121" height="19"/> the centrifugal acceleration caused by the Earth's rotation</li>
 </ul>
 </li>
 </ul>
-<p>Therefore equation <a class="el" href="#eq-ImuSimulator-VelocityNav-equation-pre"><img class="formulaInl" alt="\eqref{eq:eq-ImuSimulator-VelocityNav-equation-pre}" src="form_739.svg" width="44" height="19"/> </a> becomes <a class="anchor" id="eq-ImuSimulator-VelocityNav-equation"></a>      </p><p class="formulaDsp">
+<p>Therefore equation <a class="el" href="#eq-ImuSimulator-VelocityNav-equation-pre"><img class="formulaInl" alt="\eqref{eq:eq-ImuSimulator-VelocityNav-equation-pre}" src="form_592.svg" width="44" height="19"/> </a> becomes <a class="anchor" id="eq-ImuSimulator-VelocityNav-equation"></a>      </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuSimulator-VelocityNav-equation}
   \underbrace{\boldsymbol{\dotup{v}}^n}_{\hidewidth\text{trajectory}\hidewidth}
       = \overbrace{\boldsymbol{f}^n}^{\hidewidth\text{measured}\hidewidth}
         -\ \underbrace{(2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n}_{\text{coriolis acceleration}}
         +\ \overbrace{\mathbf{g}^n}^{\hidewidth\text{gravitation}\hidewidth}
         -\ \mathbf{C}_e^n \cdot \underbrace{\left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \right)}_{\text{centrifugal acceleration}}
-\end{equation}" src="form_740.svg" width="763" height="70"/>
+\end{equation}" src="form_593.svg" width="763" height="70"/>
 </p>
 <p>which can be reordered to calculate the measured accelerations with <a class="anchor" id="eq-ImuSimulator-acceleration-measured"></a>      </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuSimulator-acceleration-measured}
@@ -147,18 +147,18 @@ Acceleration Measurements</h1>
         + \underbrace{(2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n}_{\text{coriolis acceleration}}
         -\ \overbrace{\mathbf{g}^n}^{\hidewidth\text{gravitation}\hidewidth}
         +\ \mathbf{C}_e^n \cdot \underbrace{\left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \right)}_{\text{centrifugal acceleration}}
-\end{equation}" src="form_741.svg" width="758" height="70"/>
+\end{equation}" src="form_594.svg" width="758" height="70"/>
 </p>
 <p>The acceleration from the trajectory is derived as</p>
 <p><a class="anchor" id="eq-ImuSimulator-acceleration-navigation"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuSimulator-acceleration-navigation}
   \boldsymbol{\dotup{v}}^n = \frac{\partial}{\partial t} \left( \boldsymbol{\dotup{x}}^n \right) = \frac{\partial}{\partial t} \left( \boldsymbol{C}_e^n \cdot \boldsymbol{\dotup{x}}^e \right) = \boldsymbol{\dotup{C}}_e^n \cdot \boldsymbol{\dotup{x}}^e + \boldsymbol{C}_e^n \cdot \boldsymbol{\ddot{x}}^e
-\end{equation}" src="form_742.svg" width="681" height="39"/>
+\end{equation}" src="form_595.svg" width="681" height="39"/>
 </p>
 <p> with <a class="anchor" id="eq-ImuSimulator-acceleration-C_ne_dot"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuSimulator-acceleration-C_ne_dot}
   \boldsymbol{\dotup{C}}_e^n = (\boldsymbol{\dotup{C}}_n^e)^T = (\boldsymbol{C}_n^e \cdot \boldsymbol{\Omega}_{en}^n)^T
-\end{equation}" src="form_743.svg" width="600" height="25"/>
+\end{equation}" src="form_596.svg" width="600" height="25"/>
 </p>
 <h1 class="doxsection"><a class="anchor" id="ImuSimulator-AngularRate-Measurements"></a>
 Angular Rate Measurements</h1>
@@ -171,15 +171,15 @@ Angular Rate Measurements</h1>
                              &amp;= \mathbf{C}_n^p \cdot [ \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n + \boldsymbol{\omega}_{nb}^n ] \\
                              &amp;= \mathbf{C}_n^p \cdot [ \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n + \mathbf{C}_b^n \boldsymbol{\omega}_{nb}^b ]
 \end{aligned}
-\end{equation}" src="form_744.svg" width="644" height="158"/>
+\end{equation}" src="form_597.svg" width="644" height="158"/>
 </p>
-<p>The turn rate of the body frame with respect to the local-navigation frame expressed in body coordinates depends on the time derivation of the gimbal angles <img class="formulaInl" alt="$ \phi $" src="form_26.svg" width="11" height="18"/> (roll), <img class="formulaInl" alt="$ \theta $" src="form_745.svg" width="9" height="16"/> (pitch), <img class="formulaInl" alt="$ \psi $" src="form_746.svg" width="12" height="18"/> (yaw): <a class="anchor" id="eq-ImuSimulator-omega_nb_b"></a>     </p><p class="formulaDsp">
+<p>The turn rate of the body frame with respect to the local-navigation frame expressed in body coordinates depends on the time derivation of the gimbal angles <img class="formulaInl" alt="$ \phi $" src="form_26.svg" width="11" height="18"/> (roll), <img class="formulaInl" alt="$ \theta $" src="form_598.svg" width="9" height="16"/> (pitch), <img class="formulaInl" alt="$ \psi $" src="form_599.svg" width="12" height="18"/> (yaw): <a class="anchor" id="eq-ImuSimulator-omega_nb_b"></a>     </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuSimulator-omega_nb_b}
   \boldsymbol{\omega}_{nb}^b
       = \begin{bmatrix} \dotup{R} \\ 0 \\ 0 \end{bmatrix}
         + \mathbf{C_3} \begin{bmatrix} 0 \\ \dotup{P} \\ 0 \end{bmatrix}
         + \mathbf{C_3} \mathbf{C_2} \begin{bmatrix} 0 \\ 0 \\ \dotup{Y} \end{bmatrix}
-\end{equation}" src="form_747.svg" width="635" height="65"/>
+\end{equation}" src="form_600.svg" width="635" height="65"/>
 </p>
 <p> where</p><ul>
 <li><img class="formulaInl" alt="$ \mathbf{C_3} = \begin{bmatrix} 1 &amp;     0    &amp;    0    \\
@@ -187,7 +187,7 @@ Angular Rate Measurements</h1>
                                      0 &amp; -\sin{R} &amp; \cos{R} \end{bmatrix} $" src="form_356.svg" width="203" height="63"/> is the rotation <img class="formulaInl" alt="$ R $" src="form_353.svg" width="14" height="14"/> about the x-axis (see <a class="el" href="citelist.html#CITEREF_titterton2004">[50]</a> Titterton, ch. 3.6.3.2, eq. 3.46, p. 41)</li>
 <li><img class="formulaInl" alt="$ \mathbf{C_2} = \begin{bmatrix} \cos{P} &amp; 0 &amp; -\sin{P} \\
                                         0    &amp; 1 &amp;     0    \\
-                                     \sin{P} &amp; 0 &amp;  \cos{P} \end{bmatrix} $" src="form_357.svg" width="203" height="63"/> is the rotation <img class="formulaInl" alt="$ P $" src="form_312.svg" width="14" height="14"/> about the y-axis (see <a class="el" href="citelist.html#CITEREF_titterton2004">[50]</a> Titterton, ch. 3.6.3.2, eq. 3.45, p. 41)</li>
+                                     \sin{P} &amp; 0 &amp;  \cos{P} \end{bmatrix} $" src="form_357.svg" width="203" height="63"/> is the rotation <img class="formulaInl" alt="$ P $" src="form_261.svg" width="14" height="14"/> about the y-axis (see <a class="el" href="citelist.html#CITEREF_titterton2004">[50]</a> Titterton, ch. 3.6.3.2, eq. 3.45, p. 41)</li>
 </ul>
 <p>see</p><ul>
 <li><a class="el" href="citelist.html#CITEREF_titterton2004">[50]</a> Titterton, ch. 3.6.3.3, eq. 3.52, p. 42</li>
@@ -204,19 +204,19 @@ Fixed</h2>
  <a class="anchor" id="eq-ImuSimulator-Trajectory-Fixed-position"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Fixed-position}
   \mathbf{x}^n = \begin{pmatrix} \phi &amp; \lambda &amp; h \end{pmatrix}^T = \text{const}
-\end{equation}" src="form_748.svg" width="593" height="26"/>
+\end{equation}" src="form_601.svg" width="593" height="26"/>
 </p>
 <p><b>Velocity</b> <br  />
  <a class="anchor" id="eq-ImuSimulator-Trajectory-Fixed-velocity"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Fixed-velocity}
   \boldsymbol{v}^n = \mathbf{\dotup{x}}^n = 0
-\end{equation}" src="form_749.svg" width="541" height="19"/>
+\end{equation}" src="form_602.svg" width="541" height="19"/>
 </p>
 <p><b>Acceleration</b> <br  />
  <a class="anchor" id="eq-ImuSimulator-Trajectory-Fixed-acceleration"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Fixed-acceleration}
   \mathbf{a}^n = \boldsymbol{\dotup{v}}^n = 0
-\end{equation}" src="form_750.svg" width="541" height="19"/>
+\end{equation}" src="form_603.svg" width="541" height="19"/>
 </p>
 <h2 class="doxsection"><a class="anchor" id="ImuSimulator-Trajectory-Linear"></a>
 Linear</h2>
@@ -231,7 +231,7 @@ Linear</h2>
   \dotup{\lambda} &amp;= \frac{v_E}{(R_E + h) \cos{\phi}} \\
   \dotup{h}       &amp;= -v_D
 \end{aligned}
-\end{equation}" src="form_751.svg" width="567" height="105"/>
+\end{equation}" src="form_604.svg" width="567" height="105"/>
 </p>
 <p>As the velocity in local-navigation coordinates is constant and neglecting the change in non velocity terms, the position can be expressed as</p>
 <p><a class="anchor" id="eq-ImuSimulator-Trajectory-Linear-position"></a>       </p><p class="formulaDsp">
@@ -242,19 +242,19 @@ Linear</h2>
   \approx \begin{pmatrix} \phi_0 \\ \lambda_0 \\ h_0 \end{pmatrix}
   + \begin{pmatrix} \dfrac{v_N}{R_N + h} \\ \dfrac{v_E}{(R_E + h) \cos{\phi}} \\  -v_D \end{pmatrix}
   \cdot t
-\end{equation}" src="form_752.svg" width="665" height="128"/>
+\end{equation}" src="form_605.svg" width="665" height="128"/>
 </p>
 <p><b>Velocity</b> <br  />
  <a class="anchor" id="eq-ImuSimulator-Trajectory-Linear-velocity"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Linear-velocity}
 \boldsymbol{v}^n = \mathbf{\dotup{x}}^n = const
-\end{equation}" src="form_753.svg" width="557" height="19"/>
+\end{equation}" src="form_606.svg" width="557" height="19"/>
 </p>
 <p><b>Acceleration</b> <br  />
  <a class="anchor" id="eq-ImuSimulator-Trajectory-Linear-acceleration"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Linear-acceleration}
   \mathbf{a}^n = \boldsymbol{\dotup{v}}^n = 0
-\end{equation}" src="form_754.svg" width="541" height="19"/>
+\end{equation}" src="form_607.svg" width="541" height="19"/>
 </p>
 <h2 class="doxsection"><a class="anchor" id="ImuSimulator-Trajectory-Circular"></a>
 Circular</h2>
@@ -263,11 +263,11 @@ Circular</h2>
 \begin{aligned}
   \left|\boldsymbol{v}_{\text{h}}^n\right| &amp;= \text{const}
 \end{aligned}
-\end{equation}" src="form_755.svg" width="548" height="19"/>
+\end{equation}" src="form_608.svg" width="548" height="19"/>
 </p>
 <p> The vertical velocity is</p><ul>
-<li>for the circular trajectory: <img class="formulaInl" alt="$ v_D = 0 $" src="form_756.svg" width="54" height="16"/></li>
-<li>for the helical trajectory: <img class="formulaInl" alt="$ v_D = \text{const} $" src="form_757.svg" width="84" height="16"/></li>
+<li>for the circular trajectory: <img class="formulaInl" alt="$ v_D = 0 $" src="form_609.svg" width="54" height="16"/></li>
+<li>for the helical trajectory: <img class="formulaInl" alt="$ v_D = \text{const} $" src="form_610.svg" width="84" height="16"/></li>
 </ul>
 <p><b>Position</b> <br  />
  In the local-navigation frame in a tangential plane to the Earth surface a circular path can be expressed as</p>
@@ -278,22 +278,22 @@ Circular</h2>
                  + \begin{pmatrix} r \cdot \sin{\left( \varphi \right)} \\
                                    r \cdot \cos{\left( \varphi \right)}
                    \end{pmatrix}
-\end{equation}" src="form_758.svg" width="625" height="42"/>
+\end{equation}" src="form_611.svg" width="625" height="42"/>
 </p>
-<p> where <img class="formulaInl" alt="$ x_M $" src="form_759.svg" width="25" height="12"/> is the center of the circle.</p>
-<p>The vertical position is <img class="formulaInl" alt="$ x_D = x_{M,D} - v_{UP} \cdot t $" src="form_760.svg" width="158" height="18"/>.</p>
-<p>The variable <img class="formulaInl" alt="$ \varphi $" src="form_761.svg" width="12" height="14"/> can be expressed due to the constant speed <a class="anchor" id="eq-ImuSimulator-Trajectory-Circular-phi-tilde"></a>     </p><p class="formulaDsp">
+<p> where <img class="formulaInl" alt="$ x_M $" src="form_612.svg" width="25" height="12"/> is the center of the circle.</p>
+<p>The vertical position is <img class="formulaInl" alt="$ x_D = x_{M,D} - v_{UP} \cdot t $" src="form_613.svg" width="158" height="18"/>.</p>
+<p>The variable <img class="formulaInl" alt="$ \varphi $" src="form_614.svg" width="12" height="14"/> can be expressed due to the constant speed <a class="anchor" id="eq-ImuSimulator-Trajectory-Circular-phi-tilde"></a>     </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Circular-phi-tilde}
   \left|\boldsymbol{v}_{\text{h}}^n\right| = \frac{s}{t}
                                 = \left( \frac{\tilde{\varphi}}{2\pi} \cdot U \right) \frac{1}{t}
                                 = \left( \frac{\tilde{\varphi}}{2\pi} \cdot 2\pi r \right) \frac{1}{t}
                                 = \frac{\tilde{\varphi} \cdot r}{t}
-\end{equation}" src="form_762.svg" width="676" height="42"/>
+\end{equation}" src="form_615.svg" width="676" height="42"/>
 </p>
-<p>Also a starting angle <img class="formulaInl" alt="$ \varphi_0 $" src="form_763.svg" width="19" height="14"/> and direction term <img class="formulaInl" alt="$ \text{dir} $" src="form_764.svg" width="21" height="14"/> (-1 for CW and +1 for CCW) are added. <a class="anchor" id="eq-ImuSimulator-Trajectory-Circular-phi"></a>  </p><p class="formulaDsp">
+<p>Also a starting angle <img class="formulaInl" alt="$ \varphi_0 $" src="form_616.svg" width="19" height="14"/> and direction term <img class="formulaInl" alt="$ \text{dir} $" src="form_617.svg" width="21" height="14"/> (-1 for CW and +1 for CCW) are added. <a class="anchor" id="eq-ImuSimulator-Trajectory-Circular-phi"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Circular-phi}
   \varphi = \frac{\left|\boldsymbol{v}_{\text{h}}^n\right| \cdot t}{r} \cdot \text{dir} + \varphi_0
-\end{equation}" src="form_765.svg" width="574" height="39"/>
+\end{equation}" src="form_618.svg" width="574" height="39"/>
 </p>
 <p>As perfekt circular trajectories are hard for Navigation algorithms to estimate, due to the lack of dynamic elements, a harmonic modulation is added to the position, which leads to</p>
 <p><a class="anchor" id="eq-ImuSimulator-Trajectory-Circular-local-position"></a>         </p><p class="formulaDsp">
@@ -306,15 +306,15 @@ Circular</h2>
                       - v_{UP} \cdot t
       \end{pmatrix}
 \end{aligned}
-\end{equation}" src="form_766.svg" width="714" height="63"/>
+\end{equation}" src="form_619.svg" width="714" height="63"/>
 </p>
-<p> where <img class="formulaInl" alt="$ a_h $" src="form_767.svg" width="18" height="12"/> is an amplitude factor which scales the harmonic oscillation in relation to the radius and <img class="formulaInl" alt="$ \omega_h $" src="form_768.svg" width="19" height="12"/> is the harmonic oscillation frequency in units [cycles/revolution]. Note that only unsigned integer values are allowed for <img class="formulaInl" alt="$ \omega_h $" src="form_768.svg" width="19" height="12"/>.</p>
+<p> where <img class="formulaInl" alt="$ a_h $" src="form_620.svg" width="18" height="12"/> is an amplitude factor which scales the harmonic oscillation in relation to the radius and <img class="formulaInl" alt="$ \omega_h $" src="form_621.svg" width="19" height="12"/> is the harmonic oscillation frequency in units [cycles/revolution]. Note that only unsigned integer values are allowed for <img class="formulaInl" alt="$ \omega_h $" src="form_621.svg" width="19" height="12"/>.</p>
 <p>The local position can then be added to the start position after rotating it into the Earth frame</p>
 <p><a class="anchor" id="eq-ImuSimulator-Trajectory-Circular-position"></a>   </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuSimulator-Trajectory-Circular-position}
   \renewcommand*{\arraystretch}{2.0}
   \mathbf{x}^e = \mathbf{x}_M^e + \mathbf{C}_n^e(\mathbf{x}_M) \cdot \mathbf{x}^n
-\end{equation}" src="form_769.svg" width="586" height="19"/>
+\end{equation}" src="form_622.svg" width="586" height="19"/>
 </p>
 <p><b>Velocity</b> <br  />
 </p>
@@ -372,19 +372,19 @@ Roll angle</h2>
 
   \path [draw,-&gt;,thick] ($($(origin)!.8!(xMC)$)$) -- (xMC) node [pos=0.5,right] {$\vec{\mathbf{x}}_M^e$};
   \path [draw, thick] ($($(origin)!.8!(xMC)$)$) --pic{ext} ($($(origin)!.8!(xMC)$)$);
-\end{tikzpicture}" src="form_770.svg" width="891" height="235"/>
+\end{tikzpicture}" src="form_623.svg" width="891" height="235"/>
 </p>
-<p>The simulated position is at the position <img class="formulaInl" alt="$\vec{x}^e$" src="form_771.svg" width="18" height="16"/> and its velocity vector is facing out of the plane. When facing into the plane, the roll angle runs into the other direction resulting in a minus in the formula.</p>
+<p>The simulated position is at the position <img class="formulaInl" alt="$\vec{x}^e$" src="form_624.svg" width="18" height="16"/> and its velocity vector is facing out of the plane. When facing into the plane, the roll angle runs into the other direction resulting in a minus in the formula.</p>
 <p>The roll angle is the angle between the tangential planes to the Earth surface in the current position and the center of the flight path. <a class="anchor" id="eq-ImuSimulator-roll-with-norm"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuSimulator-roll-with-norm}
   R = \text{dir} \cdot \arccos{\left(\frac{\vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e}{\left|\vec{\mathbf{n}}_M^e\right| \cdot \left|\vec{\mathbf{n}}^e\right|}\right)}
-\end{equation}" src="form_772.svg" width="607" height="44"/>
+\end{equation}" src="form_625.svg" width="607" height="44"/>
 </p>
-<p> where <img class="formulaInl" alt="$ \text{dir} $" src="form_764.svg" width="21" height="14"/> is a sign (+1 for CW and -1 for CCW) determining the direction of the circle.</p>
-<p>The normal of the tangential planes is however not the position vectors <img class="formulaInl" alt="$\vec{\mathbf{x}}^e$" src="form_773.svg" width="18" height="16"/> and <img class="formulaInl" alt="$\vec{\mathbf{x}}^e_M$" src="form_774.svg" width="25" height="19"/>, because Earth is an ellipsoid, but can be calculated with the geodetic latitude and longitude as (see <a href="https://en.wikipedia.org/wiki/N-vector">Wikipedia n-vector</a> ) <a class="anchor" id="eq-ImuSimulator-n-vector"></a>  </p><p class="formulaDsp">
+<p> where <img class="formulaInl" alt="$ \text{dir} $" src="form_617.svg" width="21" height="14"/> is a sign (+1 for CW and -1 for CCW) determining the direction of the circle.</p>
+<p>The normal of the tangential planes is however not the position vectors <img class="formulaInl" alt="$\vec{\mathbf{x}}^e$" src="form_626.svg" width="18" height="16"/> and <img class="formulaInl" alt="$\vec{\mathbf{x}}^e_M$" src="form_627.svg" width="25" height="19"/>, because Earth is an ellipsoid, but can be calculated with the geodetic latitude and longitude as (see <a href="https://en.wikipedia.org/wiki/N-vector">Wikipedia n-vector</a> ) <a class="anchor" id="eq-ImuSimulator-n-vector"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuSimulator-n-vector}
   \vec{\mathbf{n}}^e = \begin{pmatrix} \cos{\phi} \cdot \cos{\lambda} \\ \cos{\phi} \cdot \sin{\lambda} \\ \sin{\phi} \end{pmatrix}
-\end{equation}" src="form_775.svg" width="572" height="63"/>
+\end{equation}" src="form_628.svg" width="572" height="63"/>
 </p>
 <p>Especially it can be seen, that this vector has length one <a class="anchor" id="eq-ImuSimulator-n-vector-norm"></a>       </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuSimulator-n-vector-norm}
@@ -394,26 +394,26 @@ Roll angle</h2>
                                   &amp;= \sqrt{ \cos^2{\phi} + \sin^2{\phi} } \\
                                   &amp;= 1
 \end{aligned}
-\end{equation}" src="form_776.svg" width="670" height="154"/>
+\end{equation}" src="form_629.svg" width="670" height="154"/>
 </p>
 <p>The roll angle therefore becomes <a class="anchor" id="eq-ImuSimulator-roll"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuSimulator-roll}
   R = \text{dir} \cdot \arccos{\left( \vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e \right)}
-\end{equation}" src="form_777.svg" width="590" height="19"/>
+\end{equation}" src="form_630.svg" width="590" height="19"/>
 </p>
 <h2 class="doxsection"><a class="anchor" id="ImuSimulator-Flight-Angles-Pitch"></a>
 Pitch angle</h2>
-<p>The pitch angle is calculated with the local navigation frame velocity after formula <a class="el" href="namespaceNAV.html#eq-INS-Mechanization-Pitch"><img class="formulaInl" alt="\eqref{eq:eq-INS-Mechanization-Pitch}" src="form_778.svg" width="33" height="19"/> </a> <a class="anchor" id="eq-ImuSimulator-pitch"></a>  </p><p class="formulaDsp">
+<p>The pitch angle is calculated with the local navigation frame velocity after formula <a class="el" href="namespaceNAV.html#eq-INS-Mechanization-Pitch"><img class="formulaInl" alt="\eqref{eq:eq-INS-Mechanization-Pitch}" src="form_631.svg" width="33" height="19"/> </a> <a class="anchor" id="eq-ImuSimulator-pitch"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuSimulator-pitch}
   P = \tan^{-1}\left(\frac{-v_D}{\sqrt{v_N^2 + v_E^2}}\right)
-\end{equation}" src="form_779.svg" width="592" height="53"/>
+\end{equation}" src="form_632.svg" width="592" height="53"/>
 </p>
 <h2 class="doxsection"><a class="anchor" id="ImuSimulator-Flight-Angles-Yaw"></a>
 Yaw angle</h2>
-<p>The yaw angle is calculated with the local navigation frame velocity after formula <a class="el" href="namespaceNAV.html#eq-INS-Mechanization-Yaw"><img class="formulaInl" alt="\eqref{eq:eq-INS-Mechanization-Yaw}" src="form_780.svg" width="33" height="19"/> </a> <a class="anchor" id="eq-ImuSimulator-yaw"></a>  </p><p class="formulaDsp">
+<p>The yaw angle is calculated with the local navigation frame velocity after formula <a class="el" href="namespaceNAV.html#eq-INS-Mechanization-Yaw"><img class="formulaInl" alt="\eqref{eq:eq-INS-Mechanization-Yaw}" src="form_633.svg" width="33" height="19"/> </a> <a class="anchor" id="eq-ImuSimulator-yaw"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuSimulator-yaw}
   Y = \tan^{-1}\left(\frac{v_E}{v_N}\right)
-\end{equation}" src="form_781.svg" width="562" height="42"/>
+\end{equation}" src="form_634.svg" width="562" height="42"/>
 </p>
  </div></div><!-- contents -->
 </div><!-- PageDoc -->

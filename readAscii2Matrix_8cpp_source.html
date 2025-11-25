@@ -48,7 +48,7 @@
               <td id="projectlogo"><img alt="Logo" src="INSTINCT_Logo_Text.png"  /></td>
               <td id="projectalign">
                 <div id="projectname"><span
-                    id="projectnumber">&#160;0.5.0</span>
+                    id="projectnumber">&#160;0.5.1</span>
                 </div>
               </td>
             </tr>
@@ -156,7 +156,7 @@ $(function(){initNavTree('readAscii2Matrix_8cpp_source.html','',''); });
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>        {</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>            <span class="keywordflow">while</span> ((pos = line.find(delimiter)) != std::string::npos)</div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>            {</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>                <span class="keywordflow">if</span> (line.substr(0, 1) == <span class="stringliteral">&quot; &quot;</span>)</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>                <span class="keywordflow">if</span> (line.starts_with(<span class="stringliteral">&quot; &quot;</span>))</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>                {</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>                    <a class="code hl_function" href="namespaceNAV_1_1str.html#a5f1391b96d539eb1a0b1d18059bae2e3">NAV::str::ltrim</a>(line);</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>                }</div>

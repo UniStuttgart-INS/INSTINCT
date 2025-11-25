@@ -48,7 +48,7 @@
               <td id="projectlogo"><img alt="Logo" src="INSTINCT_Logo_Text.png"  /></td>
               <td id="projectalign">
                 <div id="projectname"><span
-                    id="projectnumber">&#160;0.5.0</span>
+                    id="projectnumber">&#160;0.5.1</span>
                 </div>
               </td>
             </tr>
@@ -177,7 +177,7 @@ The Demo Node</h1>
 <li><em>Object</em>: Pointer to a custom object</li>
 <li><em>Matrix</em>: Pointer to a matrix</li>
 </ol>
-<p>In order to create pins, one calls functions from the NodeManager namespace like <a class="el" href="namespaceNAV_1_1NodeManager.html#af96144033dd974922f3ee45686ce76ec" title="Create an Input Pin object.">NAV::NodeManager::CreateInputPin()</a> and <a class="el" href="namespaceNAV_1_1NodeManager.html#a285981551acca7cb04983b58778c9b04" title="Create an Output Pin object.">NAV::NodeManager::CreateOutputPin()</a>. There are multiple overloads of both functions depending what purpose the pin serves. More can be read in the code documentation.</p>
+<p>In order to create pins, one calls functions from the Node class like <a class="el" href="classNAV_1_1Node.html#ab68a7dee11448defa3ce9c5c6ffe39c1" title="Create an Input Pin object.">NAV::Node::CreateInputPin()</a> and <a class="el" href="classNAV_1_1Node.html#a63a474fe4a0bd42fb2e7fcc500a9b76b" title="Create an Output Pin object.">NAV::Node::CreateOutputPin()</a>. There are multiple overloads of both functions depending what purpose the pin serves. More can be read in the code documentation.</p>
 <p>All pins from the yellow node are connected to the teal node. We can see in the configuration window, that the input values of teal coincide with the output values of the yellow node. When changing the GUI, you could instantaneously see the changes in the connected node.</p>
 <div class="image">
 <img src="dev_getting-started_flow-boxes-teal.png" alt=""/>

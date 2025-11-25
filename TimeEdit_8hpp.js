@@ -2,7 +2,7 @@ var TimeEdit_8hpp =
 [
     [ "NAV::gui::widgets::TimeEditFormat", "structNAV_1_1gui_1_1widgets_1_1TimeEditFormat.html", "structNAV_1_1gui_1_1widgets_1_1TimeEditFormat" ],
     [ "NAV::gui::widgets::from_json", "namespaceNAV_1_1gui_1_1widgets.html#a49d1219fc8c42629cfdc54d441b6f9c3", null ],
-    [ "NAV::gui::widgets::TimeEdit", "namespaceNAV_1_1gui_1_1widgets.html#a2aab255cfd0c422e15a332d96a97ca13", null ],
+    [ "NAV::gui::widgets::TimeEdit", "namespaceNAV_1_1gui_1_1widgets.html#a743be66575866ee833227f95e3fc585e", null ],
     [ "NAV::gui::widgets::to_json", "namespaceNAV_1_1gui_1_1widgets.html#a172db1cd340de71da9e152a0d5eecb93", null ],
     [ "NAV::to_string", "namespaceNAV.html#a174f34c8c5d3bf08876ce7ac39f73f5b", null ]
 ];

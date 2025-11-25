@@ -9,10 +9,8 @@ var dir_3756d50f4003bc63fa3fe49460f9c79d =
     [ "ConfigManager.hpp", "ConfigManager_8hpp.html", "ConfigManager_8hpp" ],
     [ "FlowExecutor.cpp", "FlowExecutor_8cpp.html", "FlowExecutor_8cpp" ],
     [ "FlowExecutor.hpp", "FlowExecutor_8hpp.html", "FlowExecutor_8hpp" ],
-    [ "FlowManager.cpp", "FlowManager_8cpp.html", "FlowManager_8cpp" ],
+    [ "FlowManager.cpp", "FlowManager_8cpp.html", null ],
     [ "FlowManager.hpp", "FlowManager_8hpp.html", "FlowManager_8hpp" ],
-    [ "NodeManager.cpp", "NodeManager_8cpp.html", "NodeManager_8cpp" ],
-    [ "NodeManager.hpp", "NodeManager_8hpp.html", "NodeManager_8hpp" ],
     [ "Sleep.cpp", "Sleep_8cpp.html", null ],
     [ "Sleep.hpp", "Sleep_8hpp.html", "Sleep_8hpp" ],
     [ "Version.hpp", "Version_8hpp.html", "Version_8hpp" ]

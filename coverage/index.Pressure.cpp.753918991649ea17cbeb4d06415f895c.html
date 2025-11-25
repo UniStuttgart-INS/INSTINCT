@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-07-19 10:51:51</td>
+      <td>2025-11-25 23:34:18</td>
     </tr>
   </table>
 </div>
@@ -40,9 +40,9 @@
     </tr>
     <tr>
       <th scope="row">Lines:</th>
-      <td>5</td>
+      <td>4</td>
       <td>28</td>
-      <td class="coverage-low">17.9%</td>
+      <td class="coverage-low">14.3%</td>
     </tr>
     <tr>
       <th scope="row">Functions:</th>
@@ -52,9 +52,9 @@
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>2</td>
-      <td>18</td>
-      <td class="coverage-low">11.1%</td>
+      <td>1</td>
+      <td>16</td>
+      <td class="coverage-low">6.2%</td>
     </tr>
   </table>
 </div>
@@ -71,7 +71,7 @@
       <th>Block coverage</th>
     </tr>
     <tr><td><a href="#l40">NAV::ComboPressureModel(char const*, NAV::PressureModel&amp;) (line 40)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l45">NAV::calcTotalPressure(double, NAV::PressureModel) (line 45)</a></td><td>called 140358 times</td><td>24.0%</td></tr>
+    <tr><td><a href="#l45">NAV::calcTotalPressure(double, NAV::PressureModel) (line 45)</a></td><td>called 140360 times</td><td>16.0%</td></tr>
     <tr><td><a href="#l20">NAV::to_string(NAV::PressureModel) (line 20)</a></td><td>not called</td><td>0.0%</td></tr>
   </table>
 </details>
@@ -398,7 +398,7 @@
       <td class="lineno"><a id="l45" href="#l45">45</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">140358</td>
+      <td class="linecount coveredLine">140360</td>
       <td class="src coveredLine"><span class="kt">double</span><span class="w"> </span><span class="nf">calcTotalPressure</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">altitudeMSL</span><span class="p">,</span><span class="w"> </span><span class="n">PressureModel</span><span class="w"> </span><span class="n">pressureModel</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -412,17 +412,17 @@
       <td class="lineno"><a id="l47" href="#l47">47</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">2/5</summary>
+          <summary class="linebranchSummary">1/5</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 140357 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 140362 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 1 times.</div>
+            <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">140358</td>
+      <td class="linecount partialCoveredLine">140360</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">pressureModel</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -450,14 +450,14 @@
       <td class="lineno"><a id="l51" href="#l51">51</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">140357</td>
+      <td class="linecount coveredLine">140362</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">PressureModel</span><span class="o">::</span><span class="no">ISA</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l52" href="#l52">52</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">140357</td>
+      <td class="linecount coveredLine">140362</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">calcTotalPressureStAtm</span><span class="p">(</span><span class="n">altitudeMSL</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -527,8 +527,8 @@
       <td class="lineno"><a id="l62" href="#l62">62</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l63" href="#l63">63</a></td>

@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-07-19 10:51:51</td>
+      <td>2025-11-25 23:34:18</td>
     </tr>
   </table>
 </div>
@@ -71,13 +71,13 @@
       <th>Block coverage</th>
     </tr>
     <tr><td><a href="#l62">NAV::FileReader::FileReader() (line 62)</a></td><td>called 1762 times</td><td>67.0%</td></tr>
-    <tr><td><a href="#l141">NAV::FileReader::eof() const (line 141)</a></td><td>called 5662194 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l141">NAV::FileReader::eof() const (line 141)</a></td><td>called 5662173 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l152">NAV::FileReader::getCurrentLineNumber() const (line 152)</a></td><td>called 6 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l103">NAV::FileReader::getline(std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;&amp;) (line 103)</a></td><td>called 359856 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l145">NAV::FileReader::good() const (line 145)</a></td><td>called 443 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l126">NAV::FileReader::ignore(long, int) (line 126)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l149">NAV::FileReader::peek() (line 149)</a></td><td>called 275480 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l120">NAV::FileReader::read(char*, long) (line 120)</a></td><td>called 5340361 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l149">NAV::FileReader::peek() (line 149)</a></td><td>called 275475 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l120">NAV::FileReader::read(char*, long) (line 120)</a></td><td>called 5340412 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l133">NAV::FileReader::seekg(long, std::_Ios_Seekdir) (line 133)</a></td><td>called 13 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l138">NAV::FileReader::tellg() (line 138)</a></td><td>called 49 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l42">NAV::FileReader::~FileReader() (line 42)</a></td><td>called 1761 times</td><td>100.0%</td></tr>
@@ -938,7 +938,7 @@
       <td class="lineno"><a id="l120" href="#l120">120</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5340361</td>
+      <td class="linecount coveredLine">5340412</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">read</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">__s</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">streamsize</span><span class="w"> </span><span class="n">__n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">_filestream</span><span class="p">.</span><span class="n">read</span><span class="p">(</span><span class="n">__s</span><span class="p">,</span><span class="w"> </span><span class="n">__n</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -1085,7 +1085,7 @@
       <td class="lineno"><a id="l141" href="#l141">141</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5662194</td>
+      <td class="linecount coveredLine">5662173</td>
       <td class="src coveredLine"><span class="w">    </span><span class="p">[[</span><span class="n">nodiscard</span><span class="p">]]</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">eof</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">_filestream</span><span class="p">.</span><span class="n">eof</span><span class="p">();</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -1141,7 +1141,7 @@
       <td class="lineno"><a id="l149" href="#l149">149</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">275480</td>
+      <td class="linecount coveredLine">275475</td>
       <td class="src coveredLine"><span class="w">    </span><span class="p">[[</span><span class="n">nodiscard</span><span class="p">]]</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">peek</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">_filestream</span><span class="p">.</span><span class="n">peek</span><span class="p">();</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">

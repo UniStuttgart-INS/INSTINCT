@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-07-19 10:51:51</td>
+      <td>2025-11-25 23:34:18</td>
     </tr>
   </table>
 </div>
@@ -52,9 +52,9 @@
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>13</td>
-      <td>84</td>
-      <td class="coverage-low">15.5%</td>
+      <td>11</td>
+      <td>72</td>
+      <td class="coverage-low">15.3%</td>
     </tr>
   </table>
 </div>
@@ -77,12 +77,12 @@
     <tr><td><a href="#l55">NAV::InsTime_YDoySod::operator std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;() const (line 55)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l48">NAV::InsTime_YMDHMS::operator std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;() const (line 48)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l104">NAV::from_json(nlohmann::json_abi_diag_v3_12_0::basic_json&lt;std::map, std::vector, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, bool, long, unsigned long, double, std::allocator, nlohmann::json_abi_diag_v3_12_0::adl_serializer, std::vector&lt;unsigned char, std::allocator&lt;unsigned char&gt; &gt;, void&gt; const&amp;, NAV::InsTime&amp;) (line 104)</a></td><td>called 14 times</td><td>86.0%</td></tr>
-    <tr><td><a href="#l64">NAV::operator&lt;&lt;(std::ostream&amp;, NAV::InsTime const&amp;) (line 64)</a></td><td>called 12896 times</td><td>78.0%</td></tr>
+    <tr><td><a href="#l64">NAV::operator&lt;&lt;(std::ostream&amp;, NAV::InsTime const&amp;) (line 64)</a></td><td>called 12896 times</td><td>73.0%</td></tr>
     <tr><td><a href="#l79">NAV::operator&lt;&lt;(std::ostream&amp;, NAV::InsTime_GPSweekTow const&amp;) (line 79)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l74">NAV::operator&lt;&lt;(std::ostream&amp;, NAV::InsTime_JD const&amp;) (line 74)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l69">NAV::operator&lt;&lt;(std::ostream&amp;, NAV::InsTime_MJD const&amp;) (line 69)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l89">NAV::operator&lt;&lt;(std::ostream&amp;, NAV::InsTime_YDoySod const&amp;) (line 89)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l84">NAV::operator&lt;&lt;(std::ostream&amp;, NAV::InsTime_YMDHMS const&amp;) (line 84)</a></td><td>called 32 times</td><td>78.0%</td></tr>
+    <tr><td><a href="#l84">NAV::operator&lt;&lt;(std::ostream&amp;, NAV::InsTime_YMDHMS const&amp;) (line 84)</a></td><td>called 32 times</td><td>73.0%</td></tr>
     <tr><td><a href="#l94">NAV::to_json(nlohmann::json_abi_diag_v3_12_0::basic_json&lt;std::map, std::vector, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, bool, long, unsigned long, double, std::allocator, nlohmann::json_abi_diag_v3_12_0::adl_serializer, std::vector&lt;unsigned char, std::allocator&lt;unsigned char&gt; &gt;, void&gt;&amp;, NAV::InsTime const&amp;) (line 94)</a></td><td>not called</td><td>0.0%</td></tr>
   </table>
 </details>
@@ -556,16 +556,14 @@
       <td class="lineno"><a id="l66" href="#l66">66</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">2/4</summary>
+          <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 12896 times.</div>
-            <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 12896 times.</div>
-            <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
+            <div class="takenBranch">&check; Branch 2 taken 12896 times.</div>
+            <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">12896</td>
+      <td class="linecount partialCoveredLine">25792</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">os</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">fmt</span><span class="o">::</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">insTime</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -705,16 +703,14 @@
       <td class="lineno"><a id="l86" href="#l86">86</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">2/4</summary>
+          <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 32 times.</div>
-            <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 32 times.</div>
-            <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
+            <div class="takenBranch">&check; Branch 2 taken 32 times.</div>
+            <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">32</td>
+      <td class="linecount partialCoveredLine">64</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">os</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">fmt</span><span class="o">::</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ymdhms</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">

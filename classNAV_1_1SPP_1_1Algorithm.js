@@ -29,8 +29,6 @@ var classNAV_1_1SPP_1_1Algorithm =
     [ "updateInterFrequencyBiases", "classNAV_1_1SPP_1_1Algorithm.html#a49edfb208a1c97fb26ebfe463df8a27d", null ],
     [ "from_json", "classNAV_1_1SPP_1_1Algorithm.html#a71504a19a69f0d106a4d2a252e5075c0", null ],
     [ "to_json", "classNAV_1_1SPP_1_1Algorithm.html#a0806a9de4b825215a3a98872d538bdc2", null ],
-    [ "_e_lastPositionCovarianceMatrix", "classNAV_1_1SPP_1_1Algorithm.html#a64e46f0dd5cb4307e94d0e7057f519a9", null ],
-    [ "_e_lastVelocityCovarianceMatrix", "classNAV_1_1SPP_1_1Algorithm.html#aef87c5d0d2537e656d88cba93739054f", null ],
     [ "_estimateInterFreqBiases", "classNAV_1_1SPP_1_1Algorithm.html#a7763a2c8bc3d8553b6c342666af2ec81", null ],
     [ "_estimatorType", "classNAV_1_1SPP_1_1Algorithm.html#aec9686c5a3cf41e533a531b241f4746b", null ],
     [ "_kalmanFilter", "classNAV_1_1SPP_1_1Algorithm.html#abf1fcdd7ba78cc602cd1979e6d7f69fc", null ],

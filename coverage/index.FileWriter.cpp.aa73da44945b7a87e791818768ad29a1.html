@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-07-19 10:51:51</td>
+      <td>2025-11-25 23:34:18</td>
     </tr>
   </table>
 </div>
@@ -40,9 +40,9 @@
     </tr>
     <tr>
       <th scope="row">Lines:</th>
-      <td>29</td>
+      <td>28</td>
       <td>59</td>
-      <td class="coverage-low">49.2%</td>
+      <td class="coverage-low">47.5%</td>
     </tr>
     <tr>
       <th scope="row">Functions:</th>
@@ -52,9 +52,9 @@
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>29</td>
-      <td>88</td>
-      <td class="coverage-low">33.0%</td>
+      <td>28</td>
+      <td>86</td>
+      <td class="coverage-low">32.6%</td>
     </tr>
   </table>
 </div>
@@ -73,7 +73,7 @@
     <tr><td><a href="#l105">NAV::FileWriter::deinitialize() (line 105)</a></td><td>called 64 times</td><td>78.0%</td></tr>
     <tr><td><a href="#l34">NAV::FileWriter::getFilepath[abi:cxx11]() (line 34)</a></td><td>called 112 times</td><td>83.0%</td></tr>
     <tr><td><a href="#l20">NAV::FileWriter::guiConfig(char const*, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, unsigned long, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;) (line 20)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l71">NAV::FileWriter::initialize() (line 71)</a></td><td>called 48 times</td><td>47.0%</td></tr>
+    <tr><td><a href="#l71">NAV::FileWriter::initialize() (line 71)</a></td><td>called 48 times</td><td>41.0%</td></tr>
     <tr><td><a href="#l57">NAV::FileWriter::restore(nlohmann::json_abi_diag_v3_12_0::basic_json&lt;std::map, std::vector, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, bool, long, unsigned long, double, std::allocator, nlohmann::json_abi_diag_v3_12_0::adl_serializer, std::vector&lt;unsigned char, std::allocator&lt;unsigned char&gt; &gt;, void&gt; const&amp;) (line 57)</a></td><td>called 16 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l45">NAV::FileWriter::save[abi:cxx11]() const (line 45)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l124">NAV::FileWriter::to_string(NAV::FileWriter::FileType) (line 124)</a></td><td>not called</td><td>0.0%</td></tr>
@@ -858,15 +858,15 @@
       <td class="lineno"><a id="l96" href="#l96">96</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">2/2</summary>
+          <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 47 times.</div>
+            <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
+            <div class="takenBranch">&check; Branch 2 taken 48 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">48</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">_filestream</span><span class="p">.</span><span class="n">good</span><span class="p">())</span></td>
+      <td class="linecount partialCoveredLine">48</td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">_filestream</span><span class="p">.</span><span class="n">good</span><span class="p">())</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l97" href="#l97">97</a></td>
@@ -878,18 +878,9 @@
     <tr class="source-line">
       <td class="lineno"><a id="l98" href="#l98">98</a></td>
       <td class="linebranch">
-        <details class="linebranchDetails">
-          <summary class="linebranchSummary">0/4</summary>
-          <div class="linebranchContents">
-            <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
-          </div>
-        </details>
       </td>
-      <td class="linecount partialCoveredLine">1</td>
-      <td class="src partialCoveredLine"><span class="w">        </span><span class="n">LOG_ERROR</span><span class="p">(</span><span class="s">&quot;Could not open file {}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">filepath</span><span class="p">);</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="n">LOG_ERROR</span><span class="p">(</span><span class="s">&quot;Could not open file {}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">filepath</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l99" href="#l99">99</a></td>
@@ -916,14 +907,14 @@
       <td class="lineno"><a id="l102" href="#l102">102</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">47</td>
+      <td class="linecount coveredLine">48</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l103" href="#l103">103</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">47</td>
+      <td class="linecount coveredLine">48</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">

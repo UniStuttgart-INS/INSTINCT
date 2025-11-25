@@ -48,7 +48,7 @@
               <td id="projectlogo"><img alt="Logo" src="INSTINCT_Logo_Text.png"  /></td>
               <td id="projectalign">
                 <div id="projectname"><span
-                    id="projectnumber">&#160;0.5.0</span>
+                    id="projectnumber">&#160;0.5.1</span>
                 </div>
               </td>
             </tr>
@@ -187,7 +187,7 @@ $(function(){initNavTree('NodeEditorStyleEditor_8cpp_source.html','',''); });
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    ImGui::BeginHorizontal(<span class="stringliteral">&quot;Color Mode&quot;</span>, ImVec2(paneWidth, 0), 1.0F);</div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    ImGui::TextUnformatted(<span class="stringliteral">&quot;Filter Colors&quot;</span>);</div>
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    ImGui::Spring();</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    <span class="keywordflow">if</span> (ImGui::Checkbox(<span class="stringliteral">&quot;Light mode&quot;</span>, &amp;<a class="code hl_variable" href="namespaceNAV_1_1gui_1_1windows.html#a296a261b4a39de939ccab88a75281fd1">nodeEditorLightMode</a>)) { <a class="code hl_function" href="namespaceNAV_1_1gui_1_1windows.html#a174f9977dec3f7a4c052135cb7b99f53">ApplyDarkLightMode</a>(colors); }</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    <span class="keywordflow">if</span> (ImGui::Checkbox(<span class="stringliteral">&quot;Light mode&quot;</span>, &amp;<a class="code hl_variable" href="namespaceNAV_1_1gui_1_1windows.html#a296a261b4a39de939ccab88a75281fd1">nodeEditorLightMode</a>)) { <a class="code hl_function" href="namespaceNAV_1_1gui_1_1windows.html#a4a8306e4ca760f6c6ad97fc86cbdbf44">ApplyDarkLightMode</a>(colors, ImGui::GetStyle().Colors[ImGuiCol_WindowBg].w != 1.0F); }</div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    ImGui::Spring(0);</div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    ImGui::RadioButton(<span class="stringliteral">&quot;RGB&quot;</span>, &amp;edit_mode, ImGuiColorEditFlags_DisplayRGB);</div>
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    ImGui::Spring(0);</div>
@@ -229,7 +229,7 @@ $(function(){initNavTree('NodeEditorStyleEditor_8cpp_source.html','',''); });
 </div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span> </div>
 <div class="foldopen" id="foldopen00114" data-start="{" data-end="}">
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1gui_1_1windows.html#a174f9977dec3f7a4c052135cb7b99f53">  114</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1gui_1_1windows.html#a174f9977dec3f7a4c052135cb7b99f53">NAV::gui::windows::ApplyDarkLightMode</a>(std::vector&lt;ImVec4&gt;&amp; colors)</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1gui_1_1windows.html#a4a8306e4ca760f6c6ad97fc86cbdbf44">  114</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1gui_1_1windows.html#a4a8306e4ca760f6c6ad97fc86cbdbf44">NAV::gui::windows::ApplyDarkLightMode</a>(std::vector&lt;ImVec4&gt;&amp; colors, <span class="keywordtype">bool</span> transparentWindows)</div>
 <div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>{</div>
 <div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    <span class="keyword">auto</span>&amp; editorStyle = ed::GetStyle();</div>
 <div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="namespaceNAV_1_1gui_1_1windows.html#a296a261b4a39de939ccab88a75281fd1">nodeEditorLightMode</a>)</div>
@@ -260,7 +260,10 @@ $(function(){initNavTree('NodeEditorStyleEditor_8cpp_source.html','',''); });
 <div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span> </div>
 <div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>        ImGui::StyleColorsDark();</div>
 <div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>    }</div>
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>}</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span> </div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>    ImGui::GetStyle().Colors[ImGuiCol_WindowBg].w = transparentWindows ? ImGuiStyle().Colors[ImGuiCol_WindowBg].w : 1.0F;</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>    ImGui::GetStyle().Colors[ImGuiCol_PopupBg].w = transparentWindows ? ImGuiStyle().Colors[ImGuiCol_PopupBg].w : 1.0F;</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>}</div>
 </div>
 <div class="ttc" id="aNodeEditorApplication_8hpp_html"><div class="ttname"><a href="NodeEditorApplication_8hpp.html">NodeEditorApplication.hpp</a></div><div class="ttdoc">GUI callbacks.</div></div>
 <div class="ttc" id="aNodeEditorStyleEditor_8hpp_html"><div class="ttname"><a href="NodeEditorStyleEditor_8hpp.html">NodeEditorStyleEditor.hpp</a></div><div class="ttdoc">Style Editor window.</div></div>
@@ -268,8 +271,8 @@ $(function(){initNavTree('NodeEditorStyleEditor_8cpp_source.html','',''); });
 <div class="ttc" id="aclassNAV_1_1gui_1_1NodeEditorApplication_html_af13a1773c7a3fed299f0502281a86b7ca9b4f526ce74400cd836aca9fe9825c4f"><div class="ttname"><a href="classNAV_1_1gui_1_1NodeEditorApplication.html#af13a1773c7a3fed299f0502281a86b7ca9b4f526ce74400cd836aca9fe9825c4f">NAV::gui::NodeEditorApplication::COLOR_GROUP_HEADER_BG</a></div><div class="ttdeci">@ COLOR_GROUP_HEADER_BG</div><div class="ttdoc">Color of the group header background.</div><div class="ttdef"><b>Definition</b> <a href="NodeEditorApplication_8hpp_source.html#l00139">NodeEditorApplication.hpp:139</a></div></div>
 <div class="ttc" id="aclassNAV_1_1gui_1_1NodeEditorApplication_html_af13a1773c7a3fed299f0502281a86b7cac68c1876119aa549cfb96af76813f0b9"><div class="ttname"><a href="classNAV_1_1gui_1_1NodeEditorApplication.html#af13a1773c7a3fed299f0502281a86b7cac68c1876119aa549cfb96af76813f0b9">NAV::gui::NodeEditorApplication::COLOR_GROUP_HEADER_TEXT</a></div><div class="ttdeci">@ COLOR_GROUP_HEADER_TEXT</div><div class="ttdoc">Color of the group header text.</div><div class="ttdef"><b>Definition</b> <a href="NodeEditorApplication_8hpp_source.html#l00138">NodeEditorApplication.hpp:138</a></div></div>
 <div class="ttc" id="anamespaceNAV_1_1gui_1_1windows_html"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1windows.html">NAV::gui::windows</a></div><div class="ttdef"><b>Definition</b> <a href="ColormapEditor_8hpp_source.html#l00016">ColormapEditor.hpp:17</a></div></div>
-<div class="ttc" id="anamespaceNAV_1_1gui_1_1windows_html_a174f9977dec3f7a4c052135cb7b99f53"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1windows.html#a174f9977dec3f7a4c052135cb7b99f53">NAV::gui::windows::ApplyDarkLightMode</a></div><div class="ttdeci">void ApplyDarkLightMode(std::vector&lt; ImVec4 &gt; &amp;colors)</div><div class="ttdef"><b>Definition</b> <a href="#l00114">NodeEditorStyleEditor.cpp:114</a></div></div>
 <div class="ttc" id="anamespaceNAV_1_1gui_1_1windows_html_a296a261b4a39de939ccab88a75281fd1"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1windows.html#a296a261b4a39de939ccab88a75281fd1">NAV::gui::windows::nodeEditorLightMode</a></div><div class="ttdeci">bool nodeEditorLightMode</div><div class="ttdoc">If true, light mode is selected.</div><div class="ttdef"><b>Definition</b> <a href="#l00020">NodeEditorStyleEditor.cpp:20</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_1_1windows_html_a4a8306e4ca760f6c6ad97fc86cbdbf44"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1windows.html#a4a8306e4ca760f6c6ad97fc86cbdbf44">NAV::gui::windows::ApplyDarkLightMode</a></div><div class="ttdeci">void ApplyDarkLightMode(std::vector&lt; ImVec4 &gt; &amp;colors, bool transparentWindows)</div><div class="ttdef"><b>Definition</b> <a href="#l00114">NodeEditorStyleEditor.cpp:114</a></div></div>
 <div class="ttc" id="anamespaceNAV_1_1gui_1_1windows_html_af95ba245b2c456ddb46ef2db628b934a"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1windows.html#af95ba245b2c456ddb46ef2db628b934a">NAV::gui::windows::ShowNodeEditorStyleEditor</a></div><div class="ttdeci">void ShowNodeEditorStyleEditor(bool *show, std::vector&lt; ImVec4 &gt; &amp;colors, const std::vector&lt; const char * &gt; &amp;colorNames)</div><div class="ttdoc">Shows a window for editing the style of the Node Editor.</div><div class="ttdef"><b>Definition</b> <a href="#l00024">NodeEditorStyleEditor.cpp:24</a></div></div>
 <div class="ttc" id="anamespaceax_1_1NodeEditor_html"><div class="ttname"><a href="namespaceax_1_1NodeEditor.html">ax::NodeEditor</a></div><div class="ttdef"><b>Definition</b> <a href="BlueprintNodeBuilder_8hpp_source.html#l00016">BlueprintNodeBuilder.hpp:17</a></div></div>
 </div><!-- fragment --></div><!-- contents -->

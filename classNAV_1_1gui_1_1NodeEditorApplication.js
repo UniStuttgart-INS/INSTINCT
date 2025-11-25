@@ -51,5 +51,7 @@ var classNAV_1_1gui_1_1NodeEditorApplication =
     [ "m_SaveButtonImage", "classNAV_1_1gui_1_1NodeEditorApplication.html#adfb3a87957f55fd2c1aea81a0b9bccd9", null ],
     [ "menuBarHeight", "classNAV_1_1gui_1_1NodeEditorApplication.html#af5ce1ea722dd0229b040571de9201483", null ],
     [ "rightPaneWidth", "classNAV_1_1gui_1_1NodeEditorApplication.html#ac17050a079c0cfe7e5c68896592c7123", null ],
+    [ "showFlowWhenInvokingCallbacks", "classNAV_1_1gui_1_1NodeEditorApplication.html#a68bac89cade75b3b9f425908eb43fb7a", null ],
+    [ "showFlowWhenNotifyingValueChange", "classNAV_1_1gui_1_1NodeEditorApplication.html#ae50cce00c8e22535daa888d85f3b2020", null ],
     [ "SPLITTER_THICKNESS", "classNAV_1_1gui_1_1NodeEditorApplication.html#a214349b3769e4115e44ab37b1df3afb1", null ]
 ];

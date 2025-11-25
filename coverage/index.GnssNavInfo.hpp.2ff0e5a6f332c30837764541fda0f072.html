@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-07-19 10:51:51</td>
+      <td>2025-11-25 23:34:18</td>
     </tr>
   </table>
 </div>
@@ -74,7 +74,7 @@
     <tr><td><a href="#l122">NAV::GnssNavInfo::nSatellites() const (line 122)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l135">NAV::GnssNavInfo::reset() (line 135)</a></td><td>called 58 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l129">NAV::GnssNavInfo::satellites() const (line 129)</a></td><td>called 1671 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l98">NAV::GnssNavInfo::searchNavigationData(NAV::SatId const&amp;, NAV::InsTime const&amp;) const (line 98)</a></td><td>called 423426 times</td><td>92.0%</td></tr>
+    <tr><td><a href="#l98">NAV::GnssNavInfo::searchNavigationData(NAV::SatId const&amp;, NAV::InsTime const&amp;) const (line 98)</a></td><td>called 423427 times</td><td>92.0%</td></tr>
     <tr><td><a href="#l34">NAV::GnssNavInfo::type[abi:cxx11]() (line 34)</a></td><td>called 1038 times</td><td>78.0%</td></tr>
   </table>
 </details>
@@ -779,7 +779,7 @@
       <td class="lineno"><a id="l98" href="#l98">98</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">423426</td>
+      <td class="linecount coveredLine">423427</td>
       <td class="src coveredLine"><span class="w">    </span><span class="p">[[</span><span class="n">nodiscard</span><span class="p">]]</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">NAV</span><span class="o">::</span><span class="n">SatNavData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">searchNavigationData</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">SatId</span><span class="o">&amp;</span><span class="w"> </span><span class="n">satId</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InsTime</span><span class="o">&amp;</span><span class="w"> </span><span class="n">recvTime</span><span class="p">)</span><span class="w"> </span><span class="k">const</span></td>
     </tr>
     <tr class="source-line">
@@ -795,14 +795,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 423428 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 423423 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 3 taken 120396 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 303032 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 120397 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 303026 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">423426</td>
+      <td class="linecount partialCoveredLine">423427</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">m_satellites</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="n">satId</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -818,14 +818,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 303026 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 303029 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 303025 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 303028 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">303032</td>
+      <td class="linecount partialCoveredLine">303026</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">satNavData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_satellites</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">satId</span><span class="p">).</span><span class="n">searchNavigationData</span><span class="p">(</span><span class="n">recvTime</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -835,11 +835,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 303024 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 303029 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">303025</td>
+      <td class="linecount partialCoveredLine">303028</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">satNavData</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -944,14 +944,14 @@
       <td class="lineno"><a id="l118" href="#l118">118</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">303024</td>
+      <td class="linecount coveredLine">303029</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">satNavData</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l119" href="#l119">119</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">303025</td>
+      <td class="linecount coveredLine">303030</td>
       <td class="src coveredLine"><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">

@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-07-19 10:51:51</td>
+      <td>2025-11-25 23:34:18</td>
     </tr>
   </table>
 </div>
@@ -52,9 +52,9 @@
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>83</td>
-      <td>375</td>
-      <td class="coverage-low">22.1%</td>
+      <td>82</td>
+      <td>351</td>
+      <td class="coverage-low">23.4%</td>
     </tr>
   </table>
 </div>
@@ -78,7 +78,7 @@
     <tr><td><a href="#l736">NAV::to_json(nlohmann::json_abi_diag_v3_12_0::basic_json&lt;std::map, std::vector, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, bool, long, unsigned long, double, std::allocator, nlohmann::json_abi_diag_v3_12_0::adl_serializer, std::vector&lt;unsigned char, std::allocator&lt;unsigned char&gt; &gt;, void&gt;&amp;, NAV::ObservationEstimator::Antenna const&amp;) (line 736)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l601">bool NAV::ObservationEstimator::ShowGuiWidgets&lt;NAV::RealTimeKinematic::ReceiverType&gt;(char const*, float) (line 601)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l601">bool NAV::ObservationEstimator::ShowGuiWidgets&lt;NAV::SPP::Algorithm::ReceiverType&gt;(char const*, float) (line 601)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l521">double NAV::ObservationEstimator::calcPCV&lt;double&gt;(NAV::Frequency const&amp;, NAV::InsTime const&amp;, double const&amp;, std::optional&lt;double&gt;, unsigned long, std::shared_ptr&lt;NAV::GnssObs const&gt; const&amp;, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;) const (line 521)</a></td><td>called 160461 times</td><td>74.0%</td></tr>
+    <tr><td><a href="#l521">double NAV::ObservationEstimator::calcPCV&lt;double&gt;(NAV::Frequency const&amp;, NAV::InsTime const&amp;, double const&amp;, std::optional&lt;double&gt;, unsigned long, std::shared_ptr&lt;NAV::GnssObs const&gt; const&amp;, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;) const (line 521)</a></td><td>called 160462 times</td><td>72.0%</td></tr>
     <tr><td><a href="#l105">void NAV::ObservationEstimator::calcObservationEstimate&lt;NAV::RealTimeKinematic::ReceiverType&gt;(NAV::SatSigId const&amp;, NAV::Observations::SignalObservation&amp;, NAV::Receiver&lt;NAV::RealTimeKinematic::ReceiverType&gt; const&amp;, std::shared_ptr&lt;NAV::IonosphericCorrections const&gt; const&amp;, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;, NAV::ObservationEstimator::ObservationDifference) const (line 105)</a></td><td>called 55572 times</td><td>78.0%</td></tr>
     <tr><td><a href="#l105">void NAV::ObservationEstimator::calcObservationEstimate&lt;NAV::SPP::Algorithm::ReceiverType&gt;(NAV::SatSigId const&amp;, NAV::Observations::SignalObservation&amp;, NAV::Receiver&lt;NAV::SPP::Algorithm::ReceiverType&gt; const&amp;, std::shared_ptr&lt;NAV::IonosphericCorrections const&gt; const&amp;, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;, NAV::ObservationEstimator::ObservationDifference) const (line 105)</a></td><td>called 104891 times</td><td>87.0%</td></tr>
     <tr><td><a href="#l84">void NAV::ObservationEstimator::calcObservationEstimates&lt;NAV::RealTimeKinematic::ReceiverType&gt;(NAV::Observations&amp;, NAV::Receiver&lt;NAV::RealTimeKinematic::ReceiverType&gt; const&amp;, std::shared_ptr&lt;NAV::IonosphericCorrections const&gt; const&amp;, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;, NAV::ObservationEstimator::ObservationDifference) const (line 84)</a></td><td>called 1202 times</td><td>100.0%</td></tr>
@@ -3803,7 +3803,7 @@
       <td class="lineno"><a id="l491" href="#l491">491</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">160463</td>
+      <td class="linecount coveredLine">160461</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">e_recvPosAPC</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">trafo</span><span class="o">::</span><span class="n">e_posMarker2ARP</span><span class="p">(</span><span class="n">e_recvPosMarker</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -3817,7 +3817,7 @@
       <td class="lineno"><a id="l493" href="#l493">493</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">160463</td>
+      <td class="linecount coveredLine">160461</td>
       <td class="src coveredLine"><span class="w">                                                   </span><span class="n">antenna</span><span class="p">.</span><span class="n">hen_delta</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -3827,11 +3827,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 0 taken 34903 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 125559 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 125560 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">160462</td>
+      <td class="linecount coveredLine">160463</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">antenna</span><span class="p">.</span><span class="n">correctPCO</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -3954,7 +3954,7 @@
       <td class="lineno"><a id="l508" href="#l508">508</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">160462</td>
+      <td class="linecount coveredLine">160463</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">e_recvPosAPC</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -4045,7 +4045,7 @@
       <td class="lineno"><a id="l521" href="#l521">521</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">160461</td>
+      <td class="linecount coveredLine">160462</td>
       <td class="src coveredLine"><span class="w">    </span><span class="p">[[</span><span class="n">nodiscard</span><span class="p">]]</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">calcPCV</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Frequency</span><span class="o">&amp;</span><span class="w"> </span><span class="n">freq</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -4101,34 +4101,34 @@
       <td class="lineno"><a id="l529" href="#l529">529</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">160461</td>
+      <td class="linecount coveredLine">160462</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">isnan</span><span class="p">(</span><span class="n">elevation</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l530" href="#l530">530</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">4/8</summary>
+          <summary class="linebranchSummary">3/8</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 160461 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 160463 times.</div>
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 160461 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 160463 times.</div>
             <div class="notTakenBranch">&cross; Branch 7 not taken.</div>
-            <div class="takenBranch">&check; Branch 8 taken 1 times.</div>
+            <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 9 not taken.</div>
-            <div class="takenBranch">&check; Branch 10 taken 160462 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 160463 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">160461</td>
+      <td class="linecount partialCoveredLine">160463</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">azimuth</span><span class="p">.</span><span class="n">has_value</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">isnan</span><span class="p">(</span><span class="o">*</span><span class="n">azimuth</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">T</span><span class="p">(</span><span class="mf">0.0</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l531" href="#l531">531</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">160462</td>
+      <td class="linecount coveredLine">160463</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">Antenna</span><span class="o">&amp;</span><span class="w"> </span><span class="n">antenna</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_antenna</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">receiverType</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -4138,11 +4138,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 0 taken 34903 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 125556 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 125559 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">160459</td>
+      <td class="linecount coveredLine">160462</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">antenna</span><span class="p">.</span><span class="n">correctPCV</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -4307,7 +4307,7 @@
       <td class="lineno"><a id="l552" href="#l552">552</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">125556</td>
+      <td class="linecount coveredLine">125559</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">T</span><span class="p">(</span><span class="mf">0.0</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">

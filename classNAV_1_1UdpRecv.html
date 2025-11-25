@@ -48,7 +48,7 @@
               <td id="projectlogo"><img alt="Logo" src="INSTINCT_Logo_Text.png"  /></td>
               <td id="projectalign">
                 <div id="projectname"><span
-                    id="projectnumber">&#160;0.5.0</span>
+                    id="projectnumber">&#160;0.5.1</span>
                 </div>
               </td>
             </tr>
@@ -146,6 +146,26 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a87e8fd98eb83d56fce486747a78a2d54 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called when a new link was established.  <br /></td></tr>
 <tr class="memitem:abd363d0fb6118e4574c7f8e9a2d0dbc9 inherit pub_methods_classNAV_1_1Node" id="r_abd363d0fb6118e4574c7f8e9a2d0dbc9"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#abd363d0fb6118e4574c7f8e9a2d0dbc9">afterDeleteLink</a> (<a class="el" href="classNAV_1_1OutputPin.html">OutputPin</a> &amp;startPin, <a class="el" href="classNAV_1_1InputPin.html">InputPin</a> &amp;endPin)</td></tr>
 <tr class="memdesc:abd363d0fb6118e4574c7f8e9a2d0dbc9 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called when a link was deleted.  <br /></td></tr>
+<tr class="memitem:a76b0feda72acc7d11c91ecbf163c53f1 inherit pub_methods_classNAV_1_1Node" id="r_a76b0feda72acc7d11c91ecbf163c53f1"><td class="memTemplParams" colspan="2">template&lt;std::derived_from&lt; <a class="el" href="classNAV_1_1Node.html">Node</a> &gt; T&gt; </td></tr>
+<tr class="memitem:a76b0feda72acc7d11c91ecbf163c53f1 inherit pub_methods_classNAV_1_1Node template"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1InputPin.html">InputPin</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#a76b0feda72acc7d11c91ecbf163c53f1">CreateInputPin</a> (const char *<a class="el" href="classNAV_1_1Node.html#aa175adec8045649de2cba57eefb184b8">name</a>, <a class="el" href="structNAV_1_1Pin_1_1Type.html">Pin::Type</a> pinType, const std::vector&lt; std::string &gt; &amp;dataIdentifier, void(T::*notifyFunc)(const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;, size_t), int idx=-1)</td></tr>
+<tr class="memdesc:a76b0feda72acc7d11c91ecbf163c53f1 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Input <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> object for data pins. The additional notify function gets called when the connected data was changed and the connected node calls <a class="el" href="classNAV_1_1Node.html#a2c20975b5f51c95a837cdd8e6b45b7bd" title="Notifies connected nodes about the change.">NAV::Node::notifyOutputValueChanged</a>.  <br /></td></tr>
+<tr class="memitem:ab68a7dee11448defa3ce9c5c6ffe39c1 inherit pub_methods_classNAV_1_1Node" id="r_ab68a7dee11448defa3ce9c5c6ffe39c1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1InputPin.html">InputPin</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#ab68a7dee11448defa3ce9c5c6ffe39c1">CreateInputPin</a> (const char *<a class="el" href="classNAV_1_1Node.html#aa175adec8045649de2cba57eefb184b8">name</a>, <a class="el" href="structNAV_1_1Pin_1_1Type.html">Pin::Type</a> pinType, const std::vector&lt; std::string &gt; &amp;dataIdentifier={}, <a class="el" href="classNAV_1_1InputPin.html#aa0c3c5cfa65d98c5939883adcaec1b0c">InputPin::Callback</a> callback=static_cast&lt; <a class="el" href="classNAV_1_1InputPin.html#a933affe0a3685865240d799bf5448f89">InputPin::FlowFirableCallbackFunc</a> &gt;(nullptr), <a class="el" href="classNAV_1_1InputPin.html#aa6d4352ff2778ef7ebf054227bf4be3f">InputPin::FlowFirableCheckFunc</a> firable=nullptr, int priority=0, int idx=-1)</td></tr>
+<tr class="memdesc:ab68a7dee11448defa3ce9c5c6ffe39c1 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Input <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> object.  <br /></td></tr>
+<tr class="memitem:a16dd132debc12b3dc25531be83662a4c inherit pub_methods_classNAV_1_1Node" id="r_a16dd132debc12b3dc25531be83662a4c"><td class="memTemplParams" colspan="2">template&lt;std::derived_from&lt; <a class="el" href="classNAV_1_1Node.html">Node</a> &gt; T&gt; </td></tr>
+<tr class="memitem:a16dd132debc12b3dc25531be83662a4c inherit pub_methods_classNAV_1_1Node template"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1InputPin.html">InputPin</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#a16dd132debc12b3dc25531be83662a4c">CreateInputPin</a> (const char *<a class="el" href="classNAV_1_1Node.html#aa175adec8045649de2cba57eefb184b8">name</a>, <a class="el" href="structNAV_1_1Pin_1_1Type.html">Pin::Type</a> pinType, const std::vector&lt; std::string &gt; &amp;dataIdentifier={}, void(T::*callback)(<a class="el" href="classNAV_1_1InputPin.html#a47683b163e79b13098f38627d8f4d87b">InputPin::NodeDataQueue</a> &amp;, size_t)=nullptr, <a class="el" href="classNAV_1_1InputPin.html#aa6d4352ff2778ef7ebf054227bf4be3f">InputPin::FlowFirableCheckFunc</a> firable=nullptr, int priority=0, int idx=-1)</td></tr>
+<tr class="memdesc:a16dd132debc12b3dc25531be83662a4c inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Input <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> object.  <br /></td></tr>
+<tr class="memitem:a63a474fe4a0bd42fb2e7fcc500a9b76b inherit pub_methods_classNAV_1_1Node" id="r_a63a474fe4a0bd42fb2e7fcc500a9b76b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1OutputPin.html">OutputPin</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#a63a474fe4a0bd42fb2e7fcc500a9b76b">CreateOutputPin</a> (const char *<a class="el" href="classNAV_1_1Node.html#aa175adec8045649de2cba57eefb184b8">name</a>, <a class="el" href="structNAV_1_1Pin_1_1Type.html">Pin::Type</a> pinType, const std::vector&lt; std::string &gt; &amp;dataIdentifier, <a class="el" href="classNAV_1_1OutputPin.html#a746f45d83fa13fc24ea8db7724ead64b">OutputPin::PinData</a> data=static_cast&lt; void * &gt;(nullptr), int idx=-1)</td></tr>
+<tr class="memdesc:a63a474fe4a0bd42fb2e7fcc500a9b76b inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Output <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> object.  <br /></td></tr>
+<tr class="memitem:aed5ad3c978991b001a4d9cd9dad4c1ba inherit pub_methods_classNAV_1_1Node" id="r_aed5ad3c978991b001a4d9cd9dad4c1ba"><td class="memTemplParams" colspan="2">template&lt;std::derived_from&lt; <a class="el" href="classNAV_1_1Node.html">Node</a> &gt; T&gt; </td></tr>
+<tr class="memitem:aed5ad3c978991b001a4d9cd9dad4c1ba inherit pub_methods_classNAV_1_1Node template"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1OutputPin.html">OutputPin</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#aed5ad3c978991b001a4d9cd9dad4c1ba">CreateOutputPin</a> (const char *<a class="el" href="classNAV_1_1Node.html#aa175adec8045649de2cba57eefb184b8">name</a>, <a class="el" href="structNAV_1_1Pin_1_1Type.html">Pin::Type</a> pinType, const std::vector&lt; std::string &gt; &amp;dataIdentifier, std::shared_ptr&lt; const <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a> &gt;(T::*peekPollDataFunc)(size_t, bool)=nullptr, int idx=-1)</td></tr>
+<tr class="memdesc:aed5ad3c978991b001a4d9cd9dad4c1ba inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Output <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> object for Flow Pins.  <br /></td></tr>
+<tr class="memitem:abca83b43d9b8ba9bc0f0c41c269efe59 inherit pub_methods_classNAV_1_1Node" id="r_abca83b43d9b8ba9bc0f0c41c269efe59"><td class="memTemplParams" colspan="2">template&lt;std::derived_from&lt; <a class="el" href="classNAV_1_1Node.html">Node</a> &gt; T&gt; </td></tr>
+<tr class="memitem:abca83b43d9b8ba9bc0f0c41c269efe59 inherit pub_methods_classNAV_1_1Node template"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1OutputPin.html">OutputPin</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#abca83b43d9b8ba9bc0f0c41c269efe59">CreateOutputPin</a> (const char *<a class="el" href="classNAV_1_1Node.html#aa175adec8045649de2cba57eefb184b8">name</a>, <a class="el" href="structNAV_1_1Pin_1_1Type.html">Pin::Type</a> pinType, const std::vector&lt; std::string &gt; &amp;dataIdentifier, std::shared_ptr&lt; const <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a> &gt;(T::*pollDataFunc)()=nullptr, int idx=-1)</td></tr>
+<tr class="memdesc:abca83b43d9b8ba9bc0f0c41c269efe59 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Output <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> object for Flow Pins.  <br /></td></tr>
+<tr class="memitem:acec461ed1348362c5592c1978b879783 inherit pub_methods_classNAV_1_1Node" id="r_acec461ed1348362c5592c1978b879783"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#acec461ed1348362c5592c1978b879783">DeleteInputPin</a> (size_t pinIndex)</td></tr>
+<tr class="memdesc:acec461ed1348362c5592c1978b879783 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deletes the input pin. Invalidates the pin reference given.  <br /></td></tr>
+<tr class="memitem:a4110b820d14596dfb36d3315feb634d5 inherit pub_methods_classNAV_1_1Node" id="r_a4110b820d14596dfb36d3315feb634d5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#a4110b820d14596dfb36d3315feb634d5">DeleteOutputPin</a> (size_t pinIndex)</td></tr>
+<tr class="memdesc:a4110b820d14596dfb36d3315feb634d5 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deletes the output pin. Invalidates the pin reference given.  <br /></td></tr>
 <tr class="memitem:a05d65fed1964daf2e8e588de7bbbe136 inherit pub_methods_classNAV_1_1Node" id="r_a05d65fed1964daf2e8e588de7bbbe136"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#a05d65fed1964daf2e8e588de7bbbe136">doDeinitialize</a> (bool wait=false)</td></tr>
 <tr class="memdesc:a05d65fed1964daf2e8e588de7bbbe136 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the node worker to deinitialize the node.  <br /></td></tr>
 <tr class="memitem:a15e8cdd4b182aa39bdd4e62897a744cf inherit pub_methods_classNAV_1_1Node" id="r_a15e8cdd4b182aa39bdd4e62897a744cf"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#a15e8cdd4b182aa39bdd4e62897a744cf">doDisable</a> (bool wait=false)</td></tr>
@@ -340,7 +360,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Default constructor. </p>
 
-<p class="definition">Definition at line <a class="el" href="udpRecv_8cpp_source.html#l00032">32</a> of file <a class="el" href="udpRecv_8cpp_source.html">udpRecv.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="udpRecv_8cpp_source.html#l00030">30</a> of file <a class="el" href="udpRecv_8cpp_source.html">udpRecv.cpp</a>.</p>
 
 </div>
 </div>
@@ -369,7 +389,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Destructor. </p>
 
-<p class="definition">Definition at line <a class="el" href="udpRecv_8cpp_source.html#l00044">44</a> of file <a class="el" href="udpRecv_8cpp_source.html">udpRecv.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="udpRecv_8cpp_source.html#l00042">42</a> of file <a class="el" href="udpRecv_8cpp_source.html">udpRecv.cpp</a>.</p>
 
 </div>
 </div>
@@ -453,7 +473,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Polls the next data. </p>
 
-<p class="definition">Definition at line <a class="el" href="udpRecv_8cpp_source.html#l00208">208</a> of file <a class="el" href="udpRecv_8cpp_source.html">udpRecv.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="udpRecv_8cpp_source.html#l00206">206</a> of file <a class="el" href="udpRecv_8cpp_source.html">udpRecv.cpp</a>.</p>
 
 </div>
 </div>
@@ -482,7 +502,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>String representation of the Class Category. </p>
 
-<p class="definition">Definition at line <a class="el" href="udpRecv_8cpp_source.html#l00059">59</a> of file <a class="el" href="udpRecv_8cpp_source.html">udpRecv.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="udpRecv_8cpp_source.html#l00057">57</a> of file <a class="el" href="udpRecv_8cpp_source.html">udpRecv.cpp</a>.</p>
 
 </div>
 </div>
@@ -513,7 +533,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1Node.html#a672f89aaab8b8a18998d994e8e05b7f2">NAV::Node</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="udpRecv_8cpp_source.html#l00198">198</a> of file <a class="el" href="udpRecv_8cpp_source.html">udpRecv.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="udpRecv_8cpp_source.html#l00196">196</a> of file <a class="el" href="udpRecv_8cpp_source.html">udpRecv.cpp</a>.</p>
 
 </div>
 </div>
@@ -545,7 +565,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1Node.html#a9668fbb2b2d073eea8b9ccce8b1d88fb">NAV::Node</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="udpRecv_8cpp_source.html#l00064">64</a> of file <a class="el" href="udpRecv_8cpp_source.html">udpRecv.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="udpRecv_8cpp_source.html#l00062">62</a> of file <a class="el" href="udpRecv_8cpp_source.html">udpRecv.cpp</a>.</p>
 
 </div>
 </div>
@@ -576,7 +596,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1Node.html#affdb065780fd29abe64b2fb2731e8080">NAV::Node</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="udpRecv_8cpp_source.html#l00161">161</a> of file <a class="el" href="udpRecv_8cpp_source.html">udpRecv.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="udpRecv_8cpp_source.html#l00159">159</a> of file <a class="el" href="udpRecv_8cpp_source.html">udpRecv.cpp</a>.</p>
 
 </div>
 </div>
@@ -661,7 +681,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1Node.html#a84fea0433f26f6f3e15d9c1a4436dd57">NAV::Node</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="udpRecv_8cpp_source.html#l00108">108</a> of file <a class="el" href="udpRecv_8cpp_source.html">udpRecv.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="udpRecv_8cpp_source.html#l00106">106</a> of file <a class="el" href="udpRecv_8cpp_source.html">udpRecv.cpp</a>.</p>
 
 </div>
 </div>
@@ -698,7 +718,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1Node.html#a0c9bc29a2df267ea6a857bde1e1c3beb">NAV::Node</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="udpRecv_8cpp_source.html#l00124">124</a> of file <a class="el" href="udpRecv_8cpp_source.html">udpRecv.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="udpRecv_8cpp_source.html#l00122">122</a> of file <a class="el" href="udpRecv_8cpp_source.html">udpRecv.cpp</a>.</p>
 
 </div>
 </div>
@@ -729,7 +749,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1Node.html#ac76f6bb65e90f01fd78f1d63b9cf2af8">NAV::Node</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="udpRecv_8cpp_source.html#l00113">113</a> of file <a class="el" href="udpRecv_8cpp_source.html">udpRecv.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="udpRecv_8cpp_source.html#l00111">111</a> of file <a class="el" href="udpRecv_8cpp_source.html">udpRecv.cpp</a>.</p>
 
 </div>
 </div>
@@ -760,7 +780,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classNAV_1_1Node.html#ae64d61c4d754203004ed5df92fe33321">NAV::Node</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="udpRecv_8cpp_source.html#l00054">54</a> of file <a class="el" href="udpRecv_8cpp_source.html">udpRecv.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="udpRecv_8cpp_source.html#l00052">52</a> of file <a class="el" href="udpRecv_8cpp_source.html">udpRecv.cpp</a>.</p>
 
 </div>
 </div>
@@ -789,7 +809,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>String representation of the Class Type. </p>
 
-<p class="definition">Definition at line <a class="el" href="udpRecv_8cpp_source.html#l00049">49</a> of file <a class="el" href="udpRecv_8cpp_source.html">udpRecv.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="udpRecv_8cpp_source.html#l00047">47</a> of file <a class="el" href="udpRecv_8cpp_source.html">udpRecv.cpp</a>.</p>
 
 </div>
 </div>

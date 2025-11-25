@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-07-19 10:51:51</td>
+      <td>2025-11-25 23:34:18</td>
     </tr>
   </table>
 </div>
@@ -41,8 +41,8 @@
     <tr>
       <th scope="row">Lines:</th>
       <td>64</td>
-      <td>122</td>
-      <td class="coverage-low">52.5%</td>
+      <td>125</td>
+      <td class="coverage-low">51.2%</td>
     </tr>
     <tr>
       <th scope="row">Functions:</th>
@@ -53,8 +53,8 @@
     <tr>
       <th scope="row">Branches:</th>
       <td>136</td>
-      <td>510</td>
-      <td class="coverage-low">26.7%</td>
+      <td>518</td>
+      <td class="coverage-low">26.3%</td>
     </tr>
   </table>
 </div>
@@ -70,15 +70,15 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l114">NAV::ConfigManager::CheckOptions(int, char const**) (line 114)</a></td><td>called 114 times</td><td>35.0%</td></tr>
-    <tr><td><a href="#l79">NAV::ConfigManager::FetchConfigs[abi:cxx11](int, char const**) (line 79)</a></td><td>called 411 times</td><td>62.0%</td></tr>
+    <tr><td><a href="#l114">NAV::ConfigManager::CheckOptions(int, char const**) (line 114)</a></td><td>called 114 times</td><td>33.0%</td></tr>
+    <tr><td><a href="#l79">NAV::ConfigManager::FetchConfigs[abi:cxx11](int, char const**) (line 79)</a></td><td>called 414 times</td><td>62.0%</td></tr>
     <tr><td><a href="#l169">NAV::ConfigManager::GetKeys[abi:cxx11]() (line 169)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l74">NAV::ConfigManager::GetProgramOptions() (line 74)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l164">NAV::ConfigManager::HasKey(std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;) (line 164)</a></td><td>called 702 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l210">NAV::ConfigManager::LoadGlobalSettings() (line 210)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l164">NAV::ConfigManager::HasKey(std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;) (line 164)</a></td><td>called 708 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l211">NAV::ConfigManager::LoadGlobalSettings() (line 211)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l181">NAV::ConfigManager::SaveGlobalSettings() (line 181)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l69">NAV::ConfigManager::deinitialize() (line 69)</a></td><td>called 411 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l37">NAV::ConfigManager::initialize() (line 37)</a></td><td>called 411 times</td><td>64.0%</td></tr>
+    <tr><td><a href="#l69">NAV::ConfigManager::deinitialize() (line 69)</a></td><td>called 414 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l37">NAV::ConfigManager::initialize() (line 37)</a></td><td>called 414 times</td><td>64.0%</td></tr>
   </table>
 </details>
 
@@ -348,7 +348,7 @@
       <td class="lineno"><a id="l37" href="#l37">37</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">411</td>
+      <td class="linecount coveredLine">414</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="nf">NAV::ConfigManager::initialize</span><span class="p">()</span></td>
     </tr>
     <tr class="source-line">
@@ -378,12 +378,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 293 times.</div>
             <div class="takenBranch">&check; Branch 3 taken 121 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">411</td>
+      <td class="linecount coveredLine">414</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">program_options</span><span class="p">.</span><span class="n">options</span><span class="p">().</span><span class="n">empty</span><span class="p">())</span></td>
     </tr>
     <tr class="source-line">
@@ -413,12 +413,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">290</td>
+      <td class="linecount partialCoveredLine">293</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="n">program_options</span><span class="p">.</span><span class="n">add_options</span><span class="p">()</span></td>
     </tr>
     <tr class="source-line">
@@ -427,14 +427,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 5 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">290</td>
+      <td class="linecount partialCoveredLine">293</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="p">(</span><span class="s">&quot;config&quot;</span><span class="p">,</span><span class="w">            </span><span class="n">bpo</span><span class="o">::</span><span class="n">value</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;&gt;</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">multitoken</span><span class="p">(),</span><span class="w">             </span><span class="s">&quot;List of configuration files to read parameters from&quot;</span><span class="w">                                         </span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -443,12 +443,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">290</td>
+      <td class="linecount partialCoveredLine">293</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="p">(</span><span class="s">&quot;version,v&quot;</span><span class="p">,</span><span class="w">                                                                           </span><span class="s">&quot;Display the version number&quot;</span><span class="w">                                                                  </span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -457,12 +457,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">290</td>
+      <td class="linecount partialCoveredLine">293</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="p">(</span><span class="s">&quot;help,h&quot;</span><span class="p">,</span><span class="w">                                                                              </span><span class="s">&quot;Display this help message&quot;</span><span class="w">                                                                   </span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -471,16 +471,16 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">290</td>
+      <td class="linecount partialCoveredLine">293</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="p">(</span><span class="s">&quot;sigterm&quot;</span><span class="p">,</span><span class="w">           </span><span class="n">bpo</span><span class="o">::</span><span class="n">bool_switch</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">default_value</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span><span class="w">                         </span><span class="s">&quot;Programm waits for -SIGUSR1 / -SIGINT / -SIGTERM&quot;</span><span class="w">                                            </span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -489,16 +489,16 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">290</td>
+      <td class="linecount partialCoveredLine">293</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="p">(</span><span class="s">&quot;duration&quot;</span><span class="p">,</span><span class="w">          </span><span class="n">bpo</span><span class="o">::</span><span class="n">value</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">default_value</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w">                           </span><span class="s">&quot;Program execution duration [sec]&quot;</span><span class="w">                                                            </span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -507,16 +507,16 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">290</td>
+      <td class="linecount partialCoveredLine">293</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="p">(</span><span class="s">&quot;nogui&quot;</span><span class="p">,</span><span class="w">             </span><span class="n">bpo</span><span class="o">::</span><span class="n">bool_switch</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">default_value</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span><span class="w">                         </span><span class="s">&quot;Launch without the gui&quot;</span><span class="w">                                                                      </span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -525,16 +525,16 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">290</td>
+      <td class="linecount partialCoveredLine">293</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="p">(</span><span class="s">&quot;noinit&quot;</span><span class="p">,</span><span class="w">            </span><span class="n">bpo</span><span class="o">::</span><span class="n">bool_switch</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">default_value</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span><span class="w">                         </span><span class="s">&quot;Do not initialize flows after loading them&quot;</span><span class="w">                                                  </span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -543,14 +543,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">290</td>
+      <td class="linecount partialCoveredLine">293</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="p">(</span><span class="s">&quot;load,l&quot;</span><span class="p">,</span><span class="w">            </span><span class="n">bpo</span><span class="o">::</span><span class="n">value</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(),</span><span class="w">                                        </span><span class="s">&quot;Flow file to load&quot;</span><span class="w">                                                                           </span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -559,16 +559,16 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">290</td>
+      <td class="linecount partialCoveredLine">293</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="p">(</span><span class="s">&quot;rotate-output&quot;</span><span class="p">,</span><span class="w">     </span><span class="n">bpo</span><span class="o">::</span><span class="n">bool_switch</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">default_value</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span><span class="w">                         </span><span class="s">&quot;Create new folders for output files&quot;</span><span class="w">                                                         </span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -577,18 +577,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">4/8</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
-            <div class="takenBranch">&check; Branch 10 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 11 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">870</td>
+      <td class="linecount partialCoveredLine">879</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="p">(</span><span class="s">&quot;output-path,o&quot;</span><span class="p">,</span><span class="w">     </span><span class="n">bpo</span><span class="o">::</span><span class="n">value</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">default_value</span><span class="p">(</span><span class="s">&quot;logs&quot;</span><span class="p">),</span><span class="w">                 </span><span class="s">&quot;Directory path for logs and output files&quot;</span><span class="w">                                                    </span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -597,18 +597,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">4/8</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
-            <div class="takenBranch">&check; Branch 10 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 11 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">870</td>
+      <td class="linecount partialCoveredLine">879</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="p">(</span><span class="s">&quot;input-path,i&quot;</span><span class="p">,</span><span class="w">      </span><span class="n">bpo</span><span class="o">::</span><span class="n">value</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">default_value</span><span class="p">(</span><span class="s">&quot;data&quot;</span><span class="p">),</span><span class="w">                 </span><span class="s">&quot;Directory path for searching input files&quot;</span><span class="w">                                                    </span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -617,18 +617,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">4/8</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
-            <div class="takenBranch">&check; Branch 10 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 11 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">870</td>
+      <td class="linecount partialCoveredLine">879</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="p">(</span><span class="s">&quot;flow-path,f&quot;</span><span class="p">,</span><span class="w">       </span><span class="n">bpo</span><span class="o">::</span><span class="n">value</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">default_value</span><span class="p">(</span><span class="s">&quot;flow&quot;</span><span class="p">),</span><span class="w">                 </span><span class="s">&quot;Directory path for searching flow files&quot;</span><span class="w">                                                     </span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -637,18 +637,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">4/8</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
-            <div class="takenBranch">&check; Branch 10 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 11 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">870</td>
+      <td class="linecount partialCoveredLine">879</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="p">(</span><span class="s">&quot;implot-config&quot;</span><span class="p">,</span><span class="w">     </span><span class="n">bpo</span><span class="o">::</span><span class="n">value</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">default_value</span><span class="p">(</span><span class="s">&quot;implot.json&quot;</span><span class="p">),</span><span class="w">          </span><span class="s">&quot;Config file to read implot settings from&quot;</span><span class="w">                                                    </span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -657,18 +657,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">4/8</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
-            <div class="takenBranch">&check; Branch 10 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 11 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">870</td>
+      <td class="linecount partialCoveredLine">879</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="p">(</span><span class="s">&quot;global-log-level&quot;</span><span class="p">,</span><span class="w">  </span><span class="n">bpo</span><span class="o">::</span><span class="n">value</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">default_value</span><span class="p">(</span><span class="s">&quot;trace&quot;</span><span class="p">),</span><span class="w">                </span><span class="s">&quot;Global log level of all sinks (possible values: trace/debug/info/warning/error/critical/off&quot;</span><span class="w"> </span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -677,18 +677,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">4/8</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
-            <div class="takenBranch">&check; Branch 10 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 11 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">870</td>
+      <td class="linecount partialCoveredLine">879</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="p">(</span><span class="s">&quot;console-log-level&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">bpo</span><span class="o">::</span><span class="n">value</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">default_value</span><span class="p">(</span><span class="s">&quot;info&quot;</span><span class="p">),</span><span class="w">                 </span><span class="s">&quot;Log level on the console      (possible values: trace/debug/info/warning/error/critical/off&quot;</span><span class="w"> </span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -697,18 +697,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">4/8</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
-            <div class="takenBranch">&check; Branch 10 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 11 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">870</td>
+      <td class="linecount partialCoveredLine">879</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="p">(</span><span class="s">&quot;file-log-level&quot;</span><span class="p">,</span><span class="w">    </span><span class="n">bpo</span><span class="o">::</span><span class="n">value</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">default_value</span><span class="p">(</span><span class="s">&quot;debug&quot;</span><span class="p">),</span><span class="w">                </span><span class="s">&quot;Log level to the log file     (possible values: trace/debug/info/warning/error/critical/off&quot;</span><span class="w"> </span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -717,18 +717,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">4/8</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
-            <div class="takenBranch">&check; Branch 10 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 11 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1160</td>
+      <td class="linecount partialCoveredLine">1172</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="p">(</span><span class="s">&quot;flush-log-level&quot;</span><span class="p">,</span><span class="w">    </span><span class="n">bpo</span><span class="o">::</span><span class="n">value</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">default_value</span><span class="p">(</span><span class="s">&quot;info&quot;</span><span class="p">),</span><span class="w">               </span><span class="s">&quot;Log level to flush on         (possible values: trace/debug/info/warning/error/critical/off&quot;</span><span class="w"> </span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -737,14 +737,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 290 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 293 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">290</td>
+      <td class="linecount partialCoveredLine">293</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="p">(</span><span class="s">&quot;log-filter&quot;</span><span class="p">,</span><span class="w">        </span><span class="n">bpo</span><span class="o">::</span><span class="n">value</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(),</span><span class="w">                                        </span><span class="s">&quot;Filter/Regex for log messages&quot;</span><span class="w">                                                               </span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -772,7 +772,7 @@
       <td class="lineno"><a id="l67" href="#l67">67</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">411</td>
+      <td class="linecount coveredLine">414</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -786,7 +786,7 @@
       <td class="lineno"><a id="l69" href="#l69">69</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">411</td>
+      <td class="linecount coveredLine">414</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="nf">NAV::ConfigManager::deinitialize</span><span class="p">()</span></td>
     </tr>
     <tr class="source-line">
@@ -800,14 +800,14 @@
       <td class="lineno"><a id="l71" href="#l71">71</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">411</td>
+      <td class="linecount coveredLine">414</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">vm</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l72" href="#l72">72</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">411</td>
+      <td class="linecount coveredLine">414</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -856,7 +856,7 @@
       <td class="lineno"><a id="l79" href="#l79">79</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">411</td>
+      <td class="linecount coveredLine">414</td>
       <td class="src coveredLine"><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">NAV</span><span class="o">::</span><span class="n">ConfigManager</span><span class="o">::</span><span class="n">FetchConfigs</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">argv</span><span class="p">[])</span><span class="w"> </span><span class="c1">// NOLINT</span></td>
     </tr>
     <tr class="source-line">
@@ -872,14 +872,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 411 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 414 times.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 5 taken 411 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 414 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">411</td>
+      <td class="linecount partialCoveredLine">414</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">bpo</span><span class="o">::</span><span class="n">store</span><span class="p">(</span><span class="n">bpo</span><span class="o">::</span><span class="n">parse_command_line</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="n">argv</span><span class="p">,</span><span class="w"> </span><span class="n">program_options</span><span class="p">),</span><span class="w"> </span><span class="n">vm</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -893,7 +893,7 @@
       <td class="lineno"><a id="l83" href="#l83">83</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">411</td>
+      <td class="linecount coveredLine">414</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">failedConfigFiles</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -916,17 +916,17 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">4/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 411 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 414 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 411 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 414 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="takenBranch">&check; Branch 7 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 8 taken 409 times.</div>
+            <div class="takenBranch">&check; Branch 8 taken 412 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">822</td>
-      <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">vm</span><span class="p">.</span><span class="n">count</span><span class="p">(</span><span class="s">&quot;config&quot;</span><span class="p">))</span></td>
+      <td class="linecount partialCoveredLine">828</td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">vm</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;config&quot;</span><span class="p">))</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l87" href="#l87">87</a></td>
@@ -1159,12 +1159,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 411 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 414 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">411</td>
+      <td class="linecount partialCoveredLine">414</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">bpo</span><span class="o">::</span><span class="n">notify</span><span class="p">(</span><span class="n">vm</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1178,7 +1178,7 @@
       <td class="lineno"><a id="l111" href="#l111">111</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">411</td>
+      <td class="linecount coveredLine">414</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">failedConfigFiles</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1804,7 +1804,7 @@
       <td class="lineno"><a id="l164" href="#l164">164</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">702</td>
+      <td class="linecount coveredLine">708</td>
       <td class="src coveredLine"><span class="kt">bool</span><span class="w"> </span><span class="n">NAV</span><span class="o">::</span><span class="n">ConfigManager</span><span class="o">::</span><span class="n">HasKey</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">key</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -1818,8 +1818,8 @@
       <td class="lineno"><a id="l166" href="#l166">166</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">702</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">vm</span><span class="p">.</span><span class="n">count</span><span class="p">(</span><span class="n">key</span><span class="p">);</span></td>
+      <td class="linecount coveredLine">708</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">vm</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="n">key</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l167" href="#l167">167</a></td>
@@ -1979,344 +1979,344 @@
       <td class="lineno"><a id="l189" href="#l189">189</a></td>
       <td class="linebranch">
       </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="n">j</span><span class="p">[</span><span class="s">&quot;printScreenshotSaveLocation&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gui</span><span class="o">::</span><span class="n">windows</span><span class="o">::</span><span class="n">printScreenshotSaveLocation</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l190" href="#l190">190</a></td>
+      <td class="linebranch">
+      </td>
       <td class="linecount "></td>
       <td class="src "><span class="cp">#endif</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l190" href="#l190">190</a></td>
+      <td class="lineno"><a id="l191" href="#l191">191</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">    </span><span class="n">j</span><span class="p">[</span><span class="s">&quot;colormaps&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ColormapsGlobal</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l191" href="#l191">191</a></td>
+      <td class="lineno"><a id="l192" href="#l192">192</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l192" href="#l192">192</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">ImPlotContext</span><span class="o">&amp;</span><span class="w"> </span><span class="n">gp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="n">ImPlot</span><span class="o">::</span><span class="n">GetCurrentContext</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l193" href="#l193">193</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">j</span><span class="p">[</span><span class="s">&quot;selectedImPlotColormap&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gp</span><span class="p">.</span><span class="n">Style</span><span class="p">.</span><span class="n">Colormap</span><span class="p">;</span></td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="n">ImPlotContext</span><span class="o">&amp;</span><span class="w"> </span><span class="n">gp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="n">ImPlot</span><span class="o">::</span><span class="n">GetCurrentContext</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l194" href="#l194">194</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="n">j</span><span class="p">[</span><span class="s">&quot;selectedImPlotColormap&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gp</span><span class="p">.</span><span class="n">Style</span><span class="p">.</span><span class="n">Colormap</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l195" href="#l195">195</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">constexpr</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">CMAP_USER_START</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ImPlotColormap_Greys</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span></td>
+      <td class="linecount "></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l196" href="#l196">196</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CMAP_USER_START</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">gp</span><span class="p">.</span><span class="n">ColormapData</span><span class="p">.</span><span class="n">Count</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span></td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">constexpr</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">CMAP_USER_START</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ImPlotColormap_Greys</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l197" href="#l197">197</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="p">{</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CMAP_USER_START</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">gp</span><span class="p">.</span><span class="n">ColormapData</span><span class="p">.</span><span class="n">Count</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l198" href="#l198">198</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="n">j</span><span class="p">[</span><span class="s">&quot;ImPlotColormaps&quot;</span><span class="p">][</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">CMAP_USER_START</span><span class="p">)][</span><span class="s">&quot;name&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gp</span><span class="p">.</span><span class="n">ColormapData</span><span class="p">.</span><span class="n">GetName</span><span class="p">(</span><span class="n">i</span><span class="p">);</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l199" href="#l199">199</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="n">j</span><span class="p">[</span><span class="s">&quot;ImPlotColormaps&quot;</span><span class="p">][</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">CMAP_USER_START</span><span class="p">)][</span><span class="s">&quot;qual&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gp</span><span class="p">.</span><span class="n">ColormapData</span><span class="p">.</span><span class="n">IsQual</span><span class="p">(</span><span class="n">i</span><span class="p">);</span></td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="n">j</span><span class="p">[</span><span class="s">&quot;ImPlotColormaps&quot;</span><span class="p">][</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">CMAP_USER_START</span><span class="p">)][</span><span class="s">&quot;name&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gp</span><span class="p">.</span><span class="n">ColormapData</span><span class="p">.</span><span class="n">GetName</span><span class="p">(</span><span class="n">i</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l200" href="#l200">200</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">gp</span><span class="p">.</span><span class="n">ColormapData</span><span class="p">.</span><span class="n">GetKeyCount</span><span class="p">(</span><span class="n">i</span><span class="p">);</span><span class="w"> </span><span class="o">++</span><span class="n">c</span><span class="p">)</span></td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="n">j</span><span class="p">[</span><span class="s">&quot;ImPlotColormaps&quot;</span><span class="p">][</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">CMAP_USER_START</span><span class="p">)][</span><span class="s">&quot;qual&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gp</span><span class="p">.</span><span class="n">ColormapData</span><span class="p">.</span><span class="n">IsQual</span><span class="p">(</span><span class="n">i</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l201" href="#l201">201</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">gp</span><span class="p">.</span><span class="n">ColormapData</span><span class="p">.</span><span class="n">GetKeyCount</span><span class="p">(</span><span class="n">i</span><span class="p">);</span><span class="w"> </span><span class="o">++</span><span class="n">c</span><span class="p">)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l202" href="#l202">202</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l202" href="#l202">202</a></td>
+      <td class="lineno"><a id="l203" href="#l203">203</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">            </span><span class="n">j</span><span class="p">[</span><span class="s">&quot;ImPlotColormaps&quot;</span><span class="p">][</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">CMAP_USER_START</span><span class="p">)][</span><span class="s">&quot;colors&quot;</span><span class="p">][</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">c</span><span class="p">)]</span><span class="w"> </span><span class="o">=</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l203" href="#l203">203</a></td>
+      <td class="lineno"><a id="l204" href="#l204">204</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">                </span><span class="n">ImGui</span><span class="o">::</span><span class="n">ColorConvertU32ToFloat4</span><span class="p">(</span><span class="n">gp</span><span class="p">.</span><span class="n">ColormapData</span><span class="p">.</span><span class="n">GetKeyColor</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l204" href="#l204">204</a></td>
+      <td class="lineno"><a id="l205" href="#l205">205</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l205" href="#l205">205</a></td>
+      <td class="lineno"><a id="l206" href="#l206">206</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l206" href="#l206">206</a></td>
+      <td class="lineno"><a id="l207" href="#l207">207</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l207" href="#l207">207</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">filestream</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">setw</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"> </span><span class="c1">// NOLINT(performance-avoid-endl)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l208" href="#l208">208</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="p">}</span></td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="n">filestream</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">setw</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"> </span><span class="c1">// NOLINT(performance-avoid-endl)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l209" href="#l209">209</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l210" href="#l210">210</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l210" href="#l210">210</a></td>
+      <td class="lineno"><a id="l211" href="#l211">211</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">NAV</span><span class="o">::</span><span class="n">ConfigManager</span><span class="o">::</span><span class="n">LoadGlobalSettings</span><span class="p">()</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l211" href="#l211">211</a></td>
+      <td class="lineno"><a id="l212" href="#l212">212</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l212" href="#l212">212</a></td>
+      <td class="lineno"><a id="l213" href="#l213">213</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">filepath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">flow</span><span class="o">::</span><span class="n">GetConfigPath</span><span class="p">()</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="s">&quot;globals.json&quot;</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l213" href="#l213">213</a></td>
+      <td class="lineno"><a id="l214" href="#l214">214</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ifstream</span><span class="w"> </span><span class="nf">filestream</span><span class="p">(</span><span class="n">filepath</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l214" href="#l214">214</a></td>
+      <td class="lineno"><a id="l215" href="#l215">215</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l215" href="#l215">215</a></td>
+      <td class="lineno"><a id="l216" href="#l216">216</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">filestream</span><span class="p">.</span><span class="n">good</span><span class="p">())</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l216" href="#l216">216</a></td>
+      <td class="lineno"><a id="l217" href="#l217">217</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">{</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l217" href="#l217">217</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="n">LOG_ERROR</span><span class="p">(</span><span class="s">&quot;Load Flow error: Could not open file: {}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">filepath</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l218" href="#l218">218</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">return</span><span class="p">;</span></td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="n">LOG_ERROR</span><span class="p">(</span><span class="s">&quot;Load Flow error: Could not open file: {}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">filepath</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l219" href="#l219">219</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="p">}</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l220" href="#l220">220</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">json</span><span class="w"> </span><span class="n">j</span><span class="p">;</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l221" href="#l221">221</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">filestream</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">j</span><span class="p">;</span></td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="n">json</span><span class="w"> </span><span class="n">j</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l222" href="#l222">222</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="n">filestream</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">j</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l223" href="#l223">223</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l223" href="#l223">223</a></td>
+      <td class="lineno"><a id="l224" href="#l224">224</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;colormaps&quot;</span><span class="p">))</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l224" href="#l224">224</a></td>
+      <td class="lineno"><a id="l225" href="#l225">225</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l225" href="#l225">225</a></td>
+      <td class="lineno"><a id="l226" href="#l226">226</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">        </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;colormaps&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">ColormapsGlobal</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l226" href="#l226">226</a></td>
+      <td class="lineno"><a id="l227" href="#l227">227</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l227" href="#l227">227</a></td>
+      <td class="lineno"><a id="l228" href="#l228">228</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="cp">#ifdef IMGUI_IMPL_OPENGL_LOADER_GL3W</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l228" href="#l228">228</a></td>
+      <td class="lineno"><a id="l229" href="#l229">229</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;plotScreenshotImPlotStyleFile&quot;</span><span class="p">))</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l229" href="#l229">229</a></td>
+      <td class="lineno"><a id="l230" href="#l230">230</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l230" href="#l230">230</a></td>
+      <td class="lineno"><a id="l231" href="#l231">231</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">        </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;plotScreenshotImPlotStyleFile&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">gui</span><span class="o">::</span><span class="n">windows</span><span class="o">::</span><span class="n">plotScreenshotImPlotStyleFile</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l231" href="#l231">231</a></td>
+      <td class="lineno"><a id="l232" href="#l232">232</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l232" href="#l232">232</a></td>
+      <td class="lineno"><a id="l233" href="#l233">233</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;copyScreenshotsToClipboard&quot;</span><span class="p">))</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l233" href="#l233">233</a></td>
+      <td class="lineno"><a id="l234" href="#l234">234</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l234" href="#l234">234</a></td>
+      <td class="lineno"><a id="l235" href="#l235">235</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">        </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;copyScreenshotsToClipboard&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">gui</span><span class="o">::</span><span class="n">windows</span><span class="o">::</span><span class="n">copyScreenshotsToClipboard</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l235" href="#l235">235</a></td>
+      <td class="lineno"><a id="l236" href="#l236">236</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l236" href="#l236">236</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="cp">#endif</span></td>
-    </tr>
-    <tr class="source-line">
       <td class="lineno"><a id="l237" href="#l237">237</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;ImPlotColormaps&quot;</span><span class="p">))</span></td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;printScreenshotSaveLocation&quot;</span><span class="p">))</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l238" href="#l238">238</a></td>
@@ -2330,143 +2330,178 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">j</span><span class="p">[</span><span class="s">&quot;ImPlotColormaps&quot;</span><span class="p">].</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span></td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;printScreenshotSaveLocation&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">gui</span><span class="o">::</span><span class="n">windows</span><span class="o">::</span><span class="n">printScreenshotSaveLocation</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l240" href="#l240">240</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">{</span></td>
+      <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l241" href="#l241">241</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">            </span><span class="n">ImVector</span><span class="o">&lt;</span><span class="n">ImVec4</span><span class="o">&gt;</span><span class="w"> </span><span class="n">custom</span><span class="p">;</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#endif</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l242" href="#l242">242</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;ImPlotColormaps&quot;</span><span class="p">).</span><span class="n">at</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;colors&quot;</span><span class="p">))</span></td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;ImPlotColormaps&quot;</span><span class="p">))</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l243" href="#l243">243</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="p">{</span></td>
+      <td class="src "><span class="w">    </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l244" href="#l244">244</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="n">custom</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">ImVec4</span><span class="o">&gt;</span><span class="p">());</span></td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">j</span><span class="p">[</span><span class="s">&quot;ImPlotColormaps&quot;</span><span class="p">].</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l245" href="#l245">245</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="p">}</span></td>
+      <td class="src "><span class="w">        </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l246" href="#l246">246</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="n">ImVector</span><span class="o">&lt;</span><span class="n">ImVec4</span><span class="o">&gt;</span><span class="w"> </span><span class="n">custom</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l247" href="#l247">247</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">            </span><span class="n">ImPlot</span><span class="o">::</span><span class="n">AddColormap</span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;ImPlotColormaps&quot;</span><span class="p">).</span><span class="n">at</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">).</span><span class="n">get</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">().</span><span class="n">c_str</span><span class="p">(),</span></td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;ImPlotColormaps&quot;</span><span class="p">).</span><span class="n">at</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;colors&quot;</span><span class="p">))</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l248" href="#l248">248</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                                </span><span class="n">custom</span><span class="p">.</span><span class="n">Data</span><span class="p">,</span><span class="w"> </span><span class="n">custom</span><span class="p">.</span><span class="n">Size</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;ImPlotColormaps&quot;</span><span class="p">).</span><span class="n">at</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;qual&quot;</span><span class="p">).</span><span class="n">get</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="p">());</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">            </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l249" href="#l249">249</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">            </span><span class="n">ImPlot</span><span class="o">::</span><span class="n">BustItemCache</span><span class="p">();</span></td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="n">custom</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">ImVec4</span><span class="o">&gt;</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l250" href="#l250">250</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="p">}</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">            </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l251" href="#l251">251</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="p">}</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l252" href="#l252">252</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;selectedImPlotColormap&quot;</span><span class="p">))</span></td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="n">ImPlot</span><span class="o">::</span><span class="n">AddColormap</span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;ImPlotColormaps&quot;</span><span class="p">).</span><span class="n">at</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">).</span><span class="n">get</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">().</span><span class="n">c_str</span><span class="p">(),</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l253" href="#l253">253</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="p">{</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                                </span><span class="n">custom</span><span class="p">.</span><span class="n">Data</span><span class="p">,</span><span class="w"> </span><span class="n">custom</span><span class="p">.</span><span class="n">Size</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;ImPlotColormaps&quot;</span><span class="p">).</span><span class="n">at</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;qual&quot;</span><span class="p">).</span><span class="n">get</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l254" href="#l254">254</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="n">ImPlotContext</span><span class="o">&amp;</span><span class="w"> </span><span class="n">gp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="n">ImPlot</span><span class="o">::</span><span class="n">GetCurrentContext</span><span class="p">();</span></td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="n">ImPlot</span><span class="o">::</span><span class="n">BustItemCache</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l255" href="#l255">255</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="n">gp</span><span class="p">.</span><span class="n">Style</span><span class="p">.</span><span class="n">Colormap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;selectedImPlotColormap&quot;</span><span class="p">).</span><span class="n">get</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">();</span></td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l256" href="#l256">256</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="n">ImPlot</span><span class="o">::</span><span class="n">BustItemCache</span><span class="p">();</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l257" href="#l257">257</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
+      <td class="lineno"><a id="l257" href="#l257">257</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;selectedImPlotColormap&quot;</span><span class="p">))</span></td>
+    </tr>
+    <tr class="source-line">
       <td class="lineno"><a id="l258" href="#l258">258</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l259" href="#l259">259</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="n">ImPlotContext</span><span class="o">&amp;</span><span class="w"> </span><span class="n">gp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="n">ImPlot</span><span class="o">::</span><span class="n">GetCurrentContext</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l260" href="#l260">260</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="n">gp</span><span class="p">.</span><span class="n">Style</span><span class="p">.</span><span class="n">Colormap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;selectedImPlotColormap&quot;</span><span class="p">).</span><span class="n">get</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l261" href="#l261">261</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="n">ImPlot</span><span class="o">::</span><span class="n">BustItemCache</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l262" href="#l262">262</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l263" href="#l263">263</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l259" href="#l259">259</a></td>
+      <td class="lineno"><a id="l264" href="#l264">264</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>

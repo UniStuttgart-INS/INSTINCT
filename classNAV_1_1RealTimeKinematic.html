@@ -48,7 +48,7 @@
               <td id="projectlogo"><img alt="Logo" src="INSTINCT_Logo_Text.png"  /></td>
               <td id="projectalign">
                 <div id="projectname"><span
-                    id="projectnumber">&#160;0.5.0</span>
+                    id="projectnumber">&#160;0.5.1</span>
                 </div>
               </td>
             </tr>
@@ -196,6 +196,26 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a87e8fd98eb83d56fce486747a78a2d54 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called when a new link was established.  <br /></td></tr>
 <tr class="memitem:abd363d0fb6118e4574c7f8e9a2d0dbc9 inherit pub_methods_classNAV_1_1Node" id="r_abd363d0fb6118e4574c7f8e9a2d0dbc9"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#abd363d0fb6118e4574c7f8e9a2d0dbc9">afterDeleteLink</a> (<a class="el" href="classNAV_1_1OutputPin.html">OutputPin</a> &amp;startPin, <a class="el" href="classNAV_1_1InputPin.html">InputPin</a> &amp;endPin)</td></tr>
 <tr class="memdesc:abd363d0fb6118e4574c7f8e9a2d0dbc9 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called when a link was deleted.  <br /></td></tr>
+<tr class="memitem:a76b0feda72acc7d11c91ecbf163c53f1 inherit pub_methods_classNAV_1_1Node" id="r_a76b0feda72acc7d11c91ecbf163c53f1"><td class="memTemplParams" colspan="2">template&lt;std::derived_from&lt; <a class="el" href="classNAV_1_1Node.html">Node</a> &gt; T&gt; </td></tr>
+<tr class="memitem:a76b0feda72acc7d11c91ecbf163c53f1 inherit pub_methods_classNAV_1_1Node template"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1InputPin.html">InputPin</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#a76b0feda72acc7d11c91ecbf163c53f1">CreateInputPin</a> (const char *<a class="el" href="classNAV_1_1Node.html#aa175adec8045649de2cba57eefb184b8">name</a>, <a class="el" href="structNAV_1_1Pin_1_1Type.html">Pin::Type</a> pinType, const std::vector&lt; std::string &gt; &amp;dataIdentifier, void(T::*notifyFunc)(const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;, size_t), int idx=-1)</td></tr>
+<tr class="memdesc:a76b0feda72acc7d11c91ecbf163c53f1 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Input <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> object for data pins. The additional notify function gets called when the connected data was changed and the connected node calls <a class="el" href="classNAV_1_1Node.html#a2c20975b5f51c95a837cdd8e6b45b7bd" title="Notifies connected nodes about the change.">NAV::Node::notifyOutputValueChanged</a>.  <br /></td></tr>
+<tr class="memitem:ab68a7dee11448defa3ce9c5c6ffe39c1 inherit pub_methods_classNAV_1_1Node" id="r_ab68a7dee11448defa3ce9c5c6ffe39c1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1InputPin.html">InputPin</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#ab68a7dee11448defa3ce9c5c6ffe39c1">CreateInputPin</a> (const char *<a class="el" href="classNAV_1_1Node.html#aa175adec8045649de2cba57eefb184b8">name</a>, <a class="el" href="structNAV_1_1Pin_1_1Type.html">Pin::Type</a> pinType, const std::vector&lt; std::string &gt; &amp;dataIdentifier={}, <a class="el" href="classNAV_1_1InputPin.html#aa0c3c5cfa65d98c5939883adcaec1b0c">InputPin::Callback</a> callback=static_cast&lt; <a class="el" href="classNAV_1_1InputPin.html#a933affe0a3685865240d799bf5448f89">InputPin::FlowFirableCallbackFunc</a> &gt;(nullptr), <a class="el" href="classNAV_1_1InputPin.html#aa6d4352ff2778ef7ebf054227bf4be3f">InputPin::FlowFirableCheckFunc</a> firable=nullptr, int priority=0, int idx=-1)</td></tr>
+<tr class="memdesc:ab68a7dee11448defa3ce9c5c6ffe39c1 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Input <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> object.  <br /></td></tr>
+<tr class="memitem:a16dd132debc12b3dc25531be83662a4c inherit pub_methods_classNAV_1_1Node" id="r_a16dd132debc12b3dc25531be83662a4c"><td class="memTemplParams" colspan="2">template&lt;std::derived_from&lt; <a class="el" href="classNAV_1_1Node.html">Node</a> &gt; T&gt; </td></tr>
+<tr class="memitem:a16dd132debc12b3dc25531be83662a4c inherit pub_methods_classNAV_1_1Node template"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1InputPin.html">InputPin</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#a16dd132debc12b3dc25531be83662a4c">CreateInputPin</a> (const char *<a class="el" href="classNAV_1_1Node.html#aa175adec8045649de2cba57eefb184b8">name</a>, <a class="el" href="structNAV_1_1Pin_1_1Type.html">Pin::Type</a> pinType, const std::vector&lt; std::string &gt; &amp;dataIdentifier={}, void(T::*callback)(<a class="el" href="classNAV_1_1InputPin.html#a47683b163e79b13098f38627d8f4d87b">InputPin::NodeDataQueue</a> &amp;, size_t)=nullptr, <a class="el" href="classNAV_1_1InputPin.html#aa6d4352ff2778ef7ebf054227bf4be3f">InputPin::FlowFirableCheckFunc</a> firable=nullptr, int priority=0, int idx=-1)</td></tr>
+<tr class="memdesc:a16dd132debc12b3dc25531be83662a4c inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Input <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> object.  <br /></td></tr>
+<tr class="memitem:a63a474fe4a0bd42fb2e7fcc500a9b76b inherit pub_methods_classNAV_1_1Node" id="r_a63a474fe4a0bd42fb2e7fcc500a9b76b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1OutputPin.html">OutputPin</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#a63a474fe4a0bd42fb2e7fcc500a9b76b">CreateOutputPin</a> (const char *<a class="el" href="classNAV_1_1Node.html#aa175adec8045649de2cba57eefb184b8">name</a>, <a class="el" href="structNAV_1_1Pin_1_1Type.html">Pin::Type</a> pinType, const std::vector&lt; std::string &gt; &amp;dataIdentifier, <a class="el" href="classNAV_1_1OutputPin.html#a746f45d83fa13fc24ea8db7724ead64b">OutputPin::PinData</a> data=static_cast&lt; void * &gt;(nullptr), int idx=-1)</td></tr>
+<tr class="memdesc:a63a474fe4a0bd42fb2e7fcc500a9b76b inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Output <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> object.  <br /></td></tr>
+<tr class="memitem:aed5ad3c978991b001a4d9cd9dad4c1ba inherit pub_methods_classNAV_1_1Node" id="r_aed5ad3c978991b001a4d9cd9dad4c1ba"><td class="memTemplParams" colspan="2">template&lt;std::derived_from&lt; <a class="el" href="classNAV_1_1Node.html">Node</a> &gt; T&gt; </td></tr>
+<tr class="memitem:aed5ad3c978991b001a4d9cd9dad4c1ba inherit pub_methods_classNAV_1_1Node template"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1OutputPin.html">OutputPin</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#aed5ad3c978991b001a4d9cd9dad4c1ba">CreateOutputPin</a> (const char *<a class="el" href="classNAV_1_1Node.html#aa175adec8045649de2cba57eefb184b8">name</a>, <a class="el" href="structNAV_1_1Pin_1_1Type.html">Pin::Type</a> pinType, const std::vector&lt; std::string &gt; &amp;dataIdentifier, std::shared_ptr&lt; const <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a> &gt;(T::*peekPollDataFunc)(size_t, bool)=nullptr, int idx=-1)</td></tr>
+<tr class="memdesc:aed5ad3c978991b001a4d9cd9dad4c1ba inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Output <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> object for Flow Pins.  <br /></td></tr>
+<tr class="memitem:abca83b43d9b8ba9bc0f0c41c269efe59 inherit pub_methods_classNAV_1_1Node" id="r_abca83b43d9b8ba9bc0f0c41c269efe59"><td class="memTemplParams" colspan="2">template&lt;std::derived_from&lt; <a class="el" href="classNAV_1_1Node.html">Node</a> &gt; T&gt; </td></tr>
+<tr class="memitem:abca83b43d9b8ba9bc0f0c41c269efe59 inherit pub_methods_classNAV_1_1Node template"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1OutputPin.html">OutputPin</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#abca83b43d9b8ba9bc0f0c41c269efe59">CreateOutputPin</a> (const char *<a class="el" href="classNAV_1_1Node.html#aa175adec8045649de2cba57eefb184b8">name</a>, <a class="el" href="structNAV_1_1Pin_1_1Type.html">Pin::Type</a> pinType, const std::vector&lt; std::string &gt; &amp;dataIdentifier, std::shared_ptr&lt; const <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a> &gt;(T::*pollDataFunc)()=nullptr, int idx=-1)</td></tr>
+<tr class="memdesc:abca83b43d9b8ba9bc0f0c41c269efe59 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Output <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> object for Flow Pins.  <br /></td></tr>
+<tr class="memitem:acec461ed1348362c5592c1978b879783 inherit pub_methods_classNAV_1_1Node" id="r_acec461ed1348362c5592c1978b879783"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#acec461ed1348362c5592c1978b879783">DeleteInputPin</a> (size_t pinIndex)</td></tr>
+<tr class="memdesc:acec461ed1348362c5592c1978b879783 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deletes the input pin. Invalidates the pin reference given.  <br /></td></tr>
+<tr class="memitem:a4110b820d14596dfb36d3315feb634d5 inherit pub_methods_classNAV_1_1Node" id="r_a4110b820d14596dfb36d3315feb634d5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#a4110b820d14596dfb36d3315feb634d5">DeleteOutputPin</a> (size_t pinIndex)</td></tr>
+<tr class="memdesc:a4110b820d14596dfb36d3315feb634d5 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deletes the output pin. Invalidates the pin reference given.  <br /></td></tr>
 <tr class="memitem:a05d65fed1964daf2e8e588de7bbbe136 inherit pub_methods_classNAV_1_1Node" id="r_a05d65fed1964daf2e8e588de7bbbe136"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#a05d65fed1964daf2e8e588de7bbbe136">doDeinitialize</a> (bool wait=false)</td></tr>
 <tr class="memdesc:a05d65fed1964daf2e8e588de7bbbe136 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the node worker to deinitialize the node.  <br /></td></tr>
 <tr class="memitem:a15e8cdd4b182aa39bdd4e62897a744cf inherit pub_methods_classNAV_1_1Node" id="r_a15e8cdd4b182aa39bdd4e62897a744cf"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#a15e8cdd4b182aa39bdd4e62897a744cf">doDisable</a> (bool wait=false)</td></tr>
@@ -305,13 +325,13 @@ Private Member Functions</h2></td></tr>
 <tr class="memdesc:ab034b6dfe167bf8264e4dc93685fcbac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the double difference of the measurements and estimates.  <br /></td></tr>
 <tr class="memitem:a1e381245c90f0aadb9bf7bfc3e873f19" id="r_a1e381245c90f0aadb9bf7bfc3e873f19"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classNAV_1_1RtkSolution.html">RtkSolution</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1e381245c90f0aadb9bf7bfc3e873f19">calcFallbackSppSolution</a> ()</td></tr>
 <tr class="memdesc:a1e381245c90f0aadb9bf7bfc3e873f19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates a <a class="el" href="namespaceNAV_1_1SPP.html">SPP</a> solution as fallback in case no base data is available.  <br /></td></tr>
-<tr class="memitem:a36f2706f0cc1828dc4295bd70ac52c99" id="r_a36f2706f0cc1828dc4295bd70ac52c99"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a36f2706f0cc1828dc4295bd70ac52c99">calcKalmanUpdateMatrices</a> (const <a class="el" href="structNAV_1_1Observations.html">Observations</a> &amp;observations, const <a class="el" href="#a85a01c6838bc3407943a547760afc540">Differences</a> &amp;doubleDifferences, const <a class="el" href="Unordered__map_8hpp.html#a29298bc00e935389786a4fecc7021995">unordered_map</a>&lt; <a class="el" href="classNAV_1_1GnssObs.html#a062fbdb683295c944d200181d947a941">GnssObs::ObservationType</a>, <a class="el" href="namespaceNAV.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="structNAV_1_1RTK_1_1Meas_1_1SingleObs.html">RTK::Meas::SingleObs</a>&lt; <a class="el" href="#a87831e9301dd370ad983feaeacd7febb">ReceiverType</a> &gt; &gt; &gt; &amp;Rtilde)</td></tr>
+<tr class="memitem:a36f2706f0cc1828dc4295bd70ac52c99" id="r_a36f2706f0cc1828dc4295bd70ac52c99"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a36f2706f0cc1828dc4295bd70ac52c99">calcKalmanUpdateMatrices</a> (const <a class="el" href="structNAV_1_1Observations.html">Observations</a> &amp;observations, const <a class="el" href="#a85a01c6838bc3407943a547760afc540">Differences</a> &amp;doubleDifferences, const <a class="el" href="Unordered__map_8hpp.html#a9361e3e61d76ae62755ac307c5f601f9">unordered_map</a>&lt; <a class="el" href="classNAV_1_1GnssObs.html#a062fbdb683295c944d200181d947a941">GnssObs::ObservationType</a>, <a class="el" href="namespaceNAV.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="structNAV_1_1RTK_1_1Meas_1_1SingleObs.html">RTK::Meas::SingleObs</a>&lt; <a class="el" href="#a87831e9301dd370ad983feaeacd7febb">ReceiverType</a> &gt; &gt; &gt; &amp;Rtilde)</td></tr>
 <tr class="memdesc:a36f2706f0cc1828dc4295bd70ac52c99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the Measurement vector 𝐳, Measurement sensitivity matrix 𝐇 and Measurement noise covariance matrix 𝐑 for the KF update.  <br /></td></tr>
 <tr class="memitem:a7fea12e80f2a289a3f1a223af8fbd0a9" id="r_a7fea12e80f2a289a3f1a223af8fbd0a9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7fea12e80f2a289a3f1a223af8fbd0a9">calcRealTimeKinematicSolution</a> ()</td></tr>
 <tr class="memdesc:a7fea12e80f2a289a3f1a223af8fbd0a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the <a class="el" href="namespaceNAV_1_1RTK.html">RTK</a> solution.  <br /></td></tr>
 <tr class="memitem:af4ce9dd6affa55dadad95d1b3c4d7809" id="r_af4ce9dd6affa55dadad95d1b3c4d7809"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a85a01c6838bc3407943a547760afc540">Differences</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af4ce9dd6affa55dadad95d1b3c4d7809">calcSingleDifferences</a> (const <a class="el" href="structNAV_1_1Observations.html">Observations</a> &amp;observations) const</td></tr>
 <tr class="memdesc:af4ce9dd6affa55dadad95d1b3c4d7809"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the single difference of the measurements and estimates.  <br /></td></tr>
-<tr class="memitem:a933d7a60107f642f04586802126a7a96" id="r_a933d7a60107f642f04586802126a7a96"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Unordered__map_8hpp.html#a29298bc00e935389786a4fecc7021995">unordered_map</a>&lt; <a class="el" href="classNAV_1_1GnssObs.html#a062fbdb683295c944d200181d947a941">GnssObs::ObservationType</a>, <a class="el" href="namespaceNAV.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="structNAV_1_1RTK_1_1Meas_1_1SingleObs.html">RTK::Meas::SingleObs</a>&lt; <a class="el" href="#a87831e9301dd370ad983feaeacd7febb">ReceiverType</a> &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a933d7a60107f642f04586802126a7a96">calcSingleObsMeasurementNoiseMatrices</a> (const <a class="el" href="structNAV_1_1Observations.html">Observations</a> &amp;observations) const</td></tr>
+<tr class="memitem:a933d7a60107f642f04586802126a7a96" id="r_a933d7a60107f642f04586802126a7a96"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Unordered__map_8hpp.html#a9361e3e61d76ae62755ac307c5f601f9">unordered_map</a>&lt; <a class="el" href="classNAV_1_1GnssObs.html#a062fbdb683295c944d200181d947a941">GnssObs::ObservationType</a>, <a class="el" href="namespaceNAV.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="structNAV_1_1RTK_1_1Meas_1_1SingleObs.html">RTK::Meas::SingleObs</a>&lt; <a class="el" href="#a87831e9301dd370ad983feaeacd7febb">ReceiverType</a> &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a933d7a60107f642f04586802126a7a96">calcSingleObsMeasurementNoiseMatrices</a> (const <a class="el" href="structNAV_1_1Observations.html">Observations</a> &amp;observations) const</td></tr>
 <tr class="memdesc:a933d7a60107f642f04586802126a7a96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the measurement noise matrices for each observation type.  <br /></td></tr>
 <tr class="memitem:af45c4974811ee45b1ad8df7634c298ae" id="r_af45c4974811ee45b1ad8df7634c298ae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af45c4974811ee45b1ad8df7634c298ae">checkForCycleSlip</a> (<a class="el" href="structNAV_1_1Observations.html">Observations</a> &amp;observations, const std::shared_ptr&lt; <a class="el" href="classNAV_1_1RtkSolution.html">RtkSolution</a> &gt; &amp;rtkSol)</td></tr>
 <tr class="memdesc:af45c4974811ee45b1ad8df7634c298ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks for cycle-slips.  <br /></td></tr>
@@ -446,7 +466,7 @@ Private Attributes</h2></td></tr>
 <tr class="memdesc:ab985674ebcc2c281a4e51376c2c6717a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Amount of epochs to remove an outlier after being found (1 = only current)  <br /></td></tr>
 <tr class="memitem:a12d29ee6ec00a0971f6f8633a803f0c2" id="r_a12d29ee6ec00a0971f6f8633a803f0c2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a12d29ee6ec00a0971f6f8633a803f0c2">_outputStateEvents</a></td></tr>
 <tr class="memdesc:a12d29ee6ec00a0971f6f8633a803f0c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether to output state change events.  <br /></td></tr>
-<tr class="memitem:ac68f32fe1ee12f8e9c56f3cbf1afe1bc" id="r_ac68f32fe1ee12f8e9c56f3cbf1afe1bc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Unordered__map_8hpp.html#a29298bc00e935389786a4fecc7021995">unordered_map</a>&lt; std::pair&lt; <a class="el" href="classNAV_1_1Code.html">Code</a>, <a class="el" href="classNAV_1_1GnssObs.html#a062fbdb683295c944d200181d947a941">GnssObs::ObservationType</a> &gt;, <a class="el" href="structNAV_1_1RealTimeKinematic_1_1PivotSatellite.html">PivotSatellite</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac68f32fe1ee12f8e9c56f3cbf1afe1bc">_pivotSatellites</a></td></tr>
+<tr class="memitem:ac68f32fe1ee12f8e9c56f3cbf1afe1bc" id="r_ac68f32fe1ee12f8e9c56f3cbf1afe1bc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Unordered__map_8hpp.html#a9361e3e61d76ae62755ac307c5f601f9">unordered_map</a>&lt; std::pair&lt; <a class="el" href="classNAV_1_1Code.html">Code</a>, <a class="el" href="classNAV_1_1GnssObs.html#a062fbdb683295c944d200181d947a941">GnssObs::ObservationType</a> &gt;, <a class="el" href="structNAV_1_1RealTimeKinematic_1_1PivotSatellite.html">PivotSatellite</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac68f32fe1ee12f8e9c56f3cbf1afe1bc">_pivotSatellites</a></td></tr>
 <tr class="memdesc:ac68f32fe1ee12f8e9c56f3cbf1afe1bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pivot satellites for each constellation.  <br /></td></tr>
 <tr class="memitem:af5a9a875e085b9e1a0fa0e2615ae878b" id="r_af5a9a875e085b9e1a0fa0e2615ae878b"><td class="memItemLeft" align="right" valign="top">std::array&lt; <a class="el" href="#a9f0e9ad7e9dafe6a734a8077ab8395bc">Receiver</a>, <a class="el" href="#a87831e9301dd370ad983feaeacd7febbaa898ed1f0293187e87768121cdda0e76">ReceiverType::ReceiverType_COUNT</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af5a9a875e085b9e1a0fa0e2615ae878b">_receiver</a></td></tr>
 <tr class="memdesc:af5a9a875e085b9e1a0fa0e2615ae878b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Receivers.  <br /></td></tr>
@@ -660,7 +680,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Default constructor. </p>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00076">76</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00074">74</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -689,7 +709,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Destructor. </p>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00092">92</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00090">90</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -784,7 +804,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00670">670</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00668">668</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -824,7 +844,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l01876">1876</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l01874">1874</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -870,7 +890,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l02737">2737</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l02735">2735</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -905,7 +925,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00795">795</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00793">793</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -945,7 +965,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l02057">2057</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l02055">2055</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -974,7 +994,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Calculates a <a class="el" href="namespaceNAV_1_1SPP.html">SPP</a> solution as fallback in case no base data is available. </p>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l01147">1147</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l01145">1145</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -1000,7 +1020,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="Unordered__map_8hpp.html#a29298bc00e935389786a4fecc7021995">unordered_map</a>&lt; <a class="el" href="classNAV_1_1GnssObs.html#a062fbdb683295c944d200181d947a941">GnssObs::ObservationType</a>, <a class="el" href="namespaceNAV.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="structNAV_1_1RTK_1_1Meas_1_1SingleObs.html">RTK::Meas::SingleObs</a>&lt; <a class="el" href="#a87831e9301dd370ad983feaeacd7febb">ReceiverType</a> &gt; &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Rtilde</em></span>&#160;)</td>
+          <td class="paramtype">const <a class="el" href="Unordered__map_8hpp.html#a9361e3e61d76ae62755ac307c5f601f9">unordered_map</a>&lt; <a class="el" href="classNAV_1_1GnssObs.html#a062fbdb683295c944d200181d947a941">GnssObs::ObservationType</a>, <a class="el" href="namespaceNAV.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="structNAV_1_1RTK_1_1Meas_1_1SingleObs.html">RTK::Meas::SingleObs</a>&lt; <a class="el" href="#a87831e9301dd370ad983feaeacd7febb">ReceiverType</a> &gt; &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Rtilde</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -1020,7 +1040,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l02155">2155</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l02153">2153</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -1049,7 +1069,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Calculates the <a class="el" href="namespaceNAV_1_1RTK.html">RTK</a> solution. </p>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00822">822</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00820">820</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -1084,7 +1104,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l02028">2028</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l02026">2026</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -1098,7 +1118,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="Unordered__map_8hpp.html#a29298bc00e935389786a4fecc7021995">unordered_map</a>&lt; <a class="el" href="classNAV_1_1GnssObs.html#a062fbdb683295c944d200181d947a941">GnssObs::ObservationType</a>, <a class="el" href="namespaceNAV.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="structNAV_1_1RTK_1_1Meas_1_1SingleObs.html">RTK::Meas::SingleObs</a>&lt; <a class="el" href="#a87831e9301dd370ad983feaeacd7febb">RealTimeKinematic::ReceiverType</a> &gt; &gt; &gt; NAV::RealTimeKinematic::calcSingleObsMeasurementNoiseMatrices </td>
+          <td class="memname"><a class="el" href="Unordered__map_8hpp.html#a9361e3e61d76ae62755ac307c5f601f9">unordered_map</a>&lt; <a class="el" href="classNAV_1_1GnssObs.html#a062fbdb683295c944d200181d947a941">GnssObs::ObservationType</a>, <a class="el" href="namespaceNAV.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="structNAV_1_1RTK_1_1Meas_1_1SingleObs.html">RTK::Meas::SingleObs</a>&lt; <a class="el" href="#a87831e9301dd370ad983feaeacd7febb">RealTimeKinematic::ReceiverType</a> &gt; &gt; &gt; NAV::RealTimeKinematic::calcSingleObsMeasurementNoiseMatrices </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structNAV_1_1Observations.html">Observations</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>observations</em></span></td><td>)</td>
           <td> const</td>
@@ -1119,7 +1139,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l02112">2112</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l02110">2110</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -1148,7 +1168,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>String representation of the Class Category. </p>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00107">107</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00105">105</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -1188,7 +1208,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l01254">1254</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l01252">1252</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -1219,7 +1239,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1Node.html#a672f89aaab8b8a18998d994e8e05b7f2">NAV::Node</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00655">655</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00653">653</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -1251,7 +1271,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1Node.html#a9668fbb2b2d073eea8b9ccce8b1d88fb">NAV::Node</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00112">112</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00110">110</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -1282,7 +1302,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1Node.html#affdb065780fd29abe64b2fb2731e8080">NAV::Node</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00589">589</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00587">587</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -1311,7 +1331,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Does the Kalman Filter prediction. </p>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l01203">1203</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l01201">1201</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -1347,7 +1367,7 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Update valid information </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l02487">2487</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l02485">2485</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -1436,7 +1456,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00660">660</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00658">658</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -1476,7 +1496,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00665">665</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00663">663</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -1511,7 +1531,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00684">684</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00682">682</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -1540,7 +1560,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Prints all pivot satellites. </p>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l01682">1682</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l01680">1680</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -1580,7 +1600,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00743">743</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00741">741</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -1620,7 +1640,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00721">721</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00719">719</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -1660,7 +1680,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00768">768</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00766">766</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -1701,7 +1721,7 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Info of the removed outliers </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l02289">2289</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l02287">2287</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -1747,7 +1767,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l01424">1424</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l01422">1422</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -1788,7 +1808,7 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the ambiguities could be fixed </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l02536">2536</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l02534">2534</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -1825,7 +1845,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1Node.html#a0c9bc29a2df267ea6a857bde1e1c3beb">NAV::Node</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00522">522</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00520">520</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -1856,7 +1876,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1Node.html#ac76f6bb65e90f01fd78f1d63b9cf2af8">NAV::Node</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00480">480</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00478">478</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -1887,7 +1907,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classNAV_1_1Node.html#ae64d61c4d754203004ed5df92fe33321">NAV::Node</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00102">102</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00100">100</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -1916,7 +1936,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>String representation of the Class Type. </p>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00097">97</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l00095">95</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -1968,7 +1988,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l01745">1745</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l01743">1743</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -2027,7 +2047,7 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The final pivot change result after the update. Empty if no pivot was selected </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l01486">1486</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l01484">1484</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -2067,7 +2087,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l01697">1697</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RealTimeKinematic_8cpp_source.html#l01695">1695</a> of file <a class="el" href="RealTimeKinematic_8cpp_source.html">RealTimeKinematic.cpp</a>.</p>
 
 </div>
 </div>
@@ -3279,7 +3299,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="Unordered__map_8hpp.html#a29298bc00e935389786a4fecc7021995">unordered_map</a>&lt;std::pair&lt;<a class="el" href="classNAV_1_1Code.html">Code</a>, <a class="el" href="classNAV_1_1GnssObs.html#a062fbdb683295c944d200181d947a941">GnssObs::ObservationType</a>&gt;, <a class="el" href="structNAV_1_1RealTimeKinematic_1_1PivotSatellite.html">PivotSatellite</a>&gt; NAV::RealTimeKinematic::_pivotSatellites</td>
+          <td class="memname"><a class="el" href="Unordered__map_8hpp.html#a9361e3e61d76ae62755ac307c5f601f9">unordered_map</a>&lt;std::pair&lt;<a class="el" href="classNAV_1_1Code.html">Code</a>, <a class="el" href="classNAV_1_1GnssObs.html#a062fbdb683295c944d200181d947a941">GnssObs::ObservationType</a>&gt;, <a class="el" href="structNAV_1_1RealTimeKinematic_1_1PivotSatellite.html">PivotSatellite</a>&gt; NAV::RealTimeKinematic::_pivotSatellites</td>
         </tr>
       </table>
   </td>

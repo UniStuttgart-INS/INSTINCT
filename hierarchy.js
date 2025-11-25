@@ -248,6 +248,7 @@ var hierarchy =
       [ "NAV::InputPin::IncomingLink", "structNAV_1_1InputPin_1_1IncomingLink.html", null ],
       [ "NAV::OutputPin::OutgoingLink", "structNAV_1_1OutputPin_1_1OutgoingLink.html", null ]
     ] ],
+    [ "NAV::vendor::ln::Ln200UartSensor", "classNAV_1_1vendor_1_1ln_1_1Ln200UartSensor.html", null ],
     [ "NAV::CommonLog::LocalPosition", "structNAV_1_1CommonLog_1_1LocalPosition.html", null ],
     [ "Logger", "classLogger.html", null ],
     [ "NAV::InertialIntegrator::Measurement", "structNAV_1_1InertialIntegrator_1_1Measurement.html", null ],
@@ -291,6 +292,7 @@ var hierarchy =
         [ "NAV::ImuSimulator", "classNAV_1_1ImuSimulator.html", null ],
         [ "NAV::KvhFile", "classNAV_1_1KvhFile.html", null ],
         [ "NAV::KvhSensor", "classNAV_1_1KvhSensor.html", null ],
+        [ "NAV::Ln200Sensor", "classNAV_1_1Ln200Sensor.html", null ],
         [ "NAV::Navio2Sensor", "classNAV_1_1Navio2Sensor.html", null ],
         [ "NAV::UlogFile", "classNAV_1_1UlogFile.html", null ],
         [ "NAV::VectorNavFile", "classNAV_1_1VectorNavFile.html", null ],
@@ -474,6 +476,7 @@ var hierarchy =
       [ "NAV::EmlidSensor", "classNAV_1_1EmlidSensor.html", null ],
       [ "NAV::EspressifSensor", "classNAV_1_1EspressifSensor.html", null ],
       [ "NAV::KvhSensor", "classNAV_1_1KvhSensor.html", null ],
+      [ "NAV::Ln200Sensor", "classNAV_1_1Ln200Sensor.html", null ],
       [ "NAV::UbloxSensor", "classNAV_1_1UbloxSensor.html", null ],
       [ "NAV::VectorNavSensor", "classNAV_1_1VectorNavSensor.html", null ]
     ] ],

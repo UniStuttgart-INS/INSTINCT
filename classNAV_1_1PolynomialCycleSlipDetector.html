@@ -48,7 +48,7 @@
               <td id="projectlogo"><img alt="Logo" src="INSTINCT_Logo_Text.png"  /></td>
               <td id="projectalign">
                 <div id="projectname"><span
-                    id="projectnumber">&#160;0.5.0</span>
+                    id="projectnumber">&#160;0.5.1</span>
                 </div>
               </td>
             </tr>
@@ -133,6 +133,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:ab6cdf1febd5f1a6e5864e552835fa425"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks for a cycle slip.  <br /></td></tr>
 <tr class="memitem:af329eb1c387fe2f6d933e1aae02948f4" id="r_af329eb1c387fe2f6d933e1aae02948f4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af329eb1c387fe2f6d933e1aae02948f4">clear</a> ()</td></tr>
 <tr class="memdesc:af329eb1c387fe2f6d933e1aae02948f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Empties the collected polynomials.  <br /></td></tr>
+<tr class="memitem:a9003b003f3a8fe4b62f546cecb2e8321" id="r_a9003b003f3a8fe4b62f546cecb2e8321"><td class="memItemLeft" align="right" valign="top">std::optional&lt; size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9003b003f3a8fe4b62f546cecb2e8321">getDataSize</a> (const Key &amp;key) const</td></tr>
+<tr class="memdesc:a9003b003f3a8fe4b62f546cecb2e8321"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the amount of data collected.  <br /></td></tr>
 <tr class="memitem:aca521f480f82ccb1d56ce3d5912c79c3" id="r_aca521f480f82ccb1d56ce3d5912c79c3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1PolynomialRegressor.html#a8aa78507e36f374ba2d370ceffbaa8fc">Strategy</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aca521f480f82ccb1d56ce3d5912c79c3">getFitStrategy</a> () const</td></tr>
 <tr class="memdesc:aca521f480f82ccb1d56ce3d5912c79c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the strategy used for fitting.  <br /></td></tr>
 <tr class="memitem:a0f5d92ecb50210799fad875059eddeb7" id="r_a0f5d92ecb50210799fad875059eddeb7"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0f5d92ecb50210799fad875059eddeb7">getPolynomialDegree</a> () const</td></tr>
@@ -145,12 +147,16 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:adf906eb42f8374eeccf65724ec7e84ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
 <tr class="memitem:ad0333bd458a5bde9475508b27a255bc8" id="r_ad0333bd458a5bde9475508b27a255bc8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad0333bd458a5bde9475508b27a255bc8">reset</a> (const Key &amp;key)</td></tr>
 <tr class="memdesc:ad0333bd458a5bde9475508b27a255bc8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset the polynomial for the given combination.  <br /></td></tr>
+<tr class="memitem:ab0b1bd51edc61c773d6ca7fda04106d8" id="r_ab0b1bd51edc61c773d6ca7fda04106d8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab0b1bd51edc61c773d6ca7fda04106d8">resetAfterCycleSlip</a> () const</td></tr>
+<tr class="memdesc:ab0b1bd51edc61c773d6ca7fda04106d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether to discard all data after a cycle-slip.  <br /></td></tr>
 <tr class="memitem:a5d14bc1834ec427b22a8331de96ee616" id="r_a5d14bc1834ec427b22a8331de96ee616"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5d14bc1834ec427b22a8331de96ee616">setEnabled</a> (bool enabled)</td></tr>
 <tr class="memdesc:a5d14bc1834ec427b22a8331de96ee616"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the enabled state.  <br /></td></tr>
 <tr class="memitem:a150a74d718463350804f867cb16e7851" id="r_a150a74d718463350804f867cb16e7851"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a150a74d718463350804f867cb16e7851">setFitStrategy</a> (<a class="el" href="classNAV_1_1PolynomialRegressor.html#a8aa78507e36f374ba2d370ceffbaa8fc">Strategy</a> strategy)</td></tr>
 <tr class="memdesc:a150a74d718463350804f867cb16e7851"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the strategy used for fitting.  <br /></td></tr>
 <tr class="memitem:a967d078c52ad86d6ed6bfa0140946967" id="r_a967d078c52ad86d6ed6bfa0140946967"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a967d078c52ad86d6ed6bfa0140946967">setPolynomialDegree</a> (size_t polyDegree)</td></tr>
 <tr class="memdesc:a967d078c52ad86d6ed6bfa0140946967"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the degree of the polynomial which is used for fitting.  <br /></td></tr>
+<tr class="memitem:a9f78fb824c52266c9308c0f5ece31c0b" id="r_a9f78fb824c52266c9308c0f5ece31c0b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9f78fb824c52266c9308c0f5ece31c0b">setResetAfterCycleSlip</a> (bool <a class="el" href="#ad0333bd458a5bde9475508b27a255bc8">reset</a>)</td></tr>
+<tr class="memdesc:a9f78fb824c52266c9308c0f5ece31c0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets whether to discard all data after a cycle-slip.  <br /></td></tr>
 <tr class="memitem:a26078e2c85d1cd62102f944c8e3a1576" id="r_a26078e2c85d1cd62102f944c8e3a1576"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a26078e2c85d1cd62102f944c8e3a1576">setWindowSize</a> (size_t windowSize)</td></tr>
 <tr class="memdesc:a26078e2c85d1cd62102f944c8e3a1576"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the amount of points used for the fit (sliding window)  <br /></td></tr>
 </table><table class="memberdecls">
@@ -172,12 +178,14 @@ Static Private Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pri-attribs" class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:ad06dcafc7863c9c36c40ad1eb857e0a5" id="r_ad06dcafc7863c9c36c40ad1eb857e0a5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Unordered__map_8hpp.html#a29298bc00e935389786a4fecc7021995">unordered_map</a>&lt; Key, <a class="el" href="structNAV_1_1PolynomialCycleSlipDetector_1_1SignalDetector.html">SignalDetector</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad06dcafc7863c9c36c40ad1eb857e0a5">_detectors</a></td></tr>
+<tr class="memitem:ad06dcafc7863c9c36c40ad1eb857e0a5" id="r_ad06dcafc7863c9c36c40ad1eb857e0a5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Unordered__map_8hpp.html#a9361e3e61d76ae62755ac307c5f601f9">unordered_map</a>&lt; Key, <a class="el" href="structNAV_1_1PolynomialCycleSlipDetector_1_1SignalDetector.html">SignalDetector</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad06dcafc7863c9c36c40ad1eb857e0a5">_detectors</a></td></tr>
 <tr class="memdesc:ad06dcafc7863c9c36c40ad1eb857e0a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Detectors, one for each key.  <br /></td></tr>
 <tr class="memitem:ac7c736e81a26526971da6f6e0fcb796e" id="r_ac7c736e81a26526971da6f6e0fcb796e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac7c736e81a26526971da6f6e0fcb796e">_enabled</a></td></tr>
 <tr class="memdesc:ac7c736e81a26526971da6f6e0fcb796e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the cycle-slip detector is enabled.  <br /></td></tr>
 <tr class="memitem:acd8634283375e6163672815c39822f08" id="r_acd8634283375e6163672815c39822f08"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acd8634283375e6163672815c39822f08">_polyDegree</a></td></tr>
 <tr class="memdesc:acd8634283375e6163672815c39822f08"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classNAV_1_1Polynomial.html" title="Polynomial.">Polynomial</a> degree to fit.  <br /></td></tr>
+<tr class="memitem:a62f4ae445036e39069f3f6902a37f19a" id="r_a62f4ae445036e39069f3f6902a37f19a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a62f4ae445036e39069f3f6902a37f19a">_resetAfterCycleSlip</a></td></tr>
+<tr class="memdesc:a62f4ae445036e39069f3f6902a37f19a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether to discard all data after a cycle-slip.  <br /></td></tr>
 <tr class="memitem:aa04741cf3c23ea8420f6b7c4737f23fe" id="r_aa04741cf3c23ea8420f6b7c4737f23fe"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1PolynomialRegressor.html#a8aa78507e36f374ba2d370ceffbaa8fc">Strategy</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa04741cf3c23ea8420f6b7c4737f23fe">_strategy</a></td></tr>
 <tr class="memdesc:aa04741cf3c23ea8420f6b7c4737f23fe"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="#a656d5f87e2dd2de8960a11957fc44b14" title="Strategies for fitting.">Strategy</a> used for fitting.  <br /></td></tr>
 <tr class="memitem:abeaeb336945ba3dd8dc5b2fdd897da42" id="r_abeaeb336945ba3dd8dc5b2fdd897da42"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abeaeb336945ba3dd8dc5b2fdd897da42">_windowSize</a></td></tr>
@@ -210,7 +218,7 @@ template&lt;typename Key&gt; </div>
 
 <p>Strategies for fitting. </p>
 
-<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00148">148</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00165">165</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
 
 </div>
 </div>
@@ -308,7 +316,7 @@ template&lt;typename Key&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00228">228</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00256">256</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
 
 </div>
 </div>
@@ -345,7 +353,7 @@ template&lt;typename Key&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00217">217</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00245">245</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
 
 </div>
 </div>
@@ -387,7 +395,7 @@ template&lt;typename Key&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00188">188</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00215">215</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
 
 </div>
 </div>
@@ -429,7 +437,7 @@ template&lt;typename Key&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00195">195</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00222">222</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
 
 </div>
 </div>
@@ -515,7 +523,44 @@ template&lt;typename Key&gt; </div>
 
 <p>Empties the collected polynomials. </p>
 
-<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00094">94</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00099">99</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a9003b003f3a8fe4b62f546cecb2e8321" name="a9003b003f3a8fe4b62f546cecb2e8321"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9003b003f3a8fe4b62f546cecb2e8321">&#9670;&#160;</a></span>getDataSize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Key&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; size_t &gt; <a class="el" href="classNAV_1_1PolynomialCycleSlipDetector.html">NAV::PolynomialCycleSlipDetector</a>&lt; Key &gt;::getDataSize </td>
+          <td>(</td>
+          <td class="paramtype">const Key &amp;</td>          <td class="paramname"><span class="paramname"><em>key</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the amount of data collected. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>Key of the detector </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00182">182</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
 
 </div>
 </div>
@@ -546,7 +591,7 @@ template&lt;typename Key&gt; </div>
 
 <p>Get the strategy used for fitting. </p>
 
-<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00151">151</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00168">168</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
 
 </div>
 </div>
@@ -577,7 +622,7 @@ template&lt;typename Key&gt; </div>
 
 <p>Get the degree of the polynomial which is used for fitting. </p>
 
-<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00135">135</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00152">152</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
 
 </div>
 </div>
@@ -608,7 +653,7 @@ template&lt;typename Key&gt; </div>
 
 <p>Get the window size for the polynomial fit. </p>
 
-<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00122">122</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00139">139</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
 
 </div>
 </div>
@@ -639,7 +684,7 @@ template&lt;typename Key&gt; </div>
 
 <p>Is the cycle-slip detector enabled? </p>
 
-<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00110">110</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00115">115</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
 
 </div>
 </div>
@@ -681,7 +726,7 @@ template&lt;typename Key&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00205">205</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00232">232</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
 
 </div>
 </div>
@@ -718,7 +763,38 @@ template&lt;typename Key&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00101">101</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00106">106</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ab0b1bd51edc61c773d6ca7fda04106d8" name="ab0b1bd51edc61c773d6ca7fda04106d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab0b1bd51edc61c773d6ca7fda04106d8">&#9670;&#160;</a></span>resetAfterCycleSlip()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Key&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classNAV_1_1PolynomialCycleSlipDetector.html">NAV::PolynomialCycleSlipDetector</a>&lt; Key &gt;::resetAfterCycleSlip </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Whether to discard all data after a cycle-slip. </p>
+
+<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00127">127</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
 
 </div>
 </div>
@@ -755,7 +831,7 @@ template&lt;typename Key&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00116">116</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00121">121</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
 
 </div>
 </div>
@@ -792,7 +868,7 @@ template&lt;typename Key&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00154">154</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00171">171</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
 
 </div>
 </div>
@@ -829,7 +905,44 @@ template&lt;typename Key&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00138">138</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00155">155</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a9f78fb824c52266c9308c0f5ece31c0b" name="a9f78fb824c52266c9308c0f5ece31c0b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f78fb824c52266c9308c0f5ece31c0b">&#9670;&#160;</a></span>setResetAfterCycleSlip()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Key&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classNAV_1_1PolynomialCycleSlipDetector.html">NAV::PolynomialCycleSlipDetector</a>&lt; Key &gt;::setResetAfterCycleSlip </td>
+          <td>(</td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>reset</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Sets whether to discard all data after a cycle-slip. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">reset</td><td>Whether to reset or not </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00133">133</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
 
 </div>
 </div>
@@ -866,7 +979,7 @@ template&lt;typename Key&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00125">125</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00142">142</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
 
 </div>
 </div>
@@ -893,7 +1006,7 @@ template&lt;typename Key&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00237">237</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00265">265</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
 
 </div>
 </div>
@@ -919,7 +1032,7 @@ template&lt;typename Key&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00236">236</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00264">264</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
 
 </div>
 </div>
@@ -936,7 +1049,7 @@ template&lt;typename Key&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="Unordered__map_8hpp.html#a29298bc00e935389786a4fecc7021995">unordered_map</a>&lt;Key, <a class="el" href="structNAV_1_1PolynomialCycleSlipDetector_1_1SignalDetector.html">SignalDetector</a>&gt; <a class="el" href="classNAV_1_1PolynomialCycleSlipDetector.html">NAV::PolynomialCycleSlipDetector</a>&lt; Key &gt;::_detectors</td>
+          <td class="memname"><a class="el" href="Unordered__map_8hpp.html#a9361e3e61d76ae62755ac307c5f601f9">unordered_map</a>&lt;Key, <a class="el" href="structNAV_1_1PolynomialCycleSlipDetector_1_1SignalDetector.html">SignalDetector</a>&gt; <a class="el" href="classNAV_1_1PolynomialCycleSlipDetector.html">NAV::PolynomialCycleSlipDetector</a>&lt; Key &gt;::_detectors</td>
         </tr>
       </table>
   </td>
@@ -948,7 +1061,7 @@ template&lt;typename Key&gt; </div>
 
 <p>Detectors, one for each key. </p>
 
-<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00183">183</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00210">210</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
 
 </div>
 </div>
@@ -976,7 +1089,7 @@ template&lt;typename Key&gt; </div>
 
 <p>Whether the cycle-slip detector is enabled. </p>
 
-<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00179">179</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00205">205</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
 
 </div>
 </div>
@@ -1004,7 +1117,35 @@ template&lt;typename Key&gt; </div>
 
 <p><a class="el" href="classNAV_1_1Polynomial.html" title="Polynomial.">Polynomial</a> degree to fit. </p>
 
-<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00181">181</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00208">208</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a62f4ae445036e39069f3f6902a37f19a" name="a62f4ae445036e39069f3f6902a37f19a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a62f4ae445036e39069f3f6902a37f19a">&#9670;&#160;</a></span>_resetAfterCycleSlip</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Key&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classNAV_1_1PolynomialCycleSlipDetector.html">NAV::PolynomialCycleSlipDetector</a>&lt; Key &gt;::_resetAfterCycleSlip</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Whether to discard all data after a cycle-slip. </p>
+
+<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00206">206</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
 
 </div>
 </div>
@@ -1032,7 +1173,7 @@ template&lt;typename Key&gt; </div>
 
 <p><a class="el" href="#a656d5f87e2dd2de8960a11957fc44b14" title="Strategies for fitting.">Strategy</a> used for fitting. </p>
 
-<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00182">182</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00209">209</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
 
 </div>
 </div>
@@ -1060,7 +1201,7 @@ template&lt;typename Key&gt; </div>
 
 <p>Window size for the sliding window. </p>
 
-<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00180">180</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html#l00207">207</a> of file <a class="el" href="PolynomialCycleSlipDetector_8hpp_source.html">PolynomialCycleSlipDetector.hpp</a>.</p>
 
 </div>
 </div>

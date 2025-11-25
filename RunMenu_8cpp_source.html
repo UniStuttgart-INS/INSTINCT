@@ -48,7 +48,7 @@
               <td id="projectlogo"><img alt="Logo" src="INSTINCT_Logo_Text.png"  /></td>
               <td id="projectalign">
                 <div id="projectname"><span
-                    id="projectnumber">&#160;0.5.0</span>
+                    id="projectnumber">&#160;0.5.1</span>
                 </div>
               </td>
             </tr>
@@ -126,96 +126,94 @@ $(function(){initNavTree('RunMenu_8cpp_source.html','',''); });
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;imgui.h&gt;</span></div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &quot;<a class="code" href="FlowExecutor_8hpp.html">internal/FlowExecutor.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &quot;<a class="code" href="NodeManager_8hpp.html">internal/NodeManager.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceNAV_1_1NodeManager.html">nm</a> = <a class="code hl_namespace" href="namespaceNAV_1_1NodeManager.html">NAV::NodeManager</a>;</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &quot;<a class="code" href="Logger_8hpp.html">util/Logger.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="foldopen" id="foldopen00019" data-start="{" data-end="}">
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1gui_1_1menus.html#ae6d13ce2e7aedeaeca647b7358b84903">   19</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1gui_1_1menus.html#ae6d13ce2e7aedeaeca647b7358b84903">NAV::gui::menus::ShowRunMenu</a>()</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>{</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    <span class="keywordtype">bool</span> hasInitializedNodes = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <span class="keywordtype">bool</span> hasDeInitializedNodes = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* node : <a class="code hl_function" href="namespaceNAV_1_1NodeManager.html#ad568a8a1b240c645e28bbab1a9e0895d">nm::m_Nodes</a>())</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    {</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>        <span class="keywordflow">if</span> (node-&gt;getState() == <a class="code hl_enumvalue" href="classNAV_1_1Node.html#a174753f74e1f2eb8d4f16b8c82ddbea3a59d87a4758a9d35fbaf6b204341bb399">Node::State::Initialized</a>)</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>        {</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>            hasInitializedNodes = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>        }</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (node-&gt;getState() == <a class="code hl_enumvalue" href="classNAV_1_1Node.html#a174753f74e1f2eb8d4f16b8c82ddbea3afd7c1706ced8bc5a714ced665d951265">Node::State::Deinitialized</a>)</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>        {</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>            hasDeInitializedNodes = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>        }</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    }</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <span class="keywordflow">if</span> (ImGui::MenuItem(<span class="stringliteral">&quot;Initialize all Nodes&quot;</span>, <span class="keyword">nullptr</span>, <span class="keyword">false</span>, hasDeInitializedNodes))</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    {</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>        <span class="keywordflow">for</span> (<span class="keyword">auto</span>* node : <a class="code hl_function" href="namespaceNAV_1_1NodeManager.html#ad568a8a1b240c645e28bbab1a9e0895d">nm::m_Nodes</a>())</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>        {</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>            <span class="keywordflow">if</span> (node-&gt;getState() == <a class="code hl_enumvalue" href="classNAV_1_1Node.html#a174753f74e1f2eb8d4f16b8c82ddbea3afd7c1706ced8bc5a714ced665d951265">Node::State::Deinitialized</a>)</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>            {</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>                node-&gt;doInitialize();</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>            }</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>        }</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    }</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="keywordflow">if</span> (ImGui::MenuItem(<span class="stringliteral">&quot;Reinitialize all Nodes&quot;</span>, <span class="keyword">nullptr</span>, <span class="keyword">false</span>, hasInitializedNodes))</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    {</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        <span class="keywordflow">for</span> (<span class="keyword">auto</span>* node : <a class="code hl_function" href="namespaceNAV_1_1NodeManager.html#ad568a8a1b240c645e28bbab1a9e0895d">nm::m_Nodes</a>())</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        {</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>            <span class="keywordflow">if</span> (node-&gt;isInitialized())</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>            {</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>                node-&gt;doReinitialize();</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>            }</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (node-&gt;getState() == <a class="code hl_enumvalue" href="classNAV_1_1Node.html#a174753f74e1f2eb8d4f16b8c82ddbea3afd7c1706ced8bc5a714ced665d951265">Node::State::Deinitialized</a>)</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>            {</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>                node-&gt;doInitialize();</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>            }</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        }</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    }</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    <span class="keywordflow">if</span> (ImGui::MenuItem(<span class="stringliteral">&quot;Deinitialize all Nodes&quot;</span>, <span class="keyword">nullptr</span>, <span class="keyword">false</span>, hasInitializedNodes))</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    {</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        <span class="keywordflow">for</span> (<span class="keyword">auto</span>* node : <a class="code hl_function" href="namespaceNAV_1_1NodeManager.html#ad568a8a1b240c645e28bbab1a9e0895d">nm::m_Nodes</a>())</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        {</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>            <span class="keywordflow">if</span> (node-&gt;isInitialized())</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>            {</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>                node-&gt;doDeinitialize();</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>            }</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        }</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    }</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    ImGui::Separator();</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span> </div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    <span class="keywordflow">if</span> (ImGui::MenuItem(<span class="stringliteral">&quot;Run Flow&quot;</span>, <span class="stringliteral">&quot;F7&quot;</span>, <span class="keyword">false</span>, !<a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#a11abe1f9f87da360d8b75dc40bdb83b9">FlowExecutor::isRunning</a>()))</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    {</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        <span class="keywordflow">if</span> (!<a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#a11abe1f9f87da360d8b75dc40bdb83b9">FlowExecutor::isRunning</a>())</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>        {</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>            <a class="code hl_define" href="Logger_8hpp.html#aeb4f36db01bd128c7afeac5889dac311">LOG_INFO</a>(<span class="stringliteral">&quot;Starting Flow Execution&quot;</span>);</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>            <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#a9b2d37e9e778dc2e4e28f9d39a6e3aa3">FlowExecutor::start</a>();</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>        }</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    }</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    <span class="keywordflow">if</span> (ImGui::MenuItem(<span class="stringliteral">&quot;Stop Execution&quot;</span>, <span class="stringliteral">&quot;Esc&quot;</span>, <span class="keyword">false</span>, <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#a11abe1f9f87da360d8b75dc40bdb83b9">FlowExecutor::isRunning</a>()))</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    {</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>        <span class="keywordflow">if</span> (<a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#a11abe1f9f87da360d8b75dc40bdb83b9">FlowExecutor::isRunning</a>())</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>        {</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>            <a class="code hl_define" href="Logger_8hpp.html#aeb4f36db01bd128c7afeac5889dac311">LOG_INFO</a>(<span class="stringliteral">&quot;Canceling Execution...&quot;</span>);</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>            <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#ac0638d4f5a6dcc410e29ab8c59c123b9">FlowExecutor::stop</a>();</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>            <a class="code hl_define" href="Logger_8hpp.html#aeb4f36db01bd128c7afeac5889dac311">LOG_INFO</a>(<span class="stringliteral">&quot;Execution canceled&quot;</span>);</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        }</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    }</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>}</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &quot;<a class="code" href="FlowManager_8hpp.html">internal/FlowManager.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &quot;<a class="code" href="Logger_8hpp.html">util/Logger.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
+<div class="foldopen" id="foldopen00018" data-start="{" data-end="}">
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1gui_1_1menus.html#ae6d13ce2e7aedeaeca647b7358b84903">   18</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1gui_1_1menus.html#ae6d13ce2e7aedeaeca647b7358b84903">NAV::gui::menus::ShowRunMenu</a>()</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>{</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    <span class="keywordtype">bool</span> hasInitializedNodes = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    <span class="keywordtype">bool</span> hasDeInitializedNodes = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>* node : <a class="code hl_function" href="namespaceNAV_1_1flow.html#a2afe50e21ec6eca996c30b5f6d6e4b8d">flow::m_Nodes</a>())</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    {</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>        <span class="keywordflow">if</span> (node-&gt;getState() == <a class="code hl_enumvalue" href="classNAV_1_1Node.html#a174753f74e1f2eb8d4f16b8c82ddbea3a59d87a4758a9d35fbaf6b204341bb399">Node::State::Initialized</a>)</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>        {</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>            hasInitializedNodes = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>        }</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (node-&gt;getState() == <a class="code hl_enumvalue" href="classNAV_1_1Node.html#a174753f74e1f2eb8d4f16b8c82ddbea3afd7c1706ced8bc5a714ced665d951265">Node::State::Deinitialized</a>)</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        {</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>            hasDeInitializedNodes = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>        }</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    }</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <span class="keywordflow">if</span> (ImGui::MenuItem(<span class="stringliteral">&quot;Initialize all Nodes&quot;</span>, <span class="keyword">nullptr</span>, <span class="keyword">false</span>, hasDeInitializedNodes))</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    {</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        <span class="keywordflow">for</span> (<span class="keyword">auto</span>* node : <a class="code hl_function" href="namespaceNAV_1_1flow.html#a2afe50e21ec6eca996c30b5f6d6e4b8d">flow::m_Nodes</a>())</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>        {</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>            <span class="keywordflow">if</span> (node-&gt;getState() == <a class="code hl_enumvalue" href="classNAV_1_1Node.html#a174753f74e1f2eb8d4f16b8c82ddbea3afd7c1706ced8bc5a714ced665d951265">Node::State::Deinitialized</a>)</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>            {</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>                node-&gt;doInitialize();</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>            }</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        }</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    }</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <span class="keywordflow">if</span> (ImGui::MenuItem(<span class="stringliteral">&quot;Reinitialize all Nodes&quot;</span>, <span class="keyword">nullptr</span>, <span class="keyword">false</span>, hasInitializedNodes))</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    {</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        <span class="keywordflow">for</span> (<span class="keyword">auto</span>* node : <a class="code hl_function" href="namespaceNAV_1_1flow.html#a2afe50e21ec6eca996c30b5f6d6e4b8d">flow::m_Nodes</a>())</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        {</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>            <span class="keywordflow">if</span> (node-&gt;isInitialized())</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>            {</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>                node-&gt;doReinitialize();</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>            }</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (node-&gt;getState() == <a class="code hl_enumvalue" href="classNAV_1_1Node.html#a174753f74e1f2eb8d4f16b8c82ddbea3afd7c1706ced8bc5a714ced665d951265">Node::State::Deinitialized</a>)</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>            {</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>                node-&gt;doInitialize();</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>            }</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>        }</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    }</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keywordflow">if</span> (ImGui::MenuItem(<span class="stringliteral">&quot;Deinitialize all Nodes&quot;</span>, <span class="keyword">nullptr</span>, <span class="keyword">false</span>, hasInitializedNodes))</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    {</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        <span class="keywordflow">for</span> (<span class="keyword">auto</span>* node : <a class="code hl_function" href="namespaceNAV_1_1flow.html#a2afe50e21ec6eca996c30b5f6d6e4b8d">flow::m_Nodes</a>())</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        {</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>            <span class="keywordflow">if</span> (node-&gt;isInitialized())</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>            {</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>                node-&gt;doDeinitialize();</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>            }</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>        }</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    }</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    ImGui::Separator();</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    <span class="keywordflow">if</span> (ImGui::MenuItem(<span class="stringliteral">&quot;Run Flow&quot;</span>, <span class="stringliteral">&quot;F7&quot;</span>, <span class="keyword">false</span>, !<a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#a11abe1f9f87da360d8b75dc40bdb83b9">FlowExecutor::isRunning</a>()))</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    {</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>        <span class="keywordflow">if</span> (!<a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#a11abe1f9f87da360d8b75dc40bdb83b9">FlowExecutor::isRunning</a>())</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        {</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>            <a class="code hl_define" href="Logger_8hpp.html#aeb4f36db01bd128c7afeac5889dac311">LOG_INFO</a>(<span class="stringliteral">&quot;Starting Flow Execution&quot;</span>);</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>            <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#a9b2d37e9e778dc2e4e28f9d39a6e3aa3">FlowExecutor::start</a>();</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        }</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    }</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    <span class="keywordflow">if</span> (ImGui::MenuItem(<span class="stringliteral">&quot;Stop Execution&quot;</span>, <span class="stringliteral">&quot;Esc&quot;</span>, <span class="keyword">false</span>, <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#a11abe1f9f87da360d8b75dc40bdb83b9">FlowExecutor::isRunning</a>()))</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    {</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>        <span class="keywordflow">if</span> (<a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#a11abe1f9f87da360d8b75dc40bdb83b9">FlowExecutor::isRunning</a>())</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>        {</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>            <a class="code hl_define" href="Logger_8hpp.html#aeb4f36db01bd128c7afeac5889dac311">LOG_INFO</a>(<span class="stringliteral">&quot;Canceling Execution...&quot;</span>);</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>            <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#ac0638d4f5a6dcc410e29ab8c59c123b9">FlowExecutor::stop</a>();</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>            <a class="code hl_define" href="Logger_8hpp.html#aeb4f36db01bd128c7afeac5889dac311">LOG_INFO</a>(<span class="stringliteral">&quot;Execution canceled&quot;</span>);</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>        }</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    }</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>}</div>
 </div>
 <div class="ttc" id="aFlowExecutor_8hpp_html"><div class="ttname"><a href="FlowExecutor_8hpp.html">FlowExecutor.hpp</a></div><div class="ttdoc">Flow Executor Thread.</div></div>
+<div class="ttc" id="aFlowManager_8hpp_html"><div class="ttname"><a href="FlowManager_8hpp.html">FlowManager.hpp</a></div><div class="ttdoc">Save/Load the Nodes.</div></div>
 <div class="ttc" id="aLogger_8hpp_html"><div class="ttname"><a href="Logger_8hpp.html">Logger.hpp</a></div><div class="ttdoc">Utility class for logging to console and file.</div></div>
 <div class="ttc" id="aLogger_8hpp_html_aeb4f36db01bd128c7afeac5889dac311"><div class="ttname"><a href="Logger_8hpp.html#aeb4f36db01bd128c7afeac5889dac311">LOG_INFO</a></div><div class="ttdeci">#define LOG_INFO</div><div class="ttdoc">Info to the user on the state of the program.</div><div class="ttdef"><b>Definition</b> <a href="Logger_8hpp_source.html#l00069">Logger.hpp:69</a></div></div>
-<div class="ttc" id="aNodeManager_8hpp_html"><div class="ttname"><a href="NodeManager_8hpp.html">NodeManager.hpp</a></div><div class="ttdoc">Manages all Nodes.</div></div>
 <div class="ttc" id="aRunMenu_8hpp_html"><div class="ttname"><a href="RunMenu_8hpp.html">RunMenu.hpp</a></div><div class="ttdoc">Run Menu.</div></div>
 <div class="ttc" id="aclassNAV_1_1Node_html_a174753f74e1f2eb8d4f16b8c82ddbea3a59d87a4758a9d35fbaf6b204341bb399"><div class="ttname"><a href="classNAV_1_1Node.html#a174753f74e1f2eb8d4f16b8c82ddbea3a59d87a4758a9d35fbaf6b204341bb399">NAV::Node::State::Initialized</a></div><div class="ttdeci">@ Initialized</div><div class="ttdoc">Node is initialized (green)</div><div class="ttdef"><b>Definition</b> <a href="Node_8hpp_source.html#l00181">Node.hpp:181</a></div></div>
 <div class="ttc" id="aclassNAV_1_1Node_html_a174753f74e1f2eb8d4f16b8c82ddbea3afd7c1706ced8bc5a714ced665d951265"><div class="ttname"><a href="classNAV_1_1Node.html#a174753f74e1f2eb8d4f16b8c82ddbea3afd7c1706ced8bc5a714ced665d951265">NAV::Node::State::Deinitialized</a></div><div class="ttdeci">@ Deinitialized</div><div class="ttdoc">Node is deinitialized (red)</div><div class="ttdef"><b>Definition</b> <a href="Node_8hpp_source.html#l00178">Node.hpp:178</a></div></div>
-<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html_a11abe1f9f87da360d8b75dc40bdb83b9"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html#a11abe1f9f87da360d8b75dc40bdb83b9">NAV::FlowExecutor::isRunning</a></div><div class="ttdeci">bool isRunning() noexcept</div><div class="ttdoc">Checks if the thread is running.</div><div class="ttdef"><b>Definition</b> <a href="FlowExecutor_8cpp_source.html#l00085">FlowExecutor.cpp:85</a></div></div>
-<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html_a9b2d37e9e778dc2e4e28f9d39a6e3aa3"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html#a9b2d37e9e778dc2e4e28f9d39a6e3aa3">NAV::FlowExecutor::start</a></div><div class="ttdeci">void start()</div><div class="ttdoc">Starts the Thread.</div><div class="ttdef"><b>Definition</b> <a href="FlowExecutor_8cpp_source.html#l00091">FlowExecutor.cpp:91</a></div></div>
-<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html_ac0638d4f5a6dcc410e29ab8c59c123b9"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html#ac0638d4f5a6dcc410e29ab8c59c123b9">NAV::FlowExecutor::stop</a></div><div class="ttdeci">void stop()</div><div class="ttdoc">Stops the Thread.</div><div class="ttdef"><b>Definition</b> <a href="FlowExecutor_8cpp_source.html#l00105">FlowExecutor.cpp:105</a></div></div>
-<div class="ttc" id="anamespaceNAV_1_1NodeManager_html"><div class="ttname"><a href="namespaceNAV_1_1NodeManager.html">NAV::NodeManager</a></div><div class="ttdef"><b>Definition</b> <a href="NodeManager_8cpp_source.html#l00024">NodeManager.cpp:25</a></div></div>
-<div class="ttc" id="anamespaceNAV_1_1NodeManager_html_ad568a8a1b240c645e28bbab1a9e0895d"><div class="ttname"><a href="namespaceNAV_1_1NodeManager.html#ad568a8a1b240c645e28bbab1a9e0895d">NAV::NodeManager::m_Nodes</a></div><div class="ttdeci">const std::vector&lt; Node * &gt; &amp; m_Nodes()</div><div class="ttdoc">List of all registered Nodes.</div><div class="ttdef"><b>Definition</b> <a href="NodeManager_8cpp_source.html#l00055">NodeManager.cpp:55</a></div></div>
-<div class="ttc" id="anamespaceNAV_1_1gui_1_1menus_html_ae6d13ce2e7aedeaeca647b7358b84903"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1menus.html#ae6d13ce2e7aedeaeca647b7358b84903">NAV::gui::menus::ShowRunMenu</a></div><div class="ttdeci">void ShowRunMenu()</div><div class="ttdoc">Show the run menu dropdown.</div><div class="ttdef"><b>Definition</b> <a href="#l00019">RunMenu.cpp:19</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html_a11abe1f9f87da360d8b75dc40bdb83b9"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html#a11abe1f9f87da360d8b75dc40bdb83b9">NAV::FlowExecutor::isRunning</a></div><div class="ttdeci">bool isRunning() noexcept</div><div class="ttdoc">Checks if the thread is running.</div><div class="ttdef"><b>Definition</b> <a href="FlowExecutor_8cpp_source.html#l00083">FlowExecutor.cpp:83</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html_a9b2d37e9e778dc2e4e28f9d39a6e3aa3"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html#a9b2d37e9e778dc2e4e28f9d39a6e3aa3">NAV::FlowExecutor::start</a></div><div class="ttdeci">void start()</div><div class="ttdoc">Starts the Thread.</div><div class="ttdef"><b>Definition</b> <a href="FlowExecutor_8cpp_source.html#l00089">FlowExecutor.cpp:89</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html_ac0638d4f5a6dcc410e29ab8c59c123b9"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html#ac0638d4f5a6dcc410e29ab8c59c123b9">NAV::FlowExecutor::stop</a></div><div class="ttdeci">void stop()</div><div class="ttdoc">Stops the Thread.</div><div class="ttdef"><b>Definition</b> <a href="FlowExecutor_8cpp_source.html#l00103">FlowExecutor.cpp:103</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1flow_html_a2afe50e21ec6eca996c30b5f6d6e4b8d"><div class="ttname"><a href="namespaceNAV_1_1flow.html#a2afe50e21ec6eca996c30b5f6d6e4b8d">NAV::flow::m_Nodes</a></div><div class="ttdeci">const std::vector&lt; Node * &gt; &amp; m_Nodes()</div><div class="ttdoc">List of all registered Nodes.</div><div class="ttdef"><b>Definition</b> <a href="FlowManager_8cpp_source.html#l00067">FlowManager.cpp:67</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_1_1menus_html_ae6d13ce2e7aedeaeca647b7358b84903"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1menus.html#ae6d13ce2e7aedeaeca647b7358b84903">NAV::gui::menus::ShowRunMenu</a></div><div class="ttdeci">void ShowRunMenu()</div><div class="ttdoc">Show the run menu dropdown.</div><div class="ttdef"><b>Definition</b> <a href="#l00018">RunMenu.cpp:18</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 </div><!-- container -->

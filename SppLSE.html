@@ -48,7 +48,7 @@
               <td id="projectlogo"><img alt="Logo" src="INSTINCT_Logo_Text.png"  /></td>
               <td id="projectalign">
                 <div id="projectname"><span
-                    id="projectnumber">&#160;0.5.0</span>
+                    id="projectnumber">&#160;0.5.1</span>
                 </div>
               </td>
             </tr>
@@ -120,35 +120,35 @@ Algorithm - Linearized (Weighed) Least Squares Estimation</h1>
 <li>Cofactor matrix: <a class="anchor" id="eq-SPP-LseAlgorithm-Q"></a>  <p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-SPP-LseAlgorithm-Q}
     \boldsymbol{Q} = \boldsymbol{H}(\boldsymbol{x})^T \boldsymbol{W} \boldsymbol{H}(\boldsymbol{x})
-\end{equation}" src="form_272.svg" width="572" height="21"/>
+\end{equation}" src="form_310.svg" width="572" height="21"/>
 </p>
 </li>
 <li>Least squares solution: <a class="anchor" id="eq-SPP-LseAlgorithm-dx"></a>  <p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-SPP-LseAlgorithm-dx}
     \delta \boldsymbol{x} = (\boldsymbol{Q})^{-1} \boldsymbol{H}(\boldsymbol{x})^T \boldsymbol{W} \delta \boldsymbol{z}(\boldsymbol{x})
-\end{equation}" src="form_273.svg" width="599" height="21"/>
+\end{equation}" src="form_311.svg" width="599" height="21"/>
 </p>
 </li>
 <li>Unknowns: <a class="anchor" id="eq-SPP-LseAlgorithm-xhat"></a>  <p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-SPP-LseAlgorithm-xhat}
     \hat{\boldsymbol{x}} = \boldsymbol{x} + \delta \boldsymbol{x}
-\end{equation}" src="form_274.svg" width="537" height="19"/>
+\end{equation}" src="form_312.svg" width="537" height="19"/>
 </p>
 </li>
 <li>Residuals: <a class="anchor" id="eq-SPP-LseAlgorithm-e"></a>  <p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-SPP-LseAlgorithm-e}
     \boldsymbol{e} = \delta\boldsymbol{z}(\boldsymbol{x}) - \boldsymbol{H}(\boldsymbol{x}) \cdot \delta\boldsymbol{x}
-\end{equation}" src="form_275.svg" width="581" height="19"/>
+\end{equation}" src="form_313.svg" width="581" height="19"/>
 </p>
 </li>
 <li>Covariance of the unknowns: <a class="anchor" id="eq-SPP-LseAlgorithm-Sigma"></a>  <p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-SPP-LseAlgorithm-Sigma}
     \boldsymbol{\Sigma}_{x} = \hat{\sigma}_{apost}^2 \cdot \boldsymbol{Q}^{-1} \text{ where } \hat{\sigma}_{apost}^2 = \frac{\boldsymbol{e}^T\boldsymbol{W}\boldsymbol{e}}{m-n}
-\end{equation}" src="form_276.svg" width="651" height="40"/>
+\end{equation}" src="form_314.svg" width="651" height="40"/>
 </p>
 </li>
-<li>Stop if <img class="formulaInl" alt="$ \mid \delta \boldsymbol{x} \mid &lt; 10^{-4} $" src="form_277.svg" width="93" height="21"/> or the maximum number of iterations of 10 is reached.</li>
-<li>Set <img class="formulaInl" alt="$ \boldsymbol{x} = \hat{\boldsymbol{x}} $" src="form_278.svg" width="46" height="16"/></li>
+<li>Stop if <img class="formulaInl" alt="$ \mid \delta \boldsymbol{x} \mid &lt; 10^{-4} $" src="form_315.svg" width="93" height="21"/> or the maximum number of iterations of 10 is reached.</li>
+<li>Set <img class="formulaInl" alt="$ \boldsymbol{x} = \hat{\boldsymbol{x}} $" src="form_316.svg" width="46" height="16"/></li>
 </ol>
 <h1 class="doxsection"><a class="anchor" id="SppLSE-unknowns"></a>
 Unknowns</h1>
@@ -180,7 +180,7 @@ Unknowns</h1>
     };
 
   \end{tikzpicture}
-\end{equation}" src="form_279.svg" width="770" height="189"/>
+\end{equation}" src="form_317.svg" width="770" height="189"/>
 </p>
 <p><b> Doppler </b></p>
 <p><a class="anchor" id="eq-SppLSE-unknowns-doppler"></a>                         </p><p class="formulaDsp">
@@ -209,7 +209,7 @@ Unknowns</h1>
     };
 
   \end{tikzpicture}
-\end{equation}" src="form_280.svg" width="770" height="189"/>
+\end{equation}" src="form_318.svg" width="770" height="189"/>
 </p>
 <h1 class="doxsection"><a class="anchor" id="SppLSE-measurmentModel"></a>
 Measurement Model</h1>
@@ -238,7 +238,7 @@ Design matrix</h2>
   \ldots &amp; \ldots &amp; \ldots &amp; \ldots &amp; \ldots
 \end{array}\right]
 \end{aligned}
-\end{equation}" src="form_281.svg" width="674" height="145"/>
+\end{equation}" src="form_319.svg" width="674" height="145"/>
 </p>
 <p><b> Doppler </b></p>
 <p><a class="anchor" id="eq-SppLSE-measurementModel-designMatrix-pseudorangeRate"></a>                </p><p class="formulaDsp">
@@ -258,7 +258,7 @@ Design matrix</h2>
     \ldots &amp; \ldots &amp; \ldots &amp; \ldots &amp; \ldots
   \end{array}\right]
   \end{aligned}
-\end{equation}" src="form_282.svg" width="679" height="145"/>
+\end{equation}" src="form_320.svg" width="679" height="145"/>
 </p>
 <h2 class="doxsection"><a class="anchor" id="SppLSE-measurmentModel-weightMatrix"></a>
 Weight matrix</h2>

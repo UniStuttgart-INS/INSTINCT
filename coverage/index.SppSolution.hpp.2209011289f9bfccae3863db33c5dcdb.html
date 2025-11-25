@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-07-19 10:51:51</td>
+      <td>2025-11-25 23:34:18</td>
     </tr>
   </table>
 </div>
@@ -52,9 +52,9 @@
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>60</td>
-      <td>331</td>
-      <td class="coverage-low">18.1%</td>
+      <td>55</td>
+      <td>301</td>
+      <td class="coverage-low">18.3%</td>
     </tr>
   </table>
 </div>
@@ -72,7 +72,7 @@
     </tr>
     <tr><td><a href="#l60">NAV::SppSolution::GetStaticDataDescriptors[abi:cxx11]() (line 60)</a></td><td>called 7214 times</td><td>97.0%</td></tr>
     <tr><td><a href="#l101">NAV::SppSolution::GetStaticDescriptorCount() (line 101)</a></td><td>called 14426 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l224">NAV::SppSolution::dynamicDataDescriptors[abi:cxx11]() const (line 224)</a></td><td>called 601 times</td><td>75.0%</td></tr>
+    <tr><td><a href="#l224">NAV::SppSolution::dynamicDataDescriptors[abi:cxx11]() const (line 224)</a></td><td>called 601 times</td><td>73.0%</td></tr>
     <tr><td><a href="#l266">NAV::SppSolution::getDynamicDataAt(std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;) const (line 266)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l306">NAV::SppSolution::getDynamicData[abi:cxx11]() const (line 306)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l48">NAV::SppSolution::getType[abi:cxx11]() const (line 48)</a></td><td>not called</td><td>0.0%</td></tr>
@@ -80,7 +80,7 @@
     <tr><td><a href="#l52">NAV::SppSolution::parentTypes[abi:cxx11]() (line 52)</a></td><td>called 114 times</td><td>64.0%</td></tr>
     <tr><td><a href="#l104">NAV::SppSolution::staticDataDescriptors[abi:cxx11]() const (line 104)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l107">NAV::SppSolution::staticDescriptorCount() const (line 107)</a></td><td>called 3606 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l41">NAV::SppSolution::type[abi:cxx11]() (line 41)</a></td><td>called 15321 times</td><td>78.0%</td></tr>
+    <tr><td><a href="#l41">NAV::SppSolution::type[abi:cxx11]() (line 41)</a></td><td>called 15324 times</td><td>78.0%</td></tr>
   </table>
 </details>
 
@@ -378,7 +378,7 @@
       <td class="lineno"><a id="l41" href="#l41">41</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">15321</td>
+      <td class="linecount coveredLine">15324</td>
       <td class="src coveredLine"><span class="w">    </span><span class="p">[[</span><span class="n">nodiscard</span><span class="p">]]</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">type</span><span class="p">()</span></td>
     </tr>
     <tr class="source-line">
@@ -394,12 +394,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 15321 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 15324 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">30642</td>
+      <td class="linecount partialCoveredLine">30648</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;SppSolution&quot;</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1983,32 +1983,28 @@
       <td class="lineno"><a id="l231" href="#l231">231</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">2/4</summary>
+          <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 3005 times.</div>
-            <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 3005 times.</div>
-            <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
+            <div class="takenBranch">&check; Branch 2 taken 3005 times.</div>
+            <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">3005</td>
+      <td class="linecount partialCoveredLine">6010</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="n">descriptors</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">fmt</span><span class="o">::</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;{} Inter-freq bias [s]&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">bias</span><span class="p">.</span><span class="n">first</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l232" href="#l232">232</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">2/4</summary>
+          <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 3005 times.</div>
-            <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 3005 times.</div>
-            <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
+            <div class="takenBranch">&check; Branch 2 taken 3005 times.</div>
+            <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">3005</td>
+      <td class="linecount partialCoveredLine">6010</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="n">descriptors</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">fmt</span><span class="o">::</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;{} Inter-freq bias StDev [s]&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">bias</span><span class="p">.</span><span class="n">first</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
@@ -2043,32 +2039,28 @@
       <td class="lineno"><a id="l236" href="#l236">236</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">2/4</summary>
+          <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 8067 times.</div>
-            <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 8067 times.</div>
-            <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
+            <div class="takenBranch">&check; Branch 2 taken 8067 times.</div>
+            <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">8067</td>
+      <td class="linecount partialCoveredLine">16134</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="n">descriptors</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">fmt</span><span class="o">::</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;{} Elevation [deg]&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">satId</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l237" href="#l237">237</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">2/4</summary>
+          <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 8067 times.</div>
-            <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 8067 times.</div>
-            <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
+            <div class="takenBranch">&check; Branch 2 taken 8067 times.</div>
+            <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">8067</td>
+      <td class="linecount partialCoveredLine">16134</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="n">descriptors</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">fmt</span><span class="o">::</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;{} Azimuth [deg]&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">satId</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
@@ -2222,20 +2214,18 @@
       <td class="lineno"><a id="l256" href="#l256">256</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">4/8</summary>
+          <summary class="linebranchSummary">3/6</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 3 taken 72120 times.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
             <div class="takenBranch">&check; Branch 8 taken 72120 times.</div>
             <div class="notTakenBranch">&cross; Branch 9 not taken.</div>
-            <div class="takenBranch">&check; Branch 11 taken 72120 times.</div>
-            <div class="notTakenBranch">&cross; Branch 12 not taken.</div>
-            <div class="takenBranch">&check; Branch 14 taken 72120 times.</div>
-            <div class="notTakenBranch">&cross; Branch 15 not taken.</div>
+            <div class="takenBranch">&check; Branch 12 taken 72120 times.</div>
+            <div class="notTakenBranch">&cross; Branch 13 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">72120</td>
+      <td class="linecount partialCoveredLine">144240</td>
       <td class="src partialCoveredLine"><span class="w">                    </span><span class="n">descriptors</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">fmt</span><span class="o">::</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;Cov({},{})&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">_e_sppCovarianceMatrix</span><span class="o">-&gt;</span><span class="n">rowKeys</span><span class="p">().</span><span class="n">at</span><span class="p">(</span><span class="n">r</span><span class="p">),</span><span class="w"> </span><span class="n">_e_sppCovarianceMatrix</span><span class="o">-&gt;</span><span class="n">colKeys</span><span class="p">().</span><span class="n">at</span><span class="p">(</span><span class="n">c</span><span class="p">)));</span></td>
     </tr>
     <tr class="source-line">

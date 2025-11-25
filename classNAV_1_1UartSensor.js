@@ -10,7 +10,8 @@ var classNAV_1_1UartSensor =
       [ "BAUDRATE_128000", "classNAV_1_1UartSensor.html#a3b5241b8197acb7fde19ebc58193d856a597fd4b367ebbbbc6d70505132ae63f6", null ],
       [ "BAUDRATE_230400", "classNAV_1_1UartSensor.html#a3b5241b8197acb7fde19ebc58193d856a3f492bb215aa40d535ce0e372a5f7f1f", null ],
       [ "BAUDRATE_460800", "classNAV_1_1UartSensor.html#a3b5241b8197acb7fde19ebc58193d856acad62a210533424cc4620a2fffb74807", null ],
-      [ "BAUDRATE_921600", "classNAV_1_1UartSensor.html#a3b5241b8197acb7fde19ebc58193d856abd52875e329b1267b63dd49bad476a50", null ]
+      [ "BAUDRATE_921600", "classNAV_1_1UartSensor.html#a3b5241b8197acb7fde19ebc58193d856abd52875e329b1267b63dd49bad476a50", null ],
+      [ "BAUDRATE_2000000", "classNAV_1_1UartSensor.html#a3b5241b8197acb7fde19ebc58193d856aa9363d2b170585bbd4b782cecd890bdf", null ]
     ] ],
     [ "~UartSensor", "classNAV_1_1UartSensor.html#ae9ff879282dee6b7972f3e591ff2ebd8", null ],
     [ "UartSensor", "classNAV_1_1UartSensor.html#a24b3b9d528b10cbb057ae17eee3f636c", null ],

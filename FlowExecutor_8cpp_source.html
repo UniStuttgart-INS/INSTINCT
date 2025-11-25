@@ -48,7 +48,7 @@
               <td id="projectlogo"><img alt="Logo" src="INSTINCT_Logo_Text.png"  /></td>
               <td id="projectalign">
                 <div id="projectname"><span
-                    id="projectnumber">&#160;0.5.0</span>
+                    id="projectnumber">&#160;0.5.1</span>
                 </div>
               </td>
             </tr>
@@ -138,316 +138,314 @@ $(function(){initNavTree('FlowExecutor_8cpp_source.html','',''); });
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="preprocessor">#include &quot;<a class="code" href="Node_8hpp.html">internal/Node/Node.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="preprocessor">#include &quot;<a class="code" href="NodeManager_8hpp.html">internal/NodeManager.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceNAV_1_1NodeManager.html">nm</a> = <a class="code hl_namespace" href="namespaceNAV_1_1NodeManager.html">NAV::NodeManager</a>;</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="preprocessor">#include &quot;<a class="code" href="ConfigManager_8hpp.html">internal/ConfigManager.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="preprocessor">#include &quot;<a class="code" href="TimeBase_8hpp.html">util/Time/TimeBase.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="preprocessor">#include &lt;chrono&gt;</span></div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="preprocessor">#include &lt;map&gt;</span></div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="preprocessor">#include &lt;variant&gt;</span></div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="preprocessor">#include &lt;memory&gt;</span></div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="preprocessor">#include &lt;thread&gt;</span></div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="preprocessor">#include &lt;atomic&gt;</span></div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="preprocessor">#include &lt;mutex&gt;</span></div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">#include &lt;condition_variable&gt;</span></div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">#ifdef TESTING</span></div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="preprocessor">    #include &lt;catch2/catch_test_macros.hpp&gt;</span></div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="preprocessor">#include &quot;<a class="code" href="ConfigManager_8hpp.html">internal/ConfigManager.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="preprocessor">#include &quot;<a class="code" href="TimeBase_8hpp.html">util/Time/TimeBase.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="preprocessor">#include &lt;chrono&gt;</span></div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="preprocessor">#include &lt;map&gt;</span></div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="preprocessor">#include &lt;variant&gt;</span></div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="preprocessor">#include &lt;memory&gt;</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="preprocessor">#include &lt;thread&gt;</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="preprocessor">#include &lt;atomic&gt;</span></div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="preprocessor">#include &lt;mutex&gt;</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="preprocessor">#include &lt;condition_variable&gt;</span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">#ifdef TESTING</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="preprocessor">    #include &lt;catch2/catch_test_macros.hpp&gt;</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="comment">/* -------------------------------------------------------------------------------------------------------- */</span></div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="comment">/*                                              Private Members                                             */</span></div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="comment">/* -------------------------------------------------------------------------------------------------------- */</span></div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="comment">/*                                              Private Members                                             */</span></div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="comment">/* -------------------------------------------------------------------------------------------------------- */</span></div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
-<div class="foldopen" id="foldopen00049" data-start="{" data-end="}">
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1FlowExecutor.html">   49</a></span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceNAV_1_1FlowExecutor.html">NAV::FlowExecutor</a></div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
+<div class="foldopen" id="foldopen00047" data-start="{" data-end="}">
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1FlowExecutor.html">   47</a></span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceNAV_1_1FlowExecutor.html">NAV::FlowExecutor</a></div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>{</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="keyword">namespace</span></div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>{</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="keyword">namespace</span></div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>{</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>std::mutex _mutex;</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>std::condition_variable _cv;</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="keyword">enum class</span> State : uint8_t</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>{</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    Idle,</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    Starting,</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    Running,</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    Stopping,</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>};</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>State _state = State::Idle;</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>std::thread _thd;</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>std::atomic&lt;size_t&gt; _activeNodes{ 0 };</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>std::chrono::time_point&lt;std::chrono::steady_clock&gt; _startTime;</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>std::mutex _mutex;</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>std::condition_variable _cv;</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="keyword">enum class</span> State : uint8_t</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>{</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    Idle,</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    Starting,</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    Running,</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    Stopping,</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>};</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>State _state = State::Idle;</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>std::thread _thd;</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>std::atomic&lt;size_t&gt; _activeNodes{ 0 };</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>std::chrono::time_point&lt;std::chrono::steady_clock&gt; _startTime;</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="comment">/* -------------------------------------------------------------------------------------------------------- */</span></div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span><span class="comment">/*                                       Private Function Declarations                                      */</span></div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="comment">/* -------------------------------------------------------------------------------------------------------- */</span></div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span><span class="comment">/*                                       Private Function Declarations                                      */</span></div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span><span class="comment">/* -------------------------------------------------------------------------------------------------------- */</span></div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>} <span class="comment">// namespace</span></div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span><span class="comment"></span> </div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span><span class="comment">/// @brief Main task of the thread</span></div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#abdca197ceadc3cd79da319d70d2af8c9">execute</a>();</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>} <span class="comment">// namespace</span></div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span><span class="comment"></span> </div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span><span class="comment">/// @brief Main task of the thread</span></div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#abdca197ceadc3cd79da319d70d2af8c9">execute</a>();</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>} <span class="comment">// namespace NAV::FlowExecutor</span></div>
+</div>
 <div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>} <span class="comment">// namespace NAV::FlowExecutor</span></div>
-</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="comment">/* -------------------------------------------------------------------------------------------------------- */</span></div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span><span class="comment">/*                                           Function Definitions                                           */</span></div>
 <div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span><span class="comment">/* -------------------------------------------------------------------------------------------------------- */</span></div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span><span class="comment">/*                                           Function Definitions                                           */</span></div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span><span class="comment">/* -------------------------------------------------------------------------------------------------------- */</span></div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
-<div class="foldopen" id="foldopen00085" data-start="{" data-end="}">
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1FlowExecutor.html#a11abe1f9f87da360d8b75dc40bdb83b9">   85</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#a11abe1f9f87da360d8b75dc40bdb83b9">NAV::FlowExecutor::isRunning</a>() noexcept</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>{</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    std::scoped_lock&lt;std::mutex&gt; lk(_mutex);</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    <span class="keywordflow">return</span> _state != State::Idle;</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>}</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span> </div>
+<div class="foldopen" id="foldopen00083" data-start="{" data-end="}">
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1FlowExecutor.html#a11abe1f9f87da360d8b75dc40bdb83b9">   83</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#a11abe1f9f87da360d8b75dc40bdb83b9">NAV::FlowExecutor::isRunning</a>() noexcept</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>{</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    std::scoped_lock&lt;std::mutex&gt; lk(_mutex);</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    <span class="keywordflow">return</span> _state != State::Idle;</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>}</div>
 </div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
-<div class="foldopen" id="foldopen00091" data-start="{" data-end="}">
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1FlowExecutor.html#a9b2d37e9e778dc2e4e28f9d39a6e3aa3">   91</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#a9b2d37e9e778dc2e4e28f9d39a6e3aa3">NAV::FlowExecutor::start</a>()</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>{</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    <a class="code hl_define" href="Logger_8hpp.html#af7abc145380f1916838e42f9272aa0f6">LOG_TRACE</a>(<span class="stringliteral">&quot;called&quot;</span>);</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
+<div class="foldopen" id="foldopen00089" data-start="{" data-end="}">
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1FlowExecutor.html#a9b2d37e9e778dc2e4e28f9d39a6e3aa3">   89</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#a9b2d37e9e778dc2e4e28f9d39a6e3aa3">NAV::FlowExecutor::start</a>()</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>{</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    <a class="code hl_define" href="Logger_8hpp.html#af7abc145380f1916838e42f9272aa0f6">LOG_TRACE</a>(<span class="stringliteral">&quot;called&quot;</span>);</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#ac0638d4f5a6dcc410e29ab8c59c123b9">stop</a>();</div>
 <div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#ac0638d4f5a6dcc410e29ab8c59c123b9">stop</a>();</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span> </div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    {</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>        std::scoped_lock&lt;std::mutex&gt; lk(_mutex);</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>        _state = State::Starting;</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    }</div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span> </div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    _thd = std::thread(<a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#abdca197ceadc3cd79da319d70d2af8c9">execute</a>);</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>}</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    {</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>        std::scoped_lock&lt;std::mutex&gt; lk(_mutex);</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>        _state = State::Starting;</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    }</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span> </div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    _thd = std::thread(<a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#abdca197ceadc3cd79da319d70d2af8c9">execute</a>);</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>}</div>
 </div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span> </div>
-<div class="foldopen" id="foldopen00105" data-start="{" data-end="}">
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1FlowExecutor.html#ac0638d4f5a6dcc410e29ab8c59c123b9">  105</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#ac0638d4f5a6dcc410e29ab8c59c123b9">NAV::FlowExecutor::stop</a>()</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>{</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    <a class="code hl_define" href="Logger_8hpp.html#af7abc145380f1916838e42f9272aa0f6">LOG_TRACE</a>(<span class="stringliteral">&quot;called&quot;</span>);</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span> </div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    <span class="keywordflow">if</span> (<a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#a11abe1f9f87da360d8b75dc40bdb83b9">isRunning</a>())</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    {</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>        {</div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>            std::scoped_lock&lt;std::mutex&gt; lk(_mutex);</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>            <span class="keywordflow">if</span> (_state == State::Running || _state == State::Starting)</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>            {</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>                _state = State::Stopping;</div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>                _cv.notify_all();</div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>            }</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>        }</div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span> </div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>        <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#ab80f0906dc77cb55e7383e27c83402ca">waitForFinish</a>();</div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>    }</div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span> </div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>    <span class="keywordflow">if</span> (_thd.joinable()) { _thd.join(); }</div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>}</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span> </div>
+<div class="foldopen" id="foldopen00103" data-start="{" data-end="}">
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1FlowExecutor.html#ac0638d4f5a6dcc410e29ab8c59c123b9">  103</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#ac0638d4f5a6dcc410e29ab8c59c123b9">NAV::FlowExecutor::stop</a>()</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>{</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    <a class="code hl_define" href="Logger_8hpp.html#af7abc145380f1916838e42f9272aa0f6">LOG_TRACE</a>(<span class="stringliteral">&quot;called&quot;</span>);</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span> </div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    <span class="keywordflow">if</span> (<a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#a11abe1f9f87da360d8b75dc40bdb83b9">isRunning</a>())</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    {</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>        {</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>            std::scoped_lock&lt;std::mutex&gt; lk(_mutex);</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>            <span class="keywordflow">if</span> (_state == State::Running || _state == State::Starting)</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>            {</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>                _state = State::Stopping;</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>                _cv.notify_all();</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>            }</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>        }</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span> </div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>        <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#ab80f0906dc77cb55e7383e27c83402ca">waitForFinish</a>();</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>    }</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span> </div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>    <span class="keywordflow">if</span> (_thd.joinable()) { _thd.join(); }</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>}</div>
 </div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span> </div>
-<div class="foldopen" id="foldopen00126" data-start="{" data-end="}">
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1FlowExecutor.html#ab80f0906dc77cb55e7383e27c83402ca">  126</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#ab80f0906dc77cb55e7383e27c83402ca">NAV::FlowExecutor::waitForFinish</a>()</div>
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>{</div>
-<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>    <a class="code hl_define" href="Logger_8hpp.html#af7abc145380f1916838e42f9272aa0f6">LOG_TRACE</a>(<span class="stringliteral">&quot;Waiting for finish of FlowExecutor...&quot;</span>);</div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>    {</div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>        std::unique_lock lk(_mutex);</div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>        _cv.wait(lk, [] { <span class="keywordflow">return</span> _state == State::Idle; });</div>
-<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>    }</div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span> </div>
-<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>    {</div>
-<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>        std::scoped_lock&lt;std::mutex&gt; lk(_mutex);</div>
-<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>        <span class="keywordflow">if</span> (_thd.joinable()) { _thd.join(); }</div>
-<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>    }</div>
-<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>    <a class="code hl_define" href="Logger_8hpp.html#af7abc145380f1916838e42f9272aa0f6">LOG_TRACE</a>(<span class="stringliteral">&quot;FlowExecutor finished.&quot;</span>);</div>
-<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>}</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span> </div>
+<div class="foldopen" id="foldopen00124" data-start="{" data-end="}">
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1FlowExecutor.html#ab80f0906dc77cb55e7383e27c83402ca">  124</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#ab80f0906dc77cb55e7383e27c83402ca">NAV::FlowExecutor::waitForFinish</a>()</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>{</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>    <a class="code hl_define" href="Logger_8hpp.html#af7abc145380f1916838e42f9272aa0f6">LOG_TRACE</a>(<span class="stringliteral">&quot;Waiting for finish of FlowExecutor...&quot;</span>);</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>    {</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>        std::unique_lock lk(_mutex);</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>        _cv.wait(lk, [] { <span class="keywordflow">return</span> _state == State::Idle; });</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>    }</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span> </div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>    {</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>        std::scoped_lock&lt;std::mutex&gt; lk(_mutex);</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>        <span class="keywordflow">if</span> (_thd.joinable()) { _thd.join(); }</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>    }</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>    <a class="code hl_define" href="Logger_8hpp.html#af7abc145380f1916838e42f9272aa0f6">LOG_TRACE</a>(<span class="stringliteral">&quot;FlowExecutor finished.&quot;</span>);</div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>}</div>
 </div>
-<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span> </div>
-<div class="foldopen" id="foldopen00141" data-start="{" data-end="}">
-<div class="line"><a id="l00141" name="l00141"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1FlowExecutor.html#a1da0d76b8c9cebde9e739e50cefd376e">  141</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#a1da0d76b8c9cebde9e739e50cefd376e">NAV::FlowExecutor::deregisterNode</a>([[maybe_unused]] <span class="keyword">const</span> <a class="code hl_class" href="classNAV_1_1Node.html">Node</a>* node)</div>
-<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>{</div>
-<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>    <a class="code hl_define" href="Logger_8hpp.html#a6ff63e8955665c4a58b1598f2b07c51a">LOG_DEBUG</a>(<span class="stringliteral">&quot;Node {} finished.&quot;</span>, node-&gt;nameId());</div>
-<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>    _activeNodes--;</div>
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span> </div>
-<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>    <span class="keywordflow">if</span> (_activeNodes == 0)</div>
-<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>    {</div>
-<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>        std::scoped_lock&lt;std::mutex&gt; lk(_mutex);</div>
-<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>        _state = State::Stopping;</div>
-<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>        _cv.notify_all();</div>
-<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>    }</div>
-<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>}</div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span> </div>
+<div class="foldopen" id="foldopen00139" data-start="{" data-end="}">
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1FlowExecutor.html#a1da0d76b8c9cebde9e739e50cefd376e">  139</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#a1da0d76b8c9cebde9e739e50cefd376e">NAV::FlowExecutor::deregisterNode</a>([[maybe_unused]] <span class="keyword">const</span> <a class="code hl_class" href="classNAV_1_1Node.html">Node</a>* node)</div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>{</div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>    <a class="code hl_define" href="Logger_8hpp.html#a6ff63e8955665c4a58b1598f2b07c51a">LOG_DEBUG</a>(<span class="stringliteral">&quot;Node {} finished.&quot;</span>, node-&gt;nameId());</div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>    _activeNodes--;</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span> </div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>    <span class="keywordflow">if</span> (_activeNodes == 0)</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>    {</div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>        std::scoped_lock&lt;std::mutex&gt; lk(_mutex);</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>        _state = State::Stopping;</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>        _cv.notify_all();</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>    }</div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>}</div>
 </div>
-<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span> </div>
-<div class="foldopen" id="foldopen00154" data-start="{" data-end="}">
-<div class="line"><a id="l00154" name="l00154"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1FlowExecutor.html#abdca197ceadc3cd79da319d70d2af8c9">  154</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#abdca197ceadc3cd79da319d70d2af8c9">NAV::FlowExecutor::execute</a>()</div>
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>{</div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>    <a class="code hl_define" href="Logger_8hpp.html#af7abc145380f1916838e42f9272aa0f6">LOG_TRACE</a>(<span class="stringliteral">&quot;called&quot;</span>);</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span> </div>
+<div class="foldopen" id="foldopen00152" data-start="{" data-end="}">
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1FlowExecutor.html#abdca197ceadc3cd79da319d70d2af8c9">  152</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#abdca197ceadc3cd79da319d70d2af8c9">NAV::FlowExecutor::execute</a>()</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>{</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>    <a class="code hl_define" href="Logger_8hpp.html#af7abc145380f1916838e42f9272aa0f6">LOG_TRACE</a>(<span class="stringliteral">&quot;called&quot;</span>);</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span> </div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>    <a class="code hl_function" href="classNAV_1_1AntexReader.html#a713dd6cf5592e3962babb80cdeaa09f1">AntexReader::Get</a>().reset();</div>
 <div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span> </div>
-<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>    <a class="code hl_function" href="classNAV_1_1AntexReader.html#a713dd6cf5592e3962babb80cdeaa09f1">AntexReader::Get</a>().reset();</div>
-<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span> </div>
-<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>    <span class="keywordflow">for</span> (<a class="code hl_class" href="classNAV_1_1Node.html">Node</a>* node : <a class="code hl_function" href="namespaceNAV_1_1NodeManager.html#ad568a8a1b240c645e28bbab1a9e0895d">nm::m_Nodes</a>())</div>
-<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>    {</div>
-<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>        <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; inputPin : node-&gt;inputPins)</div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>        {</div>
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>            inputPin.queue.clear();</div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>            inputPin.queueBlocked = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>        }</div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>        node-&gt;pollEvents.clear();</div>
-<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>    }</div>
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span> </div>
-<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>    <span class="keywordflow">if</span> (!<a class="code hl_function" href="namespaceNAV_1_1NodeManager.html#ab07ae23b081d66df71388a2b07172e73">nm::InitializeAllNodes</a>()) <span class="comment">// This wakes the threads</span></div>
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>    {</div>
-<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>        std::scoped_lock&lt;std::mutex&gt; lk(_mutex);</div>
-<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>        _state = State::Idle;</div>
-<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>        _cv.notify_all();</div>
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>        <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>    }</div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span> </div>
-<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>    <a class="code hl_define" href="Logger_8hpp.html#aeb4f36db01bd128c7afeac5889dac311">LOG_INFO</a>(<span class="stringliteral">&quot;=====================================================&quot;</span>);</div>
-<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>    <span class="keywordtype">bool</span> realTimeMode = std::any_of(<a class="code hl_function" href="namespaceNAV_1_1NodeManager.html#ad568a8a1b240c645e28bbab1a9e0895d">nm::m_Nodes</a>().begin(), <a class="code hl_function" href="namespaceNAV_1_1NodeManager.html#ad568a8a1b240c645e28bbab1a9e0895d">nm::m_Nodes</a>().end(), [](<span class="keyword">const</span> <a class="code hl_class" href="classNAV_1_1Node.html">Node</a>* node) {</div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>        <span class="keywordflow">return</span> node &amp;&amp; !node-&gt;<a class="code hl_function" href="classNAV_1_1Node.html#a026affb8949351dc59588a32554b5978">isDisabled</a>() &amp;&amp; node-&gt;<a class="code hl_variable" href="classNAV_1_1Node.html#aa1e91fd9f312aadf79297d25c39a1788">_onlyRealTime</a>;</div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>    });</div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>    <a class="code hl_define" href="Logger_8hpp.html#aeb4f36db01bd128c7afeac5889dac311">LOG_INFO</a>(<span class="stringliteral">&quot;Executing in {} mode&quot;</span>, realTimeMode ? <span class="stringliteral">&quot;real-time&quot;</span> : <span class="stringliteral">&quot;post-processing&quot;</span>);</div>
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span> </div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>    util::time::SetMode(realTimeMode ? util::time::Mode::REAL_TIME : util::time::Mode::POST_PROCESSING);</div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>    _activeNodes = 0;</div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span> </div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>    <span class="keywordflow">for</span> (<a class="code hl_class" href="classNAV_1_1Node.html">Node</a>* node : <a class="code hl_function" href="namespaceNAV_1_1NodeManager.html#ad568a8a1b240c645e28bbab1a9e0895d">nm::m_Nodes</a>())</div>
-<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>    {</div>
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>        <span class="keywordflow">if</span> (node == <span class="keyword">nullptr</span> || node-&gt;<a class="code hl_variable" href="classNAV_1_1Node.html#a51e38c43af1eb909a0f6faf2dae3bef4">kind</a> == <a class="code hl_enumvalue" href="structNAV_1_1Node_1_1Kind.html#a7a07f8df7c0ef9ecbe2dc5ce3851b04aa465fb2862577f21cc21f7f1a0ad19611">Node::Kind::GroupBox</a> || !node-&gt;<a class="code hl_function" href="classNAV_1_1Node.html#a0515c9a8e741151b1e632baa12883011">isInitialized</a>()) { <span class="keywordflow">continue</span>; }</div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span> </div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>        {</div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>            std::scoped_lock&lt;std::mutex&gt; lk(_mutex);</div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>            <span class="keywordflow">if</span> (_state != State::Starting) { <span class="keywordflow">break</span>; }</div>
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>        }</div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span> </div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>        node-&gt;<a class="code hl_variable" href="classNAV_1_1Node.html#a7f6815fdaf1d69c18a3c14d44d42e551">_mode</a> = realTimeMode ? <a class="code hl_enumvalue" href="classNAV_1_1Node.html#a6f2a799f19bcb2275e4be4bd0067b513aa211f45bf313bdaed8cb10ddb5fe42f6">Node::Mode::REAL_TIME</a> : <a class="code hl_enumvalue" href="classNAV_1_1Node.html#a6f2a799f19bcb2275e4be4bd0067b513a8e36a31c4d89f9eacce3dde33b2467e9">Node::Mode::POST_PROCESSING</a>;</div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>        <span class="keywordflow">if</span> (!realTimeMode)</div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>        {</div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>            _activeNodes += 1;</div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>            <a class="code hl_define" href="Logger_8hpp.html#af7abc145380f1916838e42f9272aa0f6">LOG_TRACE</a>(<span class="stringliteral">&quot;Putting node &#39;{}&#39; into post-processing mode and adding to active nodes.&quot;</span>, node-&gt;<a class="code hl_function" href="classNAV_1_1Node.html#a858207a7dd64ea9bf1da7f850f97cc4e">nameId</a>());</div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>        }</div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>        {</div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>            std::scoped_lock&lt;std::mutex&gt; guard(node-&gt;<a class="code hl_variable" href="classNAV_1_1Node.html#a1cda16cf3edc57d1b11bdb1c8a81f559">_configWindowMutex</a>);</div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>            node-&gt;<a class="code hl_function" href="classNAV_1_1Node.html#a84fea0433f26f6f3e15d9c1a4436dd57">resetNode</a>();</div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>        }</div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; node-&gt;<a class="code hl_variable" href="classNAV_1_1Node.html#a355d74c9bf39e9b763078c2710059075">outputPins</a>.size(); i++) <span class="comment">// for (auto&amp; outputPin : node-&gt;outputPins)</span></div>
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>        {</div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>            <span class="keyword">auto</span>&amp; outputPin = node-&gt;<a class="code hl_variable" href="classNAV_1_1Node.html#a355d74c9bf39e9b763078c2710059075">outputPins</a>[i];</div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>            <span class="keywordflow">if</span> (outputPin.type == <a class="code hl_enumvalue" href="structNAV_1_1Pin_1_1Type.html#a279e3676818f11aa004d931727122b07ab68345d692cc18f6dd15ecbcb06a1924">Pin::Type::Flow</a> &amp;&amp; outputPin.isPinLinked())</div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>            {</div>
-<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>                outputPin.noMoreDataAvailable = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>                <a class="code hl_define" href="Logger_8hpp.html#af7abc145380f1916838e42f9272aa0f6">LOG_TRACE</a>(<span class="stringliteral">&quot;    Setting pin &#39;{}&#39; to hasDataAvailable&quot;</span>, outputPin.name);</div>
-<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>            }</div>
-<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span> </div>
-<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>            <span class="keywordflow">if</span> (std::holds_alternative&lt;OutputPin::PollDataFunc&gt;(outputPin.data))</div>
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>            {</div>
-<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>                <a class="code hl_define" href="Logger_8hpp.html#af7abc145380f1916838e42f9272aa0f6">LOG_TRACE</a>(<span class="stringliteral">&quot;    Adding pin &#39;{}&#39; to data poll event list.&quot;</span>, outputPin.name);</div>
-<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>                node-&gt;<a class="code hl_variable" href="classNAV_1_1Node.html#a48d6ee1f296a7bc3a30d5b31c923f310">pollEvents</a>.insert(std::make_pair(<a class="code hl_class" href="classNAV_1_1InsTime.html">InsTime</a>(), std::make_pair(&amp;outputPin, i)));</div>
-<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>            }</div>
-<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (std::holds_alternative&lt;OutputPin::PeekPollDataFunc&gt;(outputPin.data))</div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>            {</div>
-<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>                <span class="keywordflow">if</span> (<span class="keyword">auto</span>* callback = std::get_if&lt;OutputPin::PeekPollDataFunc&gt;(&amp;outputPin.data);</div>
-<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>                    !outputPin.noMoreDataAvailable &amp;&amp; callback != <span class="keyword">nullptr</span> &amp;&amp; *callback != <span class="keyword">nullptr</span></div>
-<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>                    &amp;&amp; std::ranges::any_of(outputPin.links, [](<span class="keyword">const</span> <a class="code hl_struct" href="structNAV_1_1OutputPin_1_1OutgoingLink.html">OutputPin::OutgoingLink</a>&amp; link) {</div>
-<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>                           return link.connectedNode-&gt;isInitialized();</div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>                       }))</div>
-<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>                {</div>
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>                    <span class="keywordflow">if</span> (<span class="keyword">auto</span> obs = (node-&gt;**callback)(i, <span class="keyword">true</span>)) <span class="comment">// Peek the data</span></div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>                    {</div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>                        <a class="code hl_define" href="Logger_8hpp.html#af7abc145380f1916838e42f9272aa0f6">LOG_TRACE</a>(<span class="stringliteral">&quot;    Adding pin &#39;{}&#39; to data poll event list with time {}.&quot;</span>, outputPin.name, obs-&gt;insTime);</div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>                        node-&gt;<a class="code hl_variable" href="classNAV_1_1Node.html#a48d6ee1f296a7bc3a30d5b31c923f310">pollEvents</a>.insert(std::make_pair(obs-&gt;insTime, std::make_pair(&amp;outputPin, i)));</div>
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>                    }</div>
-<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>                }</div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>            }</div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>        }</div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>    }</div>
-<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span> </div>
-<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>    {</div>
-<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>        std::scoped_lock&lt;std::mutex&gt; lk(_mutex);</div>
-<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>        <span class="keywordflow">if</span> (_state == State::Starting)</div>
-<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>        {</div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>            <a class="code hl_function" href="namespaceNAV_1_1NodeManager.html#a9c6b47b9510771335f25f5eb0bbc3431">nm::EnableAllCallbacks</a>();</div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>            _state = State::Running;</div>
-<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>        }</div>
-<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>    }</div>
-<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span> </div>
-<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>    _startTime = std::chrono::steady_clock::now();</div>
-<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>    <a class="code hl_define" href="Logger_8hpp.html#aeb4f36db01bd128c7afeac5889dac311">LOG_INFO</a>(<span class="stringliteral">&quot;Execution started&quot;</span>);</div>
-<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span> </div>
-<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>    <span class="keywordtype">bool</span> anyNodeRunning = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>    <span class="keywordflow">for</span> (<a class="code hl_class" href="classNAV_1_1Node.html">Node</a>* node : <a class="code hl_function" href="namespaceNAV_1_1NodeManager.html#ad568a8a1b240c645e28bbab1a9e0895d">nm::m_Nodes</a>()) <span class="comment">// Search for node pins with data callbacks</span></div>
-<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>    {</div>
-<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>        <span class="keywordflow">if</span> (node != <span class="keyword">nullptr</span> &amp;&amp; node-&gt;<a class="code hl_variable" href="classNAV_1_1Node.html#a51e38c43af1eb909a0f6faf2dae3bef4">kind</a> != <a class="code hl_enumvalue" href="structNAV_1_1Node_1_1Kind.html#a7a07f8df7c0ef9ecbe2dc5ce3851b04aa465fb2862577f21cc21f7f1a0ad19611">Node::Kind::GroupBox</a> &amp;&amp; node-&gt;<a class="code hl_function" href="classNAV_1_1Node.html#a0515c9a8e741151b1e632baa12883011">isInitialized</a>())</div>
-<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>        {</div>
-<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>            anyNodeRunning = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>            <a class="code hl_define" href="Logger_8hpp.html#a6ff63e8955665c4a58b1598f2b07c51a">LOG_DEBUG</a>(<span class="stringliteral">&quot;Waking up node {}&quot;</span>, node-&gt;<a class="code hl_function" href="classNAV_1_1Node.html#a858207a7dd64ea9bf1da7f850f97cc4e">nameId</a>());</div>
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>            node-&gt;<a class="code hl_function" href="classNAV_1_1Node.html#a177a8e664ee965e496c4c629376dbd38">wakeWorker</a>();</div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>        }</div>
-<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>    }</div>
-<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span> </div>
-<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>    <span class="keywordflow">if</span> (anyNodeRunning)</div>
-<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>    {</div>
-<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>        <span class="comment">// Wait for the nodes to finish</span></div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>        <span class="keywordtype">bool</span> timeout = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>        <span class="keyword">auto</span> timeoutDuration = std::chrono::minutes(1);</div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>        <span class="keywordflow">while</span> (timeout)</div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>        {</div>
-<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>            std::unique_lock lk(_mutex);</div>
-<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span> </div>
-<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>            <span class="keywordflow">if</span> (realTimeMode)</div>
-<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>            {</div>
-<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>                _cv.wait(lk, [] { <span class="keywordflow">return</span> _state == State::Stopping; });</div>
-<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>                <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>            }</div>
-<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span> </div>
-<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>            timeout = !_cv.wait_for(lk, timeoutDuration, [] { <span class="keywordflow">return</span> _state == State::Stopping; });</div>
-<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>            <span class="keywordflow">if</span> (timeout &amp;&amp; _activeNodes == 0)</div>
-<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>            {</div>
-<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>                <a class="code hl_define" href="Logger_8hpp.html#aced66975c154ea0e2a8ec3bc818b4e08">LOG_ERROR</a>(<span class="stringliteral">&quot;FlowExecutor had a timeout, but all nodes finished already.&quot;</span>);</div>
-<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span><span class="preprocessor">#ifdef TESTING</span></div>
-<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>                FAIL(<span class="stringliteral">&quot;The FlowExecutor should not have a timeout when all nodes are finished already.&quot;</span>);</div>
-<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>                <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>            }</div>
-<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>        }</div>
-<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>    }</div>
-<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span> </div>
-<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>    <span class="comment">// Deinitialize</span></div>
-<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>    <a class="code hl_define" href="Logger_8hpp.html#a6ff63e8955665c4a58b1598f2b07c51a">LOG_DEBUG</a>(<span class="stringliteral">&quot;Stopping FlowExecutor...&quot;</span>);</div>
-<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>    <a class="code hl_function" href="namespaceNAV_1_1NodeManager.html#aa0a9a6ea5b5b91049b0c50938f8bc2aa">nm::DisableAllCallbacks</a>();</div>
-<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>    <a class="code hl_function" href="namespaceNAV_1_1NodeManager.html#a1f28ad551bafda2903984f0eb0057ff7">nm::ClearAllNodeQueues</a>();</div>
-<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span> </div>
-<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>    <span class="keywordflow">for</span> (<a class="code hl_class" href="classNAV_1_1Node.html">Node</a>* node : <a class="code hl_function" href="namespaceNAV_1_1NodeManager.html#ad568a8a1b240c645e28bbab1a9e0895d">nm::m_Nodes</a>())</div>
-<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>    {</div>
-<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>        <span class="keywordflow">if</span> (node == <span class="keyword">nullptr</span> || node-&gt;<a class="code hl_variable" href="classNAV_1_1Node.html#a51e38c43af1eb909a0f6faf2dae3bef4">kind</a> == <a class="code hl_enumvalue" href="structNAV_1_1Node_1_1Kind.html#a7a07f8df7c0ef9ecbe2dc5ce3851b04aa465fb2862577f21cc21f7f1a0ad19611">Node::Kind::GroupBox</a> || !node-&gt;<a class="code hl_function" href="classNAV_1_1Node.html#a0515c9a8e741151b1e632baa12883011">isInitialized</a>()) { <span class="keywordflow">continue</span>; }</div>
-<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span> </div>
-<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>        node-&gt;<a class="code hl_variable" href="classNAV_1_1Node.html#a7f6815fdaf1d69c18a3c14d44d42e551">_mode</a> = <a class="code hl_enumvalue" href="classNAV_1_1Node.html#a6f2a799f19bcb2275e4be4bd0067b513aa211f45bf313bdaed8cb10ddb5fe42f6">Node::Mode::REAL_TIME</a>;</div>
-<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>        <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; outputPin : node-&gt;<a class="code hl_variable" href="classNAV_1_1Node.html#a355d74c9bf39e9b763078c2710059075">outputPins</a>)</div>
-<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>        {</div>
-<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>            outputPin.noMoreDataAvailable = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>        }</div>
-<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>        node-&gt;<a class="code hl_function" href="classNAV_1_1Node.html#a3291b41a8b5a3ca3ff0d7822f3bde317">flush</a>();</div>
-<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>    }</div>
-<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span> </div>
-<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>    <span class="keywordflow">if</span> (!<a class="code hl_function" href="namespaceNAV_1_1ConfigManager.html#a63c3ed25602865950b056e480f02e608">ConfigManager::Get&lt;bool&gt;</a>(<span class="stringliteral">&quot;nogui&quot;</span>)</div>
-<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>        || (!<a class="code hl_function" href="namespaceNAV_1_1ConfigManager.html#a63c3ed25602865950b056e480f02e608">ConfigManager::Get&lt;bool&gt;</a>(<span class="stringliteral">&quot;sigterm&quot;</span>) &amp;&amp; !<a class="code hl_function" href="namespaceNAV_1_1ConfigManager.html#a63c3ed25602865950b056e480f02e608">ConfigManager::Get&lt;size_t&gt;</a>(<span class="stringliteral">&quot;duration&quot;</span>)))</div>
-<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>    {</div>
-<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>        <span class="keyword">auto</span> finish = std::chrono::steady_clock::now();</div>
-<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>        [[maybe_unused]] std::chrono::duration&lt;double&gt; elapsed = finish - _startTime;</div>
-<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>        <a class="code hl_define" href="Logger_8hpp.html#aeb4f36db01bd128c7afeac5889dac311">LOG_INFO</a>(<span class="stringliteral">&quot;Elapsed time: {:.2f} s&quot;</span>, elapsed.count());</div>
-<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>    }</div>
-<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span> </div>
-<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>    _activeNodes = 0;</div>
-<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>    <a class="code hl_define" href="Logger_8hpp.html#af7abc145380f1916838e42f9272aa0f6">LOG_TRACE</a>(<span class="stringliteral">&quot;FlowExecutor deinitialized.&quot;</span>);</div>
-<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>    {</div>
-<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>        std::scoped_lock&lt;std::mutex&gt; lk(_mutex);</div>
-<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>        _state = State::Idle;</div>
-<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>        _cv.notify_all();</div>
-<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>    }</div>
-<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span> </div>
-<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>    <a class="code hl_define" href="Logger_8hpp.html#af7abc145380f1916838e42f9272aa0f6">LOG_TRACE</a>(<span class="stringliteral">&quot;Execute thread finished.&quot;</span>);</div>
-<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>}</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>    <span class="keywordflow">for</span> (<a class="code hl_class" href="classNAV_1_1Node.html">Node</a>* node : <a class="code hl_function" href="namespaceNAV_1_1flow.html#a2afe50e21ec6eca996c30b5f6d6e4b8d">flow::m_Nodes</a>())</div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>    {</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>        <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; inputPin : node-&gt;inputPins)</div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>        {</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>            inputPin.queue.clear();</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>            inputPin.queueBlocked = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>        }</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>        node-&gt;pollEvents.clear();</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>    }</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span> </div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>    <span class="keywordflow">if</span> (!<a class="code hl_function" href="namespaceNAV_1_1flow.html#af86d0953233fd8226ec39ef3516dd9c5">flow::InitializeAllNodes</a>()) <span class="comment">// This wakes the threads</span></div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>    {</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>        std::scoped_lock&lt;std::mutex&gt; lk(_mutex);</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>        _state = State::Idle;</div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>        _cv.notify_all();</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>        <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>    }</div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span> </div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>    <a class="code hl_define" href="Logger_8hpp.html#aeb4f36db01bd128c7afeac5889dac311">LOG_INFO</a>(<span class="stringliteral">&quot;=====================================================&quot;</span>);</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>    <span class="keywordtype">bool</span> realTimeMode = std::any_of(<a class="code hl_function" href="namespaceNAV_1_1flow.html#a2afe50e21ec6eca996c30b5f6d6e4b8d">flow::m_Nodes</a>().begin(), <a class="code hl_function" href="namespaceNAV_1_1flow.html#a2afe50e21ec6eca996c30b5f6d6e4b8d">flow::m_Nodes</a>().end(), [](<span class="keyword">const</span> <a class="code hl_class" href="classNAV_1_1Node.html">Node</a>* node) {</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>        <span class="keywordflow">return</span> node &amp;&amp; !node-&gt;<a class="code hl_function" href="classNAV_1_1Node.html#a026affb8949351dc59588a32554b5978">isDisabled</a>() &amp;&amp; node-&gt;<a class="code hl_variable" href="classNAV_1_1Node.html#aa1e91fd9f312aadf79297d25c39a1788">_onlyRealTime</a>;</div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>    });</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>    <a class="code hl_define" href="Logger_8hpp.html#aeb4f36db01bd128c7afeac5889dac311">LOG_INFO</a>(<span class="stringliteral">&quot;Executing in {} mode&quot;</span>, realTimeMode ? <span class="stringliteral">&quot;real-time&quot;</span> : <span class="stringliteral">&quot;post-processing&quot;</span>);</div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span> </div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>    util::time::SetMode(realTimeMode ? util::time::Mode::REAL_TIME : util::time::Mode::POST_PROCESSING);</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>    _activeNodes = 0;</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span> </div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>    <span class="keywordflow">for</span> (<a class="code hl_class" href="classNAV_1_1Node.html">Node</a>* node : <a class="code hl_function" href="namespaceNAV_1_1flow.html#a2afe50e21ec6eca996c30b5f6d6e4b8d">flow::m_Nodes</a>())</div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>    {</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>        <span class="keywordflow">if</span> (node == <span class="keyword">nullptr</span> || node-&gt;<a class="code hl_variable" href="classNAV_1_1Node.html#a51e38c43af1eb909a0f6faf2dae3bef4">kind</a> == <a class="code hl_enumvalue" href="structNAV_1_1Node_1_1Kind.html#a7a07f8df7c0ef9ecbe2dc5ce3851b04aa465fb2862577f21cc21f7f1a0ad19611">Node::Kind::GroupBox</a> || !node-&gt;<a class="code hl_function" href="classNAV_1_1Node.html#a0515c9a8e741151b1e632baa12883011">isInitialized</a>()) { <span class="keywordflow">continue</span>; }</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span> </div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>        {</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>            std::scoped_lock&lt;std::mutex&gt; lk(_mutex);</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>            <span class="keywordflow">if</span> (_state != State::Starting) { <span class="keywordflow">break</span>; }</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>        }</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span> </div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>        node-&gt;<a class="code hl_variable" href="classNAV_1_1Node.html#a7f6815fdaf1d69c18a3c14d44d42e551">_mode</a> = realTimeMode ? <a class="code hl_enumvalue" href="classNAV_1_1Node.html#a6f2a799f19bcb2275e4be4bd0067b513aa211f45bf313bdaed8cb10ddb5fe42f6">Node::Mode::REAL_TIME</a> : <a class="code hl_enumvalue" href="classNAV_1_1Node.html#a6f2a799f19bcb2275e4be4bd0067b513a8e36a31c4d89f9eacce3dde33b2467e9">Node::Mode::POST_PROCESSING</a>;</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>        <span class="keywordflow">if</span> (!realTimeMode)</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>        {</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>            _activeNodes += 1;</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>            <a class="code hl_define" href="Logger_8hpp.html#af7abc145380f1916838e42f9272aa0f6">LOG_TRACE</a>(<span class="stringliteral">&quot;Putting node &#39;{}&#39; into post-processing mode and adding to active nodes.&quot;</span>, node-&gt;<a class="code hl_function" href="classNAV_1_1Node.html#a858207a7dd64ea9bf1da7f850f97cc4e">nameId</a>());</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>        }</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>        {</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>            std::scoped_lock&lt;std::mutex&gt; guard(node-&gt;<a class="code hl_variable" href="classNAV_1_1Node.html#a1cda16cf3edc57d1b11bdb1c8a81f559">_configWindowMutex</a>);</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>            node-&gt;<a class="code hl_function" href="classNAV_1_1Node.html#a84fea0433f26f6f3e15d9c1a4436dd57">resetNode</a>();</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>        }</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; node-&gt;<a class="code hl_variable" href="classNAV_1_1Node.html#a355d74c9bf39e9b763078c2710059075">outputPins</a>.size(); i++) <span class="comment">// for (auto&amp; outputPin : node-&gt;outputPins)</span></div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>        {</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>            <span class="keyword">auto</span>&amp; outputPin = node-&gt;<a class="code hl_variable" href="classNAV_1_1Node.html#a355d74c9bf39e9b763078c2710059075">outputPins</a>[i];</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>            <span class="keywordflow">if</span> (outputPin.type == <a class="code hl_enumvalue" href="structNAV_1_1Pin_1_1Type.html#a279e3676818f11aa004d931727122b07ab68345d692cc18f6dd15ecbcb06a1924">Pin::Type::Flow</a> &amp;&amp; outputPin.isPinLinked())</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>            {</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>                outputPin.noMoreDataAvailable = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>                <a class="code hl_define" href="Logger_8hpp.html#af7abc145380f1916838e42f9272aa0f6">LOG_TRACE</a>(<span class="stringliteral">&quot;    Setting pin &#39;{}&#39; to hasDataAvailable&quot;</span>, outputPin.name);</div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>            }</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span> </div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>            <span class="keywordflow">if</span> (std::holds_alternative&lt;OutputPin::PollDataFunc&gt;(outputPin.data))</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>            {</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>                <a class="code hl_define" href="Logger_8hpp.html#af7abc145380f1916838e42f9272aa0f6">LOG_TRACE</a>(<span class="stringliteral">&quot;    Adding pin &#39;{}&#39; to data poll event list.&quot;</span>, outputPin.name);</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>                node-&gt;<a class="code hl_variable" href="classNAV_1_1Node.html#a48d6ee1f296a7bc3a30d5b31c923f310">pollEvents</a>.insert(std::make_pair(<a class="code hl_class" href="classNAV_1_1InsTime.html">InsTime</a>(), std::make_pair(&amp;outputPin, i)));</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>            }</div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (std::holds_alternative&lt;OutputPin::PeekPollDataFunc&gt;(outputPin.data))</div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>            {</div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>                <span class="keywordflow">if</span> (<span class="keyword">auto</span>* callback = std::get_if&lt;OutputPin::PeekPollDataFunc&gt;(&amp;outputPin.data);</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>                    !outputPin.noMoreDataAvailable &amp;&amp; callback != <span class="keyword">nullptr</span> &amp;&amp; *callback != <span class="keyword">nullptr</span></div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>                    &amp;&amp; std::ranges::any_of(outputPin.links, [](<span class="keyword">const</span> <a class="code hl_struct" href="structNAV_1_1OutputPin_1_1OutgoingLink.html">OutputPin::OutgoingLink</a>&amp; link) {</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>                           return link.connectedNode-&gt;isInitialized();</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>                       }))</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>                {</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>                    <span class="keywordflow">if</span> (<span class="keyword">auto</span> obs = (node-&gt;**callback)(i, <span class="keyword">true</span>)) <span class="comment">// Peek the data</span></div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>                    {</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>                        <a class="code hl_define" href="Logger_8hpp.html#af7abc145380f1916838e42f9272aa0f6">LOG_TRACE</a>(<span class="stringliteral">&quot;    Adding pin &#39;{}&#39; to data poll event list with time {}.&quot;</span>, outputPin.name, obs-&gt;insTime);</div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>                        node-&gt;<a class="code hl_variable" href="classNAV_1_1Node.html#a48d6ee1f296a7bc3a30d5b31c923f310">pollEvents</a>.insert(std::make_pair(obs-&gt;insTime, std::make_pair(&amp;outputPin, i)));</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>                    }</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>                }</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>            }</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>        }</div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>    }</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span> </div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>    {</div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>        std::scoped_lock&lt;std::mutex&gt; lk(_mutex);</div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>        <span class="keywordflow">if</span> (_state == State::Starting)</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>        {</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>            <a class="code hl_function" href="namespaceNAV_1_1flow.html#ad34045473c517816ed2627599276b092">flow::EnableAllCallbacks</a>();</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>            _state = State::Running;</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>        }</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>    }</div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span> </div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>    _startTime = std::chrono::steady_clock::now();</div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>    <a class="code hl_define" href="Logger_8hpp.html#aeb4f36db01bd128c7afeac5889dac311">LOG_INFO</a>(<span class="stringliteral">&quot;Execution started&quot;</span>);</div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span> </div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>    <span class="keywordtype">bool</span> anyNodeRunning = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>    <span class="keywordflow">for</span> (<a class="code hl_class" href="classNAV_1_1Node.html">Node</a>* node : <a class="code hl_function" href="namespaceNAV_1_1flow.html#a2afe50e21ec6eca996c30b5f6d6e4b8d">flow::m_Nodes</a>()) <span class="comment">// Search for node pins with data callbacks</span></div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>    {</div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>        <span class="keywordflow">if</span> (node != <span class="keyword">nullptr</span> &amp;&amp; node-&gt;<a class="code hl_variable" href="classNAV_1_1Node.html#a51e38c43af1eb909a0f6faf2dae3bef4">kind</a> != <a class="code hl_enumvalue" href="structNAV_1_1Node_1_1Kind.html#a7a07f8df7c0ef9ecbe2dc5ce3851b04aa465fb2862577f21cc21f7f1a0ad19611">Node::Kind::GroupBox</a> &amp;&amp; node-&gt;<a class="code hl_function" href="classNAV_1_1Node.html#a0515c9a8e741151b1e632baa12883011">isInitialized</a>())</div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>        {</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>            anyNodeRunning = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>            <a class="code hl_define" href="Logger_8hpp.html#a6ff63e8955665c4a58b1598f2b07c51a">LOG_DEBUG</a>(<span class="stringliteral">&quot;Waking up node {}&quot;</span>, node-&gt;<a class="code hl_function" href="classNAV_1_1Node.html#a858207a7dd64ea9bf1da7f850f97cc4e">nameId</a>());</div>
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>            node-&gt;<a class="code hl_function" href="classNAV_1_1Node.html#a177a8e664ee965e496c4c629376dbd38">wakeWorker</a>();</div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>        }</div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>    }</div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span> </div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>    <span class="keywordflow">if</span> (anyNodeRunning)</div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>    {</div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>        <span class="comment">// Wait for the nodes to finish</span></div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>        <span class="keywordtype">bool</span> timeout = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>        <span class="keyword">auto</span> timeoutDuration = std::chrono::minutes(1);</div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>        <span class="keywordflow">while</span> (timeout)</div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>        {</div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>            std::unique_lock lk(_mutex);</div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span> </div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>            <span class="keywordflow">if</span> (realTimeMode)</div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>            {</div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>                _cv.wait(lk, [] { <span class="keywordflow">return</span> _state == State::Stopping; });</div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>                <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>            }</div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span> </div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>            timeout = !_cv.wait_for(lk, timeoutDuration, [] { <span class="keywordflow">return</span> _state == State::Stopping; });</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>            <span class="keywordflow">if</span> (timeout &amp;&amp; _activeNodes == 0)</div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>            {</div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>                <a class="code hl_define" href="Logger_8hpp.html#aced66975c154ea0e2a8ec3bc818b4e08">LOG_ERROR</a>(<span class="stringliteral">&quot;FlowExecutor had a timeout, but all nodes finished already.&quot;</span>);</div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span><span class="preprocessor">#ifdef TESTING</span></div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>                FAIL(<span class="stringliteral">&quot;The FlowExecutor should not have a timeout when all nodes are finished already.&quot;</span>);</div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>                <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>            }</div>
+<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>        }</div>
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>    }</div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span> </div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>    <span class="comment">// Deinitialize</span></div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>    <a class="code hl_define" href="Logger_8hpp.html#a6ff63e8955665c4a58b1598f2b07c51a">LOG_DEBUG</a>(<span class="stringliteral">&quot;Stopping FlowExecutor...&quot;</span>);</div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>    <a class="code hl_function" href="namespaceNAV_1_1flow.html#a595986649133a52b1bbe8528519b56bb">flow::DisableAllCallbacks</a>();</div>
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>    <a class="code hl_function" href="namespaceNAV_1_1flow.html#abaaf5d971a3188dc96ff045a96422275">flow::ClearAllNodeQueues</a>();</div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span> </div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>    <span class="keywordflow">for</span> (<a class="code hl_class" href="classNAV_1_1Node.html">Node</a>* node : <a class="code hl_function" href="namespaceNAV_1_1flow.html#a2afe50e21ec6eca996c30b5f6d6e4b8d">flow::m_Nodes</a>())</div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>    {</div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>        <span class="keywordflow">if</span> (node == <span class="keyword">nullptr</span> || node-&gt;<a class="code hl_variable" href="classNAV_1_1Node.html#a51e38c43af1eb909a0f6faf2dae3bef4">kind</a> == <a class="code hl_enumvalue" href="structNAV_1_1Node_1_1Kind.html#a7a07f8df7c0ef9ecbe2dc5ce3851b04aa465fb2862577f21cc21f7f1a0ad19611">Node::Kind::GroupBox</a> || !node-&gt;<a class="code hl_function" href="classNAV_1_1Node.html#a0515c9a8e741151b1e632baa12883011">isInitialized</a>()) { <span class="keywordflow">continue</span>; }</div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span> </div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>        node-&gt;<a class="code hl_variable" href="classNAV_1_1Node.html#a7f6815fdaf1d69c18a3c14d44d42e551">_mode</a> = <a class="code hl_enumvalue" href="classNAV_1_1Node.html#a6f2a799f19bcb2275e4be4bd0067b513aa211f45bf313bdaed8cb10ddb5fe42f6">Node::Mode::REAL_TIME</a>;</div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>        <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; outputPin : node-&gt;<a class="code hl_variable" href="classNAV_1_1Node.html#a355d74c9bf39e9b763078c2710059075">outputPins</a>)</div>
+<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>        {</div>
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>            outputPin.noMoreDataAvailable = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>        }</div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>        node-&gt;<a class="code hl_function" href="classNAV_1_1Node.html#a3291b41a8b5a3ca3ff0d7822f3bde317">flush</a>();</div>
+<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>    }</div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span> </div>
+<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>    <span class="keywordflow">if</span> (!<a class="code hl_function" href="namespaceNAV_1_1ConfigManager.html#a63c3ed25602865950b056e480f02e608">ConfigManager::Get&lt;bool&gt;</a>(<span class="stringliteral">&quot;nogui&quot;</span>)</div>
+<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>        || (!<a class="code hl_function" href="namespaceNAV_1_1ConfigManager.html#a63c3ed25602865950b056e480f02e608">ConfigManager::Get&lt;bool&gt;</a>(<span class="stringliteral">&quot;sigterm&quot;</span>) &amp;&amp; !<a class="code hl_function" href="namespaceNAV_1_1ConfigManager.html#a63c3ed25602865950b056e480f02e608">ConfigManager::Get&lt;size_t&gt;</a>(<span class="stringliteral">&quot;duration&quot;</span>)))</div>
+<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>    {</div>
+<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>        <span class="keyword">auto</span> finish = std::chrono::steady_clock::now();</div>
+<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>        [[maybe_unused]] std::chrono::duration&lt;double&gt; elapsed = finish - _startTime;</div>
+<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>        <a class="code hl_define" href="Logger_8hpp.html#aeb4f36db01bd128c7afeac5889dac311">LOG_INFO</a>(<span class="stringliteral">&quot;Elapsed time: {:.2f} s&quot;</span>, elapsed.count());</div>
+<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>    }</div>
+<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span> </div>
+<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>    _activeNodes = 0;</div>
+<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>    <a class="code hl_define" href="Logger_8hpp.html#af7abc145380f1916838e42f9272aa0f6">LOG_TRACE</a>(<span class="stringliteral">&quot;FlowExecutor deinitialized.&quot;</span>);</div>
+<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>    {</div>
+<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>        std::scoped_lock&lt;std::mutex&gt; lk(_mutex);</div>
+<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>        _state = State::Idle;</div>
+<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>        _cv.notify_all();</div>
+<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>    }</div>
+<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span> </div>
+<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>    <a class="code hl_define" href="Logger_8hpp.html#af7abc145380f1916838e42f9272aa0f6">LOG_TRACE</a>(<span class="stringliteral">&quot;Execute thread finished.&quot;</span>);</div>
+<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span>}</div>
 </div>
 <div class="ttc" id="aAntexReader_8hpp_html"><div class="ttname"><a href="AntexReader_8hpp.html">AntexReader.hpp</a></div><div class="ttdoc">ANTEX file reader.</div></div>
 <div class="ttc" id="aConfigManager_8hpp_html"><div class="ttname"><a href="ConfigManager_8hpp.html">ConfigManager.hpp</a></div><div class="ttdoc">Config management for the Project.</div></div>
@@ -458,40 +456,38 @@ $(function(){initNavTree('FlowExecutor_8cpp_source.html','',''); });
 <div class="ttc" id="aLogger_8hpp_html_aced66975c154ea0e2a8ec3bc818b4e08"><div class="ttname"><a href="Logger_8hpp.html#aced66975c154ea0e2a8ec3bc818b4e08">LOG_ERROR</a></div><div class="ttdeci">#define LOG_ERROR</div><div class="ttdoc">Error occurred, which stops part of the program to work, but not everything.</div><div class="ttdef"><b>Definition</b> <a href="Logger_8hpp_source.html#l00073">Logger.hpp:73</a></div></div>
 <div class="ttc" id="aLogger_8hpp_html_aeb4f36db01bd128c7afeac5889dac311"><div class="ttname"><a href="Logger_8hpp.html#aeb4f36db01bd128c7afeac5889dac311">LOG_INFO</a></div><div class="ttdeci">#define LOG_INFO</div><div class="ttdoc">Info to the user on the state of the program.</div><div class="ttdef"><b>Definition</b> <a href="Logger_8hpp_source.html#l00069">Logger.hpp:69</a></div></div>
 <div class="ttc" id="aLogger_8hpp_html_af7abc145380f1916838e42f9272aa0f6"><div class="ttname"><a href="Logger_8hpp.html#af7abc145380f1916838e42f9272aa0f6">LOG_TRACE</a></div><div class="ttdeci">#define LOG_TRACE</div><div class="ttdoc">Detailled info to trace the execution of the program. Should not be called on functions which receive...</div><div class="ttdef"><b>Definition</b> <a href="Logger_8hpp_source.html#l00065">Logger.hpp:65</a></div></div>
-<div class="ttc" id="aNodeManager_8hpp_html"><div class="ttname"><a href="NodeManager_8hpp.html">NodeManager.hpp</a></div><div class="ttdoc">Manages all Nodes.</div></div>
 <div class="ttc" id="aNode_8hpp_html"><div class="ttname"><a href="Node_8hpp.html">Node.hpp</a></div><div class="ttdoc">Node Class.</div></div>
 <div class="ttc" id="aTimeBase_8hpp_html"><div class="ttname"><a href="TimeBase_8hpp.html">TimeBase.hpp</a></div><div class="ttdoc">Keeps track of the current real/simulation time.</div></div>
 <div class="ttc" id="aclassNAV_1_1AntexReader_html_a713dd6cf5592e3962babb80cdeaa09f1"><div class="ttname"><a href="classNAV_1_1AntexReader.html#a713dd6cf5592e3962babb80cdeaa09f1">NAV::AntexReader::Get</a></div><div class="ttdeci">static AntexReader &amp; Get()</div><div class="ttdoc">Get the static Instance of the reader.</div><div class="ttdef"><b>Definition</b> <a href="AntexReader_8hpp_source.html#l00098">AntexReader.hpp:98</a></div></div>
 <div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> <a href="InsTime_8hpp_source.html#l00709">InsTime.hpp:710</a></div></div>
 <div class="ttc" id="aclassNAV_1_1Node_html"><div class="ttname"><a href="classNAV_1_1Node.html">NAV::Node</a></div><div class="ttdoc">Abstract parent class for all nodes.</div><div class="ttdef"><b>Definition</b> <a href="Node_8hpp_source.html#l00091">Node.hpp:92</a></div></div>
-<div class="ttc" id="aclassNAV_1_1Node_html_a026affb8949351dc59588a32554b5978"><div class="ttname"><a href="classNAV_1_1Node.html#a026affb8949351dc59588a32554b5978">NAV::Node::isDisabled</a></div><div class="ttdeci">bool isDisabled() const</div><div class="ttdoc">Checks if the node is disabled.</div><div class="ttdef"><b>Definition</b> <a href="Node_8cpp_source.html#l00499">Node.cpp:499</a></div></div>
-<div class="ttc" id="aclassNAV_1_1Node_html_a0515c9a8e741151b1e632baa12883011"><div class="ttname"><a href="classNAV_1_1Node.html#a0515c9a8e741151b1e632baa12883011">NAV::Node::isInitialized</a></div><div class="ttdeci">bool isInitialized() const</div><div class="ttdoc">Checks if the node is initialized.</div><div class="ttdef"><b>Definition</b> <a href="Node_8cpp_source.html#l00504">Node.cpp:504</a></div></div>
-<div class="ttc" id="aclassNAV_1_1Node_html_a177a8e664ee965e496c4c629376dbd38"><div class="ttname"><a href="classNAV_1_1Node.html#a177a8e664ee965e496c4c629376dbd38">NAV::Node::wakeWorker</a></div><div class="ttdeci">void wakeWorker()</div><div class="ttdoc">Wakes the worker thread.</div><div class="ttdef"><b>Definition</b> <a href="Node_8cpp_source.html#l00490">Node.cpp:490</a></div></div>
-<div class="ttc" id="aclassNAV_1_1Node_html_a1cda16cf3edc57d1b11bdb1c8a81f559"><div class="ttname"><a href="classNAV_1_1Node.html#a1cda16cf3edc57d1b11bdb1c8a81f559">NAV::Node::_configWindowMutex</a></div><div class="ttdeci">std::mutex _configWindowMutex</div><div class="ttdoc">Mutex to show the config window (prevents initialization to modify values within the config window)</div><div class="ttdef"><b>Definition</b> <a href="Node_8hpp_source.html#l00438">Node.hpp:438</a></div></div>
-<div class="ttc" id="aclassNAV_1_1Node_html_a3291b41a8b5a3ca3ff0d7822f3bde317"><div class="ttname"><a href="classNAV_1_1Node.html#a3291b41a8b5a3ca3ff0d7822f3bde317">NAV::Node::flush</a></div><div class="ttdeci">virtual void flush()</div><div class="ttdoc">Function called by the flow executer after finishing to flush out remaining data.</div><div class="ttdef"><b>Definition</b> <a href="Node_8cpp_source.html#l00073">Node.cpp:73</a></div></div>
-<div class="ttc" id="aclassNAV_1_1Node_html_a355d74c9bf39e9b763078c2710059075"><div class="ttname"><a href="classNAV_1_1Node.html#a355d74c9bf39e9b763078c2710059075">NAV::Node::outputPins</a></div><div class="ttdeci">std::vector&lt; OutputPin &gt; outputPins</div><div class="ttdoc">List of output pins.</div><div class="ttdef"><b>Definition</b> <a href="Node_8hpp_source.html#l00399">Node.hpp:399</a></div></div>
-<div class="ttc" id="aclassNAV_1_1Node_html_a48d6ee1f296a7bc3a30d5b31c923f310"><div class="ttname"><a href="classNAV_1_1Node.html#a48d6ee1f296a7bc3a30d5b31c923f310">NAV::Node::pollEvents</a></div><div class="ttdeci">std::multimap&lt; InsTime, std::pair&lt; OutputPin *, size_t &gt; &gt; pollEvents</div><div class="ttdoc">Map with callback events (sorted by time)</div><div class="ttdef"><b>Definition</b> <a href="Node_8hpp_source.html#l00405">Node.hpp:405</a></div></div>
-<div class="ttc" id="aclassNAV_1_1Node_html_a51e38c43af1eb909a0f6faf2dae3bef4"><div class="ttname"><a href="classNAV_1_1Node.html#a51e38c43af1eb909a0f6faf2dae3bef4">NAV::Node::kind</a></div><div class="ttdeci">Kind kind</div><div class="ttdoc">Kind of the Node.</div><div class="ttdef"><b>Definition</b> <a href="Node_8hpp_source.html#l00393">Node.hpp:393</a></div></div>
+<div class="ttc" id="aclassNAV_1_1Node_html_a026affb8949351dc59588a32554b5978"><div class="ttname"><a href="classNAV_1_1Node.html#a026affb8949351dc59588a32554b5978">NAV::Node::isDisabled</a></div><div class="ttdeci">bool isDisabled() const</div><div class="ttdoc">Checks if the node is disabled.</div><div class="ttdef"><b>Definition</b> <a href="Node_8cpp_source.html#l00569">Node.cpp:569</a></div></div>
+<div class="ttc" id="aclassNAV_1_1Node_html_a0515c9a8e741151b1e632baa12883011"><div class="ttname"><a href="classNAV_1_1Node.html#a0515c9a8e741151b1e632baa12883011">NAV::Node::isInitialized</a></div><div class="ttdeci">bool isInitialized() const</div><div class="ttdoc">Checks if the node is initialized.</div><div class="ttdef"><b>Definition</b> <a href="Node_8cpp_source.html#l00574">Node.cpp:574</a></div></div>
+<div class="ttc" id="aclassNAV_1_1Node_html_a177a8e664ee965e496c4c629376dbd38"><div class="ttname"><a href="classNAV_1_1Node.html#a177a8e664ee965e496c4c629376dbd38">NAV::Node::wakeWorker</a></div><div class="ttdeci">void wakeWorker()</div><div class="ttdoc">Wakes the worker thread.</div><div class="ttdef"><b>Definition</b> <a href="Node_8cpp_source.html#l00560">Node.cpp:560</a></div></div>
+<div class="ttc" id="aclassNAV_1_1Node_html_a1cda16cf3edc57d1b11bdb1c8a81f559"><div class="ttname"><a href="classNAV_1_1Node.html#a1cda16cf3edc57d1b11bdb1c8a81f559">NAV::Node::_configWindowMutex</a></div><div class="ttdeci">std::mutex _configWindowMutex</div><div class="ttdoc">Mutex to show the config window (prevents initialization to modify values within the config window)</div><div class="ttdef"><b>Definition</b> <a href="Node_8hpp_source.html#l00550">Node.hpp:550</a></div></div>
+<div class="ttc" id="aclassNAV_1_1Node_html_a3291b41a8b5a3ca3ff0d7822f3bde317"><div class="ttname"><a href="classNAV_1_1Node.html#a3291b41a8b5a3ca3ff0d7822f3bde317">NAV::Node::flush</a></div><div class="ttdeci">virtual void flush()</div><div class="ttdoc">Function called by the flow executer after finishing to flush out remaining data.</div><div class="ttdef"><b>Definition</b> <a href="Node_8cpp_source.html#l00072">Node.cpp:72</a></div></div>
+<div class="ttc" id="aclassNAV_1_1Node_html_a355d74c9bf39e9b763078c2710059075"><div class="ttname"><a href="classNAV_1_1Node.html#a355d74c9bf39e9b763078c2710059075">NAV::Node::outputPins</a></div><div class="ttdeci">std::vector&lt; OutputPin &gt; outputPins</div><div class="ttdoc">List of output pins.</div><div class="ttdef"><b>Definition</b> <a href="Node_8hpp_source.html#l00511">Node.hpp:511</a></div></div>
+<div class="ttc" id="aclassNAV_1_1Node_html_a48d6ee1f296a7bc3a30d5b31c923f310"><div class="ttname"><a href="classNAV_1_1Node.html#a48d6ee1f296a7bc3a30d5b31c923f310">NAV::Node::pollEvents</a></div><div class="ttdeci">std::multimap&lt; InsTime, std::pair&lt; OutputPin *, size_t &gt; &gt; pollEvents</div><div class="ttdoc">Map with callback events (sorted by time)</div><div class="ttdef"><b>Definition</b> <a href="Node_8hpp_source.html#l00517">Node.hpp:517</a></div></div>
+<div class="ttc" id="aclassNAV_1_1Node_html_a51e38c43af1eb909a0f6faf2dae3bef4"><div class="ttname"><a href="classNAV_1_1Node.html#a51e38c43af1eb909a0f6faf2dae3bef4">NAV::Node::kind</a></div><div class="ttdeci">Kind kind</div><div class="ttdoc">Kind of the Node.</div><div class="ttdef"><b>Definition</b> <a href="Node_8hpp_source.html#l00505">Node.hpp:505</a></div></div>
 <div class="ttc" id="aclassNAV_1_1Node_html_a6f2a799f19bcb2275e4be4bd0067b513a8e36a31c4d89f9eacce3dde33b2467e9"><div class="ttname"><a href="classNAV_1_1Node.html#a6f2a799f19bcb2275e4be4bd0067b513a8e36a31c4d89f9eacce3dde33b2467e9">NAV::Node::Mode::POST_PROCESSING</a></div><div class="ttdeci">@ POST_PROCESSING</div><div class="ttdoc">Node running in post-processing mode.</div><div class="ttdef"><b>Definition</b> <a href="Node_8hpp_source.html#l00192">Node.hpp:192</a></div></div>
 <div class="ttc" id="aclassNAV_1_1Node_html_a6f2a799f19bcb2275e4be4bd0067b513aa211f45bf313bdaed8cb10ddb5fe42f6"><div class="ttname"><a href="classNAV_1_1Node.html#a6f2a799f19bcb2275e4be4bd0067b513aa211f45bf313bdaed8cb10ddb5fe42f6">NAV::Node::Mode::REAL_TIME</a></div><div class="ttdeci">@ REAL_TIME</div><div class="ttdoc">Node running in real-time mode.</div><div class="ttdef"><b>Definition</b> <a href="Node_8hpp_source.html#l00191">Node.hpp:191</a></div></div>
-<div class="ttc" id="aclassNAV_1_1Node_html_a7f6815fdaf1d69c18a3c14d44d42e551"><div class="ttname"><a href="classNAV_1_1Node.html#a7f6815fdaf1d69c18a3c14d44d42e551">NAV::Node::_mode</a></div><div class="ttdeci">std::atomic&lt; Mode &gt; _mode</div><div class="ttdoc">Mode the node is currently running in.</div><div class="ttdef"><b>Definition</b> <a href="Node_8hpp_source.html#l00426">Node.hpp:426</a></div></div>
-<div class="ttc" id="aclassNAV_1_1Node_html_a84fea0433f26f6f3e15d9c1a4436dd57"><div class="ttname"><a href="classNAV_1_1Node.html#a84fea0433f26f6f3e15d9c1a4436dd57">NAV::Node::resetNode</a></div><div class="ttdeci">virtual bool resetNode()</div><div class="ttdoc">Resets the node. It is guaranteed that the node is initialized when this is called.</div><div class="ttdef"><b>Definition</b> <a href="Node_8cpp_source.html#l00075">Node.cpp:75</a></div></div>
-<div class="ttc" id="aclassNAV_1_1Node_html_a858207a7dd64ea9bf1da7f850f97cc4e"><div class="ttname"><a href="classNAV_1_1Node.html#a858207a7dd64ea9bf1da7f850f97cc4e">NAV::Node::nameId</a></div><div class="ttdeci">std::string nameId() const</div><div class="ttdoc">Node name and id.</div><div class="ttdef"><b>Definition</b> <a href="Node_8cpp_source.html#l00253">Node.cpp:253</a></div></div>
-<div class="ttc" id="aclassNAV_1_1Node_html_aa1e91fd9f312aadf79297d25c39a1788"><div class="ttname"><a href="classNAV_1_1Node.html#aa1e91fd9f312aadf79297d25c39a1788">NAV::Node::_onlyRealTime</a></div><div class="ttdeci">bool _onlyRealTime</div><div class="ttdoc">Whether the node can run in post-processing or only real-time.</div><div class="ttdef"><b>Definition</b> <a href="Node_8hpp_source.html#l00419">Node.hpp:419</a></div></div>
+<div class="ttc" id="aclassNAV_1_1Node_html_a7f6815fdaf1d69c18a3c14d44d42e551"><div class="ttname"><a href="classNAV_1_1Node.html#a7f6815fdaf1d69c18a3c14d44d42e551">NAV::Node::_mode</a></div><div class="ttdeci">std::atomic&lt; Mode &gt; _mode</div><div class="ttdoc">Mode the node is currently running in.</div><div class="ttdef"><b>Definition</b> <a href="Node_8hpp_source.html#l00538">Node.hpp:538</a></div></div>
+<div class="ttc" id="aclassNAV_1_1Node_html_a84fea0433f26f6f3e15d9c1a4436dd57"><div class="ttname"><a href="classNAV_1_1Node.html#a84fea0433f26f6f3e15d9c1a4436dd57">NAV::Node::resetNode</a></div><div class="ttdeci">virtual bool resetNode()</div><div class="ttdoc">Resets the node. It is guaranteed that the node is initialized when this is called.</div><div class="ttdef"><b>Definition</b> <a href="Node_8cpp_source.html#l00074">Node.cpp:74</a></div></div>
+<div class="ttc" id="aclassNAV_1_1Node_html_a858207a7dd64ea9bf1da7f850f97cc4e"><div class="ttname"><a href="classNAV_1_1Node.html#a858207a7dd64ea9bf1da7f850f97cc4e">NAV::Node::nameId</a></div><div class="ttdeci">std::string nameId() const</div><div class="ttdoc">Node name and id.</div><div class="ttdef"><b>Definition</b> <a href="Node_8cpp_source.html#l00323">Node.cpp:323</a></div></div>
+<div class="ttc" id="aclassNAV_1_1Node_html_aa1e91fd9f312aadf79297d25c39a1788"><div class="ttname"><a href="classNAV_1_1Node.html#aa1e91fd9f312aadf79297d25c39a1788">NAV::Node::_onlyRealTime</a></div><div class="ttdeci">bool _onlyRealTime</div><div class="ttdoc">Whether the node can run in post-processing or only real-time.</div><div class="ttdef"><b>Definition</b> <a href="Node_8hpp_source.html#l00531">Node.hpp:531</a></div></div>
 <div class="ttc" id="anamespaceNAV_1_1ConfigManager_html_a63c3ed25602865950b056e480f02e608"><div class="ttname"><a href="namespaceNAV_1_1ConfigManager.html#a63c3ed25602865950b056e480f02e608">NAV::ConfigManager::Get</a></div><div class="ttdeci">const T &amp; Get(const std::string &amp;key, const T &amp;&amp;defaultValue)</div><div class="ttdoc">Retrieves the value of a corresponding key from the configuration, if one exists.</div><div class="ttdef"><b>Definition</b> <a href="ConfigManager_8hpp_source.html#l00058">ConfigManager.hpp:58</a></div></div>
-<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html">NAV::FlowExecutor</a></div><div class="ttdef"><b>Definition</b> <a href="#l00049">FlowExecutor.cpp:50</a></div></div>
-<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html_a11abe1f9f87da360d8b75dc40bdb83b9"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html#a11abe1f9f87da360d8b75dc40bdb83b9">NAV::FlowExecutor::isRunning</a></div><div class="ttdeci">bool isRunning() noexcept</div><div class="ttdoc">Checks if the thread is running.</div><div class="ttdef"><b>Definition</b> <a href="#l00085">FlowExecutor.cpp:85</a></div></div>
-<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html_a1da0d76b8c9cebde9e739e50cefd376e"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html#a1da0d76b8c9cebde9e739e50cefd376e">NAV::FlowExecutor::deregisterNode</a></div><div class="ttdeci">void deregisterNode(const Node *node)</div><div class="ttdoc">Called by nodes when they finished with sending data.</div><div class="ttdef"><b>Definition</b> <a href="#l00141">FlowExecutor.cpp:141</a></div></div>
-<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html_a9b2d37e9e778dc2e4e28f9d39a6e3aa3"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html#a9b2d37e9e778dc2e4e28f9d39a6e3aa3">NAV::FlowExecutor::start</a></div><div class="ttdeci">void start()</div><div class="ttdoc">Starts the Thread.</div><div class="ttdef"><b>Definition</b> <a href="#l00091">FlowExecutor.cpp:91</a></div></div>
-<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html_ab80f0906dc77cb55e7383e27c83402ca"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html#ab80f0906dc77cb55e7383e27c83402ca">NAV::FlowExecutor::waitForFinish</a></div><div class="ttdeci">void waitForFinish()</div><div class="ttdoc">Waits for a thread to finish its execution.</div><div class="ttdef"><b>Definition</b> <a href="#l00126">FlowExecutor.cpp:126</a></div></div>
-<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html_abdca197ceadc3cd79da319d70d2af8c9"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html#abdca197ceadc3cd79da319d70d2af8c9">NAV::FlowExecutor::execute</a></div><div class="ttdeci">void execute()</div><div class="ttdoc">Main task of the thread.</div><div class="ttdef"><b>Definition</b> <a href="#l00154">FlowExecutor.cpp:154</a></div></div>
-<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html_ac0638d4f5a6dcc410e29ab8c59c123b9"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html#ac0638d4f5a6dcc410e29ab8c59c123b9">NAV::FlowExecutor::stop</a></div><div class="ttdeci">void stop()</div><div class="ttdoc">Stops the Thread.</div><div class="ttdef"><b>Definition</b> <a href="#l00105">FlowExecutor.cpp:105</a></div></div>
-<div class="ttc" id="anamespaceNAV_1_1NodeManager_html"><div class="ttname"><a href="namespaceNAV_1_1NodeManager.html">NAV::NodeManager</a></div><div class="ttdef"><b>Definition</b> <a href="NodeManager_8cpp_source.html#l00024">NodeManager.cpp:25</a></div></div>
-<div class="ttc" id="anamespaceNAV_1_1NodeManager_html_a1f28ad551bafda2903984f0eb0057ff7"><div class="ttname"><a href="namespaceNAV_1_1NodeManager.html#a1f28ad551bafda2903984f0eb0057ff7">NAV::NodeManager::ClearAllNodeQueues</a></div><div class="ttdeci">void ClearAllNodeQueues()</div><div class="ttdoc">Clears all nodes queues.</div><div class="ttdef"><b>Definition</b> <a href="NodeManager_8cpp_source.html#l00341">NodeManager.cpp:341</a></div></div>
-<div class="ttc" id="anamespaceNAV_1_1NodeManager_html_a9c6b47b9510771335f25f5eb0bbc3431"><div class="ttname"><a href="namespaceNAV_1_1NodeManager.html#a9c6b47b9510771335f25f5eb0bbc3431">NAV::NodeManager::EnableAllCallbacks</a></div><div class="ttdeci">void EnableAllCallbacks()</div><div class="ttdoc">Enables all Node callbacks.</div><div class="ttdef"><b>Definition</b> <a href="NodeManager_8cpp_source.html#l00320">NodeManager.cpp:320</a></div></div>
-<div class="ttc" id="anamespaceNAV_1_1NodeManager_html_aa0a9a6ea5b5b91049b0c50938f8bc2aa"><div class="ttname"><a href="namespaceNAV_1_1NodeManager.html#aa0a9a6ea5b5b91049b0c50938f8bc2aa">NAV::NodeManager::DisableAllCallbacks</a></div><div class="ttdeci">void DisableAllCallbacks()</div><div class="ttdoc">Disables all Node callbacks.</div><div class="ttdef"><b>Definition</b> <a href="NodeManager_8cpp_source.html#l00332">NodeManager.cpp:332</a></div></div>
-<div class="ttc" id="anamespaceNAV_1_1NodeManager_html_ab07ae23b081d66df71388a2b07172e73"><div class="ttname"><a href="namespaceNAV_1_1NodeManager.html#ab07ae23b081d66df71388a2b07172e73">NAV::NodeManager::InitializeAllNodes</a></div><div class="ttdeci">bool InitializeAllNodes()</div><div class="ttdoc">Initializes all nodes.</div><div class="ttdef"><b>Definition</b> <a href="NodeManager_8cpp_source.html#l00353">NodeManager.cpp:353</a></div></div>
-<div class="ttc" id="anamespaceNAV_1_1NodeManager_html_ad568a8a1b240c645e28bbab1a9e0895d"><div class="ttname"><a href="namespaceNAV_1_1NodeManager.html#ad568a8a1b240c645e28bbab1a9e0895d">NAV::NodeManager::m_Nodes</a></div><div class="ttdeci">const std::vector&lt; Node * &gt; &amp; m_Nodes()</div><div class="ttdoc">List of all registered Nodes.</div><div class="ttdef"><b>Definition</b> <a href="NodeManager_8cpp_source.html#l00055">NodeManager.cpp:55</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html">NAV::FlowExecutor</a></div><div class="ttdef"><b>Definition</b> <a href="#l00047">FlowExecutor.cpp:48</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html_a11abe1f9f87da360d8b75dc40bdb83b9"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html#a11abe1f9f87da360d8b75dc40bdb83b9">NAV::FlowExecutor::isRunning</a></div><div class="ttdeci">bool isRunning() noexcept</div><div class="ttdoc">Checks if the thread is running.</div><div class="ttdef"><b>Definition</b> <a href="#l00083">FlowExecutor.cpp:83</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html_a1da0d76b8c9cebde9e739e50cefd376e"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html#a1da0d76b8c9cebde9e739e50cefd376e">NAV::FlowExecutor::deregisterNode</a></div><div class="ttdeci">void deregisterNode(const Node *node)</div><div class="ttdoc">Called by nodes when they finished with sending data.</div><div class="ttdef"><b>Definition</b> <a href="#l00139">FlowExecutor.cpp:139</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html_a9b2d37e9e778dc2e4e28f9d39a6e3aa3"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html#a9b2d37e9e778dc2e4e28f9d39a6e3aa3">NAV::FlowExecutor::start</a></div><div class="ttdeci">void start()</div><div class="ttdoc">Starts the Thread.</div><div class="ttdef"><b>Definition</b> <a href="#l00089">FlowExecutor.cpp:89</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html_ab80f0906dc77cb55e7383e27c83402ca"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html#ab80f0906dc77cb55e7383e27c83402ca">NAV::FlowExecutor::waitForFinish</a></div><div class="ttdeci">void waitForFinish()</div><div class="ttdoc">Waits for a thread to finish its execution.</div><div class="ttdef"><b>Definition</b> <a href="#l00124">FlowExecutor.cpp:124</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html_abdca197ceadc3cd79da319d70d2af8c9"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html#abdca197ceadc3cd79da319d70d2af8c9">NAV::FlowExecutor::execute</a></div><div class="ttdeci">void execute()</div><div class="ttdoc">Main task of the thread.</div><div class="ttdef"><b>Definition</b> <a href="#l00152">FlowExecutor.cpp:152</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html_ac0638d4f5a6dcc410e29ab8c59c123b9"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html#ac0638d4f5a6dcc410e29ab8c59c123b9">NAV::FlowExecutor::stop</a></div><div class="ttdeci">void stop()</div><div class="ttdoc">Stops the Thread.</div><div class="ttdef"><b>Definition</b> <a href="#l00103">FlowExecutor.cpp:103</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1flow_html_a2afe50e21ec6eca996c30b5f6d6e4b8d"><div class="ttname"><a href="namespaceNAV_1_1flow.html#a2afe50e21ec6eca996c30b5f6d6e4b8d">NAV::flow::m_Nodes</a></div><div class="ttdeci">const std::vector&lt; Node * &gt; &amp; m_Nodes()</div><div class="ttdoc">List of all registered Nodes.</div><div class="ttdef"><b>Definition</b> <a href="FlowManager_8cpp_source.html#l00067">FlowManager.cpp:67</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1flow_html_a595986649133a52b1bbe8528519b56bb"><div class="ttname"><a href="namespaceNAV_1_1flow.html#a595986649133a52b1bbe8528519b56bb">NAV::flow::DisableAllCallbacks</a></div><div class="ttdeci">void DisableAllCallbacks()</div><div class="ttdoc">Disables all Node callbacks.</div><div class="ttdef"><b>Definition</b> <a href="FlowManager_8cpp_source.html#l00256">FlowManager.cpp:256</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1flow_html_abaaf5d971a3188dc96ff045a96422275"><div class="ttname"><a href="namespaceNAV_1_1flow.html#abaaf5d971a3188dc96ff045a96422275">NAV::flow::ClearAllNodeQueues</a></div><div class="ttdeci">void ClearAllNodeQueues()</div><div class="ttdoc">Clears all nodes queues.</div><div class="ttdef"><b>Definition</b> <a href="FlowManager_8cpp_source.html#l00265">FlowManager.cpp:265</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1flow_html_ad34045473c517816ed2627599276b092"><div class="ttname"><a href="namespaceNAV_1_1flow.html#ad34045473c517816ed2627599276b092">NAV::flow::EnableAllCallbacks</a></div><div class="ttdeci">void EnableAllCallbacks()</div><div class="ttdoc">Enables all Node callbacks.</div><div class="ttdef"><b>Definition</b> <a href="FlowManager_8cpp_source.html#l00244">FlowManager.cpp:244</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1flow_html_af86d0953233fd8226ec39ef3516dd9c5"><div class="ttname"><a href="namespaceNAV_1_1flow.html#af86d0953233fd8226ec39ef3516dd9c5">NAV::flow::InitializeAllNodes</a></div><div class="ttdeci">bool InitializeAllNodes()</div><div class="ttdoc">Initializes all nodes.</div><div class="ttdef"><b>Definition</b> <a href="FlowManager_8cpp_source.html#l00277">FlowManager.cpp:277</a></div></div>
 <div class="ttc" id="astructNAV_1_1Node_1_1Kind_html_a7a07f8df7c0ef9ecbe2dc5ce3851b04aa465fb2862577f21cc21f7f1a0ad19611"><div class="ttname"><a href="structNAV_1_1Node_1_1Kind.html#a7a07f8df7c0ef9ecbe2dc5ce3851b04aa465fb2862577f21cc21f7f1a0ad19611">NAV::Node::Kind::GroupBox</a></div><div class="ttdeci">@ GroupBox</div><div class="ttdoc">Group box which can group other nodes and drag them together.</div><div class="ttdef"><b>Definition</b> <a href="Node_8hpp_source.html#l00102">Node.hpp:102</a></div></div>
 <div class="ttc" id="astructNAV_1_1OutputPin_1_1OutgoingLink_html"><div class="ttname"><a href="structNAV_1_1OutputPin_1_1OutgoingLink.html">NAV::OutputPin::OutgoingLink</a></div><div class="ttdoc">Collection of information about the connected node and pin.</div><div class="ttdef"><b>Definition</b> <a href="Pin_8hpp_source.html#l00411">Pin.hpp:412</a></div></div>
 <div class="ttc" id="astructNAV_1_1Pin_1_1Type_html_a279e3676818f11aa004d931727122b07ab68345d692cc18f6dd15ecbcb06a1924"><div class="ttname"><a href="structNAV_1_1Pin_1_1Type.html#a279e3676818f11aa004d931727122b07ab68345d692cc18f6dd15ecbcb06a1924">NAV::Pin::Type::Flow</a></div><div class="ttdeci">@ Flow</div><div class="ttdoc">NodeData Trigger.</div><div class="ttdef"><b>Definition</b> <a href="Pin_8hpp_source.html#l00052">Pin.hpp:52</a></div></div>

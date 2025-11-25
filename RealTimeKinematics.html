@@ -48,7 +48,7 @@
               <td id="projectlogo"><img alt="Logo" src="INSTINCT_Logo_Text.png"  /></td>
               <td id="projectalign">
                 <div id="projectname"><span
-                    id="projectnumber">&#160;0.5.0</span>
+                    id="projectnumber">&#160;0.5.1</span>
                 </div>
               </td>
             </tr>
@@ -163,7 +163,7 @@ Single GNSS Observation Equation</h2>
                             + {d\dotup{t}_{ISB}^S}
                             + { \delta f^{rel}_{clk}}]
 \end{aligned}
-\end{equation}" src="form_117.svg" width="950" height="84"/>
+\end{equation}" src="form_142.svg" width="950" height="84"/>
 </p>
 <p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation*}\begin{array}{clcl}
@@ -188,7 +188,7 @@ Single GNSS Observation Equation</h2>
   { \lambda_j^S}                  &amp; \text{Wavelength [m]}                               &amp; { N_{r,j}^s}                   &amp; \text{Carrier-phase ambiguity [cyc]} \\
   { \omega_{r}^s }      &amp; \text{Phase wind-up error [m]} \\
 \end{array}
-\end{equation*}" src="form_118.svg" width="921" height="424"/>
+\end{equation*}" src="form_143.svg" width="921" height="424"/>
 </p>
 <p>See</p><ul>
 <li><a class="el" href="citelist.html#CITEREF_springerhandbookgnss2017">[48]</a> SpringerHandbookGNSS2017, p.606</li>
@@ -198,7 +198,7 @@ Single GNSS Observation Equation</h2>
 <h2 class="doxsection"><a class="anchor" id="RTK-SingleDifference"></a>
 Single Difference</h2>
 <ul>
-<li><p class="startli">Base receiver <img class="formulaInl" alt="$ b $" src="form_119.svg" width="9" height="14"/>, rover receiver <img class="formulaInl" alt="$ r $" src="form_120.svg" width="9" height="11"/>                                                      </p><p class="formulaDsp">
+<li><p class="startli">Base receiver <img class="formulaInl" alt="$ b $" src="form_144.svg" width="9" height="14"/>, rover receiver <img class="formulaInl" alt="$ r $" src="form_145.svg" width="9" height="11"/>                                                      </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\begin{aligned}
 { p_{br}^s}
         &amp;= { p_{r}^s} - { p_{b}^s}
@@ -251,7 +251,7 @@ Single Difference</h2>
                   + \overbrace{{d\dotup{t}_{ISB}^S} - {d\dotup{t}_{ISB}^S}}^{= 0}
                   + \overbrace{{ \delta f^{rel,s}_{clk}} - { \delta f^{rel,s}_{clk}}}^{= 0}]
 \end{aligned}
-\end{equation}" src="form_121.svg" width="1122" height="326"/>
+\end{equation}" src="form_146.svg" width="1122" height="326"/>
 </p>
 <p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\begin{aligned}
@@ -285,7 +285,7 @@ Single Difference</h2>
                            - {\delta\dotup{\rho}_{ie,br}^s}
                            + c\ {d\dotup{t}_{br}}
 \end{aligned}
-\end{equation}" src="form_122.svg" width="870" height="102"/>
+\end{equation}" src="form_147.svg" width="870" height="102"/>
 </p>
 </li>
 </ul>
@@ -294,11 +294,11 @@ Single Difference</h2>
 <li><a class="el" href="citelist.html#CITEREF_morton2020">[35]</a> Morton2020Vol1, p. 486</li>
 <li><a class="el" href="citelist.html#CITEREF_groves2013">[18]</a> Groves2013, p. 443</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd>Increased noise of Single Difference, compared to separate measurements: <img class="formulaInl" alt="$ \sigma_{12} = \sqrt{2}\sigma $" src="form_123.svg" width="82" height="19"/></dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Increased noise of Single Difference, compared to separate measurements: <img class="formulaInl" alt="$ \sigma_{12} = \sqrt{2}\sigma $" src="form_148.svg" width="82" height="19"/></dd></dl>
 <h2 class="doxsection"><a class="anchor" id="RTK-DoubleDifference"></a>
 Double Difference</h2>
 <ul>
-<li>Pivot satellite <img class="formulaInl" alt="$1$" src="form_124.svg" width="9" height="14"/> and other satellites as <img class="formulaInl" alt="$s$" src="form_125.svg" width="9" height="11"/></li>
+<li>Pivot satellite <img class="formulaInl" alt="$1$" src="form_149.svg" width="9" height="14"/> and other satellites as <img class="formulaInl" alt="$s$" src="form_150.svg" width="9" height="11"/></li>
 <li><p class="startli">1 Pivot satellite per GNSS constellation needed. Double Difference only possible for measurements on same frequency, otherwise the hardware biases do not cancel out each other</p>
 <p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\begin{aligned}
@@ -341,7 +341,7 @@ Double Difference</h2>
              - ({\delta\dotup{\rho}_{ie,br}^s} - {\delta\dotup{\rho}_{ie,br}^1})
              + c [ \overbrace{{d\dotup{t}_{br}} - {d\dotup{t}_{br}}}^{= 0} ]
 \end{aligned}
-\end{equation}" src="form_126.svg" width="914" height="301"/>
+\end{equation}" src="form_151.svg" width="914" height="301"/>
 </p>
 <p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\begin{aligned}
@@ -372,7 +372,7 @@ Double Difference</h2>
                                  + {{\mathbf{u}_{b}^{1}}^T} {\mathbf{v}^1}
                               - ({\delta\dotup{\rho}_{ie,br}^s} - {\delta\dotup{\rho}_{ie,br}^1})
 \end{aligned}
-\end{equation}" src="form_127.svg" width="835" height="103"/>
+\end{equation}" src="form_152.svg" width="835" height="103"/>
 </p>
 </li>
 </ul>
@@ -381,7 +381,7 @@ Double Difference</h2>
 <li><a class="el" href="citelist.html#CITEREF_morton2020">[35]</a> Morton2020Vol1, p. 486</li>
 <li><a class="el" href="citelist.html#CITEREF_groves2013">[18]</a> Groves2013, p. 444ff</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd>Increased noise of Double Difference, compared to separate measurements: <img class="formulaInl" alt="$ \sigma_{br}^{1s} = \sqrt{4}\sigma = 2\sigma $" src="form_128.svg" width="124" height="21"/></dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Increased noise of Double Difference, compared to separate measurements: <img class="formulaInl" alt="$ \sigma_{br}^{1s} = \sqrt{4}\sigma = 2\sigma $" src="form_153.svg" width="124" height="21"/></dd></dl>
 <h1 class="doxsection"><a class="anchor" id="RTK-State"></a>
 State</h1>
 <p>Theoretically our state would consist of the following states, <b>satellite 1 being our pivot satellite</b>.      </p><p class="formulaDsp">
@@ -389,7 +389,7 @@ State</h1>
 \begin{array}{cc|ccccc}
     { \mathbf{r}_{r} } &amp; { \mathbf{v}_{r} } &amp; {N_{br}^1} &amp; {N_{br}^2} &amp; {N_{br}^3} &amp; \dots &amp; {N_{br}^m}
 \end{array}\right]
-\end{equation}" src="form_129.svg" width="669" height="23"/>
+\end{equation}" src="form_154.svg" width="669" height="23"/>
 </p>
 <p> This will however lead to the system not being solvable in a unique way, as it is is rank-deficient (see <a class="el" href="citelist.html#CITEREF_springerhandbookgnss2017">[48]</a> SpringerHandbookGNSS2017, ch. 26.3.1, p. 763).</p>
 <p>To solve this, we set the ambiguity of the pivot satellite to 0 and remove it from the state. This means all other ambiguities will be relative to the pivot satellite ambiguity. This practically results in us doing <b>double difference ambiguities</b> in the state                              </p><p class="formulaDsp">
@@ -421,7 +421,7 @@ State</h1>
     \vdots \\
     \text{Double-Differenced Carrier-phase ambiguity of satellite m [cyc]} \\
 \end{bmatrix}
-\end{equation}" src="form_130.svg" width="870" height="138"/>
+\end{equation}" src="form_155.svg" width="870" height="138"/>
 </p>
 <h2 class="doxsection"><a class="anchor" id="RTK-AmbiguityInitialization"></a>
 Ambiguity initialization</h2>
@@ -479,14 +479,14 @@ Carrier-Pseudorange Difference</h3>
             - { \lambda_j^1} { \omega_{br}^{1s}}
         \right)
 \end{aligned}
-\end{equation}" src="form_131.svg" width="875" height="149"/>
+\end{equation}" src="form_156.svg" width="875" height="149"/>
 </p>
 <p>Neglecting the error terms this becomes      </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}{ N_{br}^{1s}} = \frac{1}{{ \lambda_j^1}}
         \left(
             { \tilde{\varphi}_{br}^{1s}} - { \tilde{p}_{br}^{1s}}
         \right)
-\end{equation}" src="form_132.svg" width="576" height="46"/>
+\end{equation}" src="form_157.svg" width="576" height="46"/>
 </p>
 <p> However the pseudorange error terms are quite big and can lead to significant errors</p>
 <h3 class="doxsection"><a class="anchor" id="RTK-CarrierGeometryDifference"></a>
@@ -529,14 +529,14 @@ Carrier-Geometry Difference</h3>
             - { \lambda_j^1} { \omega_{br}^{1s}}
         \right)
 \end{aligned}
-\end{equation}" src="form_133.svg" width="859" height="151"/>
+\end{equation}" src="form_158.svg" width="859" height="151"/>
 </p>
 <p>Neglecting the error terms this becomes      </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}{ N_{br}^{1s}} = \frac{1}{{ \lambda_j^1}}
         \left(
             { \tilde{\varphi}_{br}^{1s}} - { \hat{\varphi}_{br}^{1s}}
         \right)
-\end{equation}" src="form_134.svg" width="578" height="46"/>
+\end{equation}" src="form_159.svg" width="578" height="46"/>
 </p>
 <h1 class="doxsection"><a class="anchor" id="RTK-PivotSatelliteChange"></a>
 Pivot satellite change</h1>
@@ -550,13 +550,13 @@ Pivot satellite change</h1>
     {N_{br}^{14}} \\
     {N_{br}^{15}} \\
 \end{bmatrix}_{\text{old}}
-\end{equation}" src="form_135.svg" width="557" height="128"/>
+\end{equation}" src="form_160.svg" width="557" height="128"/>
 </p>
 <h2 class="doxsection"><a class="anchor" id="RTK-PivotCase1"></a>
 Case 1: Low elevation</h2>
 <ul>
 <li>Old pivot satellite 1 has low elevation but is still observed</li>
-<li><p class="startli">Satellite 2 becomes the new pivot We can transform the state with a matrix <img class="formulaInl" alt="$ \mathbf{D} $" src="form_136.svg" width="16" height="14"/> with <img class="formulaInl" alt="$ \mathbf{x}_{\text{new}} = \mathbf{D} \cdot \mathbf{x}_{\text{old}} $" src="form_137.svg" width="116" height="16"/></p>
+<li><p class="startli">Satellite 2 becomes the new pivot We can transform the state with a matrix <img class="formulaInl" alt="$ \mathbf{D} $" src="form_161.svg" width="16" height="14"/> with <img class="formulaInl" alt="$ \mathbf{x}_{\text{new}} = \mathbf{D} \cdot \mathbf{x}_{\text{old}} $" src="form_162.svg" width="116" height="16"/></p>
 <p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\begin{bmatrix}
     { \mathbf{r}_{r} } \\
@@ -586,7 +586,7 @@ Case 1: Low elevation</h2>
     {N_{br}^{14}} = {N_{br}^{4}} - {N_{br}^{1}} \\
     {N_{br}^{15}} = {N_{br}^{5}} - {N_{br}^{1}} \\
 \end{bmatrix}_{\text{old}}
-\end{equation}" src="form_138.svg" width="802" height="152"/>
+\end{equation}" src="form_163.svg" width="802" height="152"/>
 </p>
 </li>
 </ul>
@@ -594,7 +594,7 @@ Case 1: Low elevation</h2>
 Case 2: Not observed</h2>
 <ul>
 <li>Old pivot satellite 1 is not observed this epoch</li>
-<li>Satellite 2 becomes the new pivot We can transform the state with a matrix <img class="formulaInl" alt="$ \mathbf{D} $" src="form_136.svg" width="16" height="14"/> with <img class="formulaInl" alt="$ \mathbf{x}_{\text{new}} = \mathbf{D} \cdot \mathbf{x}_{\text{old}} $" src="form_137.svg" width="116" height="16"/>                              <p class="formulaDsp">
+<li>Satellite 2 becomes the new pivot We can transform the state with a matrix <img class="formulaInl" alt="$ \mathbf{D} $" src="form_161.svg" width="16" height="14"/> with <img class="formulaInl" alt="$ \mathbf{x}_{\text{new}} = \mathbf{D} \cdot \mathbf{x}_{\text{old}} $" src="form_162.svg" width="116" height="16"/>                              <p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\begin{bmatrix}
     { \mathbf{r}_{r} } \\
     { \mathbf{v}_{r} } \\ \hdashline
@@ -623,7 +623,7 @@ Case 2: Not observed</h2>
     {N_{br}^{14}} = {N_{br}^{4}} - {N_{br}^{1}} \\
     {N_{br}^{15}} = {N_{br}^{5}} - {N_{br}^{1}} \\
 \end{bmatrix}_{\text{old}}
-\end{equation}" src="form_139.svg" width="802" height="152"/>
+\end{equation}" src="form_164.svg" width="802" height="152"/>
 </p>
 </li>
 </ul>
@@ -631,7 +631,7 @@ Case 2: Not observed</h2>
 Error propagation</h2>
 <p>After a transformation, the covariance matrix has also to be adapted by error propagation   </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\mathbf{P}_{\text{new}} = \mathbf{D} \cdot \mathbf{P}_{\text{old}} \cdot \mathbf{D}^T
-\end{equation}" src="form_140.svg" width="574" height="21"/>
+\end{equation}" src="form_165.svg" width="574" height="21"/>
 </p>
 <h1 class="doxsection"><a class="anchor" id="RTK-SyncCorrection"></a>
 Synchronization correction</h1>
@@ -640,32 +640,32 @@ Two step correction</h2>
 <blockquote class="doxtable">
 <p>See <a class="el" href="citelist.html#CITEREF_stucke2023">[46]</a> Stucke2023 </p>
 </blockquote>
-<p>The linearized observation equation is valid for a common point in time. So for example the rover receiver time <img class="formulaInl" alt="$ t_r $" src="form_141.svg" width="14" height="16"/>     </p><p class="formulaDsp">
+<p>The linearized observation equation is valid for a common point in time. So for example the rover receiver time <img class="formulaInl" alt="$ t_r $" src="form_166.svg" width="14" height="16"/>     </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}{ \tilde{p}_{br}^{1s}}({ t_r})
 - { \hat{p}_{br}^{1s}}({ t_r})
   = \mathbf{H}({ t_r})\delta\mathbf{x}({ t_r})
-\end{equation}" src="form_142.svg" width="613" height="21"/>
+\end{equation}" src="form_167.svg" width="613" height="21"/>
 </p>
-<p> However, the base observation is observed at a time <img class="formulaInl" alt="$ t_b $" src="form_143.svg" width="12" height="16"/>. So we need to sync the observations according to <a class="el" href="citelist.html#CITEREF_stucke2023">[46]</a> Stucke2023, ch. 3 in two steps. </p>
+<p> However, the base observation is observed at a time <img class="formulaInl" alt="$ t_b $" src="form_168.svg" width="12" height="16"/>. So we need to sync the observations according to <a class="el" href="citelist.html#CITEREF_stucke2023">[46]</a> Stucke2023, ch. 3 in two steps. </p>
 <h3 class="doxsection"><a class="anchor" id="autotoc_md27"></a>
 1. Correction of receiver internal clock error</h3>
-<p>The observations estimate their observations at times <img class="formulaInl" alt="$ t_b $" src="form_143.svg" width="12" height="16"/> for the base and <img class="formulaInl" alt="$ t_r $" src="form_141.svg" width="14" height="16"/> for the rover. However they are not logged for the estimated times but instead for the internal clock at times <img class="formulaInl" alt="$ \tilde{t}_b $" src="form_144.svg" width="12" height="19"/> and <img class="formulaInl" alt="$ \tilde{t}_r $" src="form_145.svg" width="14" height="19"/>. According to <a class="el" href="citelist.html#CITEREF_stucke2023">[46]</a> Stucke2023 the error lies in the order of milliseconds. To remove this error, the receiver clock errors <img class="formulaInl" alt="$ dt_b $" src="form_146.svg" width="23" height="16"/> and <img class="formulaInl" alt="$ dt_r $" src="form_147.svg" width="23" height="16"/> are estimated by a SPP. This allows evaluation of the observations at the correct instances of time      </p><p class="formulaDsp">
+<p>The observations estimate their observations at times <img class="formulaInl" alt="$ t_b $" src="form_168.svg" width="12" height="16"/> for the base and <img class="formulaInl" alt="$ t_r $" src="form_166.svg" width="14" height="16"/> for the rover. However they are not logged for the estimated times but instead for the internal clock at times <img class="formulaInl" alt="$ \tilde{t}_b $" src="form_169.svg" width="12" height="19"/> and <img class="formulaInl" alt="$ \tilde{t}_r $" src="form_170.svg" width="14" height="19"/>. According to <a class="el" href="citelist.html#CITEREF_stucke2023">[46]</a> Stucke2023 the error lies in the order of milliseconds. To remove this error, the receiver clock errors <img class="formulaInl" alt="$ dt_b $" src="form_171.svg" width="23" height="16"/> and <img class="formulaInl" alt="$ dt_r $" src="form_172.svg" width="23" height="16"/> are estimated by a SPP. This allows evaluation of the observations at the correct instances of time      </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\begin{aligned}
 { t_b} &amp;= { \tilde{t}_b} - { dt_b} \\
 { t_r} &amp;= { \tilde{t}_r} - { dt_r} \\
 \end{aligned}
-\end{equation}" src="form_148.svg" width="541" height="47"/>
+\end{equation}" src="form_173.svg" width="541" height="47"/>
 </p>
 <p> While this correction of the time makes sense, it proved to deteriorate the solution. So this <span class="red"><b>first step is not applied</b></span>. </p>
 <h3 class="doxsection"><a class="anchor" id="autotoc_md28"></a>
 2. Synchronizing base and rover observations</h3>
-<p>We now correcting the pseudorange <img class="formulaInl" alt="${ p_{b}^s}({ t_b}) $" src="form_149.svg" width="44" height="19"/> of the base to the time of the rover <img class="formulaInl" alt="${ t_r} $" src="form_150.svg" width="14" height="16"/>. This can be done for the carrier-phase analogously.</p>
+<p>We now correcting the pseudorange <img class="formulaInl" alt="${ p_{b}^s}({ t_b}) $" src="form_174.svg" width="44" height="19"/> of the base to the time of the rover <img class="formulaInl" alt="${ t_r} $" src="form_175.svg" width="14" height="16"/>. This can be done for the carrier-phase analogously.</p>
 <p>Assuming the time-dependent error is approximately driven by the geometrical range, the correction equation for the basis receiver can be given as      </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\begin{aligned}
 { \tilde{p}_{b}^s}({ t_r}) - { \tilde{p}_{b}^s}({ t_b}) &amp;\approx { \hat{p}_{b}^s}({ t_r}) - { \hat{p}_{b}^s}({ t_b}) \\
 { \tilde{p}_{b}^s}({ t_r}) &amp;\approx { \tilde{p}_{b}^s}({ t_b}) + { \hat{p}_{b}^s}({ t_r}) - { \hat{p}_{b}^s}({ t_b})
 \end{aligned}
-\end{equation}" src="form_151.svg" width="648" height="46"/>
+\end{equation}" src="form_176.svg" width="648" height="46"/>
 </p>
 <p> The linearized observation equation is       </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\begin{aligned}
@@ -673,7 +673,7 @@ Two step correction</h2>
 \mathbf{z}({ t_r}) - \mathbf{h}(\mathbf{\hat{x}}({ t_r})) &amp;= \mathbf{H}({ t_r})\delta\mathbf{x}({ t_r}) \\
 \mathbf{\tilde{z}}({ t_r}) - \mathbf{\hat{z}}({ t_r}) &amp;= \mathbf{H}({ t_r})\delta\mathbf{x}({ t_r}) \\
 \end{aligned}
-\end{equation}" src="form_152.svg" width="611" height="72"/>
+\end{equation}" src="form_177.svg" width="611" height="72"/>
 </p>
 <p> For the double differenced pseudorange this is                                      </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\begin{aligned}
@@ -712,7 +712,7 @@ Two step correction</h2>
            - { \hat{p}_{b}^1}({ t_b})\big)\right]
   &amp;= \mathbf{H}({ t_r})\delta\mathbf{x}({ t_r}) \\
 \end{aligned}
-\end{equation}" src="form_153.svg" width="999" height="193"/>
+\end{equation}" src="form_178.svg" width="999" height="193"/>
 </p>
 <h4 class="doxsection"><a class="anchor" id="autotoc_md29"></a>
 Observation equations</h4>
@@ -762,7 +762,7 @@ Observation equations</h4>
                             + {d\dotup{t}_{ISB}^S}
                             + { \delta f^{rel}_{clk}}]
 \end{aligned}
-\end{equation}" src="form_154.svg" width="950" height="84"/>
+\end{equation}" src="form_182.svg" width="950" height="84"/>
 </p>
  <h4 class="doxsection"><a class="anchor" id="autotoc_md30"></a>
 Single difference</h4>
@@ -789,13 +789,13 @@ Single difference</h4>
           + \underbrace{{ \xi_{r,j}^s}({ t_r}) - { \xi_{b,j}^s}({ t_b})}_{ \xi_{br,j}^s}
           + \underbrace{{ e_{r,j}^s}({ t_r}) - { e_{b,j}^s}({ t_b})}_{ e_{br,j}^s}
 \end{aligned}
-\end{equation}" src="form_155.svg" width="1076" height="198"/>
+\end{equation}" src="form_183.svg" width="1076" height="198"/>
 </p>
 <ul>
-<li>The satellite clock <img class="formulaInl" alt="${ dt^s}$" src="form_156.svg" width="23" height="14"/> drifts with approximately <img class="formulaInl" alt="$2 \cdot 10^{-11}\ \text{[s/s]}$" src="form_157.svg" width="102" height="21"/> which can lead to a maximum error of <img class="formulaInl" alt="$0.012\ \text{[m]}$" src="form_158.svg" width="68" height="19"/> over 1 second</li>
-<li>The inter-system bias <img class="formulaInl" alt="${ dt_{ISB}^S}$" src="form_159.svg" width="42" height="21"/> can be bounded by <img class="formulaInl" alt="$6\ \text{ns/day}$" src="form_160.svg" width="68" height="19"/> which leads to a maximum error of <img class="formulaInl" alt="$4 \times 10^{-5}\ \text{[m]}$" src="form_161.svg" width="95" height="21"/> over 1 second and can be neglected</li>
-<li>Deviation of the satellite clock frequency due to relativistic effects <img class="formulaInl" alt="${ \delta t^{rel,s}_{clk}}$" src="form_162.svg" width="44" height="25"/> (maximum value for GPS <img class="formulaInl" alt="$\approx 45.0\text{ns} \equiv 13.5\text{m}$" src="form_163.svg" width="137" height="14"/>)</li>
-<li>Satellite code hardware bias <img class="formulaInl" alt="${ d_{j}^s}$" src="form_164.svg" width="16" height="21"/> and satellite phase hardware bias <img class="formulaInl" alt="${ \delta_{j}^s}$" src="form_165.svg" width="16" height="23"/> also don't cancel out                                               <p class="formulaDsp">
+<li>The satellite clock <img class="formulaInl" alt="${ dt^s}$" src="form_184.svg" width="23" height="14"/> drifts with approximately <img class="formulaInl" alt="$2 \cdot 10^{-11}\ \text{[s/s]}$" src="form_186.svg" width="102" height="21"/> which can lead to a maximum error of <img class="formulaInl" alt="$0.012\ \text{[m]}$" src="form_187.svg" width="68" height="19"/> over 1 second</li>
+<li>The inter-system bias <img class="formulaInl" alt="${ dt_{ISB}^S}$" src="form_188.svg" width="42" height="21"/> can be bounded by <img class="formulaInl" alt="$6\ \text{ns/day}$" src="form_189.svg" width="68" height="19"/> which leads to a maximum error of <img class="formulaInl" alt="$4 \times 10^{-5}\ \text{[m]}$" src="form_190.svg" width="95" height="21"/> over 1 second and can be neglected</li>
+<li>Deviation of the satellite clock frequency due to relativistic effects <img class="formulaInl" alt="${ \delta t^{rel,s}_{clk}}$" src="form_191.svg" width="44" height="25"/> (maximum value for GPS <img class="formulaInl" alt="$\approx 45.0\text{ns} \equiv 13.5\text{m}$" src="form_192.svg" width="137" height="14"/>)</li>
+<li>Satellite code hardware bias <img class="formulaInl" alt="${ d_{j}^s}$" src="form_193.svg" width="16" height="21"/> and satellite phase hardware bias <img class="formulaInl" alt="${ \delta_{j}^s}$" src="form_194.svg" width="16" height="23"/> also don't cancel out                                               <p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\begin{aligned}
 { \varphi_{br}^s}
          &amp;= { \varphi_{r}^s}({ t_r}) - { \varphi_{b}^s}({ t_b})
@@ -841,7 +841,7 @@ Single difference</h4>
                   + \underbrace{{ \delta f^{rel,s}_{clk}}({ t_r})
                       - { \delta f^{rel,s}_{clk}}({ t_b})}_{\approx 0}]
 \end{aligned}
-\end{equation}" src="form_166.svg" width="1076" height="373"/>
+\end{equation}" src="form_195.svg" width="1076" height="373"/>
 </p>
  </li>
 </ul>
@@ -894,7 +894,7 @@ Double difference</h4>
              - ({\delta\dotup{\rho}_{ie,br}^s} - {\delta\dotup{\rho}_{ie,br}^1})
              + c [ \overbrace{{d\dotup{t}_{br}} - {d\dotup{t}_{br}}}^{= 0} ]
 \end{aligned}
-\end{equation}" src="form_167.svg" width="1096" height="320"/>
+\end{equation}" src="form_198.svg" width="1096" height="320"/>
 </p>
 <h1 class="doxsection"><a class="anchor" id="RTK-KalmanFilter"></a>
 Kalman Filter</h1>
@@ -934,13 +934,13 @@ System Model</h2>
 }^{\mathbf{x}^e}
 +
 \mathbf{G} \cdot \boldsymbol{w}
-\end{equation}" src="form_168.svg" width="749" height="168"/>
+\end{equation}" src="form_205.svg" width="749" height="168"/>
 </p>
  <h3 class="doxsection"><a class="anchor" id="autotoc_md32"></a>
 State transition matrix 𝛟</h3>
 <p>Higher order terms are zero, so the exact solution is   </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\mathbf{\Phi} = \text{exp}(\mathbf{F} \tau_s) = \mathbf{I} + \mathbf{F}\tau_s
-\end{equation}" src="form_169.svg" width="586" height="19"/>
+\end{equation}" src="form_208.svg" width="586" height="19"/>
 </p>
  <h3 class="doxsection"><a class="anchor" id="autotoc_md33"></a>
 Process noise covariance matrix Q</h3>
@@ -958,7 +958,7 @@ Noise input matrix G</h4>
         \;\;\ 1 \;\;\ &amp; \;\;\ 1 \;\;\ &amp; \dots &amp; \;\;\ 1 \;\;\
     \end{array}\right]
 \end{array}
-\end{equation}" src="form_170.svg" width="690" height="54"/>
+\end{equation}" src="form_212.svg" width="690" height="54"/>
 </p>
  <h4 class="doxsection"><a class="anchor" id="autotoc_md35"></a>
 Noise scale matrix W</h4>
@@ -974,61 +974,61 @@ Noise scale matrix W</h4>
         \:\ \sigma_N^2 \:\ &amp; \:\ \sigma_N^3 \: &amp; \dots &amp; \: \sigma_N^m \:\
     \end{array}\right]
 \end{array}
-\end{equation}" src="form_171.svg" width="690" height="54"/>
+\end{equation}" src="form_213.svg" width="690" height="54"/>
 </p>
 <ul>
-<li>Velocity change due to user motion (Variances) <img class="formulaInl" alt="$\rightarrow$" src="form_172.svg" width="18" height="12"/> IRW on position       <p class="formulaDsp">
+<li>Velocity change due to user motion (Variances) <img class="formulaInl" alt="$\rightarrow$" src="form_215.svg" width="18" height="12"/> IRW on position       <p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\mathbf{S}_a^n = \begin{bmatrix}
 S_{aH} &amp;   0    &amp; 0      \\
 0    &amp; S_{aH} &amp; 0      \\
 0    &amp;   0    &amp; S_{aV} \\
 \end{bmatrix}
-\end{equation}" src="form_173.svg" width="592" height="63"/>
+\end{equation}" src="form_216.svg" width="592" height="63"/>
 </p>
 <ul>
-<li>Suitable values for <img class="formulaInl" alt="$S_{aH}$" src="form_174.svg" width="32" height="18"/> are around<ul>
-<li><img class="formulaInl" alt="$1 \text{ m}^2 \text{s}^{-3}$" src="form_175.svg" width="61" height="18"/> for a pedestrian or ship,</li>
-<li><img class="formulaInl" alt="$10 \text{ m}^2 \text{s}^{-3}$" src="form_176.svg" width="70" height="18"/> for a car,</li>
-<li><img class="formulaInl" alt="$100 \text{ m}^2 \text{s}^{-3}$" src="form_177.svg" width="79" height="18"/> for a military aircraft.</li>
+<li>Suitable values for <img class="formulaInl" alt="$S_{aH}$" src="form_217.svg" width="32" height="18"/> are around<ul>
+<li><img class="formulaInl" alt="$1 \text{ m}^2 \text{s}^{-3}$" src="form_218.svg" width="61" height="18"/> for a pedestrian or ship,</li>
+<li><img class="formulaInl" alt="$10 \text{ m}^2 \text{s}^{-3}$" src="form_219.svg" width="70" height="18"/> for a car,</li>
+<li><img class="formulaInl" alt="$100 \text{ m}^2 \text{s}^{-3}$" src="form_220.svg" width="79" height="18"/> for a military aircraft.</li>
 </ul>
 </li>
-<li>The vertical acceleration PSD <img class="formulaInl" alt="$S_{aV}$" src="form_178.svg" width="30" height="18"/> is usually smaller</li>
+<li>The vertical acceleration PSD <img class="formulaInl" alt="$S_{aV}$" src="form_221.svg" width="30" height="18"/> is usually smaller</li>
 </ul>
 </li>
-<li>Ambiguities are modeled as RW with very small noise to keep numerical stability <img class="formulaInl" alt="$\sigma_N \approx 10^{-6}$" src="form_179.svg" width="82" height="19"/></li>
+<li>Ambiguities are modeled as RW with very small noise to keep numerical stability <img class="formulaInl" alt="$\sigma_N \approx 10^{-6}$" src="form_222.svg" width="82" height="19"/></li>
 </ul>
 <h4 class="doxsection"><a class="anchor" id="autotoc_md36"></a>
 Van-Loan method</h4>
 <p>The state transition matrix and the system/process noise covariance matrix can be calculated with the van Loan method <a class="el" href="citelist.html#CITEREF_loan1978">[51]</a> vanloan1978. In short</p><ol type="1">
-<li>Form a <img class="formulaInl" alt="$2n \times 2n$" src="form_180.svg" width="60" height="14"/> matrix called <img class="formulaInl" alt="$\mathbf{A}$" src="form_181.svg" width="16" height="14"/> ( <img class="formulaInl" alt="$n$" src="form_182.svg" width="11" height="11"/> is the dimension of <img class="formulaInl" alt="$\mathbf{x}$" src="form_183.svg" width="11" height="11"/> and <img class="formulaInl" alt="$\mathbf{W}$" src="form_184.svg" width="21" height="14"/> is the power spectral density of the noise <img class="formulaInl" alt="$W(t)$" src="form_185.svg" width="39" height="19"/>)    <p class="formulaDsp">
+<li>Form a <img class="formulaInl" alt="$2n \times 2n$" src="form_223.svg" width="60" height="14"/> matrix called <img class="formulaInl" alt="$\mathbf{A}$" src="form_224.svg" width="16" height="14"/> ( <img class="formulaInl" alt="$n$" src="form_225.svg" width="11" height="11"/> is the dimension of <img class="formulaInl" alt="$\mathbf{x}$" src="form_226.svg" width="11" height="11"/> and <img class="formulaInl" alt="$\mathbf{W}$" src="form_227.svg" width="21" height="14"/> is the power spectral density of the noise <img class="formulaInl" alt="$W(t)$" src="form_228.svg" width="39" height="19"/>)    <p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}  \mathbf{A} = \begin{bmatrix} -\mathbf{F} &amp; \mathbf{G} \mathbf{W} \mathbf{G}^T \\
                                 \mathbf{0} &amp;            \mathbf{F}^T          \end{bmatrix} \Delta t
-\end{equation}" src="form_186.svg" width="586" height="42"/>
+\end{equation}" src="form_230.svg" width="586" height="42"/>
 </p>
 </li>
-<li>Calculate the exponential of <img class="formulaInl" alt="$\mathbf{A}$" src="form_181.svg" width="16" height="14"/>       <p class="formulaDsp">
+<li>Calculate the exponential of <img class="formulaInl" alt="$\mathbf{A}$" src="form_224.svg" width="16" height="14"/>       <p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}  \mathbf{B} = \text{expm}(\mathbf{A}) = \left[ \begin{array}{c:c}
                                             \dots          &amp; \mathbf{\Phi}^{-1} \mathbf{Q} \\ \hdashline
                                             \mathbf{0}          &amp; \mathbf{\Phi}^T                     \end{array} \right]
                                        = \begin{bmatrix} \mathbf{B}_{11} &amp; \mathbf{B}_{12} \\
                                                          \mathbf{B}_{21} &amp; \mathbf{B}_{22} \end{bmatrix}
-\end{equation}" src="form_187.svg" width="679" height="46"/>
+\end{equation}" src="form_231.svg" width="679" height="46"/>
 </p>
 </li>
-<li>Calculate the state transition matrix <img class="formulaInl" alt="$\mathbf{\Phi}$" src="form_188.svg" width="14" height="14"/> as   <p class="formulaDsp">
+<li>Calculate the state transition matrix <img class="formulaInl" alt="$\mathbf{\Phi}$" src="form_232.svg" width="14" height="14"/> as   <p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}  \mathbf{\Phi} = \mathbf{B}_{22}^T
-\end{equation}" src="form_189.svg" width="527" height="21"/>
+\end{equation}" src="form_233.svg" width="527" height="21"/>
 </p>
 </li>
-<li>Calculate the process noise covariance matrix <img class="formulaInl" alt="$\mathbf{Q}$" src="form_190.svg" width="16" height="16"/> as   <p class="formulaDsp">
+<li>Calculate the process noise covariance matrix <img class="formulaInl" alt="$\mathbf{Q}$" src="form_234.svg" width="16" height="16"/> as   <p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}  \mathbf{Q} = \mathbf{\Phi} \mathbf{B}_{12}
-\end{equation}" src="form_191.svg" width="534" height="19"/>
+\end{equation}" src="form_235.svg" width="534" height="19"/>
 </p>
  </li>
 </ol>
 <h5 class="doxsection"><a class="anchor" id="autotoc_md37"></a>
 Computation</h5>
-<p>Because the ambiguity related parts of <img class="formulaInl" alt="$\mathbf{F}$" src="form_192.svg" width="12" height="14"/> are 0 and <img class="formulaInl" alt="$\mathbf{G}, \mathbf{W}$" src="form_193.svg" width="46" height="16"/> are purely diagonal matrices, the Van-Loan method must be only calculated for the 6x6 top left part of the matrices (position, velocity). The ambiguities can be directly computed in <img class="formulaInl" alt="$\mathbf{Q}$" src="form_190.svg" width="16" height="16"/> as <img class="formulaInl" alt="$\sigma_N^2 \cdot \Delta t$" src="form_194.svg" width="58" height="21"/> .</p>
+<p>Because the ambiguity related parts of <img class="formulaInl" alt="$\mathbf{F}$" src="form_237.svg" width="12" height="14"/> are 0 and <img class="formulaInl" alt="$\mathbf{G}, \mathbf{W}$" src="form_238.svg" width="46" height="16"/> are purely diagonal matrices, the Van-Loan method must be only calculated for the 6x6 top left part of the matrices (position, velocity). The ambiguities can be directly computed in <img class="formulaInl" alt="$\mathbf{Q}$" src="form_234.svg" width="16" height="16"/> as <img class="formulaInl" alt="$\sigma_N^2 \cdot \Delta t$" src="form_239.svg" width="58" height="21"/> .</p>
 <h2 class="doxsection"><a class="anchor" id="RTK-MeasurementModel"></a>
 Measurement Model</h2>
 <blockquote class="doxtable">
@@ -1045,13 +1045,13 @@ Measurement vector</h4>
 { \tilde{p}_{br}^{12}} &amp; { \tilde{p}_{br}^{13}} &amp; \dots &amp; { \tilde{p}_{br}^{1n}} &amp;
 { \tilde{\dotup{p}}_{br}^{12}} &amp; { \tilde{\dotup{p}}_{br}^{13}} &amp; \dots &amp; { \tilde{\dotup{p}}_{br}^{1n}}
 \end{array}\right\}^T
-\end{equation}" src="form_195.svg" width="777" height="28"/>
+\end{equation}" src="form_241.svg" width="777" height="28"/>
 </p>
 <h4 class="doxsection"><a class="anchor" id="autotoc_md40"></a>
 Measurement innovation</h4>
 <p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\boldsymbol{\delta}\mathbf{z} = \overbrace{\mathbf{z}}^{\text{measurement}} - \underbrace{\mathbf{h}(\mathbf{\hat{x}})}_{\text{estimate}}
-\end{equation}" src="form_196.svg" width="590" height="61"/>
+\end{equation}" src="form_244.svg" width="590" height="61"/>
 </p>
 <p> where the estimates are        </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\mathbf{h}(\mathbf{\hat{x}}) =
@@ -1060,18 +1060,18 @@ Measurement innovation</h4>
   { \hat{p}_{br}^{12}} &amp; { \hat{p}_{br}^{13}} &amp; \dots &amp; { \hat{p}_{br}^{1n}} &amp;
   { \hat{\dotup{p}}_{br}^{12}} &amp; { \hat{\dotup{p}}_{br}^{13}} &amp; \dots &amp; { \hat{\dotup{p}}_{br}^{1n}}
 \end{array}\right\}^T
-\end{equation}" src="form_197.svg" width="789" height="30"/>
+\end{equation}" src="form_245.svg" width="789" height="30"/>
 </p>
  <h3 class="doxsection"><a class="anchor" id="autotoc_md41"></a>
 Measurement sensitivity Matrix H</h3>
 <p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\mathbf{H}_k = \frac{\partial\mathbf{h}(\mathbf{x}, t_k)}{\partial\mathbf{x}}\Biggr\rvert_{x=\hat{x}_k^-}
 = \frac{\partial\mathbf{z}(\mathbf{x}, t_k)}{\partial\mathbf{x}}\Biggr\rvert_{x=\hat{x}_k^-}
-\end{equation}" src="form_198.svg" width="644" height="60"/>
+\end{equation}" src="form_249.svg" width="644" height="60"/>
 </p>
 <p>with helper definition for the velocities similar to the Line-of-Sight vector   </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}{\mathbf{u}_{r,v}^s} = \frac{{\mathbf{v}^s} - {\mathbf{v}_r}}{ \rho_r^s}
-\end{equation}" src="form_199.svg" width="551" height="42"/>
+\end{equation}" src="form_250.svg" width="551" height="42"/>
 </p>
 <p> Differentiating yields                  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\begin{array}{rl}
@@ -1090,19 +1090,19 @@ Measurement sensitivity Matrix H</h3>
 - {\text{u}_{r,v_x}^1} \left({\text{u}_{r,x}^1}\right)^{2} + {\text{u}_{r,v_x}^1} + {\text{u}_{r,v_x}^m} \left({\text{u}_{r,x}^m}\right)^{2} - {\text{u}_{r,v_x}^m} - {\text{u}_{r,v_y}^1} {\text{u}_{r,x}^1} {\text{u}_{r,y}^1} + {\text{u}_{r,v_y}^m} {\text{u}_{r,x}^m} {\text{u}_{r,y}^m} - {\text{u}_{r,v_z}^1} {\text{u}_{r,x}^1} {\text{u}_{r,z}^1} + {\text{u}_{r,v_z}^m} {\text{u}_{r,x}^m} {\text{u}_{r,z}^m} &amp; - {\text{u}_{r,v_x}^1} {\text{u}_{r,x}^1} {\text{u}_{r,y}^1} + {\text{u}_{r,v_x}^m} {\text{u}_{r,x}^m} {\text{u}_{r,y}^m} - {\text{u}_{r,v_y}^1} \left({\text{u}_{r,y}^1}\right)^{2} + {\text{u}_{r,v_y}^1} + {\text{u}_{r,v_y}^m} \left({\text{u}_{r,y}^m}\right)^{2} - {\text{u}_{r,v_y}^m} - {\text{u}_{r,v_z}^1} {\text{u}_{r,y}^1} {\text{u}_{r,z}^1} + {\text{u}_{r,v_z}^m} {\text{u}_{r,y}^m} {\text{u}_{r,z}^m} &amp; - {\text{u}_{r,v_x}^1} {\text{u}_{r,x}^1} {\text{u}_{r,z}^1} + {\text{u}_{r,v_x}^m} {\text{u}_{r,x}^m} {\text{u}_{r,z}^m} - {\text{u}_{r,v_y}^1} {\text{u}_{r,y}^1} {\text{u}_{r,z}^1} + {\text{u}_{r,v_y}^m} {\text{u}_{r,y}^m} {\text{u}_{r,z}^m} - {\text{u}_{r,v_z}^1} \left({\text{u}_{r,z}^1}\right)^{2} + {\text{u}_{r,v_z}^1} + {\text{u}_{r,v_z}^m} \left({\text{u}_{r,z}^m}\right)^{2} - {\text{u}_{r,v_z}^m} &amp; {\text{u}_{r,x}^1} - {\text{u}_{r,x}^m} &amp; {\text{u}_{r,y}^1} - {\text{u}_{r,y}^m} &amp; {\text{u}_{r,z}^1} - {\text{u}_{r,z}^m} &amp; 0 &amp; 0 &amp; \dots &amp; 0\\
 \end{array}\right]
 \end{array}
-\end{equation}" src="form_200.svg" width="2923" height="292"/>
+\end{equation}" src="form_252.svg" width="2923" height="292"/>
 </p>
 <h3 class="doxsection"><a class="anchor" id="autotoc_md42"></a>
 Measurement noise covariance matrix R</h3>
 <h4 class="doxsection"><a class="anchor" id="autotoc_md43"></a>
 Correlated measurement error</h4>
-<p>Because of the double differences, the measurements are correlated which causes the <img class="formulaInl" alt="$\mathbf{R}$" src="form_201.svg" width="16" height="14"/> matrix to have non diagonal elements. According to the propagation of uncertainty one can write this as:   </p><p class="formulaDsp">
+<p>Because of the double differences, the measurements are correlated which causes the <img class="formulaInl" alt="$\mathbf{R}$" src="form_253.svg" width="16" height="14"/> matrix to have non diagonal elements. According to the propagation of uncertainty one can write this as:   </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\mathbf{R} = \mathbf{J} \cdot \mathbf{\tilde{R}} \cdot \mathbf{J}^T
-\end{equation}" src="form_202.svg" width="548" height="23"/>
+\end{equation}" src="form_255.svg" width="548" height="23"/>
 </p>
 <p> where</p><ul>
-<li><img class="formulaInl" alt="$\mathbf{\tilde{R}}$" src="form_203.svg" width="16" height="19"/> is the uncorrelated measurement error described below</li>
-<li><img class="formulaInl" alt="$\mathbf{J}$" src="form_204.svg" width="11" height="14"/> is the Jacobi-Matrix <img class="formulaInl" alt="$J_{ij} = \dfrac{\partial h_i}{\partial z_r^s}$" src="form_205.svg" width="75" height="42"/> with <img class="formulaInl" alt="$z_r^s$" src="form_206.svg" width="16" height="18"/> being the <a class="el" href="#RTK-SingleObservationEquations">Single GNSS Observation Equation</a> (see <a class="el" href="citelist.html#CITEREF_springerhandbookgnss2017">[48]</a> SpringerHandbookGNSS2017, p.606 / <a class="el" href="citelist.html#CITEREF_morton2020">[35]</a> Morton2020-vol1, p. 483 / <a class="el" href="citelist.html#CITEREF_groves2013">[18]</a> Groves2013, p. 443)</li>
+<li><img class="formulaInl" alt="$\mathbf{\tilde{R}}$" src="form_256.svg" width="16" height="19"/> is the uncorrelated measurement error described below</li>
+<li><img class="formulaInl" alt="$\mathbf{J}$" src="form_257.svg" width="11" height="14"/> is the Jacobi-Matrix <img class="formulaInl" alt="$J_{ij} = \dfrac{\partial h_i}{\partial z_r^s}$" src="form_258.svg" width="75" height="42"/> with <img class="formulaInl" alt="$z_r^s$" src="form_259.svg" width="16" height="18"/> being the <a class="el" href="#RTK-SingleObservationEquations">Single GNSS Observation Equation</a> (see <a class="el" href="citelist.html#CITEREF_springerhandbookgnss2017">[48]</a> SpringerHandbookGNSS2017, p.606 / <a class="el" href="citelist.html#CITEREF_morton2020">[35]</a> Morton2020-vol1, p. 483 / <a class="el" href="citelist.html#CITEREF_groves2013">[18]</a> Groves2013, p. 443)</li>
 </ul>
 <p>For the double difference measurements the estimates are                </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}h = \left[\begin{matrix}
@@ -1119,9 +1119,9 @@ Correlated measurement error</h4>
   \dots\\
   {\dotup{p}_b^1} - {\dotup{p}_b^m} - {\dotup{p}_r^1} + {\dotup{p}_r^m}\\
 \end{matrix}\right]
-\end{equation}" src="form_207.svg" width="597" height="252"/>
+\end{equation}" src="form_262.svg" width="597" height="252"/>
 </p>
-<p> which leads to the following <img class="formulaInl" alt="$\sigma$" src="form_208.svg" width="11" height="11"/> means variances, not standard deviations                                </p><p class="formulaDsp">
+<p> which leads to the following <img class="formulaInl" alt="$\sigma$" src="form_267.svg" width="11" height="11"/> means variances, not standard deviations                                </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\mathbf{\tilde{R}} =
     \left[\begin{array}{ccccccccc|ccccccccc|ccccccccc}
         {\sigma_{\varphi,r}^1} &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\
@@ -1152,7 +1152,7 @@ Correlated measurement error</h4>
         0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; {\sigma_{d,r}^m} &amp; 0 \\
         0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; {\sigma_{d,b}^m} \\
     \end{array}\right]
-\end{equation}" src="form_209.svg" width="1293" height="642"/>
+\end{equation}" src="form_270.svg" width="1293" height="642"/>
 </p>
                  <p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\mathbf{J} =
@@ -1170,21 +1170,21 @@ Correlated measurement error</h4>
         \dots &amp; \dots &amp; \dots &amp; \dots &amp; \dots &amp; \dots &amp; \dots &amp; \dots &amp; \dots &amp; \dots &amp; \dots &amp; \dots &amp; \dots &amp; \dots &amp; \dots &amp; \dots &amp; \dots &amp; \dots &amp; \dots &amp; \dots &amp; \dots &amp; \dots &amp; \dots &amp; \dots &amp; \dots &amp; \dots &amp; \dots\\
         0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; \dots &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; \dots &amp; 0 &amp; 0 &amp; -1 &amp; 1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; \dots &amp; 1 &amp; -1
     \end{array}\right]
-\end{equation}" src="form_210.svg" width="1150" height="275"/>
+\end{equation}" src="form_272.svg" width="1150" height="275"/>
 </p>
-<p> As the <img class="formulaInl" alt="$\mathbf{J}$" src="form_204.svg" width="11" height="14"/> matrix has a block for each observation type and the <img class="formulaInl" alt="$\mathbf{\tilde{R}}$" src="form_203.svg" width="16" height="19"/> matrix is diagonal, we can calculate each part separately and join them into the final <img class="formulaInl" alt="$\mathbf{R}$" src="form_201.svg" width="16" height="14"/> matrix like       </p><p class="formulaDsp">
+<p> As the <img class="formulaInl" alt="$\mathbf{J}$" src="form_257.svg" width="11" height="14"/> matrix has a block for each observation type and the <img class="formulaInl" alt="$\mathbf{\tilde{R}}$" src="form_256.svg" width="16" height="19"/> matrix is diagonal, we can calculate each part separately and join them into the final <img class="formulaInl" alt="$\mathbf{R}$" src="form_253.svg" width="16" height="14"/> matrix like       </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\mathbf{R} = \begin{bmatrix}
     \mathbf{R}_\varphi &amp; \mathbf{0} &amp; \mathbf{0} \\
     \mathbf{0} &amp; \mathbf{R}_p &amp; \mathbf{0} \\
     \mathbf{0} &amp; \mathbf{0} &amp; \mathbf{R}_d \\
 \end{bmatrix}
-\end{equation}" src="form_211.svg" width="578" height="63"/>
+\end{equation}" src="form_273.svg" width="578" height="63"/>
 </p>
 <h4 class="doxsection"><a class="anchor" id="autotoc_md44"></a>
 Uncorrelated Measurement Error</h4>
 <ul>
-<li>Increased noise of Single Difference, compared to separate measurements: <img class="formulaInl" alt="$\sigma_{br} = \sqrt{2}\sigma$" src="form_212.svg" width="81" height="19"/></li>
-<li>Increased noise of Double Difference, compared to separate measurements: <img class="formulaInl" alt="$\sigma_{br}^{1s} = \sqrt{4}\sigma = 2\sigma$" src="form_213.svg" width="124" height="21"/></li>
+<li>Increased noise of Single Difference, compared to separate measurements: <img class="formulaInl" alt="$\sigma_{br} = \sqrt{2}\sigma$" src="form_274.svg" width="81" height="19"/></li>
+<li>Increased noise of Double Difference, compared to separate measurements: <img class="formulaInl" alt="$\sigma_{br}^{1s} = \sqrt{4}\sigma = 2\sigma$" src="form_275.svg" width="124" height="21"/></li>
 <li>But errors are correlated, so the error propagation above is applied</li>
 </ul>
 <h5 class="doxsection"><a class="anchor" id="autotoc_md45"></a>
@@ -1197,7 +1197,7 @@ GNSS measurement error</h5>
 \sigma_{pj}^2     &amp;= {F^s}^2 {R_r}^2 \left(a_\sigma^2 + \frac{b_\sigma^2}{\sin^2{\text{El}_r^s}} \right) \\
 \sigma_{\phi j}^2 &amp;= {F^s}^2 \left(a_\sigma^2 + \frac{b_\sigma^2}{\sin^2{\text{El}_r^s}} \right) \\
 \end{array}
-\end{equation}" src="form_214.svg" width="611" height="63"/>
+\end{equation}" src="form_277.svg" width="611" height="63"/>
 </p>
 <p> where:        </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation*}\begin{array}{cl}
@@ -1206,7 +1206,7 @@ R_r                &amp; \text{Code/Carrier-phase error ratio (default value is 
 a_\sigma, b_\sigma &amp; \text{Carrier-phase error factor $a$ and $b$ [m] (default values are 0.003m for both factors)} \\
 \sigma_{dj}        &amp; \text{Doppler Frequency error factor [Hz] (default value is 1 Hz)} \\
 \end{array}
-\end{equation*}" src="form_215.svg" width="774" height="84"/>
+\end{equation*}" src="form_278.svg" width="774" height="84"/>
 </p>
 <h5 class="doxsection"><a class="anchor" id="autotoc_md46"></a>
 GNSS measurement error</h5>
@@ -1218,11 +1218,11 @@ GNSS measurement error</h5>
 \sigma_{pj}^2     &amp;= \dfrac{1}{\sin^2({el})} \left( \sigma_{pZ}^2 + \dfrac{\sigma_{pc}^2}{(c/n_0)_j} + \sigma_{pa}^2 \ddot{r}_{aj}^2 \right)\\
 \sigma_{\phi j}^2 &amp;= \dfrac{1}{\sin^2({el})} \left( \sigma_{\phi Z}^2 + \dfrac{\sigma_{\phi c}^2}{(c/n_0)_j} + \sigma_{\phi a}^2 \ddot{r}_{aj}^2 \right)\\
 \end{array}
-\end{equation*}" src="form_216.svg" width="331" height="105"/>
+\end{equation*}" src="form_279.svg" width="331" height="105"/>
 </p>
 <ul>
-<li>coefficients <img class="formulaInl" alt="$\sigma_{pZ}$" src="form_217.svg" width="28" height="14"/>, <img class="formulaInl" alt="$\sigma_{pc}$" src="form_218.svg" width="25" height="14"/>, <img class="formulaInl" alt="$\sigma_{pa}$" src="form_219.svg" width="25" height="14"/>, <img class="formulaInl" alt="$\sigma_{\phi Z}$" src="form_220.svg" width="30" height="14"/>, <img class="formulaInl" alt="$\sigma_{\phi c}$" src="form_221.svg" width="25" height="14"/> and <img class="formulaInl" alt="$\sigma_{\phi a}$" src="form_222.svg" width="26" height="14"/> should be determined empirically</li>
-<li><img class="formulaInl" alt="$\ddotup{r}_{aj}$" src="form_223.svg" width="21" height="18"/> Range acceleration [groves2013, Appendix G.4.1] (probably not necessary)</li>
+<li>coefficients <img class="formulaInl" alt="$\sigma_{pZ}$" src="form_280.svg" width="28" height="14"/>, <img class="formulaInl" alt="$\sigma_{pc}$" src="form_281.svg" width="25" height="14"/>, <img class="formulaInl" alt="$\sigma_{pa}$" src="form_282.svg" width="25" height="14"/>, <img class="formulaInl" alt="$\sigma_{\phi Z}$" src="form_283.svg" width="30" height="14"/>, <img class="formulaInl" alt="$\sigma_{\phi c}$" src="form_284.svg" width="25" height="14"/> and <img class="formulaInl" alt="$\sigma_{\phi a}$" src="form_285.svg" width="26" height="14"/> should be determined empirically</li>
+<li><img class="formulaInl" alt="$\ddotup{r}_{aj}$" src="form_286.svg" width="21" height="18"/> Range acceleration [groves2013, Appendix G.4.1] (probably not necessary)</li>
 </ul>
 <h2 class="doxsection"><a class="anchor" id="RTK-MeasurementInnovationValidation"></a>
 Measurement Innovation validation</h2>
@@ -1233,37 +1233,37 @@ Normalized Innovation Squared (NIS)</h3>
 </blockquote>
 <p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\text{NIS} (\boldsymbol{\delta}\mathbf{z}_k,\mathbf{S}_k) = \epsilon_{\boldsymbol{\delta}\mathbf{z}_k} = \boldsymbol{\delta}\mathbf{z}_k^T \mathbf{S}_k^{-1} \boldsymbol{\delta}\mathbf{z}_k
-\end{equation}" src="form_224.svg" width="625" height="23"/>
+\end{equation}" src="form_287.svg" width="625" height="23"/>
 </p>
 <p> where</p><ul>
-<li>Measurement innovation <img class="formulaInl" alt="$\boldsymbol{\delta}\mathbf{z}$" src="form_225.svg" width="19" height="16"/></li>
-<li><img class="formulaInl" alt="$n_z = \text{dim}( \boldsymbol{\delta}\mathbf{z} )$" src="form_226.svg" width="102" height="19"/> degrees of freedom is the the dimension of the measurement vector</li>
-<li><img class="formulaInl" alt="$\mathbf{S}(k) = \mathbf{H}_{k} \mathbf{P}_{k}^{-} \mathbf{H}_{k}^\text{T} + \mathbf{R}_{k}$" src="form_227.svg" width="179" height="23"/> Innovation Covariance Matrix</li>
+<li>Measurement innovation <img class="formulaInl" alt="$\boldsymbol{\delta}\mathbf{z}$" src="form_288.svg" width="19" height="16"/></li>
+<li><img class="formulaInl" alt="$n_z = \text{dim}( \boldsymbol{\delta}\mathbf{z} )$" src="form_289.svg" width="102" height="19"/> degrees of freedom is the the dimension of the measurement vector</li>
+<li><img class="formulaInl" alt="$\mathbf{S}(k) = \mathbf{H}_{k} \mathbf{P}_{k}^{-} \mathbf{H}_{k}^\text{T} + \mathbf{R}_{k}$" src="form_290.svg" width="179" height="23"/> Innovation Covariance Matrix</li>
 </ul>
 <p>NIS accepted if   </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\epsilon_{\boldsymbol{\delta}\mathbf{z}} \in [r_1,r_2] \text{.}
-\end{equation}" src="form_228.svg" width="543" height="19"/>
+\end{equation}" src="form_291.svg" width="543" height="19"/>
 </p>
-<p> where <img class="formulaInl" alt="$[r_1,r_2]$" src="form_229.svg" width="46" height="19"/> is the confidence interval   </p><p class="formulaDsp">
+<p> where <img class="formulaInl" alt="$[r_1,r_2]$" src="form_292.svg" width="46" height="19"/> is the confidence interval   </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}r_1 = F^{-1} ( \frac{\alpha}{2}, n_z ), \ r_2 = F^{-1} ( 1- \frac{\alpha}{2}, n_z ) \text{.}
-\end{equation}" src="form_230.svg" width="644" height="33"/>
+\end{equation}" src="form_293.svg" width="644" height="33"/>
 </p>
-<p> and can be calculated with the inverse cumulative distribution function <img class="formulaInl" alt="$F^{-1}$" src="form_231.svg" width="32" height="18"/> (also called <a href="https://en.wikipedia.org/wiki/Quantile_function">Quantile function</a>) of the chi-squared distribution (<a href="https://www.boost.org/doc/libs/1_85_0/libs/math/doc/html/math_toolkit/dist_ref/dists/chi_squared_dist.html">Chi Squared Distribution - Boost 1.85.0</a> - <span class="tt">quantile</span> function)</p>
+<p> and can be calculated with the inverse cumulative distribution function <img class="formulaInl" alt="$F^{-1}$" src="form_294.svg" width="32" height="18"/> (also called <a href="https://en.wikipedia.org/wiki/Quantile_function">Quantile function</a>) of the chi-squared distribution (<a href="https://www.boost.org/doc/libs/1_85_0/libs/math/doc/html/math_toolkit/dist_ref/dists/chi_squared_dist.html">Chi Squared Distribution - Boost 1.85.0</a> - <span class="tt">quantile</span> function)</p>
 <p><a href="https://en.wikipedia.org/wiki/Chi-squared_distribution">Chi-squared distribution - Wikipedia</a> (<a href="https://www.boost.org/doc/libs/1_85_0/libs/math/doc/html/math_toolkit/sf_gamma/igamma.html">Incomplete Gamma Functions - Boost 1.85.0</a>)   </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\text{CDF} = \frac{1}{\Gamma(k/2)} \gamma \left( \frac{k}{2}, \frac{x}{2} \right), \quad \text{gamma\_p(a, z)} = \frac{\gamma(a, z)}{\Gamma(a)}
-\end{equation}" src="form_232.svg" width="697" height="42"/>
+\end{equation}" src="form_295.svg" width="697" height="42"/>
 </p>
 <p> <a href="https://en.wikipedia.org/wiki/Gamma_function">Gamma function - Wikipedia</a>   </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\Gamma (z) = \int_0^\infty t^{z-1} e^{-t} dt
-\end{equation}" src="form_233.svg" width="576" height="44"/>
+\end{equation}" src="form_296.svg" width="576" height="44"/>
 </p>
 <p> <a href="https://en.wikipedia.org/wiki/Incomplete_gamma_function">Lower incomplete gamma function - Wikipedia</a>   </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\gamma (s, x) = \int_0^x t^{s-1} e^{-t} dt
-\end{equation}" src="form_234.svg" width="581" height="44"/>
+\end{equation}" src="form_297.svg" width="581" height="44"/>
 </p>
  <h4 class="doxsection"><a class="anchor" id="autotoc_md48"></a>
 One sided Test</h4>
-<p>Test only <img class="formulaInl" alt="$\epsilon_{\boldsymbol{\delta}\mathbf{z}} \le r_2$" src="form_235.svg" width="61" height="16"/> with <img class="formulaInl" alt="$r_2 = F^{-1} ( 1 - \alpha, n_z )$" src="form_236.svg" width="152" height="21"/></p>
+<p>Test only <img class="formulaInl" alt="$\epsilon_{\boldsymbol{\delta}\mathbf{z}} \le r_2$" src="form_298.svg" width="61" height="16"/> with <img class="formulaInl" alt="$r_2 = F^{-1} ( 1 - \alpha, n_z )$" src="form_299.svg" width="152" height="21"/></p>
 <h3 class="doxsection"><a class="anchor" id="autotoc_md49"></a>
 KF scheme with NIS test</h3>
 <p>NIS only tells that something is wrong, not what. Need to look at post-fit residuals to find incorrect measurements.</p>
@@ -1271,12 +1271,12 @@ KF scheme with NIS test</h3>
 Ambiguity resolution</h1>
 <h2 class="doxsection"><a class="anchor" id="RTK-CorrectingFloatState"></a>
 Correcting float state</h2>
-<p>Readjusting the float estimator <img class="formulaInl" alt="$\boldsymbol{\hat{b}}$" src="form_237.svg" width="11" height="19"/> with the ambiguity residual <img class="formulaInl" alt="$\boldsymbol{\hat{a}} - \boldsymbol{\check{a}}$" src="form_238.svg" width="44" height="14"/>      </p><p class="formulaDsp">
+<p>Readjusting the float estimator <img class="formulaInl" alt="$\boldsymbol{\hat{b}}$" src="form_300.svg" width="11" height="19"/> with the ambiguity residual <img class="formulaInl" alt="$\boldsymbol{\hat{a}} - \boldsymbol{\check{a}}$" src="form_301.svg" width="44" height="14"/>      </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\begin{aligned}
   \boldsymbol{\check{b}}                       &amp; = \boldsymbol{\hat{b}} - \mathbf{Q}_{\boldsymbol{\hat{b}\hat{a}}} \mathbf{Q}_{\boldsymbol{\hat{a}\hat{a}}}^{-1} \left( \boldsymbol{\hat{a}} - \boldsymbol{\check{a}} \right)         \\
   \mathbf{Q}_{\boldsymbol{\check{b}\check{b}}} &amp; = \mathbf{Q}_{\boldsymbol{\hat{b}\hat{b}}} - \mathbf{Q}_{\boldsymbol{\hat{b}\hat{a}}} \mathbf{Q}_{\boldsymbol{\hat{a}\hat{a}}}^{-1} \mathbf{Q}_{\boldsymbol{\hat{a}\hat{b}}}
 \end{aligned}
-\end{equation}" src="form_239.svg" width="599" height="53"/>
+\end{equation}" src="form_302.svg" width="599" height="53"/>
 </p>
  <h2 class="doxsection"><a class="anchor" id="RTK-UpdatingAmbiguityCovariance"></a>
 Updating Ambiguity covariance</h2>
@@ -1290,17 +1290,17 @@ Measurement vector</h4>
 \left\{\begin{array}{cccc}
 {\check{N}_{br}^{12}} &amp; {\check{N}_{br}^{13}} &amp; \dots &amp; {\check{N}_{br}^{1m}}
 \end{array}\right\}^T
-\end{equation}" src="form_240.svg" width="621" height="26"/>
+\end{equation}" src="form_303.svg" width="621" height="26"/>
 </p>
 <h4 class="doxsection"><a class="anchor" id="autotoc_md52"></a>
 Measurement innovation</h4>
 <p>This is the difference between the current ambiguities in the state vector and the fixed ambiguities here   </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\boldsymbol{\delta}\mathbf{z} = \mathbf{z} - \mathbf{h}(\mathbf{\hat{x}})
-\end{equation}" src="form_241.svg" width="548" height="19"/>
+\end{equation}" src="form_304.svg" width="548" height="19"/>
 </p>
 <h3 class="doxsection"><a class="anchor" id="autotoc_md53"></a>
 Measurement sensitivity Matrix H</h3>
-<p>This extends the previously stated <img class="formulaInl" alt="$\mathbf{H}$" src="form_242.svg" width="16" height="14"/> matrix                           </p><p class="formulaDsp">
+<p>This extends the previously stated <img class="formulaInl" alt="$\mathbf{H}$" src="form_305.svg" width="16" height="14"/> matrix                           </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation}\overbrace{
   \begin{bmatrix}
     {\check{N}_{br}^{12}} \\
@@ -1326,7 +1326,7 @@ Measurement sensitivity Matrix H</h3>
     {N_{br}^{1m}} \\
   \end{bmatrix}
 }^{\mathbf{x}}
-\end{equation}" src="form_243.svg" width="688" height="161"/>
+\end{equation}" src="form_306.svg" width="688" height="161"/>
 </p>
 <h3 class="doxsection"><a class="anchor" id="autotoc_md54"></a>
 Measurement noise covariance matrix R</h3>
@@ -1337,9 +1337,9 @@ Measurement noise covariance matrix R</h3>
 \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
    0   &amp;   0    &amp; \dots &amp; \sigma_{N}^2 \\
 \end{array} \right]
-\end{equation}" src="form_244.svg" width="606" height="96"/>
+\end{equation}" src="form_307.svg" width="606" height="96"/>
 </p>
-<p> with <img class="formulaInl" alt="$\sigma_{N}^2$" src="form_245.svg" width="23" height="21"/> being very small, e.g. <img class="formulaInl" alt="$10^{-6}$" src="form_246.svg" width="35" height="18"/> </p>
+<p> with <img class="formulaInl" alt="$\sigma_{N}^2$" src="form_308.svg" width="23" height="21"/> being very small, e.g. <img class="formulaInl" alt="$10^{-6}$" src="form_309.svg" width="35" height="18"/> </p>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
 </div><!-- doc-content -->

@@ -48,7 +48,7 @@
               <td id="projectlogo"><img alt="Logo" src="INSTINCT_Logo_Text.png"  /></td>
               <td id="projectalign">
                 <div id="projectname"><span
-                    id="projectnumber">&#160;0.5.0</span>
+                    id="projectnumber">&#160;0.5.1</span>
                 </div>
               </td>
             </tr>
@@ -166,6 +166,26 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a87e8fd98eb83d56fce486747a78a2d54 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called when a new link was established.  <br /></td></tr>
 <tr class="memitem:abd363d0fb6118e4574c7f8e9a2d0dbc9 inherit pub_methods_classNAV_1_1Node" id="r_abd363d0fb6118e4574c7f8e9a2d0dbc9"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#abd363d0fb6118e4574c7f8e9a2d0dbc9">afterDeleteLink</a> (<a class="el" href="classNAV_1_1OutputPin.html">OutputPin</a> &amp;startPin, <a class="el" href="classNAV_1_1InputPin.html">InputPin</a> &amp;endPin)</td></tr>
 <tr class="memdesc:abd363d0fb6118e4574c7f8e9a2d0dbc9 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called when a link was deleted.  <br /></td></tr>
+<tr class="memitem:a76b0feda72acc7d11c91ecbf163c53f1 inherit pub_methods_classNAV_1_1Node" id="r_a76b0feda72acc7d11c91ecbf163c53f1"><td class="memTemplParams" colspan="2">template&lt;std::derived_from&lt; <a class="el" href="classNAV_1_1Node.html">Node</a> &gt; T&gt; </td></tr>
+<tr class="memitem:a76b0feda72acc7d11c91ecbf163c53f1 inherit pub_methods_classNAV_1_1Node template"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1InputPin.html">InputPin</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#a76b0feda72acc7d11c91ecbf163c53f1">CreateInputPin</a> (const char *<a class="el" href="classNAV_1_1Node.html#aa175adec8045649de2cba57eefb184b8">name</a>, <a class="el" href="structNAV_1_1Pin_1_1Type.html">Pin::Type</a> pinType, const std::vector&lt; std::string &gt; &amp;dataIdentifier, void(T::*notifyFunc)(const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;, size_t), int idx=-1)</td></tr>
+<tr class="memdesc:a76b0feda72acc7d11c91ecbf163c53f1 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Input <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> object for data pins. The additional notify function gets called when the connected data was changed and the connected node calls <a class="el" href="classNAV_1_1Node.html#a2c20975b5f51c95a837cdd8e6b45b7bd" title="Notifies connected nodes about the change.">NAV::Node::notifyOutputValueChanged</a>.  <br /></td></tr>
+<tr class="memitem:ab68a7dee11448defa3ce9c5c6ffe39c1 inherit pub_methods_classNAV_1_1Node" id="r_ab68a7dee11448defa3ce9c5c6ffe39c1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1InputPin.html">InputPin</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#ab68a7dee11448defa3ce9c5c6ffe39c1">CreateInputPin</a> (const char *<a class="el" href="classNAV_1_1Node.html#aa175adec8045649de2cba57eefb184b8">name</a>, <a class="el" href="structNAV_1_1Pin_1_1Type.html">Pin::Type</a> pinType, const std::vector&lt; std::string &gt; &amp;dataIdentifier={}, <a class="el" href="classNAV_1_1InputPin.html#aa0c3c5cfa65d98c5939883adcaec1b0c">InputPin::Callback</a> callback=static_cast&lt; <a class="el" href="classNAV_1_1InputPin.html#a933affe0a3685865240d799bf5448f89">InputPin::FlowFirableCallbackFunc</a> &gt;(nullptr), <a class="el" href="classNAV_1_1InputPin.html#aa6d4352ff2778ef7ebf054227bf4be3f">InputPin::FlowFirableCheckFunc</a> firable=nullptr, int priority=0, int idx=-1)</td></tr>
+<tr class="memdesc:ab68a7dee11448defa3ce9c5c6ffe39c1 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Input <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> object.  <br /></td></tr>
+<tr class="memitem:a16dd132debc12b3dc25531be83662a4c inherit pub_methods_classNAV_1_1Node" id="r_a16dd132debc12b3dc25531be83662a4c"><td class="memTemplParams" colspan="2">template&lt;std::derived_from&lt; <a class="el" href="classNAV_1_1Node.html">Node</a> &gt; T&gt; </td></tr>
+<tr class="memitem:a16dd132debc12b3dc25531be83662a4c inherit pub_methods_classNAV_1_1Node template"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1InputPin.html">InputPin</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#a16dd132debc12b3dc25531be83662a4c">CreateInputPin</a> (const char *<a class="el" href="classNAV_1_1Node.html#aa175adec8045649de2cba57eefb184b8">name</a>, <a class="el" href="structNAV_1_1Pin_1_1Type.html">Pin::Type</a> pinType, const std::vector&lt; std::string &gt; &amp;dataIdentifier={}, void(T::*callback)(<a class="el" href="classNAV_1_1InputPin.html#a47683b163e79b13098f38627d8f4d87b">InputPin::NodeDataQueue</a> &amp;, size_t)=nullptr, <a class="el" href="classNAV_1_1InputPin.html#aa6d4352ff2778ef7ebf054227bf4be3f">InputPin::FlowFirableCheckFunc</a> firable=nullptr, int priority=0, int idx=-1)</td></tr>
+<tr class="memdesc:a16dd132debc12b3dc25531be83662a4c inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Input <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> object.  <br /></td></tr>
+<tr class="memitem:a63a474fe4a0bd42fb2e7fcc500a9b76b inherit pub_methods_classNAV_1_1Node" id="r_a63a474fe4a0bd42fb2e7fcc500a9b76b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1OutputPin.html">OutputPin</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#a63a474fe4a0bd42fb2e7fcc500a9b76b">CreateOutputPin</a> (const char *<a class="el" href="classNAV_1_1Node.html#aa175adec8045649de2cba57eefb184b8">name</a>, <a class="el" href="structNAV_1_1Pin_1_1Type.html">Pin::Type</a> pinType, const std::vector&lt; std::string &gt; &amp;dataIdentifier, <a class="el" href="classNAV_1_1OutputPin.html#a746f45d83fa13fc24ea8db7724ead64b">OutputPin::PinData</a> data=static_cast&lt; void * &gt;(nullptr), int idx=-1)</td></tr>
+<tr class="memdesc:a63a474fe4a0bd42fb2e7fcc500a9b76b inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Output <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> object.  <br /></td></tr>
+<tr class="memitem:aed5ad3c978991b001a4d9cd9dad4c1ba inherit pub_methods_classNAV_1_1Node" id="r_aed5ad3c978991b001a4d9cd9dad4c1ba"><td class="memTemplParams" colspan="2">template&lt;std::derived_from&lt; <a class="el" href="classNAV_1_1Node.html">Node</a> &gt; T&gt; </td></tr>
+<tr class="memitem:aed5ad3c978991b001a4d9cd9dad4c1ba inherit pub_methods_classNAV_1_1Node template"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1OutputPin.html">OutputPin</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#aed5ad3c978991b001a4d9cd9dad4c1ba">CreateOutputPin</a> (const char *<a class="el" href="classNAV_1_1Node.html#aa175adec8045649de2cba57eefb184b8">name</a>, <a class="el" href="structNAV_1_1Pin_1_1Type.html">Pin::Type</a> pinType, const std::vector&lt; std::string &gt; &amp;dataIdentifier, std::shared_ptr&lt; const <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a> &gt;(T::*peekPollDataFunc)(size_t, bool)=nullptr, int idx=-1)</td></tr>
+<tr class="memdesc:aed5ad3c978991b001a4d9cd9dad4c1ba inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Output <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> object for Flow Pins.  <br /></td></tr>
+<tr class="memitem:abca83b43d9b8ba9bc0f0c41c269efe59 inherit pub_methods_classNAV_1_1Node" id="r_abca83b43d9b8ba9bc0f0c41c269efe59"><td class="memTemplParams" colspan="2">template&lt;std::derived_from&lt; <a class="el" href="classNAV_1_1Node.html">Node</a> &gt; T&gt; </td></tr>
+<tr class="memitem:abca83b43d9b8ba9bc0f0c41c269efe59 inherit pub_methods_classNAV_1_1Node template"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1OutputPin.html">OutputPin</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#abca83b43d9b8ba9bc0f0c41c269efe59">CreateOutputPin</a> (const char *<a class="el" href="classNAV_1_1Node.html#aa175adec8045649de2cba57eefb184b8">name</a>, <a class="el" href="structNAV_1_1Pin_1_1Type.html">Pin::Type</a> pinType, const std::vector&lt; std::string &gt; &amp;dataIdentifier, std::shared_ptr&lt; const <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a> &gt;(T::*pollDataFunc)()=nullptr, int idx=-1)</td></tr>
+<tr class="memdesc:abca83b43d9b8ba9bc0f0c41c269efe59 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Output <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> object for Flow Pins.  <br /></td></tr>
+<tr class="memitem:acec461ed1348362c5592c1978b879783 inherit pub_methods_classNAV_1_1Node" id="r_acec461ed1348362c5592c1978b879783"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#acec461ed1348362c5592c1978b879783">DeleteInputPin</a> (size_t pinIndex)</td></tr>
+<tr class="memdesc:acec461ed1348362c5592c1978b879783 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deletes the input pin. Invalidates the pin reference given.  <br /></td></tr>
+<tr class="memitem:a4110b820d14596dfb36d3315feb634d5 inherit pub_methods_classNAV_1_1Node" id="r_a4110b820d14596dfb36d3315feb634d5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#a4110b820d14596dfb36d3315feb634d5">DeleteOutputPin</a> (size_t pinIndex)</td></tr>
+<tr class="memdesc:a4110b820d14596dfb36d3315feb634d5 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deletes the output pin. Invalidates the pin reference given.  <br /></td></tr>
 <tr class="memitem:a05d65fed1964daf2e8e588de7bbbe136 inherit pub_methods_classNAV_1_1Node" id="r_a05d65fed1964daf2e8e588de7bbbe136"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#a05d65fed1964daf2e8e588de7bbbe136">doDeinitialize</a> (bool wait=false)</td></tr>
 <tr class="memdesc:a05d65fed1964daf2e8e588de7bbbe136 inherit pub_methods_classNAV_1_1Node"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the node worker to deinitialize the node.  <br /></td></tr>
 <tr class="memitem:a15e8cdd4b182aa39bdd4e62897a744cf inherit pub_methods_classNAV_1_1Node" id="r_a15e8cdd4b182aa39bdd4e62897a744cf"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Node.html#a15e8cdd4b182aa39bdd4e62897a744cf">doDisable</a> (bool wait=false)</td></tr>
@@ -461,6 +481,8 @@ Additional Inherited Members</h2></td></tr>
 &#160;&#160;<a class="el" href="classNAV_1_1UartSensor.html#a3b5241b8197acb7fde19ebc58193d856acad62a210533424cc4620a2fffb74807">BAUDRATE_460800</a>
 , <br />
 &#160;&#160;<a class="el" href="classNAV_1_1UartSensor.html#a3b5241b8197acb7fde19ebc58193d856abd52875e329b1267b63dd49bad476a50">BAUDRATE_921600</a>
+, <br />
+&#160;&#160;<a class="el" href="classNAV_1_1UartSensor.html#a3b5241b8197acb7fde19ebc58193d856aa9363d2b170585bbd4b782cecd890bdf">BAUDRATE_2000000</a>
 <br />
  }</td></tr>
 <tr class="memdesc:a3b5241b8197acb7fde19ebc58193d856"><td class="mdescLeft">&#160;</td><td class="mdescRight">Available Baudrates.  <a href="classNAV_1_1UartSensor.html#a3b5241b8197acb7fde19ebc58193d856">More...</a><br /></td></tr>
@@ -601,7 +623,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Default constructor. </p>
 
-<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l01653">1653</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l01651">1651</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
 
 </div>
 </div>
@@ -630,7 +652,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Destructor. </p>
 
-<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l01691">1691</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l01689">1689</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
 
 </div>
 </div>
@@ -731,7 +753,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l06642">6642</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l06640">6640</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
 
 </div>
 </div>
@@ -760,7 +782,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>String representation of the Class Category. </p>
 
-<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l01706">1706</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l01704">1704</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
 
 </div>
 </div>
@@ -806,7 +828,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l00629">629</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l00627">627</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
 
 </div>
 </div>
@@ -837,7 +859,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1Node.html#a672f89aaab8b8a18998d994e8e05b7f2">NAV::Node</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l06442">6442</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l06440">6440</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
 
 </div>
 </div>
@@ -869,7 +891,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1Imu.html#a77a50119e04d250697e0814a04c9301e">NAV::Imu</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l01711">1711</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l01709">1709</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
 
 </div>
 </div>
@@ -900,7 +922,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1Node.html#affdb065780fd29abe64b2fb2731e8080">NAV::Node</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l05812">5812</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l05810">5810</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
 
 </div>
 </div>
@@ -940,7 +962,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l06503">6503</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l06501">6501</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
 
 </div>
 </div>
@@ -1025,7 +1047,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1Node.html#a84fea0433f26f6f3e15d9c1a4436dd57">NAV::Node</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l05795">5795</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l05793">5793</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
 
 </div>
 </div>
@@ -1062,7 +1084,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1Imu.html#a4d31c3a84e15b836d8f50b10ea42c27b">NAV::Imu</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l05596">5596</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l05594">5594</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
 
 </div>
 </div>
@@ -1093,7 +1115,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1Imu.html#a187aa931ba244de475cc55c167f8b528">NAV::Imu</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l05514">5514</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l05512">5512</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
 
 </div>
 </div>
@@ -1124,7 +1146,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classNAV_1_1Node.html#ae64d61c4d754203004ed5df92fe33321">NAV::Node</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l01701">1701</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l01699">1699</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
 
 </div>
 </div>
@@ -1153,7 +1175,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>String representation of the Class Type. </p>
 
-<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l01696">1696</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8cpp_source.html#l01694">1694</a> of file <a class="el" href="VectorNavSensor_8cpp_source.html">VectorNavSensor.cpp</a>.</p>
 
 </div>
 </div>
@@ -1338,7 +1360,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Binary group 5 provides all estimated outputs which are dependent upon the estimated attitude solution. </p>
 <p>The attitude will be derived from either the AHRS or the INS, depending upon which filter is currently active and tracking. All of the fields in this group will only be valid if the AHRS/INS filter is currently enabled and tracking. </p>
 
-<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8hpp_source.html#l01427">1427</a> of file <a class="el" href="VectorNavSensor_8hpp_source.html">VectorNavSensor.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8hpp_source.html#l01425">1425</a> of file <a class="el" href="VectorNavSensor_8hpp_source.html">VectorNavSensor.hpp</a>.</p>
 
 </div>
 </div>
@@ -1366,7 +1388,7 @@ Additional Inherited Members</h2></td></tr>
 <p>All data in this group is updated at the rate of the GNSS receiver (nominally 5Hz for the internal GNSS).</p>
 <dl class="section note"><dt>Note</dt><dd>If data is asynchronously sent from group 4/7 at a rate equal to the GNSS update rate, then packets will be sent out when updated by the GNSS receiver. For all other rates, the output will be based on the divisor selected and the internal IMU sampling rate. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8hpp_source.html#l00929">929</a> of file <a class="el" href="VectorNavSensor_8hpp_source.html">VectorNavSensor.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8hpp_source.html#l00927">927</a> of file <a class="el" href="VectorNavSensor_8hpp_source.html">VectorNavSensor.hpp</a>.</p>
 
 </div>
 </div>
@@ -1392,7 +1414,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Binary group 3 provides all outputs which are dependent upon the measurements collected from the onboard IMU, or an external IMU (if enabled). </p>
 
-<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8hpp_source.html#l00895">895</a> of file <a class="el" href="VectorNavSensor_8hpp_source.html">VectorNavSensor.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8hpp_source.html#l00893">893</a> of file <a class="el" href="VectorNavSensor_8hpp_source.html">VectorNavSensor.hpp</a>.</p>
 
 </div>
 </div>
@@ -1419,7 +1441,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Binary group 6 provides all estimated outputs which are dependent upon the onboard INS state solution. </p>
 <p>All of the fields in this group will only be valid if the INS filter is currently enabled and tracking. </p>
 
-<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8hpp_source.html#l01538">1538</a> of file <a class="el" href="VectorNavSensor_8hpp_source.html">VectorNavSensor.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8hpp_source.html#l01536">1536</a> of file <a class="el" href="VectorNavSensor_8hpp_source.html">VectorNavSensor.hpp</a>.</p>
 
 </div>
 </div>
@@ -1448,7 +1470,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Binary group 2 provides all timing and event counter related outputs.</p>
 <p>Some of these outputs (such as the TimeGps, TimePps, and TimeUtc), require either that the internal GNSS to be enabled, or an external GNSS must be present. </p>
 
-<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8hpp_source.html#l00731">731</a> of file <a class="el" href="VectorNavSensor_8hpp_source.html">VectorNavSensor.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8hpp_source.html#l00729">729</a> of file <a class="el" href="VectorNavSensor_8hpp_source.html">VectorNavSensor.hpp</a>.</p>
 
 </div>
 </div>

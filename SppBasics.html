@@ -48,7 +48,7 @@
               <td id="projectlogo"><img alt="Logo" src="INSTINCT_Logo_Text.png"  /></td>
               <td id="projectalign">
                 <div id="projectname"><span
-                    id="projectnumber">&#160;0.5.0</span>
+                    id="projectnumber">&#160;0.5.1</span>
                 </div>
               </td>
             </tr>
@@ -123,8 +123,8 @@ Estimators</h1>
 <h1 class="doxsection"><a class="anchor" id="SppBasics-measurementModel"></a>
 Measurement model</h1>
 <p>Used observations</p><ul>
-<li><img class="formulaInl" alt="$ \tilde{p}_r^s $" src="form_247.svg" width="18" height="18"/> Pseudorange measurements [m]</li>
-<li><img class="formulaInl" alt="$ \tilde{d}_r^s $" src="form_248.svg" width="16" height="23"/> Doppler/Pseudorange rate measurements [m/s]</li>
+<li><img class="formulaInl" alt="$ \tilde{p}_r^s $" src="form_117.svg" width="18" height="18"/> Pseudorange measurements [m]</li>
+<li><img class="formulaInl" alt="$ \tilde{d}_r^s $" src="form_118.svg" width="16" height="23"/> Doppler/Pseudorange rate measurements [m/s]</li>
 </ul>
 <h2 class="doxsection"><a class="anchor" id="SppBasics-measurementModel-innovation"></a>
 Measurement innovation</h2>
@@ -133,7 +133,7 @@ Innovation vector</h3>
 <p><a class="anchor" id="eq-SppBasics-measurementModel-innovation"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-SppBasics-measurementModel-innovation}
 \delta\mathbf{z}(\boldsymbol{x}) = \mathbf{z} - \mathbf{h}(\mathbf{x})
-\end{equation}" src="form_249.svg" width="558" height="19"/>
+\end{equation}" src="form_119.svg" width="558" height="19"/>
 </p>
 <p><b> Measurement vector </b> <a class="anchor" id="eq-SppBasics-measurementModel-innovation-measurementVector"></a>     </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-SppBasics-measurementModel-innovation-measurementVector}
@@ -141,7 +141,7 @@ Innovation vector</h3>
 \tilde{p}_r^1,\quad \tilde{p}_r^2,\quad \dots,\quad \tilde{p}_r^m &amp;
 \tilde{d}_r^1,\quad \tilde{d}_r^2,\quad \dots,\quad \tilde{d}_r^m
 \end{array} \right\}
-\end{equation}" src="form_250.svg" width="691" height="25"/>
+\end{equation}" src="form_120.svg" width="691" height="25"/>
 </p>
 <p><b> Estimates vector </b> <a class="anchor" id="eq-SppBasics-measurementModel-innovation-estimatesVector"></a>     </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-SppBasics-measurementModel-innovation-estimatesVector}
@@ -149,38 +149,38 @@ Innovation vector</h3>
 \hat{p}_r^1,\quad \hat{p}_r^2,\quad \dots,\quad \hat{p}_r^m &amp;
 \hat{d}_r^1,\quad \hat{d}_r^2,\quad \dots,\quad \hat{d}_r^m
 \end{array} \right\}
-\end{equation}" src="form_251.svg" width="705" height="26"/>
+\end{equation}" src="form_121.svg" width="705" height="26"/>
 </p>
 <ul>
 <li><p class="startli">Pseudorange estimates <a class="anchor" id="eq-SppBasics-measurementModel-innovation-estimates-pseudorange"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-SppBasics-measurementModel-innovation-estimates-pseudorange}
   \hat{p}_r^s = \hat{\rho}_r^s + c [d\hat{t}_r - d\hat{t}^s + d\hat{t}_{ISB}] + \hat{I}_r^s + \hat{T}_r^s + \delta\hat{\rho}_r^s
-\end{equation}" src="form_252.svg" width="670" height="23"/>
+\end{equation}" src="form_122.svg" width="670" height="23"/>
 </p>
 <p> where</p><ul>
-<li><img class="formulaInl" alt="$ \hat{\rho}_r^s $" src="form_253.svg" width="16" height="18"/> Receiver-satellite range [m]</li>
-<li><img class="formulaInl" alt="$ d\hat{t}_r $" src="form_254.svg" width="23" height="19"/> Receiver clock error [s]</li>
-<li><img class="formulaInl" alt="$ d\hat{t}^s $" src="form_255.svg" width="23" height="18"/> Satellite clock error [s]</li>
-<li><img class="formulaInl" alt="$ d\hat{t}_{ISB} $" src="form_256.svg" width="42" height="19"/> Inter-system bias clock error [s]</li>
-<li><img class="formulaInl" alt="$ \hat{I}_r^s $" src="form_257.svg" width="16" height="23"/> Ionospheric delay [m]</li>
-<li><img class="formulaInl" alt="$ \hat{T}_r^s $" src="form_258.svg" width="19" height="23"/> Tropospheric delay [m]</li>
-<li><img class="formulaInl" alt="$ \delta\hat{\rho}_r^s $" src="form_259.svg" width="25" height="19"/> Sagnac correction [m]</li>
+<li><img class="formulaInl" alt="$ \hat{\rho}_r^s $" src="form_123.svg" width="16" height="18"/> Receiver-satellite range [m]</li>
+<li><img class="formulaInl" alt="$ d\hat{t}_r $" src="form_124.svg" width="23" height="19"/> Receiver clock error [s]</li>
+<li><img class="formulaInl" alt="$ d\hat{t}^s $" src="form_125.svg" width="23" height="18"/> Satellite clock error [s]</li>
+<li><img class="formulaInl" alt="$ d\hat{t}_{ISB} $" src="form_126.svg" width="42" height="19"/> Inter-system bias clock error [s]</li>
+<li><img class="formulaInl" alt="$ \hat{I}_r^s $" src="form_127.svg" width="16" height="23"/> Ionospheric delay [m]</li>
+<li><img class="formulaInl" alt="$ \hat{T}_r^s $" src="form_128.svg" width="19" height="23"/> Tropospheric delay [m]</li>
+<li><img class="formulaInl" alt="$ \delta\hat{\rho}_r^s $" src="form_129.svg" width="25" height="19"/> Sagnac correction [m]</li>
 </ul>
 <p class="startli">(<a class="el" href="citelist.html#CITEREF_springerhandbookgnss2017">[48]</a> Springer Handbook, ch. 21.1.1, eq. 21.1, p. 606)</p>
 </li>
 <li><p class="startli">Pseudorange-rate estimates <a class="anchor" id="eq-SppBasics-measurementModel-innovation-estimates-pseudorangeRate"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-SppBasics-measurementModel-innovation-estimates-pseudorangeRate}
   \hat{d}_r^s = {\mathbf{u}_{as}^e}^T [\mathbf{\hat{v}}^e_s - \mathbf{\hat{v}}^e_r] + c [d\hat{\dotup{t}}_r - d\hat{\dotup{t}}^s + d\hat{\dotup{t}}_{ISB}] - \delta\hat{\dotup{\rho}}_r^s
-\end{equation}" src="form_260.svg" width="674" height="26"/>
+\end{equation}" src="form_130.svg" width="674" height="26"/>
 </p>
 <p> where</p><ul>
-<li><img class="formulaInl" alt="$ \mathbf{u}_{rs}^e $" src="form_261.svg" width="25" height="18"/> Line-of-Sight vector</li>
-<li><img class="formulaInl" alt="$ \mathbf{\hat{v}}^e_s $" src="form_262.svg" width="18" height="18"/> Satellite velocity [m/s]</li>
-<li><img class="formulaInl" alt="$ \mathbf{\hat{v}}^e_r $" src="form_263.svg" width="18" height="18"/> Receiver velocity [m/s]</li>
-<li><img class="formulaInl" alt="$ d\hat{\dotup{t}}_r $" src="form_264.svg" width="23" height="23"/> Receiver clock drift [s/s]</li>
-<li><img class="formulaInl" alt="$ d\hat{\dotup{t}}^s $" src="form_265.svg" width="23" height="21"/> Satellite clock drift [s/s]</li>
-<li><img class="formulaInl" alt="$ d\hat{\dotup{t}}_{ISB} $" src="form_266.svg" width="42" height="23"/> Inter-system bias clock drift [s/s]</li>
-<li><img class="formulaInl" alt="$ \delta\hat{\dotup{\rho}}_r^s $" src="form_267.svg" width="25" height="23"/> Range-rate Sagnac correction [m/s]</li>
+<li><img class="formulaInl" alt="$ \mathbf{u}_{rs}^e $" src="form_131.svg" width="25" height="18"/> Line-of-Sight vector</li>
+<li><img class="formulaInl" alt="$ \mathbf{\hat{v}}^e_s $" src="form_132.svg" width="18" height="18"/> Satellite velocity [m/s]</li>
+<li><img class="formulaInl" alt="$ \mathbf{\hat{v}}^e_r $" src="form_133.svg" width="18" height="18"/> Receiver velocity [m/s]</li>
+<li><img class="formulaInl" alt="$ d\hat{\dotup{t}}_r $" src="form_134.svg" width="23" height="23"/> Receiver clock drift [s/s]</li>
+<li><img class="formulaInl" alt="$ d\hat{\dotup{t}}^s $" src="form_135.svg" width="23" height="21"/> Satellite clock drift [s/s]</li>
+<li><img class="formulaInl" alt="$ d\hat{\dotup{t}}_{ISB} $" src="form_136.svg" width="42" height="23"/> Inter-system bias clock drift [s/s]</li>
+<li><img class="formulaInl" alt="$ \delta\hat{\dotup{\rho}}_r^s $" src="form_137.svg" width="25" height="23"/> Range-rate Sagnac correction [m/s]</li>
 </ul>
 <p class="startli">(<a class="el" href="citelist.html#CITEREF_groves2013">[18]</a> Groves, ch. 9.4.1, eq. 9.142, p. 412 (Sagnac correction different sign))</p>
 </li>
@@ -190,7 +190,7 @@ Measurement estimates</h3>
 <p><b> Receiver-satellite range </b> <a class="anchor" id="eq-SppBasics-measurementModel-innovation-estimates-rho"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-SppBasics-measurementModel-innovation-estimates-rho}
 \hat{\rho}_r^s = \mid(\mathbf{x}^s\left(t_{\mathrm{E}}\right) - \mathbf{x}_r\left(t_{\mathrm{A}}\right))\mid
-\end{equation}" src="form_268.svg" width="590" height="19"/>
+\end{equation}" src="form_138.svg" width="590" height="19"/>
 </p>
 <p><b> Ionospheric delay </b> <br  />
  See <a class="el" href="namespaceNAV.html#Ionosphere-Model-Klobuchar">Ionosphere-Model-Klobuchar</a></p>
@@ -199,13 +199,13 @@ Measurement estimates</h3>
 <p><b> Sagnac correction </b> <a class="anchor" id="eq-SppBasics-measurementModel-innovation-estimates-sagnac"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-SppBasics-measurementModel-innovation-estimates-sagnac}
 \delta\hat{\rho}_r^s = \frac{1}{c}\left(\boldsymbol{x}_{r}\left(t_{\mathrm{A}}\right)-\boldsymbol{x}^{s}\left(t_{\mathrm{E}}\right)\right) \cdot \left(\boldsymbol{\omega}_{ie} \times \boldsymbol{x}_{r}\left(t_{\mathrm{A}}\right)\right)
-\end{equation}" src="form_269.svg" width="658" height="39"/>
+\end{equation}" src="form_139.svg" width="658" height="39"/>
 </p>
 <p> (<a class="el" href="citelist.html#CITEREF_springerhandbookgnss2017">[48]</a> Springer Handbook, ch. 19.1.1, eq. 19.7, p. 562)</p>
 <p><b> Range-rate Sagnac correction </b> <a class="anchor" id="eq-SppBasics-measurementModel-innovation-estimates-sagnac-rate"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-SppBasics-measurementModel-innovation-estimates-sagnac-rate}
 \delta\hat{\dotup{\rho}}_r^s = \frac{\boldsymbol{\omega}_{ie}}{c}\left(v_y^s \cdot x_r + y^s \cdot v_{x,r} - v_x^s \cdot y_r - x^s \cdot v_{y,r}\right)
-\end{equation}" src="form_270.svg" width="677" height="33"/>
+\end{equation}" src="form_140.svg" width="677" height="33"/>
 </p>
 <p> (<a class="el" href="citelist.html#CITEREF_groves2013">[18]</a> Groves, ch. 8.5.3, eq. 8.46, p. 342)</p>
 <h2 class="doxsection"><a class="anchor" id="SppBasics-measurementModel-sensitivityMatrix"></a>
@@ -213,7 +213,7 @@ Design matrix / Measurement sensitivity matrix</h2>
 <p><a class="anchor" id="eq-SppBasics-measurementModel-sensitivityMatrix-general"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-SppBasics-measurementModel-sensitivityMatrix-general}
 \mathbf{H}_k = \left.\frac{\delta\mathbf{h}(\mathbf{x}, t_k)}{\delta\mathbf{x}}\right|_{x=\hat{x}_k^-}
-\end{equation}" src="form_271.svg" width="576" height="49"/>
+\end{equation}" src="form_141.svg" width="576" height="49"/>
 </p>
 <h2 class="doxsection"><a class="anchor" id="SppBasics-measurementModel-measurementError"></a>
 Measurement error models</h2>

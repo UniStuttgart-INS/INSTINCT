@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-07-19 10:51:51</td>
+      <td>2025-11-25 23:34:18</td>
     </tr>
   </table>
 </div>
@@ -53,8 +53,8 @@
     <tr>
       <th scope="row">Branches:</th>
       <td>48</td>
-      <td>492</td>
-      <td class="coverage-low">9.8%</td>
+      <td>430</td>
+      <td class="coverage-low">11.2%</td>
     </tr>
   </table>
 </div>
@@ -75,10 +75,10 @@
     <tr><td><a href="#l40">NAV::GnssMeasurementErrorModel::carrierMeasErrorVar(NAV::SatelliteSystem const&amp;, double, double) const (line 40)</a></td><td>called 55572 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l51">NAV::GnssMeasurementErrorModel::codeBiasErrorVar() const (line 51)</a></td><td>called 104891 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l35">NAV::GnssMeasurementErrorModel::psrMeasErrorVar(NAV::SatelliteSystem const&amp;, double, double) const (line 35)</a></td><td>called 160463 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l45">NAV::GnssMeasurementErrorModel::psrRateMeasErrorVar(NAV::Frequency const&amp;, signed char, double, double) const (line 45)</a></td><td>called 159587 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l45">NAV::GnssMeasurementErrorModel::psrRateMeasErrorVar(NAV::Frequency const&amp;, signed char, double, double) const (line 45)</a></td><td>called 159586 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l59">NAV::GnssMeasurementErrorModel::satSysErrorFactorVariance(NAV::SatelliteSystem const&amp;) (line 59)</a></td><td>called 375620 times</td><td>62.0%</td></tr>
     <tr><td><a href="#l112">NAV::GnssMeasurementErrorModel::updateStdDevCurvePlot(NAV::GnssMeasurementErrorModel::Model) (line 112)</a></td><td>called 2816 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l83">NAV::GnssMeasurementErrorModel::weightingFunction(NAV::GnssMeasurementErrorModel::Model, double, double) const (line 83)</a></td><td>called 25722436 times</td><td>96.0%</td></tr>
+    <tr><td><a href="#l83">NAV::GnssMeasurementErrorModel::weightingFunction(NAV::GnssMeasurementErrorModel::Model, double, double) const (line 83)</a></td><td>called 25722435 times</td><td>96.0%</td></tr>
     <tr><td><a href="#l372">NAV::from_json(nlohmann::json_abi_diag_v3_12_0::basic_json&lt;std::map, std::vector, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, bool, long, unsigned long, double, std::allocator, nlohmann::json_abi_diag_v3_12_0::adl_serializer, std::vector&lt;unsigned char, std::allocator&lt;unsigned char&gt; &gt;, void&gt; const&amp;, NAV::GnssMeasurementErrorModel&amp;) (line 372)</a></td><td>called 9 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l476">NAV::from_json(nlohmann::json_abi_diag_v3_12_0::basic_json&lt;std::map, std::vector, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, bool, long, unsigned long, double, std::allocator, nlohmann::json_abi_diag_v3_12_0::adl_serializer, std::vector&lt;unsigned char, std::allocator&lt;unsigned char&gt; &gt;, void&gt; const&amp;, NAV::GnssMeasurementErrorModel::ModelParametersCosineType&amp;) (line 476)</a></td><td>called 9 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l461">NAV::from_json(nlohmann::json_abi_diag_v3_12_0::basic_json&lt;std::map, std::vector, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, bool, long, unsigned long, double, std::allocator, nlohmann::json_abi_diag_v3_12_0::adl_serializer, std::vector&lt;unsigned char, std::allocator&lt;unsigned char&gt; &gt;, void&gt; const&amp;, NAV::GnssMeasurementErrorModel::ModelParametersExponential&amp;) (line 461)</a></td><td>called 9 times</td><td>100.0%</td></tr>
@@ -444,7 +444,7 @@
       <td class="lineno"><a id="l45" href="#l45">45</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">159587</td>
+      <td class="linecount coveredLine">159586</td>
       <td class="src coveredLine"><span class="kt">double</span><span class="w"> </span><span class="n">GnssMeasurementErrorModel</span><span class="o">::</span><span class="n">psrRateMeasErrorVar</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Frequency</span><span class="o">&amp;</span><span class="w"> </span><span class="n">freq</span><span class="p">,</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="n">num</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">elevation</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">cn0</span><span class="p">)</span><span class="w"> </span><span class="k">const</span></td>
     </tr>
     <tr class="source-line">
@@ -458,7 +458,7 @@
       <td class="lineno"><a id="l47" href="#l47">47</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">159587</td>
+      <td class="linecount coveredLine">159586</td>
       <td class="src coveredLine"><span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">psrRateMeasStdDev</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">doppler2rangeRate</span><span class="p">(</span><span class="n">_dopplerStdDev</span><span class="p">,</span><span class="w"> </span><span class="n">freq</span><span class="p">,</span><span class="w"> </span><span class="n">num</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -467,11 +467,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 159587 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 159586 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
             <div class="takenBranch">&check; Branch 4 taken 159587 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 159586 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 159587 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
           </div>
         </details>
@@ -576,7 +576,7 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/5</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 375620 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 375621 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
@@ -598,7 +598,7 @@
       <td class="lineno"><a id="l64" href="#l64">64</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">375620</td>
+      <td class="linecount coveredLine">375621</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">GPS</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
@@ -626,14 +626,14 @@
       <td class="lineno"><a id="l68" href="#l68">68</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">375620</td>
+      <td class="linecount coveredLine">375621</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">satSysErrFactor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l69" href="#l69">69</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">375620</td>
+      <td class="linecount coveredLine">375621</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">break</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -710,7 +710,7 @@
       <td class="lineno"><a id="l80" href="#l80">80</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">375620</td>
+      <td class="linecount coveredLine">375621</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">pow</span><span class="p">(</span><span class="n">satSysErrFactor</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -731,7 +731,7 @@
       <td class="lineno"><a id="l83" href="#l83">83</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">25722436</td>
+      <td class="linecount coveredLine">25722435</td>
       <td class="src coveredLine"><span class="kt">double</span><span class="w"> </span><span class="n">GnssMeasurementErrorModel</span><span class="o">::</span><span class="n">weightingFunction</span><span class="p">(</span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">elevation</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">cn0</span><span class="p">)</span><span class="w"> </span><span class="k">const</span></td>
     </tr>
     <tr class="source-line">
@@ -752,7 +752,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">25722436</td>
+      <td class="linecount partialCoveredLine">25722435</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">isnan</span><span class="p">(</span><span class="n">elevation</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -771,7 +771,7 @@
             <div class="takenBranch">&check; Branch 0 taken 3172732 times.</div>
             <div class="takenBranch">&check; Branch 1 taken 3168352 times.</div>
             <div class="takenBranch">&check; Branch 2 taken 3168352 times.</div>
-            <div class="takenBranch">&check; Branch 3 taken 3539590 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 3539592 times.</div>
             <div class="takenBranch">&check; Branch 4 taken 3168352 times.</div>
             <div class="takenBranch">&check; Branch 5 taken 3168352 times.</div>
             <div class="takenBranch">&check; Branch 6 taken 3168352 times.</div>
@@ -780,7 +780,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">25722434</td>
+      <td class="linecount partialCoveredLine">25722436</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">model</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -843,21 +843,21 @@
       <td class="lineno"><a id="l96" href="#l96">96</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3539590</td>
+      <td class="linecount coveredLine">3539592</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">Model</span><span class="o">::</span><span class="no">RTKLIB</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l97" href="#l97">97</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3539590</td>
+      <td class="linecount coveredLine">3539592</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">elevation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">max</span><span class="p">(</span><span class="n">elevation</span><span class="p">,</span><span class="w"> </span><span class="n">deg2rad</span><span class="p">(</span><span class="mf">5.0</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l98" href="#l98">98</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3539589</td>
+      <td class="linecount coveredLine">3539592</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">sqrt</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">pow</span><span class="p">(</span><span class="n">_modelParametersRtklib</span><span class="p">.</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">pow</span><span class="p">(</span><span class="n">_modelParametersRtklib</span><span class="p">.</span><span class="n">b</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">sin</span><span class="p">(</span><span class="n">elevation</span><span class="p">),</span><span class="w"> </span><span class="mi">2</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">

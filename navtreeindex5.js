@@ -1,5 +1,9 @@
 var NAVTREEINDEX5 =
 {
+"ViennaMappingFunction_8hpp_source.html":[7,0,1,1,0,3,0,8],
+"WaterVapor_2Models_2StandardAtmosphere_8hpp.html":[7,0,1,1,0,4,0,0],
+"WaterVapor_2Models_2StandardAtmosphere_8hpp_source.html":[7,0,1,1,0,4,0,0],
+"WaterVapor_8cpp.html":[7,0,1,1,0,4,1],
 "WaterVapor_8cpp_source.html":[7,0,1,1,0,4,1],
 "WaterVapor_8hpp.html":[7,0,1,1,0,4,2],
 "WaterVapor_8hpp_source.html":[7,0,1,1,0,4,2],
@@ -24,10 +28,10 @@ var NAVTREEINDEX5 =
 "advanced_gui_landing_page.html":[4,1,4],
 "algorithms_landing_page.html":[1],
 "annotated.html":[6,0],
-"autopilot__interface_8cpp.html":[7,0,1,4,5,3,0],
-"autopilot__interface_8cpp_source.html":[7,0,1,4,5,3,0],
-"autopilot__interface_8hpp.html":[7,0,1,4,5,3,1],
-"autopilot__interface_8hpp_source.html":[7,0,1,4,5,3,1],
+"autopilot__interface_8cpp.html":[7,0,1,4,5,4,0],
+"autopilot__interface_8cpp_source.html":[7,0,1,4,5,4,0],
+"autopilot__interface_8hpp.html":[7,0,1,4,5,4,1],
+"autopilot__interface_8hpp_source.html":[7,0,1,4,5,4,1],
 "bar_edit_colormap_editor.html":[4,1,4,0],
 "bar_edit_implot_style.html":[4,1,4,1],
 "bar_edit_node_editor_style.html":[4,1,4,2],
@@ -245,9 +249,5 @@ var NAVTREEINDEX5 =
 "classNAV_1_1BaroSimulator.html#ad912f70e70df44bd23dd3897a5b52623":[6,0,3,19,10],
 "classNAV_1_1BaroSimulator.html#ae769e6ca9c25d389c41a406dbec5ed78":[6,0,3,19,17],
 "classNAV_1_1BaroSimulator.html#af63f88692e6e1c196e13f0e0b3563821":[6,0,3,19,14],
-"classNAV_1_1BaroSimulator.html#af8b91fd7a5d45984ca2e017a4e82d561":[6,0,3,19,16],
-"classNAV_1_1BaroSimulator.html#afac49c35c77502cf0d5b0ca2872b3837":[6,0,3,19,9],
-"classNAV_1_1COD.html":[6,0,3,23],
-"classNAV_1_1COD.html#a6fa0f92111c1012cf3b46b51d8501ec5":[6,0,3,23,1],
-"classNAV_1_1COD.html#aea20c578258cb73cce9ec6d1543d4873":[6,0,3,23,0]
+"classNAV_1_1BaroSimulator.html#af8b91fd7a5d45984ca2e017a4e82d561":[6,0,3,19,16]
 };

@@ -48,7 +48,7 @@
               <td id="projectlogo"><img alt="Logo" src="INSTINCT_Logo_Text.png"  /></td>
               <td id="projectalign">
                 <div id="projectname"><span
-                    id="projectnumber">&#160;0.5.0</span>
+                    id="projectnumber">&#160;0.5.1</span>
                 </div>
               </td>
             </tr>
@@ -205,7 +205,7 @@ $(function(){initNavTree('ConfigManager_8cpp_source.html','',''); });
 <div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    std::vector&lt;std::string&gt; failedConfigFiles;</div>
 <div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    <span class="comment">// if config file is available, the parameters from file will be added</span></div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="namespaceNAV_1_1ConfigManager.html#a4bad78c75feff01f8d792c4641b6247f">vm</a>.count(<span class="stringliteral">&quot;config&quot;</span>))</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="namespaceNAV_1_1ConfigManager.html#a4bad78c75feff01f8d792c4641b6247f">vm</a>.contains(<span class="stringliteral">&quot;config&quot;</span>))</div>
 <div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    {</div>
 <div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        <span class="keywordflow">for</span> (<span class="keyword">const</span> std::string&amp; configFile : <a class="code hl_variable" href="namespaceNAV_1_1ConfigManager.html#a4bad78c75feff01f8d792c4641b6247f">vm</a>[<span class="stringliteral">&quot;config&quot;</span>].as&lt;std::vector&lt;std::string&gt;&gt;())</div>
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>        {</div>
@@ -289,7 +289,7 @@ $(function(){initNavTree('ConfigManager_8cpp_source.html','',''); });
 <div class="foldopen" id="foldopen00164" data-start="{" data-end="}">
 <div class="line"><a id="l00164" name="l00164"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1ConfigManager.html#a6890a253e9f37f388197a581c53509e0">  164</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="namespaceNAV_1_1ConfigManager.html#a6890a253e9f37f388197a581c53509e0">NAV::ConfigManager::HasKey</a>(<span class="keyword">const</span> std::string&amp; key)</div>
 <div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>{</div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="namespaceNAV_1_1ConfigManager.html#a4bad78c75feff01f8d792c4641b6247f">vm</a>.count(key);</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="namespaceNAV_1_1ConfigManager.html#a4bad78c75feff01f8d792c4641b6247f">vm</a>.contains(key);</div>
 <div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>}</div>
 </div>
 <div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span> </div>
@@ -316,84 +316,89 @@ $(function(){initNavTree('ConfigManager_8cpp_source.html','',''); });
 <div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span><span class="preprocessor">#ifdef IMGUI_IMPL_OPENGL_LOADER_GL3W</span></div>
 <div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>    j[<span class="stringliteral">&quot;plotScreenshotImPlotStyleFile&quot;</span>] = gui::windows::plotScreenshotImPlotStyleFile;</div>
 <div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>    j[<span class="stringliteral">&quot;copyScreenshotsToClipboard&quot;</span>] = gui::windows::copyScreenshotsToClipboard;</div>
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>    j[<span class="stringliteral">&quot;colormaps&quot;</span>] = <a class="code hl_variable" href="namespaceNAV.html#a3fde1e396b52352c89242f0b051c728c">ColormapsGlobal</a>;</div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span> </div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>    ImPlotContext&amp; gp = *ImPlot::GetCurrentContext();</div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>    j[<span class="stringliteral">&quot;selectedImPlotColormap&quot;</span>] = gp.Style.Colormap;</div>
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span> </div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>    <span class="keyword">constexpr</span> <span class="keywordtype">int</span> CMAP_USER_START = ImPlotColormap_Greys + 2;</div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = CMAP_USER_START; i &lt; gp.ColormapData.Count; ++i)</div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>    {</div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>        j[<span class="stringliteral">&quot;ImPlotColormaps&quot;</span>][<span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(i - CMAP_USER_START)][<span class="stringliteral">&quot;name&quot;</span>] = gp.ColormapData.GetName(i);</div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>        j[<span class="stringliteral">&quot;ImPlotColormaps&quot;</span>][<span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(i - CMAP_USER_START)][<span class="stringliteral">&quot;qual&quot;</span>] = gp.ColormapData.IsQual(i);</div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> c = 0; c &lt; gp.ColormapData.GetKeyCount(i); ++c)</div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>        {</div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>            j[<span class="stringliteral">&quot;ImPlotColormaps&quot;</span>][<span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(i - CMAP_USER_START)][<span class="stringliteral">&quot;colors&quot;</span>][<span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(c)] =</div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>                ImGui::ColorConvertU32ToFloat4(gp.ColormapData.GetKeyColor(i, c));</div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>        }</div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>    }</div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span> </div>
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>    filestream &lt;&lt; std::setw(4) &lt;&lt; j &lt;&lt; std::endl; <span class="comment">// NOLINT(performance-avoid-endl)</span></div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>}</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>    j[<span class="stringliteral">&quot;printScreenshotSaveLocation&quot;</span>] = gui::windows::printScreenshotSaveLocation;</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>    j[<span class="stringliteral">&quot;colormaps&quot;</span>] = <a class="code hl_variable" href="namespaceNAV.html#a3fde1e396b52352c89242f0b051c728c">ColormapsGlobal</a>;</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span> </div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>    ImPlotContext&amp; gp = *ImPlot::GetCurrentContext();</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>    j[<span class="stringliteral">&quot;selectedImPlotColormap&quot;</span>] = gp.Style.Colormap;</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span> </div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>    <span class="keyword">constexpr</span> <span class="keywordtype">int</span> CMAP_USER_START = ImPlotColormap_Greys + 2;</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = CMAP_USER_START; i &lt; gp.ColormapData.Count; ++i)</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>    {</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>        j[<span class="stringliteral">&quot;ImPlotColormaps&quot;</span>][<span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(i - CMAP_USER_START)][<span class="stringliteral">&quot;name&quot;</span>] = gp.ColormapData.GetName(i);</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>        j[<span class="stringliteral">&quot;ImPlotColormaps&quot;</span>][<span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(i - CMAP_USER_START)][<span class="stringliteral">&quot;qual&quot;</span>] = gp.ColormapData.IsQual(i);</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> c = 0; c &lt; gp.ColormapData.GetKeyCount(i); ++c)</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>        {</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>            j[<span class="stringliteral">&quot;ImPlotColormaps&quot;</span>][<span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(i - CMAP_USER_START)][<span class="stringliteral">&quot;colors&quot;</span>][<span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(c)] =</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>                ImGui::ColorConvertU32ToFloat4(gp.ColormapData.GetKeyColor(i, c));</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>        }</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>    }</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span> </div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>    filestream &lt;&lt; std::setw(4) &lt;&lt; j &lt;&lt; std::endl; <span class="comment">// NOLINT(performance-avoid-endl)</span></div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>}</div>
 </div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span> </div>
-<div class="foldopen" id="foldopen00210" data-start="{" data-end="}">
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1ConfigManager.html#a1ac3049287324aa6962b96502b194790">  210</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1ConfigManager.html#a1ac3049287324aa6962b96502b194790">NAV::ConfigManager::LoadGlobalSettings</a>()</div>
-<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>{</div>
-<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>    <span class="keyword">auto</span> filepath = <a class="code hl_function" href="namespaceNAV_1_1flow.html#a617e85f2adfc1b9d416b2493b8c5f227">flow::GetConfigPath</a>() / <span class="stringliteral">&quot;globals.json&quot;</span>;</div>
-<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>    std::ifstream filestream(filepath);</div>
-<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span> </div>
-<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>    <span class="keywordflow">if</span> (!filestream.good())</div>
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>    {</div>
-<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>        <a class="code hl_define" href="Logger_8hpp.html#aced66975c154ea0e2a8ec3bc818b4e08">LOG_ERROR</a>(<span class="stringliteral">&quot;Load Flow error: Could not open file: {}&quot;</span>, filepath);</div>
-<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>        <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>    }</div>
-<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>    <a class="code hl_typedef" href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> j;</div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>    filestream &gt;&gt; j;</div>
-<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span> </div>
-<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>    <span class="keywordflow">if</span> (j.contains(<span class="stringliteral">&quot;colormaps&quot;</span>))</div>
-<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>    {</div>
-<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>        j.at(<span class="stringliteral">&quot;colormaps&quot;</span>).get_to(<a class="code hl_variable" href="namespaceNAV.html#a3fde1e396b52352c89242f0b051c728c">ColormapsGlobal</a>);</div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>    }</div>
-<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span><span class="preprocessor">#ifdef IMGUI_IMPL_OPENGL_LOADER_GL3W</span></div>
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>    <span class="keywordflow">if</span> (j.contains(<span class="stringliteral">&quot;plotScreenshotImPlotStyleFile&quot;</span>))</div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>    {</div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>        j.at(<span class="stringliteral">&quot;plotScreenshotImPlotStyleFile&quot;</span>).get_to(gui::windows::plotScreenshotImPlotStyleFile);</div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>    }</div>
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>    <span class="keywordflow">if</span> (j.contains(<span class="stringliteral">&quot;copyScreenshotsToClipboard&quot;</span>))</div>
-<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>    {</div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>        j.at(<span class="stringliteral">&quot;copyScreenshotsToClipboard&quot;</span>).get_to(gui::windows::copyScreenshotsToClipboard);</div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>    }</div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>    <span class="keywordflow">if</span> (j.contains(<span class="stringliteral">&quot;ImPlotColormaps&quot;</span>))</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span> </div>
+<div class="foldopen" id="foldopen00211" data-start="{" data-end="}">
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1ConfigManager.html#a1ac3049287324aa6962b96502b194790">  211</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1ConfigManager.html#a1ac3049287324aa6962b96502b194790">NAV::ConfigManager::LoadGlobalSettings</a>()</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>{</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>    <span class="keyword">auto</span> filepath = <a class="code hl_function" href="namespaceNAV_1_1flow.html#a617e85f2adfc1b9d416b2493b8c5f227">flow::GetConfigPath</a>() / <span class="stringliteral">&quot;globals.json&quot;</span>;</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>    std::ifstream filestream(filepath);</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span> </div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>    <span class="keywordflow">if</span> (!filestream.good())</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>    {</div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>        <a class="code hl_define" href="Logger_8hpp.html#aced66975c154ea0e2a8ec3bc818b4e08">LOG_ERROR</a>(<span class="stringliteral">&quot;Load Flow error: Could not open file: {}&quot;</span>, filepath);</div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>        <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>    }</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>    <a class="code hl_typedef" href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> j;</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>    filestream &gt;&gt; j;</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span> </div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>    <span class="keywordflow">if</span> (j.contains(<span class="stringliteral">&quot;colormaps&quot;</span>))</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>    {</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>        j.at(<span class="stringliteral">&quot;colormaps&quot;</span>).get_to(<a class="code hl_variable" href="namespaceNAV.html#a3fde1e396b52352c89242f0b051c728c">ColormapsGlobal</a>);</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>    }</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span><span class="preprocessor">#ifdef IMGUI_IMPL_OPENGL_LOADER_GL3W</span></div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>    <span class="keywordflow">if</span> (j.contains(<span class="stringliteral">&quot;plotScreenshotImPlotStyleFile&quot;</span>))</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>    {</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>        j.at(<span class="stringliteral">&quot;plotScreenshotImPlotStyleFile&quot;</span>).get_to(gui::windows::plotScreenshotImPlotStyleFile);</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>    }</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>    <span class="keywordflow">if</span> (j.contains(<span class="stringliteral">&quot;copyScreenshotsToClipboard&quot;</span>))</div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>    {</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>        j.at(<span class="stringliteral">&quot;copyScreenshotsToClipboard&quot;</span>).get_to(gui::windows::copyScreenshotsToClipboard);</div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>    }</div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>    <span class="keywordflow">if</span> (j.contains(<span class="stringliteral">&quot;printScreenshotSaveLocation&quot;</span>))</div>
 <div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>    {</div>
-<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; j[<span class="stringliteral">&quot;ImPlotColormaps&quot;</span>].size(); ++i)</div>
-<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>        {</div>
-<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>            ImVector&lt;ImVec4&gt; custom;</div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>            <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; c : j.at(<span class="stringliteral">&quot;ImPlotColormaps&quot;</span>).at(i).at(<span class="stringliteral">&quot;colors&quot;</span>))</div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>            {</div>
-<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>                custom.push_back(c.get&lt;ImVec4&gt;());</div>
-<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>            }</div>
-<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span> </div>
-<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>            ImPlot::AddColormap(j.at(<span class="stringliteral">&quot;ImPlotColormaps&quot;</span>).at(i).at(<span class="stringliteral">&quot;name&quot;</span>).get&lt;std::string&gt;().c_str(),</div>
-<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>                                custom.Data, custom.Size, j.at(<span class="stringliteral">&quot;ImPlotColormaps&quot;</span>).at(i).at(<span class="stringliteral">&quot;qual&quot;</span>).get&lt;<span class="keywordtype">bool</span>&gt;());</div>
-<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>            ImPlot::BustItemCache();</div>
-<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>        }</div>
-<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>    }</div>
-<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>    <span class="keywordflow">if</span> (j.contains(<span class="stringliteral">&quot;selectedImPlotColormap&quot;</span>))</div>
-<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>    {</div>
-<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>        ImPlotContext&amp; gp = *ImPlot::GetCurrentContext();</div>
-<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>        gp.Style.Colormap = j.at(<span class="stringliteral">&quot;selectedImPlotColormap&quot;</span>).get&lt;<span class="keywordtype">int</span>&gt;();</div>
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>        ImPlot::BustItemCache();</div>
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>    }</div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>}</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>        j.at(<span class="stringliteral">&quot;printScreenshotSaveLocation&quot;</span>).get_to(gui::windows::printScreenshotSaveLocation);</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>    }</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>    <span class="keywordflow">if</span> (j.contains(<span class="stringliteral">&quot;ImPlotColormaps&quot;</span>))</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>    {</div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; j[<span class="stringliteral">&quot;ImPlotColormaps&quot;</span>].size(); ++i)</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>        {</div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>            ImVector&lt;ImVec4&gt; custom;</div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>            <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; c : j.at(<span class="stringliteral">&quot;ImPlotColormaps&quot;</span>).at(i).at(<span class="stringliteral">&quot;colors&quot;</span>))</div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>            {</div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>                custom.push_back(c.get&lt;ImVec4&gt;());</div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>            }</div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span> </div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>            ImPlot::AddColormap(j.at(<span class="stringliteral">&quot;ImPlotColormaps&quot;</span>).at(i).at(<span class="stringliteral">&quot;name&quot;</span>).get&lt;std::string&gt;().c_str(),</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>                                custom.Data, custom.Size, j.at(<span class="stringliteral">&quot;ImPlotColormaps&quot;</span>).at(i).at(<span class="stringliteral">&quot;qual&quot;</span>).get&lt;<span class="keywordtype">bool</span>&gt;());</div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>            ImPlot::BustItemCache();</div>
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>        }</div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>    }</div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>    <span class="keywordflow">if</span> (j.contains(<span class="stringliteral">&quot;selectedImPlotColormap&quot;</span>))</div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>    {</div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>        ImPlotContext&amp; gp = *ImPlot::GetCurrentContext();</div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>        gp.Style.Colormap = j.at(<span class="stringliteral">&quot;selectedImPlotColormap&quot;</span>).get&lt;<span class="keywordtype">int</span>&gt;();</div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>        ImPlot::BustItemCache();</div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>    }</div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>}</div>
 </div>
 <div class="ttc" id="aColormap_8hpp_html"><div class="ttname"><a href="Colormap_8hpp.html">Colormap.hpp</a></div><div class="ttdoc">Colormap.</div></div>
 <div class="ttc" id="aConfigManager_8cpp_html_aac9929817bff695bf050019be218f69d"><div class="ttname"><a href="ConfigManager_8cpp.html#aac9929817bff695bf050019be218f69d">program_options</a></div><div class="ttdeci">bpo::options_description program_options</div><div class="ttdoc">Program option description.</div><div class="ttdef"><b>Definition</b> <a href="#l00032">ConfigManager.cpp:32</a></div></div>
 <div class="ttc" id="aConfigManager_8hpp_html"><div class="ttname"><a href="ConfigManager_8hpp.html">ConfigManager.hpp</a></div><div class="ttdoc">Config management for the Project.</div></div>
 <div class="ttc" id="aFlowManager_8hpp_html"><div class="ttname"><a href="FlowManager_8hpp.html">FlowManager.hpp</a></div><div class="ttdoc">Save/Load the Nodes.</div></div>
-<div class="ttc" id="aFlowManager_8hpp_html_ab701e3ac61a85b337ec5c1abaad6742d"><div class="ttname"><a href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a></div><div class="ttdeci">nlohmann::json json</div><div class="ttdoc">json namespace</div><div class="ttdef"><b>Definition</b> <a href="FlowManager_8hpp_source.html#l00021">FlowManager.hpp:21</a></div></div>
+<div class="ttc" id="aFlowManager_8hpp_html_ab701e3ac61a85b337ec5c1abaad6742d"><div class="ttname"><a href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a></div><div class="ttdeci">nlohmann::json json</div><div class="ttdoc">json namespace</div><div class="ttdef"><b>Definition</b> <a href="FlowManager_8hpp_source.html#l00023">FlowManager.hpp:23</a></div></div>
 <div class="ttc" id="aJson_8hpp_html"><div class="ttname"><a href="Json_8hpp.html">Json.hpp</a></div><div class="ttdoc">Defines how to save certain datatypes to json.</div></div>
 <div class="ttc" id="aLogger_8hpp_html"><div class="ttname"><a href="Logger_8hpp.html">Logger.hpp</a></div><div class="ttdoc">Utility class for logging to console and file.</div></div>
 <div class="ttc" id="aLogger_8hpp_html_a4091a2d7d849a8b5eded40d8723b8768"><div class="ttname"><a href="Logger_8hpp.html#a4091a2d7d849a8b5eded40d8723b8768">LOG_CRITICAL</a></div><div class="ttdeci">#define LOG_CRITICAL(...)</div><div class="ttdoc">Critical Event, which causes the program to work entirely and throws an exception.</div><div class="ttdef"><b>Definition</b> <a href="Logger_8hpp_source.html#l00075">Logger.hpp:75</a></div></div>
@@ -401,7 +406,7 @@ $(function(){initNavTree('ConfigManager_8cpp_source.html','',''); });
 <div class="ttc" id="aLogger_8hpp_html_aced66975c154ea0e2a8ec3bc818b4e08"><div class="ttname"><a href="Logger_8hpp.html#aced66975c154ea0e2a8ec3bc818b4e08">LOG_ERROR</a></div><div class="ttdeci">#define LOG_ERROR</div><div class="ttdoc">Error occurred, which stops part of the program to work, but not everything.</div><div class="ttdef"><b>Definition</b> <a href="Logger_8hpp_source.html#l00073">Logger.hpp:73</a></div></div>
 <div class="ttc" id="aLogger_8hpp_html_af7abc145380f1916838e42f9272aa0f6"><div class="ttname"><a href="Logger_8hpp.html#af7abc145380f1916838e42f9272aa0f6">LOG_TRACE</a></div><div class="ttdeci">#define LOG_TRACE</div><div class="ttdoc">Detailled info to trace the execution of the program. Should not be called on functions which receive...</div><div class="ttdef"><b>Definition</b> <a href="Logger_8hpp_source.html#l00065">Logger.hpp:65</a></div></div>
 <div class="ttc" id="aScreenshotter_8hpp_html"><div class="ttname"><a href="Screenshotter_8hpp.html">Screenshotter.hpp</a></div><div class="ttdoc">Screenshot utility.</div></div>
-<div class="ttc" id="anamespaceNAV_1_1ConfigManager_html_a1ac3049287324aa6962b96502b194790"><div class="ttname"><a href="namespaceNAV_1_1ConfigManager.html#a1ac3049287324aa6962b96502b194790">NAV::ConfigManager::LoadGlobalSettings</a></div><div class="ttdeci">void LoadGlobalSettings()</div><div class="ttdoc">Loads the global settings.</div><div class="ttdef"><b>Definition</b> <a href="#l00210">ConfigManager.cpp:210</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1ConfigManager_html_a1ac3049287324aa6962b96502b194790"><div class="ttname"><a href="namespaceNAV_1_1ConfigManager.html#a1ac3049287324aa6962b96502b194790">NAV::ConfigManager::LoadGlobalSettings</a></div><div class="ttdeci">void LoadGlobalSettings()</div><div class="ttdoc">Loads the global settings.</div><div class="ttdef"><b>Definition</b> <a href="#l00211">ConfigManager.cpp:211</a></div></div>
 <div class="ttc" id="anamespaceNAV_1_1ConfigManager_html_a4b48ed480395e8dfcc46863b8c53671f"><div class="ttname"><a href="namespaceNAV_1_1ConfigManager.html#a4b48ed480395e8dfcc46863b8c53671f">NAV::ConfigManager::initialize</a></div><div class="ttdeci">void initialize()</div><div class="ttdoc">Initializes the config manager. Call this function before using other functions.</div><div class="ttdef"><b>Definition</b> <a href="#l00037">ConfigManager.cpp:37</a></div></div>
 <div class="ttc" id="anamespaceNAV_1_1ConfigManager_html_a4bad78c75feff01f8d792c4641b6247f"><div class="ttname"><a href="namespaceNAV_1_1ConfigManager.html#a4bad78c75feff01f8d792c4641b6247f">NAV::ConfigManager::vm</a></div><div class="ttdeci">boost::program_options::variables_map vm</div><div class="ttdoc">Map which stores all options.</div><div class="ttdef"><b>Definition</b> <a href="#l00035">ConfigManager.cpp:35</a></div></div>
 <div class="ttc" id="anamespaceNAV_1_1ConfigManager_html_a59019a78b7ec72a4dd57e3824fab9691"><div class="ttname"><a href="namespaceNAV_1_1ConfigManager.html#a59019a78b7ec72a4dd57e3824fab9691">NAV::ConfigManager::CheckOptions</a></div><div class="ttdeci">void CheckOptions(const int argc, const char *argv[])</div><div class="ttdoc">Writes all command line options into the log.</div><div class="ttdef"><b>Definition</b> <a href="#l00114">ConfigManager.cpp:114</a></div></div>
@@ -411,8 +416,8 @@ $(function(){initNavTree('ConfigManager_8cpp_source.html','',''); });
 <div class="ttc" id="anamespaceNAV_1_1ConfigManager_html_a88b5f6c94086975de48afbdc86997ed6"><div class="ttname"><a href="namespaceNAV_1_1ConfigManager.html#a88b5f6c94086975de48afbdc86997ed6">NAV::ConfigManager::GetProgramOptions</a></div><div class="ttdeci">const boost::program_options::options_description &amp; GetProgramOptions()</div><div class="ttdoc">Get the Program Options object.</div><div class="ttdef"><b>Definition</b> <a href="#l00074">ConfigManager.cpp:74</a></div></div>
 <div class="ttc" id="anamespaceNAV_1_1ConfigManager_html_a923445583a4061e97b824d579426c81c"><div class="ttname"><a href="namespaceNAV_1_1ConfigManager.html#a923445583a4061e97b824d579426c81c">NAV::ConfigManager::deinitialize</a></div><div class="ttdeci">void deinitialize()</div><div class="ttdoc">Deinitializes the config manager. Call this if you want to Fetch config again.</div><div class="ttdef"><b>Definition</b> <a href="#l00069">ConfigManager.cpp:69</a></div></div>
 <div class="ttc" id="anamespaceNAV_1_1ConfigManager_html_ac954aad006c70bb9b6f5a4e580ff3da0"><div class="ttname"><a href="namespaceNAV_1_1ConfigManager.html#ac954aad006c70bb9b6f5a4e580ff3da0">NAV::ConfigManager::SaveGlobalSettings</a></div><div class="ttdeci">void SaveGlobalSettings()</div><div class="ttdoc">Saves the global settings.</div><div class="ttdef"><b>Definition</b> <a href="#l00181">ConfigManager.cpp:181</a></div></div>
-<div class="ttc" id="anamespaceNAV_1_1flow_html_a617e85f2adfc1b9d416b2493b8c5f227"><div class="ttname"><a href="namespaceNAV_1_1flow.html#a617e85f2adfc1b9d416b2493b8c5f227">NAV::flow::GetConfigPath</a></div><div class="ttdeci">std::filesystem::path GetConfigPath()</div><div class="ttdoc">Get the path where config files are searched.</div><div class="ttdef"><b>Definition</b> <a href="FlowManager_8cpp_source.html#l00563">FlowManager.cpp:563</a></div></div>
-<div class="ttc" id="anamespaceNAV_1_1flow_html_adfaae477cc7b3e08826a0be16735b730"><div class="ttname"><a href="namespaceNAV_1_1flow.html#adfaae477cc7b3e08826a0be16735b730">NAV::flow::GetProgramRootPath</a></div><div class="ttdeci">std::filesystem::path GetProgramRootPath()</div><div class="ttdoc">Get the program root path.</div><div class="ttdef"><b>Definition</b> <a href="FlowManager_8cpp_source.html#l00470">FlowManager.cpp:470</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1flow_html_a617e85f2adfc1b9d416b2493b8c5f227"><div class="ttname"><a href="namespaceNAV_1_1flow.html#a617e85f2adfc1b9d416b2493b8c5f227">NAV::flow::GetConfigPath</a></div><div class="ttdeci">std::filesystem::path GetConfigPath()</div><div class="ttdoc">Get the path where config files are searched.</div><div class="ttdef"><b>Definition</b> <a href="FlowManager_8cpp_source.html#l00799">FlowManager.cpp:799</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1flow_html_adfaae477cc7b3e08826a0be16735b730"><div class="ttname"><a href="namespaceNAV_1_1flow.html#adfaae477cc7b3e08826a0be16735b730">NAV::flow::GetProgramRootPath</a></div><div class="ttdeci">std::filesystem::path GetProgramRootPath()</div><div class="ttdoc">Get the program root path.</div><div class="ttdef"><b>Definition</b> <a href="FlowManager_8cpp_source.html#l00706">FlowManager.cpp:706</a></div></div>
 <div class="ttc" id="anamespaceNAV_html_a3fde1e396b52352c89242f0b051c728c"><div class="ttname"><a href="namespaceNAV.html#a3fde1e396b52352c89242f0b051c728c">NAV::ColormapsGlobal</a></div><div class="ttdeci">std::vector&lt; Colormap &gt; ColormapsGlobal</div><div class="ttdoc">Global colormaps.</div><div class="ttdef"><b>Definition</b> <a href="Colormap_8cpp_source.html#l00026">Colormap.cpp:26</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

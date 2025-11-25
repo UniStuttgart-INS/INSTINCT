@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-07-19 10:51:51</td>
+      <td>2025-11-25 23:34:18</td>
     </tr>
   </table>
 </div>
@@ -52,9 +52,9 @@
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>52</td>
-      <td>290</td>
-      <td class="coverage-low">17.9%</td>
+      <td>51</td>
+      <td>264</td>
+      <td class="coverage-low">19.3%</td>
     </tr>
   </table>
 </div>
@@ -80,7 +80,7 @@
     <tr><td><a href="#l288">NAV::from_json(nlohmann::json_abi_diag_v3_12_0::basic_json&lt;std::map, std::vector, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, bool, long, unsigned long, double, std::allocator, nlohmann::json_abi_diag_v3_12_0::adl_serializer, std::vector&lt;unsigned char, std::allocator&lt;unsigned char&gt; &gt;, void&gt; const&amp;, NAV::CycleSlipDetector&amp;) (line 288)</a></td><td>called 2 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l278">NAV::to_json(nlohmann::json_abi_diag_v3_12_0::basic_json&lt;std::map, std::vector, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, bool, long, unsigned long, double, std::allocator, nlohmann::json_abi_diag_v3_12_0::adl_serializer, std::vector&lt;unsigned char, std::allocator&lt;unsigned char&gt; &gt;, void&gt;&amp;, NAV::CycleSlipDetector const&amp;) (line 278)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l297">NAV::to_string[abi:cxx11](std::variant&lt;NAV::CycleSlipDetector::CycleSlipLossOfLockIndicator, NAV::CycleSlipDetector::CycleSlipDualFrequency, NAV::CycleSlipDetector::CycleSlipSingleFrequency&gt; const&amp;) (line 297)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l205">auto NAV::CycleSlipDetector::resetSignal(NAV::SatSigId const&amp;)::{lambda(auto:1 const&amp;)#1}::operator()&lt;std::pair&lt;NAV::DualFrequencyCombination, NAV::PolynomialCycleSlipDetector&lt;NAV::DualFrequencyCombination&gt;::SignalDetector&gt; &gt;(std::pair&lt;NAV::DualFrequencyCombination, NAV::PolynomialCycleSlipDetector&lt;NAV::DualFrequencyCombination&gt;::SignalDetector&gt; const&amp;) const (line 205)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l205">auto NAV::CycleSlipDetector::resetSignal(NAV::SatSigId const&amp;)::{lambda(auto:1 const&amp;)#1}::operator()&lt;std::pair&lt;NAV::DualFrequencyCombination const, NAV::PolynomialCycleSlipDetector&lt;NAV::DualFrequencyCombination&gt;::SignalDetector&gt; &gt;(std::pair&lt;NAV::DualFrequencyCombination const, NAV::PolynomialCycleSlipDetector&lt;NAV::DualFrequencyCombination&gt;::SignalDetector&gt; const&amp;) const (line 205)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l317">operator&lt;&lt;(std::ostream&amp;, std::variant&lt;NAV::CycleSlipDetector::CycleSlipLossOfLockIndicator, NAV::CycleSlipDetector::CycleSlipDualFrequency, NAV::CycleSlipDetector::CycleSlipSingleFrequency&gt; const&amp;) (line 317)</a></td><td>not called</td><td>0.0%</td></tr>
   </table>
 </details>
@@ -416,16 +416,14 @@
       <td class="lineno"><a id="l43" href="#l43">43</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">2/4</summary>
+          <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 55572 times.</div>
-            <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 5 taken 55572 times.</div>
-            <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
+            <div class="takenBranch">&check; Branch 3 taken 55572 times.</div>
+            <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">55572</td>
+      <td class="linecount partialCoveredLine">111144</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="n">signals</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">fmt</span><span class="o">::</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">SatSigId</span><span class="p">(</span><span class="n">signal</span><span class="p">.</span><span class="n">code</span><span class="p">,</span><span class="w"> </span><span class="n">obs</span><span class="p">.</span><span class="n">satId</span><span class="p">.</span><span class="n">satNum</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
