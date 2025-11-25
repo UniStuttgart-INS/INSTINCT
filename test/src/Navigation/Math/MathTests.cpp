@@ -28,90 +28,106 @@ namespace NAV::TESTS
 TEST_CASE("[Math] Catch Matcher significant digits", "[Math]")
 {
     auto logger = initializeTestLogger();
-
-    double val1 = 0.4657e-08;
-    double val2 = 0.46574932423e-08;
-    LOG_DEBUG("{:.4f} == {:.4f}", val1, math::roundSignificantDigits(val2, 4));
-    REQUIRE(math::roundSignificantDigits(val1, 4) == math::roundSignificantDigits(val2, 4));
-    REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val2, 4));
-
-    val1 = std::stod("0.4657e-08");
-    LOG_DEBUG("{:.4f} == {:.4f}", val1, math::roundSignificantDigits(val2, 4));
-    REQUIRE(math::roundSignificantDigits(val1, 4) == math::roundSignificantDigits(val2, 4));
-    REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val2, 4));
-
-    val1 = std::stod("0.1490e-07");
-    val2 = 0.149000000002e-07;
-    LOG_DEBUG("{:.4f} == {:.4f}", val1, math::roundSignificantDigits(val2, 4));
-    REQUIRE(math::roundSignificantDigits(val1, 4) == math::roundSignificantDigits(val2, 4));
-    REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val2, 4));
-
-    val1 = std::stod("0.2892e+00");
-    val2 = 0.28915;
-    LOG_DEBUG("{:.4f} == {:.4f}", val1, math::roundSignificantDigits(val2, 4));
-    REQUIRE(math::roundSignificantDigits(val1, 4) == math::roundSignificantDigits(val2, 4));
-    REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val2, 4));
-
-    val1 = std::stod("0.2892e+00");
-    val2 = 0.28914;
-    LOG_DEBUG("{:.4f} == {:.4f}", val1, math::roundSignificantDigits(val2, 4));
-    REQUIRE(math::roundSignificantDigits(val1, 4) != math::roundSignificantDigits(val2, 4));
-    REQUIRE_THAT(val1, !Catch::Matchers::EqualsSigDigits(val2, 4));
-
-    val1 = std::stod("-0.2892e+00");
-    val2 = -0.28915;
-    LOG_DEBUG("{:.4f} == {:.4f}", val1, math::roundSignificantDigits(val2, 4));
-    REQUIRE(math::roundSignificantDigits(val1, 4) == math::roundSignificantDigits(val2, 4));
-    REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val2, 4));
-
-    val1 = std::stod("0.2891232e+10");
-    val2 = 0.28912321334e10;
-    LOG_DEBUG("{:.7f} == {:.7f}", val1, math::roundSignificantDigits(val2, 7));
-    REQUIRE(math::roundSignificantDigits(val1, 7) == math::roundSignificantDigits(val2, 7));
-    REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val2, 7));
-
-    val1 = std::stod("10.23");
-    val2 = 10.2345;
-    LOG_DEBUG("{:.4f} == {:.4f}", val1, math::roundSignificantDigits(val2, 4));
-    REQUIRE(math::roundSignificantDigits(val1, 4) == math::roundSignificantDigits(val2, 4));
-    REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val2, 4));
-
-    val1 = std::stod("0.123");
-    val2 = 0.12345;
-    LOG_DEBUG("{:.3f} == {:.3f}", val1, math::roundSignificantDigits(val2, 3));
-    REQUIRE(math::roundSignificantDigits(val1, 3) == math::roundSignificantDigits(val2, 3));
-    REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val2, 3));
-
-    val1 = std::stod("0.0123");
-    val2 = 0.012345;
-    LOG_DEBUG("{:.3f} == {:.3f}", val1, math::roundSignificantDigits(val2, 3));
-    REQUIRE(math::roundSignificantDigits(val1, 3) == math::roundSignificantDigits(val2, 3));
-    REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val2, 3));
-
-    val1 = std::stod("-0.1490e-07");
-    val2 = -0.149000000002e-07;
-    LOG_DEBUG("{:.4f} == {:.4f}", val1, math::roundSignificantDigits(val2, 4));
-    REQUIRE(math::roundSignificantDigits(val1, 4) == math::roundSignificantDigits(val2, 4));
-    REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val2, 4));
-
-    val1 = 0.0;
-    REQUIRE(val1 == math::roundSignificantDigits(val1, 2));
-    REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val1, 2));
-
-    val1 = 1e-19;
-    REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val1, 19));
-
-    val1 = 1.85041689389;
-    val2 = 1.850416893885315;
-    LOG_DEBUG("{:.12f} == {:.12f}", val1, math::roundSignificantDigits(val2, 12));
-    REQUIRE(math::roundSignificantDigits(val1, 12) == math::roundSignificantDigits(val2, 12));
-    REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val2, 12));
-
-    val1 = -1.85041689389;
-    val2 = -1.850416893885315;
-    LOG_DEBUG("{:.12f} == {:.12f}", val1, math::roundSignificantDigits(val2, 12));
-    REQUIRE(math::roundSignificantDigits(val1, 12) == math::roundSignificantDigits(val2, 12));
-    REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val2, 12));
+    {
+        constexpr double val1 = 0.4657e-08;
+        constexpr double val2 = 0.46574932423e-08;
+        LOG_DEBUG("{:.4f} == {:.4f}", val1, math::roundSignificantDigits(val2, 4));
+        REQUIRE(math::roundSignificantDigits(val1, 4) == math::roundSignificantDigits(val2, 4));
+        REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val2, 4));
+    }
+    {
+        constexpr double val1 = 0.4657e-08;
+        constexpr double val2 = 0.46574932423e-08;
+        LOG_DEBUG("{:.4f} == {:.4f}", val1, math::roundSignificantDigits(val2, 4));
+        REQUIRE(math::roundSignificantDigits(val1, 4) == math::roundSignificantDigits(val2, 4));
+        REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val2, 4));
+    }
+    {
+        constexpr double val1 = 0.1490e-07;
+        constexpr double val2 = 0.149000000002e-07;
+        LOG_DEBUG("{:.4f} == {:.4f}", val1, math::roundSignificantDigits(val2, 4));
+        REQUIRE(math::roundSignificantDigits(val1, 4) == math::roundSignificantDigits(val2, 4));
+        REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val2, 4));
+    }
+    {
+        constexpr double val1 = 0.2892e+00;
+        constexpr double val2 = 0.28915;
+        LOG_DEBUG("{:.4f} == {:.4f}", val1, math::roundSignificantDigits(val2, 4));
+        REQUIRE(math::roundSignificantDigits(val1, 4) == math::roundSignificantDigits(val2, 4));
+        REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val2, 4));
+    }
+    {
+        constexpr double val1 = 0.2892e+00;
+        constexpr double val2 = 0.28914;
+        LOG_DEBUG("{:.4f} == {:.4f}", val1, math::roundSignificantDigits(val2, 4));
+        REQUIRE(math::roundSignificantDigits(val1, 4) != math::roundSignificantDigits(val2, 4));
+        REQUIRE_THAT(val1, !Catch::Matchers::EqualsSigDigits(val2, 4));
+    }
+    {
+        constexpr double val1 = -0.2892e+00;
+        constexpr double val2 = -0.28915;
+        LOG_DEBUG("{:.4f} == {:.4f}", val1, math::roundSignificantDigits(val2, 4));
+        REQUIRE(math::roundSignificantDigits(val1, 4) == math::roundSignificantDigits(val2, 4));
+        REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val2, 4));
+    }
+    {
+        constexpr double val1 = 0.2891232e+10;
+        constexpr double val2 = 0.28912321334e10;
+        LOG_DEBUG("{:.7f} == {:.7f}", val1, math::roundSignificantDigits(val2, 7));
+        REQUIRE(math::roundSignificantDigits(val1, 7) == math::roundSignificantDigits(val2, 7));
+        REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val2, 7));
+    }
+    {
+        constexpr double val1 = 10.23;
+        constexpr double val2 = 10.2345;
+        LOG_DEBUG("{:.4f} == {:.4f}", val1, math::roundSignificantDigits(val2, 4));
+        REQUIRE(math::roundSignificantDigits(val1, 4) == math::roundSignificantDigits(val2, 4));
+        REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val2, 4));
+    }
+    {
+        constexpr double val1 = 0.123;
+        constexpr double val2 = 0.12345;
+        LOG_DEBUG("{:.3f} == {:.3f}", val1, math::roundSignificantDigits(val2, 3));
+        REQUIRE(math::roundSignificantDigits(val1, 3) == math::roundSignificantDigits(val2, 3));
+        REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val2, 3));
+    }
+    {
+        constexpr double val1 = 0.0123;
+        constexpr double val2 = 0.012345;
+        LOG_DEBUG("{:.3f} == {:.3f}", val1, math::roundSignificantDigits(val2, 3));
+        REQUIRE(math::roundSignificantDigits(val1, 3) == math::roundSignificantDigits(val2, 3));
+        REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val2, 3));
+    }
+    {
+        constexpr double val1 = -0.1490e-07;
+        constexpr double val2 = -0.149000000002e-07;
+        LOG_DEBUG("{:.4f} == {:.4f}", val1, math::roundSignificantDigits(val2, 4));
+        REQUIRE(math::roundSignificantDigits(val1, 4) == math::roundSignificantDigits(val2, 4));
+        REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val2, 4));
+    }
+    {
+        constexpr double val1 = 0.0;
+        REQUIRE(val1 == math::roundSignificantDigits(val1, 2));
+        REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val1, 2));
+    }
+    {
+        constexpr double val1 = 1e-19;
+        REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val1, 19));
+    }
+    {
+        constexpr double val1 = 1.85041689389;
+        constexpr double val2 = 1.850416893885315;
+        LOG_DEBUG("{:.12f} == {:.12f}", val1, math::roundSignificantDigits(val2, 12));
+        REQUIRE(math::roundSignificantDigits(val1, 12) == math::roundSignificantDigits(val2, 12));
+        REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val2, 12));
+    }
+    {
+        constexpr double val1 = -1.85041689389;
+        constexpr double val2 = -1.850416893885315;
+        LOG_DEBUG("{:.12f} == {:.12f}", val1, math::roundSignificantDigits(val2, 12));
+        REQUIRE(math::roundSignificantDigits(val1, 12) == math::roundSignificantDigits(val2, 12));
+        REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val2, 12));
+    }
 }
 
 TEST_CASE("[Math] Catch Matcher significant digits container", "[Math]")
