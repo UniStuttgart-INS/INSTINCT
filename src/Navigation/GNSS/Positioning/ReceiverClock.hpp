@@ -37,8 +37,6 @@ struct ReceiverClock
     {
         bias.resize(this->satelliteSystems.size());
         biasStdDev.resize(this->satelliteSystems.size());
-        drift.resize(this->satelliteSystems.size());
-        driftStdDev.resize(this->satelliteSystems.size());
     }
 
     /// @brief Add a new system
@@ -52,8 +50,6 @@ struct ReceiverClock
         satelliteSystems.push_back(satSys);
         bias.emplace_back();
         biasStdDev.emplace_back();
-        drift.emplace_back();
-        driftStdDev.emplace_back();
     }
 
     /// @brief Clear all the structures
@@ -62,8 +58,8 @@ struct ReceiverClock
         satelliteSystems.clear();
         bias.clear();
         biasStdDev.clear();
-        drift.clear();
-        driftStdDev.clear();
+        drift = 0.;
+        driftStdDev = 0.;
     }
 
     /// @brief Resets all structures to 0 (not removing them)
@@ -71,8 +67,8 @@ struct ReceiverClock
     {
         std::ranges::for_each(bias, [](double& v) { v = 0; });
         std::ranges::for_each(biasStdDev, [](double& v) { v = 0; });
-        std::ranges::for_each(drift, [](double& v) { v = 0; });
-        std::ranges::for_each(driftStdDev, [](double& v) { v = 0; });
+        drift = 0.;
+        driftStdDev = 0.;
     }
 
     /// @brief Get the bias for the given satellite system
@@ -109,40 +105,6 @@ struct ReceiverClock
         return nullptr;
     }
 
-    /// @brief Get the drift for the given satellite system
-    /// @param[in] satSys Satellite system
-    /// @return The drift in [s/s] for the given satellite system. Or null if it is not found
-    [[nodiscard]] const double* driftFor(SatelliteSystem satSys) const
-    {
-        if (auto i = getIdx(satSys)) { return &drift.at(*i); }
-        return nullptr;
-    }
-    /// @brief Get the drift for the given satellite system
-    /// @param[in] satSys Satellite system
-    /// @return The drift in [s/s] for the given satellite system. Or null if it is not found
-    [[nodiscard]] double* driftFor(SatelliteSystem satSys)
-    {
-        if (auto i = getIdx(satSys)) { return &drift.at(*i); }
-        return nullptr;
-    }
-
-    /// @brief Get the drift StdDev for the given satellite system
-    /// @param[in] satSys Satellite system
-    /// @return The drift StdDev in [s/s] for the given satellite system. Or null if it is not found
-    [[nodiscard]] const double* driftStdDevFor(SatelliteSystem satSys) const
-    {
-        if (auto i = getIdx(satSys)) { return &driftStdDev.at(*i); }
-        return nullptr;
-    }
-    /// @brief Get the drift StdDev for the given satellite system
-    /// @param[in] satSys Satellite system
-    /// @return The drift StdDev in [s/s] for the given satellite system. Or null if it is not found
-    [[nodiscard]] double* driftStdDevFor(SatelliteSystem satSys)
-    {
-        if (auto i = getIdx(satSys)) { return &driftStdDev.at(*i); }
-        return nullptr;
-    }
-
     /// @brief Get the index of the sat system
     /// @param[in] satSys Satellite system
     /// @return The index if it was in the list
@@ -162,10 +124,12 @@ struct ReceiverClock
     std::vector<double> bias;
     /// StdDev of the receiver clock biases for each satellite system [s]
     std::vector<double> biasStdDev;
-    /// Receiver clock drifts for each satellite system [s/s]
-    std::vector<double> drift;
-    /// StdDev of the receiver clock drifts for each satellite system [s]
-    std::vector<double> driftStdDev;
+    /// Receiver clock drift [s/s]
+    /// @note The satellite reference times do not drift with respect to each other (or so small that receiver clock drift is way bigger)
+    double drift = 0.;
+    /// StdDev of the receiver clock drift[s]
+    /// @note The satellite reference times do not drift with respect to each other (or so small that receiver clock drift is way bigger)
+    double driftStdDev = 0.;
 };
 
 } // namespace NAV

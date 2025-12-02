@@ -117,8 +117,8 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
         {
             LOG_DATA("{}: [{}] {}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), satSys);
             LOG_DATA("{}: [{}]   clkBias  = {} [s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), *_receiver.recvClk.biasFor(satSys), *_receiver.recvClk.biasStdDevFor(satSys));
-            LOG_DATA("{}: [{}]   clkDrift = {} [s/s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), *_receiver.recvClk.driftFor(satSys), *_receiver.recvClk.driftStdDevFor(satSys));
         }
+        LOG_DATA("{}: [{}]   clkDrift = {} [s/s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), _receiver.recvClk.drift, _receiver.recvClk.driftStdDev);
         for ([[maybe_unused]] const auto& freq : _receiver.interFrequencyBias)
         {
             LOG_DATA("{}: [{}]   IFBBias [{:3}] = {} [s] (StdDev = {})", nameId,
@@ -228,7 +228,10 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
 
             accuracyAchieved = lsq.solution(all).norm() < 1e-4;
             if (accuracyAchieved) { LOG_DATA("{}: [{}] Accuracy achieved on iteration {}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), iteration + 1); }
-            else { LOG_DATA("{}: [{}] Bad accuracy on iteration {}: {}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), iteration + 1, lsq.solution(all).norm()); }
+            else
+            {
+                LOG_DATA("{}: [{}] Bad accuracy on iteration {}: {}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), iteration + 1, lsq.solution(all).norm());
+            }
             if (iteration == nIter - 1) { return nullptr; }
             if (accuracyAchieved || iteration == nIter - 1)
             {
@@ -244,10 +247,10 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
                     {
                         auto satSys = _receiver.recvClk.satelliteSystems.at(i);
                         x(Keys::RecvClkBias{ satSys }) = _receiver.recvClk.bias.at(i) * InsConst::C;
-                        if (x.hasRow(Keys::RecvClkDrift{ satSys }))
-                        {
-                            x(Keys::RecvClkDrift{ satSys }) = _receiver.recvClk.drift.at(i) * InsConst::C;
-                        }
+                    }
+                    if (x.hasRow(Keys::RecvClkDrift{}))
+                    {
+                        x(Keys::RecvClkDrift{}) = _receiver.recvClk.drift * InsConst::C;
                     }
                     for (const auto& state : x.rowKeys())
                     {
@@ -345,10 +348,10 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
         {
             LOG_DATA("{}: [{}] Receiver:   clkBias  = {} s", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), *_receiver.recvClk.biasFor(satSys));
         }
-        if (*sppSol->recvClk.driftFor(satSys) != *_receiver.recvClk.driftFor(satSys))
-        {
-            LOG_DATA("{}: [{}] Receiver:   clkDrift = {} s/s", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), *_receiver.recvClk.driftFor(satSys));
-        }
+    }
+    if (sppSol->recvClk.drift != _receiver.recvClk.drift)
+    {
+        LOG_DATA("{}: [{}] Receiver:   clkDrift = {} s/s", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), _receiver.recvClk.drift);
     }
 #endif
 
@@ -362,11 +365,8 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
         LOG_DATA("{}: [{}] Solution:   clkBias  [{:5}] = {} s", nameId, sppSol->insTime.toYMDHMS(GPST),
                  sppSol->recvClk.satelliteSystems.at(i), sppSol->recvClk.bias.at(i));
     }
-    for (size_t i = 0; i < sppSol->recvClk.satelliteSystems.size(); i++) // NOLINT
-    {
-        LOG_DATA("{}: [{}] Solution:   clkDrift [{:5}] = {} s/s", nameId, sppSol->insTime.toYMDHMS(GPST),
-                 sppSol->recvClk.satelliteSystems.at(i), sppSol->recvClk.drift.at(i));
-    }
+    LOG_DATA("{}: [{}] Solution:   clkDrift = {} s/s", nameId, sppSol->insTime.toYMDHMS(GPST), sppSol->recvClk.drift);
+
     for ([[maybe_unused]] const auto& freq : sppSol->interFrequencyBias)
     {
         LOG_DATA("{}: [{}] Solution:   IFBBias [{:5}] = {} s", nameId, sppSol->insTime.toYMDHMS(GPST), freq.first, freq.second.value);
@@ -441,8 +441,8 @@ std::vector<States::StateKeyType> Algorithm::determineStateKeys(const std::set<S
     for (const auto& satSys : usedSatSystems)
     {
         stateKeys.emplace_back(Keys::RecvClkBias{ satSys });
-        if (canCalculateVelocity(nDoppMeas)) { stateKeys.emplace_back(Keys::RecvClkDrift{ satSys }); }
     }
+    if (canCalculateVelocity(nDoppMeas)) { stateKeys.emplace_back(Keys::RecvClkDrift{}); }
     for (const auto& freq : _receiver.interFrequencyBias)
     {
         stateKeys.emplace_back(Keys::InterFreqBias{ freq.first });
@@ -511,7 +511,7 @@ KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyType> Algorithm::calcMatrixH(c
             case GnssObs::Doppler:
                 H.block<3>(Meas::Doppler{ satSigId }, PosKey) = -roverObs->e_vLOS(_receiver.e_posMarker, _receiver.e_vel).transpose();
                 H.block<3>(Meas::Doppler{ satSigId }, VelKey) = -roverObs->e_pLOS(_receiver.e_posMarker).transpose();
-                H(Meas::Doppler{ satSigId }, Keys::RecvClkDrift{ satId.satSys }) = 1;
+                H(Meas::Doppler{ satSigId }, Keys::RecvClkDrift{}) = 1;
                 break;
             case GnssObs::Carrier:
             case GnssObs::ObservationType_COUNT:
@@ -639,19 +639,18 @@ void Algorithm::assignLeastSquaresResult(const KeyedVectorXd<States::StateKeyTyp
         {
             if (const auto* drift = std::get_if<Keys::RecvClkDrift>(&s))
             {
-                size_t idx = _receiver.recvClk.getIdx(drift->satSys).value();
-                _receiver.recvClk.drift.at(idx) += state(*drift) / InsConst::C;
+                _receiver.recvClk.drift += state(*drift) / InsConst::C;
                 if (variance(*drift, *drift) < 0)
                 {
-                    _receiver.recvClk.driftStdDev.at(idx) = 1000 / InsConst::C;
-                    LOG_WARN("{}: Negative variance for {}. Defauting to {:.0f} [m/s]", nameId, *drift, _receiver.recvClk.driftStdDev.at(idx) * InsConst::C);
+                    _receiver.recvClk.driftStdDev = 1000 / InsConst::C;
+                    LOG_WARN("{}: Negative variance for {}. Defauting to {:.0f} [m/s]", nameId, *drift, _receiver.recvClk.driftStdDev * InsConst::C);
                 }
                 else
                 {
-                    _receiver.recvClk.driftStdDev.at(idx) = std::sqrt(variance(*drift, *drift)) / InsConst::C;
+                    _receiver.recvClk.driftStdDev = std::sqrt(variance(*drift, *drift)) / InsConst::C;
                 }
-                LOG_DATA("{}: Setting Clk Drift [{}] = {} [s/s] (StdDev = {})", nameId, drift->satSys,
-                         _receiver.recvClk.drift.at(idx), _receiver.recvClk.driftStdDev.at(idx));
+                LOG_DATA("{}: Setting Clk Drift = {} [s/s] (StdDev = {})", nameId, _receiver.recvClk.drift, _receiver.recvClk.driftStdDev);
+                break;
             }
         }
     }
@@ -681,9 +680,9 @@ void Algorithm::assignLeastSquaresResult(const KeyedVectorXd<States::StateKeyTyp
     {
         LOG_DATA("{}: [{}]     clkBias  = {} [s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
                  *_receiver.recvClk.biasFor(satSys), *_receiver.recvClk.biasStdDevFor(satSys));
-        LOG_DATA("{}: [{}]     clkDrift = {} [s/s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
-                 *_receiver.recvClk.driftFor(satSys), *_receiver.recvClk.driftStdDevFor(satSys));
     }
+    LOG_DATA("{}: [{}]     clkDrift = {} [s/s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
+             _receiver.recvClk.drift, _receiver.recvClk.driftStdDev);
 
     for ([[maybe_unused]] const auto& freq : _receiver.interFrequencyBias)
     {
@@ -718,18 +717,17 @@ void Algorithm::assignKalmanFilterResult(const KeyedVectorXd<States::StateKeyTyp
         }
         else if (const auto* drift = std::get_if<Keys::RecvClkDrift>(&s))
         {
-            size_t idx = _receiver.recvClk.getIdx(drift->satSys).value();
-            _receiver.recvClk.drift.at(idx) = state(*drift) / InsConst::C;
+            _receiver.recvClk.drift = state(*drift) / InsConst::C;
             if (variance(*drift, *drift) < 0)
             {
-                _receiver.recvClk.driftStdDev.at(idx) = 1000 / InsConst::C;
-                LOG_WARN("{}: Negative variance for {}. Defauting to {:.0f} [m/s]", nameId, *drift, _receiver.recvClk.driftStdDev.at(idx) * InsConst::C);
+                _receiver.recvClk.driftStdDev = 1000 / InsConst::C;
+                LOG_WARN("{}: Negative variance for {}. Defauting to {:.0f} [m/s]", nameId, *drift, _receiver.recvClk.driftStdDev * InsConst::C);
             }
             else
             {
-                _receiver.recvClk.driftStdDev.at(idx) = std::sqrt(variance(*drift, *drift)) / InsConst::C;
+                _receiver.recvClk.driftStdDev = std::sqrt(variance(*drift, *drift)) / InsConst::C;
             }
-            LOG_DATA("{}: Setting Clock Drift [{}] = {}", nameId, drift->satSys, _receiver.recvClk.drift.at(idx));
+            LOG_DATA("{}: Setting Clock Drift = {}", nameId, _receiver.recvClk.drift);
         }
         else if (const auto* bias = std::get_if<Keys::InterFreqBias>(&s))
         {
@@ -757,8 +755,8 @@ void Algorithm::assignKalmanFilterResult(const KeyedVectorXd<States::StateKeyTyp
     for ([[maybe_unused]] const auto& satSys : _receiver.recvClk.satelliteSystems)
     {
         LOG_DATA("{}: [{}]     clkBias  = {} s", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), *_receiver.recvClk.biasFor(satSys));
-        LOG_DATA("{}: [{}]     clkDrift = {} s/s", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), *_receiver.recvClk.driftFor(satSys));
     }
+    LOG_DATA("{}: [{}]     clkDrift = {} s/s", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), _receiver.recvClk.drift);
 
     for ([[maybe_unused]] const auto& freq : _receiver.interFrequencyBias)
     {

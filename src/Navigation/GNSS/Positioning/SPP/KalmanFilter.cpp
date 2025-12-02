@@ -88,8 +88,8 @@ void KalmanFilter::reset(const std::vector<SatelliteSystem>& satelliteSystems)
     for (const auto& satSys : satelliteSystems)
     {
         _kalmanFilter.addState(Keys::RecvClkBias{ satSys });
-        _kalmanFilter.addState(Keys::RecvClkDrift{ satSys });
     }
+    _kalmanFilter.addState(Keys::RecvClkDrift{});
     _receiverClockModel.initialize(_kalmanFilter.F, _kalmanFilter.G, _kalmanFilter.W);
 
     LOG_DATA("F = \n{}", _kalmanFilter.F);

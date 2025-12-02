@@ -63,33 +63,21 @@ class SppSolution : public PosVel
         desc.reserve(GetStaticDescriptorCount());
         desc.emplace_back("Number satellites");
         desc.emplace_back("Receiver clock bias GPS [s]");
-        desc.emplace_back("Receiver clock drift GPS [s/s]");
         desc.emplace_back("Receiver clock bias StDev GPS [s]");
-        desc.emplace_back("Receiver clock drift StDev GPS [s/s]");
         desc.emplace_back("Receiver clock bias GAL [s]");
-        desc.emplace_back("Receiver clock drift GAL [s/s]");
         desc.emplace_back("Receiver clock bias StDev GAL [s]");
-        desc.emplace_back("Receiver clock drift StDev GAL [s/s]");
         desc.emplace_back("Receiver clock bias GLO [s]");
-        desc.emplace_back("Receiver clock drift GLO [s/s]");
         desc.emplace_back("Receiver clock bias StDev GLO [s]");
-        desc.emplace_back("Receiver clock drift StDev GLO [s/s]");
         desc.emplace_back("Receiver clock bias BDS [s]");
-        desc.emplace_back("Receiver clock drift BDS [s/s]");
         desc.emplace_back("Receiver clock bias StDev BDS [s]");
-        desc.emplace_back("Receiver clock drift StDev BDS [s/s]");
         desc.emplace_back("Receiver clock bias QZSS [s]");
-        desc.emplace_back("Receiver clock drift QZSS [s/s]");
         desc.emplace_back("Receiver clock bias StDev QZSS [s]");
-        desc.emplace_back("Receiver clock drift StDev QZSS [s/s]");
         desc.emplace_back("Receiver clock bias IRNSS [s]");
-        desc.emplace_back("Receiver clock drift IRNSS [s/s]");
         desc.emplace_back("Receiver clock bias StDev IRNSS [s]");
-        desc.emplace_back("Receiver clock drift StDev IRNSS [s/s]");
         desc.emplace_back("Receiver clock bias SBAS [s]");
-        desc.emplace_back("Receiver clock drift SBAS [s/s]");
         desc.emplace_back("Receiver clock bias StDev SBAS [s]");
-        desc.emplace_back("Receiver clock drift StDev SBAS [s/s]");
+        desc.emplace_back("Receiver clock drift [s/s]");
+        desc.emplace_back("Receiver clock drift StDev [s/s]");
         desc.emplace_back("HDOP");
         desc.emplace_back("VDOP");
         desc.emplace_back("PDOP");
@@ -98,7 +86,7 @@ class SppSolution : public PosVel
     }
 
     /// @brief Get the amount of descriptors
-    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return PosVel::GetStaticDescriptorCount() + 32; }
+    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return PosVel::GetStaticDescriptorCount() + 20; }
 
     /// @brief Returns a vector of data descriptors
     [[nodiscard]] std::vector<std::string> staticDataDescriptors() const override { return GetStaticDataDescriptors(); }
@@ -121,98 +109,64 @@ class SppSolution : public PosVel
         case PosVel::GetStaticDescriptorCount() + 1: // Receiver clock bias GPS [s]
             if (const double* v = recvClk.biasFor(GPS)) { return *v; }
             break;
-        case PosVel::GetStaticDescriptorCount() + 2: // Receiver clock drift GPS [s/s]
-            if (const double* v = recvClk.driftFor(GPS)) { return *v; }
-            break;
-        case PosVel::GetStaticDescriptorCount() + 3: // Receiver clock bias StDev GPS [s]
+        case PosVel::GetStaticDescriptorCount() + 2: // Receiver clock bias StDev GPS [s]
             if (const double* v = recvClk.biasStdDevFor(GPS)) { return *v; }
             break;
-        case PosVel::GetStaticDescriptorCount() + 4: // Receiver clock drift StDev GPS [s/s]
-            if (const double* v = recvClk.driftStdDevFor(GPS)) { return *v; }
-            break;
 
-        case PosVel::GetStaticDescriptorCount() + 5: // Receiver clock bias GAL [s]
+        case PosVel::GetStaticDescriptorCount() + 3: // Receiver clock bias GAL [s]
             if (const double* v = recvClk.biasFor(GAL)) { return *v; }
             break;
-        case PosVel::GetStaticDescriptorCount() + 6: // Receiver clock drift GAL [s/s]
-            if (const double* v = recvClk.driftFor(GAL)) { return *v; }
-            break;
-        case PosVel::GetStaticDescriptorCount() + 7: // Receiver clock bias StDev GAL [s]
+        case PosVel::GetStaticDescriptorCount() + 4: // Receiver clock bias StDev GAL [s]
             if (const double* v = recvClk.biasStdDevFor(GAL)) { return *v; }
             break;
-        case PosVel::GetStaticDescriptorCount() + 8: // Receiver clock drift StDev GAL [s/s]
-            if (const double* v = recvClk.driftStdDevFor(GAL)) { return *v; }
-            break;
 
-        case PosVel::GetStaticDescriptorCount() + 9: // Receiver clock bias GLO [s]
+        case PosVel::GetStaticDescriptorCount() + 5: // Receiver clock bias GLO [s]
             if (const double* v = recvClk.biasFor(GLO)) { return *v; }
             break;
-        case PosVel::GetStaticDescriptorCount() + 10: // Receiver clock drift GLO [s/s]
-            if (const double* v = recvClk.driftFor(GLO)) { return *v; }
-            break;
-        case PosVel::GetStaticDescriptorCount() + 11: // Receiver clock bias StDev GLO [s]
+        case PosVel::GetStaticDescriptorCount() + 6: // Receiver clock bias StDev GLO [s]
             if (const double* v = recvClk.biasStdDevFor(GLO)) { return *v; }
             break;
-        case PosVel::GetStaticDescriptorCount() + 12: // Receiver clock drift StDev GLO [s/s]
-            if (const double* v = recvClk.driftStdDevFor(GLO)) { return *v; }
-            break;
 
-        case PosVel::GetStaticDescriptorCount() + 13: // Receiver clock bias BDS [s]
+        case PosVel::GetStaticDescriptorCount() + 7: // Receiver clock bias BDS [s]
             if (const double* v = recvClk.biasFor(BDS)) { return *v; }
             break;
-        case PosVel::GetStaticDescriptorCount() + 14: // Receiver clock drift BDS [s/s]
-            if (const double* v = recvClk.driftFor(BDS)) { return *v; }
-            break;
-        case PosVel::GetStaticDescriptorCount() + 15: // Receiver clock bias StDev BDS [s]
+        case PosVel::GetStaticDescriptorCount() + 8: // Receiver clock bias StDev BDS [s]
             if (const double* v = recvClk.biasStdDevFor(BDS)) { return *v; }
             break;
-        case PosVel::GetStaticDescriptorCount() + 16: // Receiver clock drift StDev BDS [s/s]
-            if (const double* v = recvClk.driftStdDevFor(BDS)) { return *v; }
-            break;
 
-        case PosVel::GetStaticDescriptorCount() + 17: // Receiver clock bias QZSS [s]
+        case PosVel::GetStaticDescriptorCount() + 9: // Receiver clock bias QZSS [s]
             if (const double* v = recvClk.biasFor(QZSS)) { return *v; }
             break;
-        case PosVel::GetStaticDescriptorCount() + 18: // Receiver clock drift QZSS [s/s]
-            if (const double* v = recvClk.driftFor(QZSS)) { return *v; }
-            break;
-        case PosVel::GetStaticDescriptorCount() + 19: // Receiver clock bias StDev QZSS [s]
+        case PosVel::GetStaticDescriptorCount() + 10: // Receiver clock bias StDev QZSS [s]
             if (const double* v = recvClk.biasStdDevFor(QZSS)) { return *v; }
             break;
-        case PosVel::GetStaticDescriptorCount() + 20: // Receiver clock drift StDev QZSS [s/s]
-            if (const double* v = recvClk.driftStdDevFor(QZSS)) { return *v; }
-            break;
 
-        case PosVel::GetStaticDescriptorCount() + 21: // Receiver clock bias IRNSS [s]
+        case PosVel::GetStaticDescriptorCount() + 11: // Receiver clock bias IRNSS [s]
             if (const double* v = recvClk.biasFor(IRNSS)) { return *v; }
             break;
-        case PosVel::GetStaticDescriptorCount() + 22: // Receiver clock drift IRNSS [s/s]
-            if (const double* v = recvClk.driftFor(IRNSS)) { return *v; }
-            break;
-        case PosVel::GetStaticDescriptorCount() + 23: // Receiver clock bias StDev IRNSS [s]
+        case PosVel::GetStaticDescriptorCount() + 12: // Receiver clock bias StDev IRNSS [s]
             if (const double* v = recvClk.biasStdDevFor(IRNSS)) { return *v; }
             break;
-        case PosVel::GetStaticDescriptorCount() + 24: // Receiver clock drift StDev IRNSS [s/s]
-            if (const double* v = recvClk.driftStdDevFor(IRNSS)) { return *v; }
-            break;
 
-        case PosVel::GetStaticDescriptorCount() + 25: // Receiver clock bias SBAS [s]
+        case PosVel::GetStaticDescriptorCount() + 13: // Receiver clock bias SBAS [s]
             if (const double* v = recvClk.biasFor(SBAS)) { return *v; }
             break;
-        case PosVel::GetStaticDescriptorCount() + 26: // Receiver clock drift SBAS [s/s]
-            if (const double* v = recvClk.driftFor(SBAS)) { return *v; }
-            break;
-        case PosVel::GetStaticDescriptorCount() + 27: // Receiver clock bias StDev SBAS [s]
+        case PosVel::GetStaticDescriptorCount() + 14: // Receiver clock bias StDev SBAS [s]
             if (const double* v = recvClk.biasStdDevFor(SBAS)) { return *v; }
             break;
-        case PosVel::GetStaticDescriptorCount() + 28: // Receiver clock drift StDev SBAS [s/s]
-            if (const double* v = recvClk.driftStdDevFor(SBAS)) { return *v; }
+
+        case PosVel::GetStaticDescriptorCount() + 15: // Receiver clock drift [s/s]
+            return recvClk.drift;
             break;
-        case PosVel::GetStaticDescriptorCount() + 29: // HDOP
+        case PosVel::GetStaticDescriptorCount() + 16: // Receiver clock drift StDev [s/s]
+            return recvClk.driftStdDev;
+            break;
+
+        case PosVel::GetStaticDescriptorCount() + 17: // HDOP
             return HDOP;
-        case PosVel::GetStaticDescriptorCount() + 30: // VDOP
+        case PosVel::GetStaticDescriptorCount() + 18: // VDOP
             return VDOP;
-        case PosVel::GetStaticDescriptorCount() + 31: // PDOP
+        case PosVel::GetStaticDescriptorCount() + 19: // PDOP
             return PDOP;
         default:
             return std::nullopt;

@@ -207,12 +207,12 @@ class ObservationEstimator
                 obsData.estimate = e_pLOS.dot(recvObs->e_satVel() - receiver.e_vel)
                                    - calcSagnacRateCorrection(e_recvPosAPC, recvObs->e_satPos(), receiver.e_vel, recvObs->e_satVel())
                                    + InsConst::C
-                                         * (*receiver.recvClk.driftFor(satSys)
+                                         * (receiver.recvClk.drift
                                             - recvObs->satClock().drift);
                 obsData.measVar = _gnssMeasurementErrorModel.psrRateMeasErrorVar(freq, observation.freqNum(), elevation, cn0);
                 // LOG_DATA("{}:   [{}][{:11}][{:5}]     {:.4f} [m/s] ", nameId, satSigId, obsType, receiver.type, e_pLOS.dot(recvObs->e_satVel() - receiver.e_vel));
                 // LOG_DATA("{}:   [{}][{:11}][{:5}]   - {:.4f} [m/s] Sagnac rate correction", nameId, satSigId, obsType, receiver.type, calcSagnacRateCorrection(e_recvPosAPC, recvObs->e_satPos(), receiver.e_vel, recvObs->e_satVel()));
-                // if (*receiver.recvClk.driftFor(satSys) != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m/s] Receiver clock drift", nameId, satSigId, obsType, receiver.type, InsConst::C * *receiver.recvClk.driftFor(satSys)); }
+                // if (receiver.recvClk.drift != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m/s] Receiver clock drift", nameId, satSigId, obsType, receiver.type, InsConst::C * *receiver.recvClk.drift); }
                 // LOG_DATA("{}:   [{}][{:11}][{:5}]   - {:.4f} [m/s] Satellite clock drift", nameId, satSigId, obsType, receiver.type, InsConst::C * recvObs->satClock().drift);
                 // LOG_DATA("{}:   [{}][{:11}][{:5}]   = {:.4f} [m/s] Doppler estimate", nameId, satSigId, obsType, receiver.type, obsData.estimate);
                 // LOG_DATA("{}:   [{}][{:11}][{:5}]     {:.4f} [m/s] Doppler measurement", nameId, satSigId, obsType, receiver.type, obsData.measurement);

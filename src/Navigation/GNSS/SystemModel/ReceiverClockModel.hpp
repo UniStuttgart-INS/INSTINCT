@@ -45,10 +45,7 @@ struct RecvClkBias
 struct RecvClkDrift
 {
     /// @brief Equal comparison operator
-    /// @param rhs Right-hand side
-    bool operator==(const RecvClkDrift& rhs) const { return satSys == rhs.satSys; }
-    /// @brief Satellite system
-    SatelliteSystem satSys;
+    bool operator==(const RecvClkDrift& /* rhs */) const { return true; }
 };
 
 } // namespace Keys
@@ -82,7 +79,7 @@ class ReceiverClockModel
         {
             if (const auto* biasKey = std::get_if<Keys::RecvClkBias>(&key))
             {
-                auto driftKey = Keys::RecvClkDrift{ biasKey->satSys };
+                auto driftKey = Keys::RecvClkDrift{};
                 INS_ASSERT_USER_ERROR(F.hasRow(driftKey), "The model should have bias and drift");
 
                 F(*biasKey, driftKey) = 1;
@@ -115,7 +112,7 @@ class ReceiverClockModel
         {
             if (const auto* bias = std::get_if<Keys::RecvClkBias>(&key))
             {
-                auto drift = Keys::RecvClkDrift{ bias->satSys };
+                auto drift = Keys::RecvClkDrift{};
                 if (Phi.hasRow(drift))
                 {
                     std::vector<StateKeyType> keys = { *bias, drift };
@@ -154,7 +151,7 @@ class ReceiverClockModel
     {
         std::vector<StateKeyType> keys = {
             Keys::RecvClkBias{ satSys },
-            Keys::RecvClkDrift{ satSys },
+            Keys::RecvClkDrift{},
         };
 
         KeyedMatrix2d<StateKeyType> F(Eigen::Matrix2d::Zero(), keys, keys);
@@ -237,7 +234,7 @@ class ReceiverClockModel
         KeyedMatrix<double, StateKeyType, StateKeyType, 2, 2> Q(Eigen::Matrix<double, 2, 2>::Zero(), keys, keys);
 
         auto bias = Keys::RecvClkBias{ satSys };
-        auto drift = Keys::RecvClkDrift{ satSys };
+        auto drift = Keys::RecvClkDrift{};
         Q(bias, bias) = _covarianceClkPhaseDrift * dt + _covarianceClkFrequencyDrift * dt3 / 3.0;
         Q(bias, drift) = _covarianceClkFrequencyDrift * dt2 / 2.0;
         Q(drift, bias) = Q(bias, drift);
@@ -319,10 +316,9 @@ template<>
 struct hash<NAV::Keys::RecvClkDrift>
 {
     /// @brief Hash function
-    /// @param[in] recvClkDrift Receiver clock drifts
-    size_t operator()(const NAV::Keys::RecvClkDrift& recvClkDrift) const
+    size_t operator()(const NAV::Keys::RecvClkDrift& /* recvClkDrift */) const
     {
-        return std::hash<NAV::SatelliteSystem>()(recvClkDrift.satSys);
+        return 0;
     }
 };
 
@@ -350,13 +346,12 @@ template<>
 struct fmt::formatter<NAV::Keys::RecvClkDrift> : fmt::formatter<std::string>
 {
     /// @brief Defines how to format structs
-    /// @param[in] recvClkDrift Struct to format
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::Keys::RecvClkDrift& recvClkDrift, FormatContext& ctx) const
+    auto format(const NAV::Keys::RecvClkDrift& /* recvClkDrift */, FormatContext& ctx) const
     {
-        return fmt::formatter<std::string>::format(fmt::format("RecvClkDrift({})", recvClkDrift.satSys), ctx);
+        return fmt::formatter<std::string>::format("RecvClkDrift", ctx);
     }
 };
 
