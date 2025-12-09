@@ -159,8 +159,12 @@ Clock::Corrections BDSEphemeris::calcClockCorrections(const InsTime& recvTime, d
 
         LOG_DATA("      dt_sv {} [s] (SV PRN code phase time offset)", dt_sv);
 
-        // Groves ch. 9.3.1, eq. 9.78, p. 391
-        clkDrift = a[1] + a[2] / 2.0 * t_minus_toc;
+        // Groves ch. 9.3.1, eq. 9.78, p. 391 (but with times 2 not divided by 2)
+        clkDrift = a[1] + 2.0 * a[2] * t_minus_toc;
+
+        // Relativistic correction term [s/s]
+        // See IS-GPS-200N GPS ICD L1/L2, ch. 20.3.3.3.3.1, p.99
+        clkDrift += (n * F * e * sqrt_A * std::cos(E_k)) / (1. - e * std::cos(E_k));
 
         // Correct transmit time for the satellite clock bias
         transTime = transTime0 - std::chrono::duration<double>(dt_sv);
