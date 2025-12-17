@@ -843,27 +843,7 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
 
         if (!startupPhase && !_receiver[Rover].e_posMarker.isZero())
         {
-            if (dt > 10.0)
-            {
-                _ambiguitiesHold.clear();
-                _pivotSatellites.clear();
-                std::vector<States::StateKeyType> ambKeys;
-                for (size_t i = States::KFStates_COUNT; i < _kalmanFilter.x.rowKeys().size(); i++) // 0-2 Pos, 3-5 Vel
-                {
-                    if (const auto* ambDD = std::get_if<States::AmbiguityDD>(&_kalmanFilter.x.rowKeys().at(i)))
-                    {
-                        ambKeys.emplace_back(*ambDD);
-                    }
-                }
-                _kalmanFilter.removeStates(ambKeys);
-                _receiver[Rover].e_posMarker.setZero();
-                _receiver[Rover].e_vel.setZero();
-
-                std::string text = fmt::format("Outage of {:.1f} [s] (interval {:.1f} [s]). Reinitializing with SPP solution.", dt, _dataInterval);
-                LOG_WARN("{}: [{}] {}", nameId(), _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), text);
-                addEventToGui(rtkSol, text);
-            }
-            else if (_kalmanFilter.x.rows() > States::KFStates_COUNT && dt > 3.0 * _dataInterval)
+            if (_kalmanFilter.x.rows() > States::KFStates_COUNT && dt > 3.0 * _dataInterval)
             {
                 _ambiguitiesHold.clear();
                 std::vector<States::StateKeyType> ambKeys;
@@ -2656,7 +2636,8 @@ bool RealTimeKinematic::resolveAmbiguities(size_t nCarrierMeasUniqueSatellite, c
     LOG_DATA("{}: [{}] Estimating ambiguities", nameId(), _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST));
     auto floatKeys = States::PosVel;
     size_t partialFixTries = 0;
-    do {
+    do
+    {
         LOG_DATA("{}: [{}] floatKeys = {}", nameId(), _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), fmt::join(floatKeys, ", "));
         LOG_DATA("{}: [{}] ambKeys   = {}", nameId(), _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), fmt::join(ambKeys, ", "));
         auto fixed = ResolveAmbiguities(_kalmanFilter.x(ambKeys), _kalmanFilter.P(ambKeys, ambKeys),
