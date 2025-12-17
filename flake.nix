@@ -36,8 +36,8 @@
               gcc
 
               # ccache is currently incompatible with clang
-              # ccache
-              # ccacheStdenv
+              ccache
+              ccacheStdenv
 
               doxygen
               texliveFull

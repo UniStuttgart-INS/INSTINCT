@@ -87,7 +87,6 @@ void RinexObsFile::guiConfig()
     ImGui::Checkbox("Allow missing header lines", &_allowMissingHeaderLines);
     ImGui::SameLine();
     gui::widgets::HelpMarker("Whether to allow e.g. \"PGM / RUN BY / DATE\" to be missing in the header");
-
 }
 
 [[nodiscard]] json RinexObsFile::save() const

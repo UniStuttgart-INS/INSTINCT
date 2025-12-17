@@ -839,7 +839,27 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
         rtkSol->insTime = _receiver[Rover].gnssObs->insTime;
         rtkSol->baseTime = _receiver[Base].gnssObs->insTime;
 
-        bool startupPhase = dt == 0.0 ? true : static_cast<double>(nFixSolutions + nFloatSolutions + nSingleSolutions) * dt < 60.0;
+        auto nSolutions = static_cast<double>(nFixSolutions + nFloatSolutions + nSingleSolutions);
+        bool startupPhase = dt == 0.0 ? true : (nSolutions * dt < 60.0 || nSolutions < 10.0);
+
+        // 𝜎²_a Variance of the acceleration due to user motion in horizontal and vertical component in [m^2 / s^3]
+        {
+            std::array<double, 2> varAccel{};
+            switch (_gui_stdevAccelUnits)
+            {
+            case StdevAccelUnits::m_sqrts3: // [m / √(s^3)]
+                varAccel = { std::pow(_gui_stdevAccel.at(0), 2), std::pow(_gui_stdevAccel.at(1), 2) };
+                break;
+            }
+            if (startupPhase)
+            {
+                _kalmanFilter.W.block<3>(States::Vel, States::Vel).diagonal() << std::max(1e-6, varAccel.at(0)), std::max(1e-6, varAccel.at(0)), std::max(1e-6, varAccel.at(1));
+            }
+            else
+            {
+                _kalmanFilter.W.block<3>(States::Vel, States::Vel).diagonal() << varAccel.at(0), varAccel.at(0), varAccel.at(1);
+            }
+        }
 
         if (!startupPhase && !_receiver[Rover].e_posMarker.isZero())
         {
