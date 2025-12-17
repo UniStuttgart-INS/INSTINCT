@@ -160,6 +160,9 @@ class RinexNavFile : public Node, public FileReader
         return navMsgType;
     }
 
+    /// @brief Whether to allow e.g. the "PGM / RUN BY / DATE" line to be missing
+    bool _allowMissingHeaderLines = false;
+
     /// @brief Data object to share over the output pin
     GnssNavInfo _gnssNavInfo;
 

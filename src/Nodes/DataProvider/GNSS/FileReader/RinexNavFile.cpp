@@ -12,6 +12,7 @@
 #include <fmt/ranges.h>
 
 #include "internal/FlowManager.hpp"
+#include "internal/gui/widgets/HelpMarker.hpp"
 
 #include "util/StringUtil.hpp"
 
@@ -77,6 +78,10 @@ void RinexNavFile::guiConfig()
         ImGui::SameLine();
         ImGui::Text("%0.2f", x);
     });
+
+    ImGui::Checkbox("Allow missing header lines", &_allowMissingHeaderLines);
+    ImGui::SameLine();
+    gui::widgets::HelpMarker("Whether to allow e.g. \"PGM / RUN BY / DATE\" to be missing in the header");
 }
 
 [[nodiscard]] json RinexNavFile::save() const
@@ -86,6 +91,7 @@ void RinexNavFile::guiConfig()
     json j;
 
     j["FileReader"] = FileReader::save();
+    j["allowMissingHeaderLines"] = _allowMissingHeaderLines;
 
     return j;
 }
@@ -94,10 +100,8 @@ void RinexNavFile::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
 
-    if (j.contains("FileReader"))
-    {
-        FileReader::restore(j.at("FileReader"));
-    }
+    if (j.contains("FileReader")) { FileReader::restore(j.at("FileReader")); }
+    if (j.contains("allowMissingHeaderLines")) { j.at("allowMissingHeaderLines").get_to(_allowMissingHeaderLines); }
 }
 
 bool RinexNavFile::initialize()
@@ -220,7 +224,7 @@ FileReader::FileType RinexNavFile::determineFileType()
         // ---------------------------------------- PGM / RUN BY / DATE ------------------------------------------
         std::getline(filestreamHeader, line);
         str::rtrim(line);
-        if (extHeaderLabel(line) != "PGM / RUN BY / DATE")
+        if (!_allowMissingHeaderLines && extHeaderLabel(line) != "PGM / RUN BY / DATE")
         {
             LOG_ERROR("{}: Not a valid RINEX NAV file. Could not read 'PGM / RUN BY / DATE' line.", nameId());
             return FileReader::FileType::NONE;

@@ -107,6 +107,9 @@ class RinexObsFile : public Node, public FileReader
     /// @brief Whether to remove less precise codes (e.g. if G1X (L1C combined) is present, don't use G1L (L1C pilot) and G1S (L1C data))
     bool _eraseLessPreciseCodes = true;
 
+    /// @brief Whether to allow e.g. the "PGM / RUN BY / DATE" line to be missing
+    bool _allowMissingHeaderLines = false;
+
     /// Receiver Info transmitted with the observation
     GnssObs::ReceiverInfo _receiverInfo;
 
