@@ -389,13 +389,13 @@ template<typename Derived>
     return n_Quat_b(rollPitchYaw(0), rollPitchYaw(1), rollPitchYaw(2));
 }
 
-/// @brief Quaternion for rotations from platform to body frame
+/// @brief Quaternion for rotations from body to platform frame
 /// @param[in] mountingAngleX Mounting angle to x axis in [rad]. First rotation. (-pi:pi]
 /// @param[in] mountingAngleY Mounting angle to y axis in [rad]. Second rotation. (-pi/2:pi/2]
 /// @param[in] mountingAngleZ Mounting angle to z axis in [rad]. Third rotation. (-pi:pi]
 /// @return The rotation Quaternion representation
 template<typename Scalar>
-[[nodiscard]] Eigen::Quaternion<Scalar> b_Quat_p(Scalar mountingAngleX, Scalar mountingAngleY, Scalar mountingAngleZ)
+[[nodiscard]] Eigen::Quaternion<Scalar> p_Quat_b(Scalar mountingAngleX, Scalar mountingAngleY, Scalar mountingAngleZ)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
     Eigen::AngleAxis<Scalar> xAngle(-mountingAngleX, Eigen::Vector3<Scalar>::UnitX());
@@ -405,15 +405,15 @@ template<typename Scalar>
     return (xAngle * yAngle * zAngle).normalized();
 }
 
-/// @brief Quaternion for rotations from body to platform frame
+/// @brief Quaternion for rotations from platform to body frame
 /// @param[in] mountingAngleX Mounting angle to x axis in [rad]. First rotation. (-pi:pi]
 /// @param[in] mountingAngleY Mounting angle to y axis in [rad]. Second rotation. (-pi/2:pi/2]
 /// @param[in] mountingAngleZ Mounting angle to z axis in [rad]. Third rotation. (-pi:pi]
 /// @return The rotation Quaternion representation
 template<typename Scalar>
-[[nodiscard]] Eigen::Quaternion<Scalar> p_Quat_b(Scalar mountingAngleX, Scalar mountingAngleY, Scalar mountingAngleZ)
+[[nodiscard]] Eigen::Quaternion<Scalar> b_Quat_p(Scalar mountingAngleX, Scalar mountingAngleY, Scalar mountingAngleZ)
 {
-    return b_Quat_p(mountingAngleX, mountingAngleY, mountingAngleZ).conjugate();
+    return p_Quat_b(mountingAngleX, mountingAngleY, mountingAngleZ).conjugate();
 }
 
 /// @brief Converts latitude, longitude and altitude into Earth-centered-Earth-fixed coordinates using WGS84

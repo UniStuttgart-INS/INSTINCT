@@ -603,7 +603,7 @@ TEST_CASE("[InsTransformations] Platform <=> body frame conversion", "[InsTransf
     Eigen::Vector3d p_x{ 2.0, 0.0, 9.81 };
     Eigen::Vector3d b_x = b_Quat_p * p_x;
 
-    CHECK_THAT(b_x, Catch::Matchers::WithinAbs(Eigen::Vector3d{ p_x(1), p_x(2), -p_x(0) }, EPSILON));
+    CHECK_THAT(b_x, Catch::Matchers::WithinAbs(Eigen::Vector3d{ -p_x.z(), -p_x.x(), p_x.y() }, EPSILON));
 }
 
 TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]")
