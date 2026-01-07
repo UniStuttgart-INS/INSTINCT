@@ -23,6 +23,7 @@
 
 #include "internal/gui/GlobalActions.hpp"
 #include "internal/gui/windows/FontSizeEditor.hpp"
+#include "internal/gui/windows/Screenshotter.hpp"
 
 namespace NAV
 {
@@ -37,6 +38,10 @@ class NodeEditorApplication : public Application
   private:
     constexpr static float BOTTOM_VIEW_COLLAPSED_MIN_HEIGHT = 23.0F;    ///< Minimal height of the bottom view if it is collapsed
     constexpr static float BOTTOM_VIEW_UNCOLLAPSED_MIN_HEIGHT = 200.0F; ///< Minimal height of the bottom view if it is not collapsed
+
+    const static inline ImColor _headerColorInitialized = { 128, 255, 128 };   /// Header color initialized (Light green)
+    const static inline ImColor _headerColorDeinitialized = { 255, 128, 128 }; /// Header color deinitialized (Light red)
+    const static inline ImColor _headerColorDisabled = { 192, 192, 192 };      /// Header color disabled (Silver)
 
   public:
     /// @brief Default constructor
@@ -113,6 +118,10 @@ class NodeEditorApplication : public Application
     /// @brief Default style of the ImPlot library to compare changes against
     static inline ImPlotStyle imPlotReferenceStyle;
 
+    static inline ImColor headerColorInitialized = _headerColorInitialized;     /// Header color initialized (Light green)
+    static inline ImColor headerColorDeinitialized = _headerColorDeinitialized; /// Header color deinitialized (Light red)
+    static inline ImColor headerColorDisabled = _headerColorDisabled;           /// Header color disabled (Silver)
+
     static inline bool hideLeftPane = false;                                 ///< Hide left pane
     static inline bool hideFPS = false;                                      ///< Hide FPS counter
     inline static float leftPaneWidth = 350.0F;                              ///< Width of the left pane
@@ -187,6 +196,12 @@ class NodeEditorApplication : public Application
     /// @brief Shows a window for choosing the font size
     /// @param[in, out] show Flag which indicates whether the window is shown
     friend void windows::ShowFontSizeEditor(bool* show);
+
+#ifdef IMGUI_IMPL_OPENGL_LOADER_GL3W
+    /// @brief Shows a window for taking screenshots
+    /// @param[in, out] show Flag which indicates whether the window is shown
+    friend void gui::windows::ShowScreenshotter(bool* show);
+#endif
 };
 
 } // namespace gui

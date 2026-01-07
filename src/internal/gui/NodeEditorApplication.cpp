@@ -928,18 +928,9 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
             if (!isSimple) // Header Text for Blueprint Nodes
             {
-                if (node->isDisabled()) // Node disabled
-                {
-                    builder.Header(ImColor(192, 192, 192)); // Silver
-                }
-                else if (node->isInitialized())
-                {
-                    builder.Header(ImColor(128, 255, 128)); // Light green
-                }
-                else
-                {
-                    builder.Header(ImColor(255, 128, 128)); // Light red
-                }
+                builder.Header(node->isDisabled()
+                                   ? headerColorDisabled
+                                   : (node->isInitialized() ? headerColorInitialized : headerColorDeinitialized));
                 ImGui::Spring(0);
                 ImGui::PushStyleColor(ImGuiCol_Text, textColor);
                 ImGui::TextUnformatted(node->name.c_str());
@@ -1416,7 +1407,10 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                                     false, node->isInitialized() || node->getState() == Node::State::Deinitialized))
                 {
                     if (node->isInitialized()) { node->doReinitialize(); }
-                    else { node->doInitialize(); }
+                    else
+                    {
+                        node->doInitialize();
+                    }
                 }
                 if (ImGui::MenuItem("Deinitialize", "", false, node->isInitialized()))
                 {
@@ -1490,7 +1484,10 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                     ImGui::TreePop();
                 }
             }
-            else { ImGui::TextUnformatted("Link: Not linked"); }
+            else
+            {
+                ImGui::TextUnformatted("Link: Not linked");
+            }
             ImGui::Separator();
             if (ImGui::TreeNode(fmt::format("Queue: {}", pin->queue.size()).c_str()))
             {
@@ -1539,7 +1536,10 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                     ImGui::TreePop();
                 }
             }
-            else { ImGui::TextUnformatted("Link: Not linked"); }
+            else
+            {
+                ImGui::TextUnformatted("Link: Not linked");
+            }
             ImGui::Separator();
             if (ImGui::MenuItem("Rename"))
             {

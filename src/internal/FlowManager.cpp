@@ -366,6 +366,9 @@ void NAV::flow::SaveFlowAs(const std::string& filepath)
     j["lightMode"] = gui::windows::nodeEditorLightMode;
     j["gridLinesEnabled"] = ed::GetStyle().Colors[ed::StyleColor_Grid].w;
     j["transparentWindows"] = ImGui::GetStyle().Colors[ImGuiCol_WindowBg].w;
+    j["header"]["colors"]["disabled"] = gui::NodeEditorApplication::headerColorDisabled;
+    j["header"]["colors"]["initialized"] = gui::NodeEditorApplication::headerColorInitialized;
+    j["header"]["colors"]["deinitialized"] = gui::NodeEditorApplication::headerColorDeinitialized;
 
     // if (ImGui::Checkbox("Light mode", &nodeEditorLightMode))
     // {
@@ -536,6 +539,13 @@ bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
         }
         if (j.contains("gridLinesEnabled")) { j.at("gridLinesEnabled").get_to(ed::GetStyle().Colors[ed::StyleColor_Grid].w); }
         if (j.contains("transparentWindows")) { j.at("transparentWindows").get_to(ImGui::GetStyle().Colors[ImGuiCol_WindowBg].w); }
+        if (j.contains("header") && j.at("header").contains("colors"))
+        {
+            const auto& js = j.at("header").at("colors");
+            if (js.contains("disabled")) { js.at("disabled").get_to(gui::NodeEditorApplication::headerColorDisabled); }
+            if (js.contains("initialized")) { js.at("initialized").get_to(gui::NodeEditorApplication::headerColorInitialized); }
+            if (js.contains("deinitialized")) { js.at("deinitialized").get_to(gui::NodeEditorApplication::headerColorDeinitialized); }
+        }
     }
 
     if (j.contains("nodes"))

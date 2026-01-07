@@ -152,6 +152,28 @@ void NAV::gui::windows::ShowScreenshotter(bool* show /* = nullptr*/)
     ImGui::SameLine();
     ImGui::Checkbox("Print save location", &printScreenshotSaveLocation);
 
+    ImGui::SetNextItemOpen(false, ImGuiCond_Once);
+    if (ImGui::TreeNode("Header Colors"))
+    {
+        auto colorEdit = [](const char* txt, ImColor& value, const ImColor& refVal) {
+            if (ImGui::ColorEdit4(txt, &value.Value.x)) { flow::ApplyChanges(); }
+            if (value != refVal)
+            {
+                ImGui::SameLine();
+                if (ImGui::Button(fmt::format("Revert##Screenshotter.{}", txt).c_str()))
+                {
+                    value = refVal;
+                    flow::ApplyChanges();
+                }
+            }
+        };
+        colorEdit("Disabled", NodeEditorApplication::headerColorDisabled, NodeEditorApplication::_headerColorDisabled);
+        colorEdit("Initialized", NodeEditorApplication::headerColorInitialized, NodeEditorApplication::_headerColorInitialized);
+        colorEdit("Deinitialized", NodeEditorApplication::headerColorDeinitialized, NodeEditorApplication::_headerColorDeinitialized);
+
+        ImGui::TreePop();
+    }
+
     ImGui::Separator();
 
     auto* editor = reinterpret_cast<ed::Detail::EditorContext*>(ed::GetCurrentEditor());
