@@ -77,11 +77,20 @@ void NAV::ImuFile::guiConfig()
         ImGui::TableSetupColumn("Delta IMU", ImGuiTableColumnFlags_WidthFixed);
         ImGui::TableHeadersRow();
 
-        auto TextColoredIfExists = [this](int index, const char* displayText, const char* searchText, bool alwaysNormal = false) {
+        auto TextColoredIfExists = [this](int index, const char* displayText, std::vector<const char*> searchText, bool alwaysNormal = false) {
             ImGui::TableSetColumnIndex(index);
             if (alwaysNormal
                 || std::ranges::find_if(_headerColumns, [&searchText](const std::string& header) {
-                       return header.starts_with(searchText);
+                       auto headerStartsWithSearchText = false;
+                       for (const char* searchIdx : searchText)
+                       {
+                           if (header.starts_with(searchIdx))
+                           {
+                               headerStartsWithSearchText = true;
+                               continue;
+                           }
+                       }
+                       return headerStartsWithSearchText;
                    }) != _headerColumns.end())
             {
                 ImGui::TextUnformatted(displayText);
@@ -93,20 +102,20 @@ void NAV::ImuFile::guiConfig()
         };
 
         ImGui::TableNextRow();
-        TextColoredIfExists(0, "GpsCycle", "GpsCycle");
-        TextColoredIfExists(1, "Mag", "MagX");
-        TextColoredIfExists(2, "DeltaTime", "DeltaTime");
+        TextColoredIfExists(0, "GpsCycle", { "GpsCycle" });
+        TextColoredIfExists(1, "Magnetometer", { "MagX", "Mag X" });
+        TextColoredIfExists(2, "DeltaTime", { "DeltaTime" });
         ImGui::TableNextRow();
-        TextColoredIfExists(0, "GpsWeek", "GpsWeek");
-        TextColoredIfExists(1, "Acc", "AccX");
-        TextColoredIfExists(2, "DeltaTheta", "DeltaThetaX");
+        TextColoredIfExists(0, "GpsWeek", { "GpsWeek" });
+        TextColoredIfExists(1, "Accelerometer", { "AccX", "Accel X" });
+        TextColoredIfExists(2, "DeltaTheta", { "DeltaThetaX" });
         ImGui::TableNextRow();
-        TextColoredIfExists(0, "GpsToW", "GpsToW");
-        TextColoredIfExists(1, "Gyro", "GyroX");
-        TextColoredIfExists(2, "DeltaVel", "DeltaVelX");
+        TextColoredIfExists(0, "GpsToW", { "GpsToW" });
+        TextColoredIfExists(1, "Gyroscope", { "GyroX", "Gyro X" });
+        TextColoredIfExists(2, "DeltaVel", { "DeltaVelX" });
         ImGui::TableNextRow();
-        TextColoredIfExists(0, "TimeStartup", "TimeStartup");
-        TextColoredIfExists(1, "Temperature", "Temperature");
+        TextColoredIfExists(0, "TimeStartup", { "TimeStartup" });
+        TextColoredIfExists(1, "Temperature", { "Temperature" });
 
         ImGui::EndTable();
     }
@@ -260,39 +269,39 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuFile::pollData()
             {
                 gpsToW = std::stold(cell);
             }
-            else if (column.starts_with("MagX"))
+            else if (column.starts_with("MagX") || column.starts_with("Mag X"))
             {
                 magX = std::stod(cell);
             }
-            else if (column.starts_with("MagY"))
+            else if (column.starts_with("MagY") || column.starts_with("Mag Y"))
             {
                 magY = std::stod(cell);
             }
-            else if (column.starts_with("MagZ"))
+            else if (column.starts_with("MagZ") || column.starts_with("Mag Z"))
             {
                 magZ = std::stod(cell);
             }
-            else if (column.starts_with("AccX"))
+            else if (column.starts_with("AccX") || column.starts_with("Accel X"))
             {
                 accelX = std::stod(cell);
             }
-            else if (column.starts_with("AccY"))
+            else if (column.starts_with("AccY") || column.starts_with("Accel Y"))
             {
                 accelY = std::stod(cell);
             }
-            else if (column.starts_with("AccZ"))
+            else if (column.starts_with("AccZ") || column.starts_with("Accel Z"))
             {
                 accelZ = std::stod(cell);
             }
-            else if (column.starts_with("GyroX"))
+            else if (column.starts_with("GyroX") || column.starts_with("Gyro X"))
             {
                 gyroX = std::stod(cell);
             }
-            else if (column.starts_with("GyroY"))
+            else if (column.starts_with("GyroY") || column.starts_with("Gyro Y"))
             {
                 gyroY = std::stod(cell);
             }
-            else if (column.starts_with("GyroZ"))
+            else if (column.starts_with("GyroZ") || column.starts_with("Gyro Z"))
             {
                 gyroZ = std::stod(cell);
             }
@@ -371,7 +380,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuFile::pollData()
 
     if (magX && magY && magZ)
     {
-        obs->p_magneticField.emplace(magX.value(), magY.value(), magZ.value());
+        obs->p_magneticField = { magX.value(), magY.value(), magZ.value() };
     }
 
     invokeCallbacks(OUTPUT_PORT_INDEX_IMU_OBS, obs);

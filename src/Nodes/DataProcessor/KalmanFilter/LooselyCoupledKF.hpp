@@ -15,18 +15,23 @@
 #pragma once
 
 #include <cstdint>
+#include <optional>
 #include "internal/Node/Node.hpp"
 #include "internal/gui/widgets/DynamicInputPins.hpp"
 
+#include "Nodes/DataProcessor/KalmanFilter/LckfKeys.hpp"
 #include "Navigation/INS/Units.hpp"
 #include "Navigation/Time/InsTime.hpp"
 #include "Navigation/INS/InertialIntegrator.hpp"
 
 #include "NodeData/IMU/ImuObs.hpp"
-#include "NodeData/State/PosVelAtt.hpp"
+#include "NodeData/State/InsGnssLCKFSolution.hpp"
 #include "NodeData/Baro/BaroHgt.hpp"
 
 #include "Navigation/Math/KeyedKalmanFilter.hpp"
+#include "util/Container/KeyedMatrix.hpp"
+#include <Eigen/src/Core/Matrix.h>
+#include <Eigen/src/Geometry/Quaternion.h>
 
 namespace NAV
 {
@@ -66,58 +71,6 @@ class LooselyCoupledKF : public Node
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
-    /// @brief State Keys of the Kalman filter
-    enum KFStates : uint8_t
-    {
-        Roll = 0,            ///< Roll
-        Pitch = 1,           ///< Pitch
-        Yaw = 2,             ///< Yaw
-        VelN = 3,            ///< Velocity North
-        VelE = 4,            ///< Velocity East
-        VelD = 5,            ///< Velocity Down
-        PosLat = 6,          ///< Latitude
-        PosLon = 7,          ///< Longitude
-        PosAlt = 8,          ///< Altitude
-        AccBiasX = 9,        ///< Accelerometer Bias X
-        AccBiasY = 10,       ///< Accelerometer Bias Y
-        AccBiasZ = 11,       ///< Accelerometer Bias Z
-        GyrBiasX = 12,       ///< Gyroscope Bias X
-        GyrBiasY = 13,       ///< Gyroscope Bias Y
-        GyrBiasZ = 14,       ///< Gyroscope Bias Z
-        HeightBias = 15,     ///< Baro Height Bias
-        HeightScale = 16,    ///< Baro Height Scale
-        KFStates_COUNT = 17, ///< Amount of states
-
-        Psi_eb_1 = Roll,  ///< Angle between Earth and Body frame around 1. axis
-        Psi_eb_2 = Pitch, ///< Angle between Earth and Body frame around 2. axis
-        Psi_eb_3 = Yaw,   ///< Angle between Earth and Body frame around 3. axis
-        VelX = VelN,      ///< ECEF Velocity X
-        VelY = VelE,      ///< ECEF Velocity Y
-        VelZ = VelD,      ///< ECEF Velocity Z
-        PosX = PosLat,    ///< ECEF Position X
-        PosY = PosLon,    ///< ECEF Position Y
-        PosZ = PosAlt,    ///< ECEF Position Z
-    };
-
-    /// @brief Measurement Keys of the Kalman filter
-    enum KFMeas : uint8_t
-    {
-        dPosLat = 0, ///< Latitude difference
-        dPosLon = 1, ///< Longitude difference
-        dPosAlt = 2, ///< Altitude difference
-        dVelN = 3,   ///< Velocity North difference
-        dVelE = 4,   ///< Velocity East difference
-        dVelD = 5,   ///< Velocity Down difference
-        dHgt = 6,    ///< height difference
-
-        dPosX = dPosLat, ///< ECEF Position X difference
-        dPosY = dPosLon, ///< ECEF Position Y difference
-        dPosZ = dPosAlt, ///< ECEF Position Z difference
-        dVelX = dVelN,   ///< ECEF Velocity X difference
-        dVelY = dVelE,   ///< ECEF Velocity Y difference
-        dVelZ = dVelD,   ///< ECEF Velocity Z difference
-    };
-
   private:
     constexpr static size_t INPUT_PORT_INDEX_IMU = 0;              ///< @brief Flow (ImuObs)
     constexpr static size_t INPUT_PORT_INDEX_POS_VEL_ATT_INIT = 1; ///< @brief Flow (PosVelAtt)
@@ -133,9 +86,10 @@ class LooselyCoupledKF : public Node
     /// @param[in] insTime Time to check
     bool hasInputPinWithSameTime(const InsTime& insTime) const;
 
-    /// @brief Invoke the callback with a PosVelAtt solution (without LCKF specific output)
-    /// @param[in] posVelAtt PosVelAtt solution
-    void invokeCallbackWithPosVelAtt(const PosVelAtt& posVelAtt);
+    /// @brief Invoke the callback with a PosVelAtt solution
+    /// @param[in] posVelAtt insGnssLCKF solution
+    /// @param[in] mmaeData LCKF data that is used for Multiple Model Adaptive Estimation (MMAE)
+    void invokeCallbackWithPosVelAtt(const PosVelAtt& posVelAtt, std::optional<InsGnssLCKFSolution::MMAEdata> mmaeData = std::nullopt);
 
     /// @brief Receive Function for the IMU observation
     /// @param[in] queue Queue with all the received data messages
@@ -177,6 +131,20 @@ class LooselyCoupledKF : public Node
     /// @param[in] R_E Meridian radius of curvature in [m]
     void setSolutionPosVelAttAndCov(const std::shared_ptr<PosVelAtt>& lckfSolution, double R_N, double R_E);
 
+    /// @brief Calculates the covariance matrix P of the LCKF with attitude quaternion instead of RPY (and does the necessary unit conversions)
+    /// @param[in] R_N Prime vertical radius of curvature (East/West) [m]
+    /// @param[in] R_E Meridian radius of curvature in [m]
+    /// @return The 18x18 P matrix of the LCKF (with attitude quaternion instead of RPY)
+    [[nodiscard]] KeyedMatrix<double, LckfKeys::KFStatesQuat, LckfKeys::KFStatesQuat, LckfKeys::KFQuat_COUNT, LckfKeys::KFQuat_COUNT> calcSolutionCovariance(double R_N, double R_E) const;
+
+    /// @brief Get the Total State Vector object (RPY case)
+    /// @return Total state vector in n-Sys
+    [[nodiscard]] KeyedVector<double, LckfKeys::KFStates, LckfKeys::KFStates_COUNT> getTotalStateVectorRPY() const;
+
+    /// @brief Get the Total State Vector object (Quaternion case)
+    /// @return Total state vector in n-Sys
+    [[nodiscard]] KeyedVector<double, LckfKeys::KFStatesQuat, LckfKeys::KFQuat_COUNT> getTotalStateVectorQuat() const;
+
     /// @brief Inertial Integrator
     InertialIntegrator _inertialIntegrator;
     /// Prefer the raw acceleration measurements over the deltaVel & deltaTheta values
@@ -209,41 +177,20 @@ class LooselyCoupledKF : public Node
     /// Whether the accumulated biases have been initialized in the 'inertialIntegrator'
     bool _initialSensorBiasesApplied = false;
 
-    /// @brief Vector with all state keys
-    inline static const std::vector<KFStates> States = { KFStates::Roll, KFStates::Pitch, KFStates::Yaw,
-                                                         KFStates::VelN, KFStates::VelE, KFStates::VelD,
-                                                         KFStates::PosLat, KFStates::PosLon, KFStates::PosAlt,
-                                                         KFStates::AccBiasX, KFStates::AccBiasY, KFStates::AccBiasZ,
-                                                         KFStates::GyrBiasX, KFStates::GyrBiasY, KFStates::GyrBiasZ,
-                                                         KFStates::HeightBias, KFStates::HeightScale };
-    /// @brief All position keys
-    inline static const std::vector<KFStates> KFPos = { KFStates::PosLat, KFStates::PosLon, KFStates::PosAlt };
-    /// @brief All velocity keys
-    inline static const std::vector<KFStates> KFVel = { KFStates::VelN, KFStates::VelE, KFStates::VelD };
-    /// @brief All attitude keys
-    inline static const std::vector<KFStates> KFAtt = { KFStates::Roll, KFStates::Pitch, KFStates::Yaw };
-    /// @brief All acceleration bias keys
-    inline static const std::vector<KFStates> KFAccBias = { KFStates::AccBiasX, KFStates::AccBiasY, KFStates::AccBiasZ };
-    /// @brief All gyroscope bias keys
-    inline static const std::vector<KFStates> KFGyrBias = { KFStates::GyrBiasX, KFStates::GyrBiasY, KFStates::GyrBiasZ };
+    /// MMAE data, used if PosVel and BaroHgtObs are available at the same timestamp
+    std::optional<InsGnssLCKFSolution::MMAEdata> _mmaeData;
 
-    /// @brief All position and velocity keys
-    inline static const std::vector<KFStates> KFPosVel = { KFStates::PosLat, KFStates::PosLon, KFStates::PosAlt,
-                                                           KFStates::VelN, KFStates::VelE, KFStates::VelD };
-    /// @brief All position, velocity and attitude keys
-    inline static const std::vector<KFStates> KFPosVelAtt = { KFStates::PosLat, KFStates::PosLon, KFStates::PosAlt,
-                                                              KFStates::VelN, KFStates::VelE, KFStates::VelD,
-                                                              KFStates::Roll, KFStates::Pitch, KFStates::Yaw };
-
-    /// @brief Vector with all measurement keys
-    inline static const std::vector<KFMeas> Meas = { KFMeas::dPosLat, KFMeas::dPosLon, KFMeas::dPosAlt, KFMeas::dVelN, KFMeas::dVelE, KFMeas::dVelD };
-    /// @brief All position difference keys
-    inline static const std::vector<KFMeas> dPos = { KFMeas::dPosLat, KFMeas::dPosLon, KFMeas::dPosAlt };
-    /// @brief All velocity difference keys
-    inline static const std::vector<KFMeas> dVel = { KFMeas::dVelN, KFMeas::dVelE, KFMeas::dVelD };
+    /// GUI option to choose between Euler angles and quaternions for the averaging of the attitude in MMAE
+    enum class MmaeAttitudeAveraging : uint8_t
+    {
+        Euler,      ///< Euler angles (RPY)
+        Quaternion, ///< Attitude quaternion
+    };
+    /// GUI option for the setting of the MMAE's attitude averaging
+    MmaeAttitudeAveraging _mmaeAttitudeAveraging = MmaeAttitudeAveraging::Euler;
 
     /// Kalman Filter representation
-    KeyedKalmanFilterD<KFStates, KFMeas> _kalmanFilter{ States, Meas };
+    KeyedKalmanFilterD<LckfKeys::KFStates, LckfKeys::KFMeas> _kalmanFilter{ LckfKeys::States, LckfKeys::Meas };
 
     // #########################################################################################################################################
     //                                                              GUI settings
@@ -589,17 +536,17 @@ class LooselyCoupledKF : public Node
     /// @param[in] tau_bad Correlation length for the accelerometer in [s]
     /// @param[in] tau_bgd Correlation length for the gyroscope in [s]
     /// @note See Groves (2013) chapter 14.2.4, equation (14.63)
-    [[nodiscard]] KeyedMatrix<double, KFStates, KFStates, 17, 17> n_systemMatrix_F(const Eigen::Quaterniond& n_Quat_b,
-                                                                                   const Eigen::Vector3d& b_specForce_ib,
-                                                                                   const Eigen::Vector3d& n_omega_in,
-                                                                                   const Eigen::Vector3d& n_velocity,
-                                                                                   const Eigen::Vector3d& lla_position,
-                                                                                   double R_N,
-                                                                                   double R_E,
-                                                                                   double g_0,
-                                                                                   double r_eS_e,
-                                                                                   const Eigen::Vector3d& tau_bad,
-                                                                                   const Eigen::Vector3d& tau_bgd) const;
+    [[nodiscard]] KeyedMatrix<double, LckfKeys::KFStates, LckfKeys::KFStates, 17, 17> n_systemMatrix_F(const Eigen::Quaterniond& n_Quat_b,
+                                                                                                       const Eigen::Vector3d& b_specForce_ib,
+                                                                                                       const Eigen::Vector3d& n_omega_in,
+                                                                                                       const Eigen::Vector3d& n_velocity,
+                                                                                                       const Eigen::Vector3d& lla_position,
+                                                                                                       double R_N,
+                                                                                                       double R_E,
+                                                                                                       double g_0,
+                                                                                                       double r_eS_e,
+                                                                                                       const Eigen::Vector3d& tau_bad,
+                                                                                                       const Eigen::Vector3d& tau_bgd) const;
 
     /// @brief Calculates the system matrix 𝐅 for the ECEF frame
     /// @param[in] e_Quat_b Attitude of the body with respect to e-system
@@ -611,14 +558,14 @@ class LooselyCoupledKF : public Node
     /// @param[in] tau_bad Correlation length for the accelerometer in [s]
     /// @param[in] tau_bgd Correlation length for the gyroscope in [s]
     /// @note See Groves (2013) chapter 14.2.3, equation (14.48)
-    [[nodiscard]] KeyedMatrix<double, KFStates, KFStates, 17, 17> e_systemMatrix_F(const Eigen::Quaterniond& e_Quat_b,
-                                                                                   const Eigen::Vector3d& b_specForce_ib,
-                                                                                   const Eigen::Vector3d& e_position,
-                                                                                   const Eigen::Vector3d& e_gravitation,
-                                                                                   double r_eS_e,
-                                                                                   const Eigen::Vector3d& e_omega_ie,
-                                                                                   const Eigen::Vector3d& tau_bad,
-                                                                                   const Eigen::Vector3d& tau_bgd) const;
+    [[nodiscard]] KeyedMatrix<double, LckfKeys::KFStates, LckfKeys::KFStates, 17, 17> e_systemMatrix_F(const Eigen::Quaterniond& e_Quat_b,
+                                                                                                       const Eigen::Vector3d& b_specForce_ib,
+                                                                                                       const Eigen::Vector3d& e_position,
+                                                                                                       const Eigen::Vector3d& e_gravitation,
+                                                                                                       double r_eS_e,
+                                                                                                       const Eigen::Vector3d& e_omega_ie,
+                                                                                                       const Eigen::Vector3d& tau_bad,
+                                                                                                       const Eigen::Vector3d& tau_bgd) const;
 
     // ###########################################################################################################
     //                                    Noise input matrix 𝐆 & Noise scale matrix 𝐖
@@ -628,7 +575,7 @@ class LooselyCoupledKF : public Node
     /// @brief Calculates the noise input matrix 𝐆
     /// @param[in] ien_Quat_b Quaternion from body frame to {i,e,n} frame
     /// @note See \cite Groves2013 Groves, ch. 14.2.6, eq. 14.79, p. 590
-    [[nodiscard]] static KeyedMatrix<double, KFStates, KFStates, 17, 17> noiseInputMatrix_G(const Eigen::Quaterniond& ien_Quat_b);
+    [[nodiscard]] static KeyedMatrix<double, LckfKeys::KFStates, LckfKeys::KFStates, 17, 17> noiseInputMatrix_G(const Eigen::Quaterniond& ien_Quat_b);
 
     /// @brief Calculates the noise scale matrix 𝐖
     /// @param[in] sigma_ra Standard deviation of the noise on the accelerometer specific-force measurements
@@ -659,12 +606,12 @@ class LooselyCoupledKF : public Node
     /// @param[in] n_Dcm_b Direction Cosine Matrix from body to navigation coordinates
     /// @param[in] tau_s Time interval in [s]
     /// @return The 17x17 matrix of system noise covariances
-    [[nodiscard]] static KeyedMatrix<double, KFStates, KFStates, 17, 17> n_systemNoiseCovarianceMatrix_Q(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
-                                                                                                         const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
-                                                                                                         const double& sigma_heightBias, const double& sigma_heightScale,
-                                                                                                         const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
-                                                                                                         const Eigen::Matrix3d& n_F_21, const Eigen::Matrix3d& T_rn_p,
-                                                                                                         const Eigen::Matrix3d& n_Dcm_b, const double& tau_s);
+    [[nodiscard]] static KeyedMatrix<double, LckfKeys::KFStates, LckfKeys::KFStates, 17, 17> n_systemNoiseCovarianceMatrix_Q(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
+                                                                                                                             const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
+                                                                                                                             const double& sigma_heightBias, const double& sigma_heightScale,
+                                                                                                                             const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
+                                                                                                                             const Eigen::Matrix3d& n_F_21, const Eigen::Matrix3d& T_rn_p,
+                                                                                                                             const Eigen::Matrix3d& n_Dcm_b, const double& tau_s);
 
     /// @brief System noise covariance matrix 𝐐_{k-1}
     /// @param[in] sigma2_ra Variance of the noise on the accelerometer specific-force measurements
@@ -679,12 +626,12 @@ class LooselyCoupledKF : public Node
     /// @param[in] e_Dcm_b Direction Cosine Matrix from body to Earth coordinates
     /// @param[in] tau_s Time interval in [s]
     /// @return The 17x17 matrix of system noise covariances
-    [[nodiscard]] static KeyedMatrix<double, KFStates, KFStates, 17, 17> e_systemNoiseCovarianceMatrix_Q(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
-                                                                                                         const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
-                                                                                                         const double& sigma_heightBias, const double& sigma_heightScale,
-                                                                                                         const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
-                                                                                                         const Eigen::Matrix3d& e_F_21,
-                                                                                                         const Eigen::Matrix3d& e_Dcm_b, const double& tau_s);
+    [[nodiscard]] static KeyedMatrix<double, LckfKeys::KFStates, LckfKeys::KFStates, 17, 17> e_systemNoiseCovarianceMatrix_Q(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
+                                                                                                                             const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
+                                                                                                                             const double& sigma_heightBias, const double& sigma_heightScale,
+                                                                                                                             const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
+                                                                                                                             const Eigen::Matrix3d& e_F_21,
+                                                                                                                             const Eigen::Matrix3d& e_Dcm_b, const double& tau_s);
 
     // ###########################################################################################################
     //                                         Error covariance matrix P
@@ -699,13 +646,13 @@ class LooselyCoupledKF : public Node
     /// @param[in] variance_heightBias Initial Covariance of the height bias [m^2]
     /// @param[in] variance_heightScale Initial Covariance of the height scale in [m^2 / m^2]
     /// @return The 17x17 matrix of initial state variances
-    [[nodiscard]] KeyedMatrix<double, KFStates, KFStates, 17, 17> initialErrorCovarianceMatrix_P0(const Eigen::Vector3d& variance_angles,
-                                                                                                  const Eigen::Vector3d& variance_vel,
-                                                                                                  const Eigen::Vector3d& variance_pos,
-                                                                                                  const Eigen::Vector3d& variance_accelBias,
-                                                                                                  const Eigen::Vector3d& variance_gyroBias,
-                                                                                                  const double& variance_heightBias,
-                                                                                                  const double& variance_heightScale) const;
+    [[nodiscard]] KeyedMatrix<double, LckfKeys::KFStates, LckfKeys::KFStates, 17, 17> initialErrorCovarianceMatrix_P0(const Eigen::Vector3d& variance_angles,
+                                                                                                                      const Eigen::Vector3d& variance_vel,
+                                                                                                                      const Eigen::Vector3d& variance_pos,
+                                                                                                                      const Eigen::Vector3d& variance_accelBias,
+                                                                                                                      const Eigen::Vector3d& variance_gyroBias,
+                                                                                                                      const double& variance_heightBias,
+                                                                                                                      const double& variance_heightScale) const;
 
     // ###########################################################################################################
     //                                                Correction
@@ -718,17 +665,17 @@ class LooselyCoupledKF : public Node
     /// @param[in] b_leverArm_InsGnss l_{ba}^b lever arm from the INS to the GNSS antenna in body-frame coordinates [m]
     /// @param[in] n_Omega_ie Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
     /// @return The 6x17 measurement matrix 𝐇
-    [[nodiscard]] static KeyedMatrix<double, KFMeas, KFStates, 6, 17> n_measurementMatrix_H(const Eigen::Matrix3d& T_rn_p,
-                                                                                            const Eigen::Matrix3d& n_Dcm_b,
-                                                                                            const Eigen::Vector3d& b_omega_ib,
-                                                                                            const Eigen::Vector3d& b_leverArm_InsGnss,
-                                                                                            const Eigen::Matrix3d& n_Omega_ie);
+    [[nodiscard]] static KeyedMatrix<double, LckfKeys::KFMeas, LckfKeys::KFStates, 6, 17> n_measurementMatrix_H(const Eigen::Matrix3d& T_rn_p,
+                                                                                                                const Eigen::Matrix3d& n_Dcm_b,
+                                                                                                                const Eigen::Vector3d& b_omega_ib,
+                                                                                                                const Eigen::Vector3d& b_leverArm_InsGnss,
+                                                                                                                const Eigen::Matrix3d& n_Omega_ie);
 
     /// @brief Measurement matrix for baro height measurements at timestep k, represented in navigation coordinates
     /// @param[in] height predicted height
     /// @param[in] scale height scale
     /// @return The 6x17 measurement matrix 𝐇
-    [[nodiscard]] static KeyedMatrix<double, KFMeas, KFStates, 1, 17> n_measurementMatrix_H(const double& height, const double& scale);
+    [[nodiscard]] static KeyedMatrix<double, LckfKeys::KFMeas, LckfKeys::KFStates, 1, 17> n_measurementMatrix_H(const double& height, const double& scale);
 
     /// @brief Measurement matrix for GNSS measurements at timestep k, represented in Earth frame coordinates
     /// @param[in] e_Dcm_b Direction Cosine Matrix from body to Earth coordinates
@@ -736,19 +683,19 @@ class LooselyCoupledKF : public Node
     /// @param[in] b_leverArm_InsGnss l_{ba}^b lever arm from the INS to the GNSS antenna in body-frame coordinates [m]
     /// @param[in] e_Omega_ie Skew-symmetric matrix of the Earth-rotation vector in Earth frame axes
     /// @return The 6x17 measurement matrix 𝐇
-    [[nodiscard]] static KeyedMatrix<double, KFMeas, KFStates, 6, 17> e_measurementMatrix_H(const Eigen::Matrix3d& e_Dcm_b,
-                                                                                            const Eigen::Vector3d& b_omega_ib,
-                                                                                            const Eigen::Vector3d& b_leverArm_InsGnss,
-                                                                                            const Eigen::Matrix3d& e_Omega_ie);
+    [[nodiscard]] static KeyedMatrix<double, LckfKeys::KFMeas, LckfKeys::KFStates, 6, 17> e_measurementMatrix_H(const Eigen::Matrix3d& e_Dcm_b,
+                                                                                                                const Eigen::Vector3d& b_omega_ib,
+                                                                                                                const Eigen::Vector3d& b_leverArm_InsGnss,
+                                                                                                                const Eigen::Matrix3d& e_Omega_ie);
 
     /// @brief Measurement matrix for barometric height measurements at timestep k, represented in Earth frame coordinates
     /// @param[in] e_positionEstimate predicted position
     /// @param[in] height predicted height (assuming that the KF internally converts to LLA at every epoch)
     /// @param[in] scale height scale
     /// @return The 1x17 measurement matrix 𝐇
-    [[nodiscard]] static KeyedMatrix<double, KFMeas, KFStates, 1, 17> e_measurementMatrix_H(const Eigen::Vector3d& e_positionEstimate,
-                                                                                            const double& height,
-                                                                                            const double& scale);
+    [[nodiscard]] static KeyedMatrix<double, LckfKeys::KFMeas, LckfKeys::KFStates, 1, 17> e_measurementMatrix_H(const Eigen::Vector3d& e_positionEstimate,
+                                                                                                                const double& height,
+                                                                                                                const double& scale);
 
     /// @brief Measurement noise covariance matrix 𝐑
     /// @param[in] posVelObs Position and velocity observation
@@ -756,20 +703,20 @@ class LooselyCoupledKF : public Node
     /// @param[in] R_N Meridian radius of curvature in [m]
     /// @param[in] R_E Prime vertical radius of curvature (East/West) [m]
     /// @return The 6x6 measurement covariance matrix 𝐑
-    [[nodiscard]] KeyedMatrix<double, KFMeas, KFMeas, 6, 6> n_measurementNoiseCovariance_R(const std::shared_ptr<const PosVel>& posVelObs,
-                                                                                           const Eigen::Vector3d& lla_position,
-                                                                                           double R_N,
-                                                                                           double R_E) const;
+    [[nodiscard]] KeyedMatrix<double, LckfKeys::KFMeas, LckfKeys::KFMeas, 6, 6> n_measurementNoiseCovariance_R(const std::shared_ptr<const PosVel>& posVelObs,
+                                                                                                               const Eigen::Vector3d& lla_position,
+                                                                                                               double R_N,
+                                                                                                               double R_E) const;
 
     /// @brief Measurement noise covariance matrix 𝐑
     /// @param[in] baroVarianceHeight Variance of height in [m²]
     /// @return The 1x1 measurement covariance matrix 𝐑
-    [[nodiscard]] static KeyedMatrix<double, KFMeas, KFMeas, 1, 1> n_measurementNoiseCovariance_R(const double& baroVarianceHeight);
+    [[nodiscard]] static KeyedMatrix<double, LckfKeys::KFMeas, LckfKeys::KFMeas, 1, 1> n_measurementNoiseCovariance_R(const double& baroVarianceHeight);
 
     /// @brief Measurement noise covariance matrix 𝐑
     /// @param[in] posVelObs Position and velocity observation
     /// @return The 6x6 measurement covariance matrix 𝐑
-    [[nodiscard]] KeyedMatrix<double, KFMeas, KFMeas, 6, 6> e_measurementNoiseCovariance_R(const std::shared_ptr<const PosVel>& posVelObs) const;
+    [[nodiscard]] KeyedMatrix<double, LckfKeys::KFMeas, LckfKeys::KFMeas, 6, 6> e_measurementNoiseCovariance_R(const std::shared_ptr<const PosVel>& posVelObs) const;
 
     /// @brief Measurement innovation vector 𝜹𝐳
     /// @param[in] lla_positionMeasurement Position measurement as Lat Lon Alt in [rad rad m]
@@ -782,10 +729,10 @@ class LooselyCoupledKF : public Node
     /// @param[in] b_omega_ib Angular rate of body with respect to inertial system in body-frame coordinates in [rad/s]
     /// @param[in] n_Omega_ie Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
     /// @return The 6x1 measurement innovation vector 𝜹𝐳
-    [[nodiscard]] static KeyedVector<double, KFMeas, 6> n_measurementInnovation_dz(const Eigen::Vector3d& lla_positionMeasurement, const Eigen::Vector3d& lla_positionEstimate,
-                                                                                   const Eigen::Vector3d& n_velocityMeasurement, const Eigen::Vector3d& n_velocityEstimate,
-                                                                                   const Eigen::Matrix3d& T_rn_p, const Eigen::Quaterniond& n_Quat_b, const Eigen::Vector3d& b_leverArm_InsGnss,
-                                                                                   const Eigen::Vector3d& b_omega_ib, const Eigen::Matrix3d& n_Omega_ie);
+    [[nodiscard]] static KeyedVector<double, LckfKeys::KFMeas, 6> n_measurementInnovation_dz(const Eigen::Vector3d& lla_positionMeasurement, const Eigen::Vector3d& lla_positionEstimate,
+                                                                                             const Eigen::Vector3d& n_velocityMeasurement, const Eigen::Vector3d& n_velocityEstimate,
+                                                                                             const Eigen::Matrix3d& T_rn_p, const Eigen::Quaterniond& n_Quat_b, const Eigen::Vector3d& b_leverArm_InsGnss,
+                                                                                             const Eigen::Vector3d& b_omega_ib, const Eigen::Matrix3d& n_Omega_ie);
 
     /// @brief Measurement innovation vector 𝜹𝐳
     /// @param[in] baroheight barometric height measurement in [m]
@@ -793,8 +740,8 @@ class LooselyCoupledKF : public Node
     /// @param[in] heightbias height bias in [m]
     /// @param[in] heightscale height scale [m/m]
     /// @return The 1x1 measurement innovation vector 𝜹𝐳
-    [[nodiscard]] static KeyedVector<double, KFMeas, 1> n_measurementInnovation_dz(const double& baroheight, const double& height,
-                                                                                   const double& heightbias, const double& heightscale);
+    [[nodiscard]] static KeyedVector<double, LckfKeys::KFMeas, 1> n_measurementInnovation_dz(const double& baroheight, const double& height,
+                                                                                             const double& heightbias, const double& heightscale);
 
     /// @brief Measurement innovation vector 𝜹𝐳
     /// @param[in] e_positionMeasurement Position measurement in ECEF coordinates in [m]
@@ -806,111 +753,10 @@ class LooselyCoupledKF : public Node
     /// @param[in] b_omega_ib Angular rate of body with respect to inertial system in body-frame coordinates in [rad/s]
     /// @param[in] e_Omega_ie Skew-symmetric matrix of the Earth-rotation vector in Earth frame axes
     /// @return The 6x1 measurement innovation vector 𝜹𝐳
-    [[nodiscard]] static KeyedVector<double, KFMeas, 6> e_measurementInnovation_dz(const Eigen::Vector3d& e_positionMeasurement, const Eigen::Vector3d& e_positionEstimate,
-                                                                                   const Eigen::Vector3d& e_velocityMeasurement, const Eigen::Vector3d& e_velocityEstimate,
-                                                                                   const Eigen::Quaterniond& e_Quat_b, const Eigen::Vector3d& b_leverArm_InsGnss,
-                                                                                   const Eigen::Vector3d& b_omega_ib, const Eigen::Matrix3d& e_Omega_ie);
+    [[nodiscard]] static KeyedVector<double, LckfKeys::KFMeas, 6> e_measurementInnovation_dz(const Eigen::Vector3d& e_positionMeasurement, const Eigen::Vector3d& e_positionEstimate,
+                                                                                             const Eigen::Vector3d& e_velocityMeasurement, const Eigen::Vector3d& e_velocityEstimate,
+                                                                                             const Eigen::Quaterniond& e_Quat_b, const Eigen::Vector3d& b_leverArm_InsGnss,
+                                                                                             const Eigen::Vector3d& b_omega_ib, const Eigen::Matrix3d& e_Omega_ie);
 };
 
 } // namespace NAV
-
-#ifndef DOXYGEN_IGNORE
-
-template<>
-struct fmt::formatter<NAV::LooselyCoupledKF::KFStates> : fmt::formatter<const char*>
-{
-    /// @brief Defines how to format structs
-    /// @param[in] st Struct to format
-    /// @param[in, out] ctx Format context
-    /// @return Output iterator
-    template<typename FormatContext>
-    auto format(const NAV::LooselyCoupledKF::KFStates& st, FormatContext& ctx) const
-    {
-        switch (st)
-        {
-        case NAV::LooselyCoupledKF::KFStates::Roll:
-            return fmt::formatter<const char*>::format("Roll/Psi_eb_1", ctx);
-        case NAV::LooselyCoupledKF::KFStates::Pitch:
-            return fmt::formatter<const char*>::format("Pitch/Psi_eb_2", ctx);
-        case NAV::LooselyCoupledKF::KFStates::Yaw:
-            return fmt::formatter<const char*>::format("Yaw/Psi_eb_3", ctx);
-        case NAV::LooselyCoupledKF::KFStates::VelN:
-            return fmt::formatter<const char*>::format("VelN/VelX", ctx);
-        case NAV::LooselyCoupledKF::KFStates::VelE:
-            return fmt::formatter<const char*>::format("VelE/VelY", ctx);
-        case NAV::LooselyCoupledKF::KFStates::VelD:
-            return fmt::formatter<const char*>::format("VelD/VelZ", ctx);
-        case NAV::LooselyCoupledKF::KFStates::PosLat:
-            return fmt::formatter<const char*>::format("PosLat/PosX", ctx);
-        case NAV::LooselyCoupledKF::KFStates::PosLon:
-            return fmt::formatter<const char*>::format("PosLon/PosY", ctx);
-        case NAV::LooselyCoupledKF::KFStates::PosAlt:
-            return fmt::formatter<const char*>::format("PosAlt/PosZ", ctx);
-        case NAV::LooselyCoupledKF::KFStates::AccBiasX:
-            return fmt::formatter<const char*>::format("AccBiasX", ctx);
-        case NAV::LooselyCoupledKF::KFStates::AccBiasY:
-            return fmt::formatter<const char*>::format("AccBiasY", ctx);
-        case NAV::LooselyCoupledKF::KFStates::AccBiasZ:
-            return fmt::formatter<const char*>::format("AccBiasZ", ctx);
-        case NAV::LooselyCoupledKF::KFStates::GyrBiasX:
-            return fmt::formatter<const char*>::format("GyrBiasX", ctx);
-        case NAV::LooselyCoupledKF::KFStates::GyrBiasY:
-            return fmt::formatter<const char*>::format("GyrBiasY", ctx);
-        case NAV::LooselyCoupledKF::KFStates::GyrBiasZ:
-            return fmt::formatter<const char*>::format("GyrBiasZ", ctx);
-        case NAV::LooselyCoupledKF::KFStates::HeightBias:
-            return fmt::formatter<const char*>::format("HeightBias", ctx);
-        case NAV::LooselyCoupledKF::KFStates::HeightScale:
-            return fmt::formatter<const char*>::format("HeightScale", ctx);
-        case NAV::LooselyCoupledKF::KFStates::KFStates_COUNT:
-            return fmt::formatter<const char*>::format("COUNT", ctx);
-        }
-
-        return fmt::formatter<const char*>::format("ERROR", ctx);
-    }
-};
-template<>
-struct fmt::formatter<NAV::LooselyCoupledKF::KFMeas> : fmt::formatter<const char*>
-{
-    /// @brief Defines how to format structs
-    /// @param[in] st Struct to format
-    /// @param[in, out] ctx Format context
-    /// @return Output iterator
-    template<typename FormatContext>
-    auto format(const NAV::LooselyCoupledKF::KFMeas& st, FormatContext& ctx) const
-    {
-        switch (st)
-        {
-        case NAV::LooselyCoupledKF::KFMeas::dPosLat:
-            return fmt::formatter<const char*>::format("dPosLat/dPosX", ctx);
-        case NAV::LooselyCoupledKF::KFMeas::dPosLon:
-            return fmt::formatter<const char*>::format("dPosLon/dPosY", ctx);
-        case NAV::LooselyCoupledKF::KFMeas::dPosAlt:
-            return fmt::formatter<const char*>::format("dPosAlt/dPosZ", ctx);
-        case NAV::LooselyCoupledKF::KFMeas::dVelN:
-            return fmt::formatter<const char*>::format("dVelN/dVelX", ctx);
-        case NAV::LooselyCoupledKF::KFMeas::dVelE:
-            return fmt::formatter<const char*>::format("dVelE/dVelY", ctx);
-        case NAV::LooselyCoupledKF::KFMeas::dVelD:
-            return fmt::formatter<const char*>::format("dVelD/dVelZ", ctx);
-        case NAV::LooselyCoupledKF::KFMeas::dHgt:
-            return fmt::formatter<const char*>::format("dHgt", ctx);
-        }
-
-        return fmt::formatter<const char*>::format("ERROR", ctx);
-    }
-};
-
-#endif
-
-/// @brief Stream insertion operator overload
-/// @param[in, out] os Output stream object to stream the time into
-/// @param[in] obj Object to print
-/// @return Returns the output stream object in order to chain stream insertions
-std::ostream& operator<<(std::ostream& os, const NAV::LooselyCoupledKF::KFStates& obj);
-
-/// @brief Stream insertion operator overload
-/// @param[in, out] os Output stream object to stream the time into
-/// @param[in] obj Object to print
-/// @return Returns the output stream object in order to chain stream insertions
-std::ostream& operator<<(std::ostream& os, const NAV::LooselyCoupledKF::KFMeas& obj);

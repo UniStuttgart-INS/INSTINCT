@@ -8,17 +8,24 @@
 
 #include "LooselyCoupledKF.hpp"
 
+#include "Navigation/Transformations/CoordinateFrames.hpp"
+#include "NodeData/Baro/BaroHgt.hpp"
 #include "NodeData/State/InsGnssLCKFSolution.hpp"
 #include "NodeData/State/PosVel.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
+#include "Nodes/DataProcessor/KalmanFilter/LckfKeys.hpp"
 #include "internal/Node/Pin.hpp"
+#include "util/Container/KeyedMatrix.hpp"
 #include "util/Eigen.hpp"
+#include <array>
 #include <memory>
 #include <numbers>
 #include <cmath>
 
 #include <imgui.h>
 #include <imgui_internal.h>
+#include <optional>
+#include <variant>
 #include "internal/gui/widgets/HelpMarker.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
 #include "internal/gui/widgets/InputWithUnit.hpp"
@@ -616,6 +623,17 @@ void NAV::LooselyCoupledKF::guiConfig()
             LOG_DEBUG("{}: checkKalmanMatricesRanks {}", nameId(), _checkKalmanMatricesRanks);
             flow::ApplyChanges();
         }
+
+        ImGui::SetNextItemWidth(unitWidth);
+        if (auto mmaeAttitudeAveraging = static_cast<int>(_mmaeAttitudeAveraging);
+            ImGui::Combo(fmt::format("MMAE attitude averaging##{}", size_t(id)).c_str(), &mmaeAttitudeAveraging, "Euler\0Quaternion\0\0"))
+        {
+            _mmaeAttitudeAveraging = static_cast<decltype(_mmaeAttitudeAveraging)>(mmaeAttitudeAveraging);
+            LOG_DEBUG("{}: MMAE attitude averaging changed to {}", nameId(), fmt::underlying(_mmaeAttitudeAveraging));
+            flow::ApplyChanges();
+        }
+        ImGui::SameLine();
+        gui::widgets::HelpMarker("Since RPY are not error states, but total states in MMAE, singularities can occur. The option with the quaternion avoids these singularities, however there it omits the covariances between the quaternion states and all other states. A solution for this still has to be found.");
     }
 }
 
@@ -632,6 +650,7 @@ void NAV::LooselyCoupledKF::guiConfig()
     j["initializeStateOverExternalPin"] = _initializeStateOverExternalPin;
 
     j["checkKalmanMatricesRanks"] = _checkKalmanMatricesRanks;
+    j["mmaeAttitudeAveraging"] = _mmaeAttitudeAveraging;
 
     j["phiCalculationAlgorithm"] = _phiCalculationAlgorithm;
     j["phiCalculationTaylorOrder"] = _phiCalculationTaylorOrder;
@@ -718,6 +737,10 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     if (j.contains("checkKalmanMatricesRanks"))
     {
         j.at("checkKalmanMatricesRanks").get_to(_checkKalmanMatricesRanks);
+    }
+    if (j.contains("mmaeAttitudeAveraging"))
+    {
+        j.at("mmaeAttitudeAveraging").get_to(_mmaeAttitudeAveraging);
     }
 
     if (j.contains("phiCalculationAlgorithm"))
@@ -934,6 +957,7 @@ bool NAV::LooselyCoupledKF::initialize()
     _heightScaleTotal = 1.0;
 
     _kalmanFilter.setZero();
+    _mmaeData.reset();
 
     // Initial Covariance of the attitude angles in [rad²]
     Eigen::Vector3d variance_angles = Eigen::Vector3d::Zero();
@@ -1088,11 +1112,11 @@ void NAV::LooselyCoupledKF::deinitialize()
 bool NAV::LooselyCoupledKF::hasInputPinWithSameTime(const InsTime& insTime) const
 {
     return std::ranges::any_of(inputPins, [&insTime](const InputPin& pin) {
-        return pin.dataIdentifier.front() == PosVel::type() && !pin.queue.empty() && pin.queue.front()->insTime == insTime;
+        return (pin.dataIdentifier.front() == PosVel::type() || pin.dataIdentifier.front() == BaroHgt::type()) && !pin.queue.empty() && pin.queue.front()->insTime == insTime; // FIXME: 'pin.dataIdentifier.front() == ImuObs' also necessary here?
     });
 }
 
-void NAV::LooselyCoupledKF::invokeCallbackWithPosVelAtt(const PosVelAtt& posVelAtt)
+void NAV::LooselyCoupledKF::invokeCallbackWithPosVelAtt(const PosVelAtt& posVelAtt, std::optional<InsGnssLCKFSolution::MMAEdata> mmaeData)
 {
     auto lckfSolution = std::make_shared<InsGnssLCKFSolution>();
     lckfSolution->insTime = posVelAtt.insTime;
@@ -1116,19 +1140,21 @@ void NAV::LooselyCoupledKF::invokeCallbackWithPosVelAtt(const PosVelAtt& posVelA
     {
         lckfSolution->b_biasAccel.value = _lastImuObs->imuPos.b_quat_p() * -_inertialIntegrator.p_getLastAccelerationBias();
         lckfSolution->b_biasAccel.stdDev = Eigen::Vector3d{
-            std::sqrt(_kalmanFilter.P(KFStates::AccBiasX, KFStates::AccBiasX) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2))),
-            std::sqrt(_kalmanFilter.P(KFStates::AccBiasY, KFStates::AccBiasY) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2))),
-            std::sqrt(_kalmanFilter.P(KFStates::AccBiasZ, KFStates::AccBiasZ) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2)))
+            std::sqrt(_kalmanFilter.P(LckfKeys::KFStates::AccBiasX, LckfKeys::KFStates::AccBiasX) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2))),
+            std::sqrt(_kalmanFilter.P(LckfKeys::KFStates::AccBiasY, LckfKeys::KFStates::AccBiasY) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2))),
+            std::sqrt(_kalmanFilter.P(LckfKeys::KFStates::AccBiasZ, LckfKeys::KFStates::AccBiasZ) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2)))
         };
         lckfSolution->b_biasGyro.value = _lastImuObs->imuPos.b_quat_p() * -_inertialIntegrator.p_getLastAngularRateBias();
         lckfSolution->b_biasGyro.stdDev = Eigen::Vector3d{
-            std::sqrt(_kalmanFilter.P(KFStates::GyrBiasX, KFStates::GyrBiasX) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2))),
-            std::sqrt(_kalmanFilter.P(KFStates::GyrBiasY, KFStates::GyrBiasY) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2))),
-            std::sqrt(_kalmanFilter.P(KFStates::GyrBiasZ, KFStates::GyrBiasZ) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2)))
+            std::sqrt(_kalmanFilter.P(LckfKeys::KFStates::GyrBiasX, LckfKeys::KFStates::GyrBiasX) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2))),
+            std::sqrt(_kalmanFilter.P(LckfKeys::KFStates::GyrBiasY, LckfKeys::KFStates::GyrBiasY) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2))),
+            std::sqrt(_kalmanFilter.P(LckfKeys::KFStates::GyrBiasZ, LckfKeys::KFStates::GyrBiasZ) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2)))
         };
     }
-    lckfSolution->heightBias = { .value = _heightBiasTotal, .stdDev = std::sqrt(_kalmanFilter.P(KFStates::HeightBias, KFStates::HeightBias)) };
-    lckfSolution->heightScale = { .value = _heightScaleTotal, .stdDev = std::sqrt(_kalmanFilter.P(KFStates::HeightScale, KFStates::HeightScale)) };
+    lckfSolution->heightBias = { .value = _heightBiasTotal, .stdDev = std::sqrt(_kalmanFilter.P(LckfKeys::KFStates::HeightBias, LckfKeys::KFStates::HeightBias)) };
+    lckfSolution->heightScale = { .value = _heightScaleTotal, .stdDev = std::sqrt(_kalmanFilter.P(LckfKeys::KFStates::HeightScale, LckfKeys::KFStates::HeightScale)) };
+    lckfSolution->mmaeData = std::move(mmaeData);
+
     if (!hasInputPinWithSameTime(lckfSolution->insTime))
     {
         invokeCallbacks(OUTPUT_PORT_INDEX_SOLUTION, lckfSolution);
@@ -1192,8 +1218,33 @@ void NAV::LooselyCoupledKF::recvImuObservation(InputPin::NodeDataQueue& queue, s
 
         if (!hasInputPinWithSameTime(nodeData->insTime))
         {
+            InsGnssLCKFSolution::MMAEdata mmaeData = { .integrationFrame = _inertialIntegrator.getIntegrationFrame(),
+                                                       .kfTotalStateVector = _mmaeAttitudeAveraging == MmaeAttitudeAveraging::Euler
+                                                                                 ? std::variant<LckfKeys::StateVector, LckfKeys::StateVectorQuat>(getTotalStateVectorRPY())
+                                                                                 : std::variant<LckfKeys::StateVector, LckfKeys::StateVectorQuat>(getTotalStateVectorQuat()),
+                                                       .kfErrorCovMatrix = _mmaeAttitudeAveraging == MmaeAttitudeAveraging::Euler
+                                                                               ? std::variant<LckfKeys::StateMatrix, LckfKeys::StateMatrixQuat>(_kalmanFilter.P)
+                                                                               : std::variant<LckfKeys::StateMatrix, LckfKeys::StateMatrixQuat>(calcSolutionCovariance(calcEarthRadius_N(inertialNavSol->latitude()), calcEarthRadius_E(inertialNavSol->latitude()))),
+                                                       .innovationVector = std::nullopt,
+                                                       .innovationCovMatrix = std::nullopt,
+                                                       .innovationVectorBaro = std::nullopt,
+                                                       .innovationCovMatrixBaro = std::nullopt };
+            if (_mmaeData.has_value())
+            {
+                if (_mmaeData->innovationVector.has_value() && _mmaeData->innovationCovMatrix.has_value())
+                {
+                    mmaeData.innovationVector = _mmaeData->innovationVector;
+                    mmaeData.innovationCovMatrix = _mmaeData->innovationCovMatrix;
+                }
+                if (_mmaeData->innovationVectorBaro.has_value() && _mmaeData->innovationCovMatrixBaro.has_value())
+                {
+                    mmaeData.innovationVectorBaro = _mmaeData->innovationVectorBaro;
+                    mmaeData.innovationCovMatrixBaro = _mmaeData->innovationCovMatrixBaro;
+                }
+                _mmaeData.reset();
+            }
             LOG_DATA("{}: [{}] Sending out predicted solution", nameId(), inertialNavSol->insTime.toYMDHMS(GPST));
-            invokeCallbackWithPosVelAtt(*inertialNavSol);
+            invokeCallbackWithPosVelAtt(*inertialNavSol, mmaeData);
         }
     }
 }
@@ -1236,7 +1287,10 @@ void NAV::LooselyCoupledKF::recvPosVelObservation(InputPin::NodeDataQueue& queue
             n_cov.topLeftCorner<6, 6>() = obs->n_CovarianceMatrix()->get()(Keys::PosVel<Keys::MotionModelKey>, Keys::PosVel<Keys::MotionModelKey>);
             posVelAtt.setPosVelAttAndCov_n(obs->lla_position(), obs->n_velocity(), _inertialIntegrator.getLatestState()->get().attitude, n_cov);
         }
-        else { posVelAtt.setPosVelAtt_n(obs->lla_position(), obs->n_velocity(), _inertialIntegrator.getLatestState()->get().attitude); }
+        else
+        {
+            posVelAtt.setPosVelAtt_n(obs->lla_position(), obs->n_velocity(), _inertialIntegrator.getLatestState()->get().attitude);
+        }
         _inertialIntegrator.addState(posVelAtt, nameId().c_str());
 
         LOG_DATA("{}: [{}] Sending out received solution, as no IMU data yet", nameId(), obs->insTime.toYMDHMS(GPST));
@@ -1387,7 +1441,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
                                                               sigma_bad.array().square(), sigma_bgd.array().square(),
                                                               sigma_heightBias, sigma_heightScale,
                                                               _tau_bad, _tau_bgd,
-                                                              _kalmanFilter.F.block<3>(KFVel, KFAtt), T_rn_p,
+                                                              _kalmanFilter.F.block<3>(LckfKeys::KFVel, LckfKeys::KFAtt), T_rn_p,
                                                               n_Quat_b.toRotationMatrix(), tau_i);
         }
     }
@@ -1413,7 +1467,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
                                                               sigma_bad.array().square(), sigma_bgd.array().square(),
                                                               sigma_heightBias, sigma_heightScale,
                                                               _tau_bad, _tau_bgd,
-                                                              _kalmanFilter.F.block<3>(KFVel, KFAtt),
+                                                              _kalmanFilter.F.block<3>(LckfKeys::KFVel, LckfKeys::KFAtt),
                                                               e_Quat_b.toRotationMatrix(), tau_i);
         }
     }
@@ -1525,7 +1579,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
                                      : Eigen::Vector3d::Zero();
     LOG_DATA("{}:     b_omega_ip = {} [rad/s]", nameId(), b_omega_ip.transpose());
 
-    _kalmanFilter.setMeasurements(Meas);
+    _kalmanFilter.setMeasurements(LckfKeys::Meas);
 
     // Prime vertical radius of curvature (East/West) [m]
     double R_E = 0.0;
@@ -1644,25 +1698,25 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     // Push out the new data
     auto lckfSolution = std::make_shared<InsGnssLCKFSolution>();
     lckfSolution->insTime = posVelObs->insTime;
-    lckfSolution->positionError = _kalmanFilter.x.segment<3>(KFPos);
-    lckfSolution->velocityError = _kalmanFilter.x.segment<3>(KFVel);
-    lckfSolution->attitudeError = _kalmanFilter.x.segment<3>(KFAtt) * (1. / SCALE_FACTOR_ATTITUDE);
+    lckfSolution->positionError = _kalmanFilter.x.segment<3>(LckfKeys::KFPos);
+    lckfSolution->velocityError = _kalmanFilter.x.segment<3>(LckfKeys::KFVel);
+    lckfSolution->attitudeError = _kalmanFilter.x.segment<3>(LckfKeys::KFAtt) * (1. / SCALE_FACTOR_ATTITUDE);
 
     LOG_DATA("{}: Accumulated biases before error has been applied: b_biasAccel.value = {}, b_biasGyro.value = {}", nameId(), _inertialIntegrator.p_getLastAccelerationBias().transpose(), _inertialIntegrator.p_getLastAngularRateBias().transpose());
 
-    _inertialIntegrator.applySensorBiasesIncrements(_lastImuObs->imuPos.p_quat_b() * -_kalmanFilter.x.segment<3>(KFAccBias) * (1. / SCALE_FACTOR_ACCELERATION),
-                                                    _lastImuObs->imuPos.p_quat_b() * -_kalmanFilter.x.segment<3>(KFGyrBias) * (1. / SCALE_FACTOR_ANGULAR_RATE));
-    lckfSolution->b_biasAccel.value = -_inertialIntegrator.p_getLastAccelerationBias();
+    _inertialIntegrator.applySensorBiasesIncrements(_lastImuObs->imuPos.p_quat_b() * -_kalmanFilter.x.segment<3>(LckfKeys::KFAccBias) * (1. / SCALE_FACTOR_ACCELERATION),
+                                                    _lastImuObs->imuPos.p_quat_b() * -_kalmanFilter.x.segment<3>(LckfKeys::KFGyrBias) * (1. / SCALE_FACTOR_ANGULAR_RATE));
+    lckfSolution->b_biasAccel.value = _lastImuObs->imuPos.b_quat_p() * -_inertialIntegrator.p_getLastAccelerationBias();
     lckfSolution->b_biasAccel.stdDev = Eigen::Vector3d{
-        std::sqrt(_kalmanFilter.P(KFStates::AccBiasX, KFStates::AccBiasX) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2))),
-        std::sqrt(_kalmanFilter.P(KFStates::AccBiasY, KFStates::AccBiasY) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2))),
-        std::sqrt(_kalmanFilter.P(KFStates::AccBiasZ, KFStates::AccBiasZ) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2)))
+        std::sqrt(_kalmanFilter.P(LckfKeys::KFStates::AccBiasX, LckfKeys::KFStates::AccBiasX) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2))),
+        std::sqrt(_kalmanFilter.P(LckfKeys::KFStates::AccBiasY, LckfKeys::KFStates::AccBiasY) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2))),
+        std::sqrt(_kalmanFilter.P(LckfKeys::KFStates::AccBiasZ, LckfKeys::KFStates::AccBiasZ) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2)))
     };
-    lckfSolution->b_biasGyro.value = -_inertialIntegrator.p_getLastAngularRateBias();
+    lckfSolution->b_biasGyro.value = _lastImuObs->imuPos.b_quat_p() * -_inertialIntegrator.p_getLastAngularRateBias();
     lckfSolution->b_biasGyro.stdDev = Eigen::Vector3d{
-        std::sqrt(_kalmanFilter.P(KFStates::GyrBiasX, KFStates::GyrBiasX) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2))),
-        std::sqrt(_kalmanFilter.P(KFStates::GyrBiasY, KFStates::GyrBiasY) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2))),
-        std::sqrt(_kalmanFilter.P(KFStates::GyrBiasZ, KFStates::GyrBiasZ) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2)))
+        std::sqrt(_kalmanFilter.P(LckfKeys::KFStates::GyrBiasX, LckfKeys::KFStates::GyrBiasX) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2))),
+        std::sqrt(_kalmanFilter.P(LckfKeys::KFStates::GyrBiasY, LckfKeys::KFStates::GyrBiasY) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2))),
+        std::sqrt(_kalmanFilter.P(LckfKeys::KFStates::GyrBiasZ, LckfKeys::KFStates::GyrBiasZ) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2)))
     };
 
     LOG_DATA("{}: Biases after error has been applied: b_biasAccel.value = {}, b_biasGyro.value = {}", nameId(), lckfSolution->b_biasAccel.value.transpose(), lckfSolution->b_biasGyro.value.transpose());
@@ -1685,8 +1739,27 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
 
     setSolutionPosVelAttAndCov(lckfSolution, R_N, R_E);
 
-    lckfSolution->heightBias = { .value = _heightBiasTotal, .stdDev = std::sqrt(_kalmanFilter.P(KFStates::HeightBias, KFStates::HeightBias)) };
-    lckfSolution->heightScale = { .value = _heightScaleTotal, .stdDev = std::sqrt(_kalmanFilter.P(KFStates::HeightScale, KFStates::HeightScale)) };
+    lckfSolution->heightBias = { .value = _heightBiasTotal, .stdDev = std::sqrt(_kalmanFilter.P(LckfKeys::KFStates::HeightBias, LckfKeys::KFStates::HeightBias)) };
+    lckfSolution->heightScale = { .value = _heightScaleTotal, .stdDev = std::sqrt(_kalmanFilter.P(LckfKeys::KFStates::HeightScale, LckfKeys::KFStates::HeightScale)) };
+
+    auto innovation = _kalmanFilter.z;
+    innovation.segment<2>(std::array{ LckfKeys::dPosLat, LckfKeys::dPosLon }) *= 1. / SCALE_FACTOR_LAT_LON;
+
+    auto innovationCovariance = _kalmanFilter.S;
+    innovationCovariance.middleRows<2>(std::array{ LckfKeys::dPosLat, LckfKeys::dPosLon }) *= 1. / SCALE_FACTOR_LAT_LON;
+    innovationCovariance.middleCols<2>(std::array{ LckfKeys::dPosLat, LckfKeys::dPosLon }) *= 1. / SCALE_FACTOR_LAT_LON;
+
+    lckfSolution->mmaeData = { .integrationFrame = _inertialIntegrator.getIntegrationFrame(),
+                               .kfTotalStateVector = _mmaeAttitudeAveraging == MmaeAttitudeAveraging::Euler
+                                                         ? std::variant<LckfKeys::StateVector, LckfKeys::StateVectorQuat>(getTotalStateVectorRPY())
+                                                         : std::variant<LckfKeys::StateVector, LckfKeys::StateVectorQuat>(getTotalStateVectorQuat()),
+                               .kfErrorCovMatrix = _mmaeAttitudeAveraging == MmaeAttitudeAveraging::Euler
+                                                       ? std::variant<LckfKeys::StateMatrix, LckfKeys::StateMatrixQuat>(_kalmanFilter.P)
+                                                       : std::variant<LckfKeys::StateMatrix, LckfKeys::StateMatrixQuat>(calcSolutionCovariance(calcEarthRadius_N(lla_position.x()), calcEarthRadius_E(lla_position.x()))),
+                               .innovationVector = innovation,
+                               .innovationCovMatrix = innovationCovariance,
+                               .innovationVectorBaro = std::nullopt,
+                               .innovationCovMatrixBaro = std::nullopt };
 
     // Closed loop
     _kalmanFilter.x(all).setZero();
@@ -1694,7 +1767,17 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     LOG_DATA("{}: [{}] Sending out updated solution", nameId(), lckfSolution->insTime.toYMDHMS(GPST));
     if (!hasInputPinWithSameTime(lckfSolution->insTime))
     {
+        if (_mmaeData.has_value() && _mmaeData->innovationVectorBaro.has_value() && _mmaeData->innovationCovMatrixBaro.has_value()) // Set BaroHgt innovation, if available at the same time
+        {
+            lckfSolution->mmaeData->innovationVectorBaro = _mmaeData->innovationVectorBaro;
+            lckfSolution->mmaeData->innovationCovMatrixBaro = _mmaeData->innovationCovMatrixBaro;
+            _mmaeData.reset();
+        }
         invokeCallbacks(OUTPUT_PORT_INDEX_SOLUTION, lckfSolution);
+    }
+    else
+    {
+        _mmaeData = lckfSolution->mmaeData;
     }
 }
 
@@ -1739,7 +1822,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Bar
     LOG_DATA("{}:     baroHeightSigmaSquared = {} [m^2]", nameId(), baroHeightSigmaSquared);
 
     // ---------------------------------------------- Correction -------------------------------------------------
-    _kalmanFilter.setMeasurements(std::array{ KFMeas::dHgt });
+    _kalmanFilter.setMeasurements(std::array{ LckfKeys::KFMeas::dHgt });
 
     // 5. Calculate the measurement matrix H_k
     if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED)
@@ -1815,25 +1898,25 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Bar
     // Push out the new data
     auto lckfSolution = std::make_shared<InsGnssLCKFSolution>();
     lckfSolution->insTime = baroHgtObs->insTime;
-    lckfSolution->positionError = _kalmanFilter.x.segment<3>(KFPos);
-    lckfSolution->velocityError = _kalmanFilter.x.segment<3>(KFVel);
-    lckfSolution->attitudeError = _kalmanFilter.x.segment<3>(KFAtt) * (1. / SCALE_FACTOR_ATTITUDE);
+    lckfSolution->positionError = _kalmanFilter.x.segment<3>(LckfKeys::KFPos);
+    lckfSolution->velocityError = _kalmanFilter.x.segment<3>(LckfKeys::KFVel);
+    lckfSolution->attitudeError = _kalmanFilter.x.segment<3>(LckfKeys::KFAtt) * (1. / SCALE_FACTOR_ATTITUDE);
 
     LOG_DATA("{}: Accumulated biases before error has been applied: b_biasAccel.value = {}, b_biasGyro.value = {}", nameId(), _inertialIntegrator.p_getLastAccelerationBias().transpose(), _inertialIntegrator.p_getLastAngularRateBias().transpose());
 
-    _inertialIntegrator.applySensorBiasesIncrements(_lastImuObs->imuPos.p_quat_b() * -_kalmanFilter.x.segment<3>(KFAccBias) * (1. / SCALE_FACTOR_ACCELERATION),
-                                                    _lastImuObs->imuPos.p_quat_b() * -_kalmanFilter.x.segment<3>(KFGyrBias) * (1. / SCALE_FACTOR_ANGULAR_RATE));
-    lckfSolution->b_biasAccel.value = -_inertialIntegrator.p_getLastAccelerationBias();
+    _inertialIntegrator.applySensorBiasesIncrements(_lastImuObs->imuPos.p_quat_b() * -_kalmanFilter.x.segment<3>(LckfKeys::KFAccBias) * (1. / SCALE_FACTOR_ACCELERATION),
+                                                    _lastImuObs->imuPos.p_quat_b() * -_kalmanFilter.x.segment<3>(LckfKeys::KFGyrBias) * (1. / SCALE_FACTOR_ANGULAR_RATE));
+    lckfSolution->b_biasAccel.value = _lastImuObs->imuPos.b_quat_p() * -_inertialIntegrator.p_getLastAccelerationBias();
     lckfSolution->b_biasAccel.stdDev = Eigen::Vector3d{
-        std::sqrt(_kalmanFilter.P(KFStates::AccBiasX, KFStates::AccBiasX) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2))),
-        std::sqrt(_kalmanFilter.P(KFStates::AccBiasY, KFStates::AccBiasY) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2))),
-        std::sqrt(_kalmanFilter.P(KFStates::AccBiasZ, KFStates::AccBiasZ) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2)))
+        std::sqrt(_kalmanFilter.P(LckfKeys::KFStates::AccBiasX, LckfKeys::KFStates::AccBiasX) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2))),
+        std::sqrt(_kalmanFilter.P(LckfKeys::KFStates::AccBiasY, LckfKeys::KFStates::AccBiasY) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2))),
+        std::sqrt(_kalmanFilter.P(LckfKeys::KFStates::AccBiasZ, LckfKeys::KFStates::AccBiasZ) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2)))
     };
-    lckfSolution->b_biasGyro.value = -_inertialIntegrator.p_getLastAngularRateBias();
+    lckfSolution->b_biasGyro.value = _lastImuObs->imuPos.b_quat_p() * -_inertialIntegrator.p_getLastAngularRateBias();
     lckfSolution->b_biasGyro.stdDev = Eigen::Vector3d{
-        std::sqrt(_kalmanFilter.P(KFStates::GyrBiasX, KFStates::GyrBiasX) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2))),
-        std::sqrt(_kalmanFilter.P(KFStates::GyrBiasY, KFStates::GyrBiasY) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2))),
-        std::sqrt(_kalmanFilter.P(KFStates::GyrBiasZ, KFStates::GyrBiasZ) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2)))
+        std::sqrt(_kalmanFilter.P(LckfKeys::KFStates::GyrBiasX, LckfKeys::KFStates::GyrBiasX) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2))),
+        std::sqrt(_kalmanFilter.P(LckfKeys::KFStates::GyrBiasY, LckfKeys::KFStates::GyrBiasY) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2))),
+        std::sqrt(_kalmanFilter.P(LckfKeys::KFStates::GyrBiasZ, LckfKeys::KFStates::GyrBiasZ) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2)))
     };
 
     LOG_DATA("{}: Biases after error has been applied: b_biasAccel.value = {}, b_biasGyro.value = {}", nameId(), lckfSolution->b_biasAccel.value.transpose(), lckfSolution->b_biasGyro.value.transpose());
@@ -1857,16 +1940,39 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Bar
     setSolutionPosVelAttAndCov(lckfSolution, calcEarthRadius_N(lla_position.x()), calcEarthRadius_E(lla_position.x()));
 
     // Closed loop
-    _heightBiasTotal += _kalmanFilter.x(KFStates::HeightBias);
-    _heightScaleTotal += _kalmanFilter.x(KFStates::HeightScale);
-    lckfSolution->heightBias = { .value = _heightBiasTotal, .stdDev = std::sqrt(_kalmanFilter.P(KFStates::HeightBias, KFStates::HeightBias)) };
-    lckfSolution->heightScale = { .value = _heightScaleTotal, .stdDev = std::sqrt(_kalmanFilter.P(KFStates::HeightScale, KFStates::HeightScale)) };
+    _heightBiasTotal += _kalmanFilter.x(LckfKeys::KFStates::HeightBias);
+    _heightScaleTotal += _kalmanFilter.x(LckfKeys::KFStates::HeightScale);
+    lckfSolution->heightBias = { .value = _heightBiasTotal, .stdDev = std::sqrt(_kalmanFilter.P(LckfKeys::KFStates::HeightBias, LckfKeys::KFStates::HeightBias)) };
+    lckfSolution->heightScale = { .value = _heightScaleTotal, .stdDev = std::sqrt(_kalmanFilter.P(LckfKeys::KFStates::HeightScale, LckfKeys::KFStates::HeightScale)) };
+
+    lckfSolution->mmaeData = { .integrationFrame = _inertialIntegrator.getIntegrationFrame(),
+                               .kfTotalStateVector = _mmaeAttitudeAveraging == MmaeAttitudeAveraging::Euler
+                                                         ? std::variant<LckfKeys::StateVector, LckfKeys::StateVectorQuat>(getTotalStateVectorRPY())
+                                                         : std::variant<LckfKeys::StateVector, LckfKeys::StateVectorQuat>(getTotalStateVectorQuat()),
+                               .kfErrorCovMatrix = _mmaeAttitudeAveraging == MmaeAttitudeAveraging::Euler
+                                                       ? std::variant<LckfKeys::StateMatrix, LckfKeys::StateMatrixQuat>(_kalmanFilter.P)
+                                                       : std::variant<LckfKeys::StateMatrix, LckfKeys::StateMatrixQuat>(calcSolutionCovariance(calcEarthRadius_N(lla_position.x()), calcEarthRadius_E(lla_position.x()))),
+                               .innovationVector = std::nullopt,
+                               .innovationCovMatrix = std::nullopt,
+                               .innovationVectorBaro = _kalmanFilter.z,
+                               .innovationCovMatrixBaro = _kalmanFilter.S };
+
     _kalmanFilter.x(all).setZero();
 
     LOG_DATA("{}: [{}] Sending out updated solution", nameId(), lckfSolution->insTime.toYMDHMS(GPST));
     if (!hasInputPinWithSameTime(lckfSolution->insTime))
     {
+        if (_mmaeData.has_value() && _mmaeData->innovationVector.has_value() && _mmaeData->innovationCovMatrix.has_value()) // Set PosVel innovation, if available at the same time
+        {
+            lckfSolution->mmaeData->innovationVector = _mmaeData->innovationVector;
+            lckfSolution->mmaeData->innovationCovMatrix = _mmaeData->innovationCovMatrix;
+            _mmaeData.reset();
+        }
         invokeCallbacks(OUTPUT_PORT_INDEX_SOLUTION, lckfSolution);
+    }
+    else
+    {
+        _mmaeData = lckfSolution->mmaeData;
     }
 }
 
@@ -1895,7 +2001,7 @@ void NAV::LooselyCoupledKF::setSolutionPosVelAttAndCov(const std::shared_ptr<Pos
         lckfSolution->setPosVelAttAndCov_n(lla_position,
                                            _inertialIntegrator.getLatestState().value().get().velocity,
                                            _inertialIntegrator.getLatestState().value().get().attitude,
-                                           J * (J_units * _kalmanFilter.P(KFPosVelAtt, KFPosVelAtt) * J_units.transpose()) * J.transpose());
+                                           J * (J_units * _kalmanFilter.P(LckfKeys::KFPosVelAtt, LckfKeys::KFPosVelAtt) * J_units.transpose()) * J.transpose());
     }
     else // if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::ECEF)
     {
@@ -1904,15 +2010,72 @@ void NAV::LooselyCoupledKF::setSolutionPosVelAttAndCov(const std::shared_ptr<Pos
         lckfSolution->setPosVelAttAndCov_e(_inertialIntegrator.getLatestState().value().get().position,
                                            _inertialIntegrator.getLatestState().value().get().velocity,
                                            _inertialIntegrator.getLatestState().value().get().attitude,
-                                           J * (J_units * _kalmanFilter.P(KFPosVelAtt, KFPosVelAtt) * J_units.transpose()) * J.transpose());
+                                           J * (J_units * _kalmanFilter.P(LckfKeys::KFPosVelAtt, LckfKeys::KFPosVelAtt) * J_units.transpose()) * J.transpose());
     }
+}
+
+NAV::KeyedMatrix<double, NAV::LckfKeys::KFStatesQuat, NAV::LckfKeys::KFStatesQuat, NAV::LckfKeys::KFQuat_COUNT, NAV::LckfKeys::KFQuat_COUNT> NAV::LooselyCoupledKF::calcSolutionCovariance(double R_N, double R_E) const
+{
+    Eigen::Matrix<double, LckfKeys::KFQuat_COUNT, LckfKeys::KFStates_COUNT> J = Eigen::Matrix<double, LckfKeys::KFQuat_COUNT, LckfKeys::KFStates_COUNT>::Zero();
+    J.bottomRightCorner<14, 14>().setIdentity(); // all, but the quaternion states: 18 - 4 = 14
+    J.topLeftCorner<4, 3>() = trafo::covRPY2quatJacobian(_inertialIntegrator.getLatestState().value().get().attitude);
+
+    Eigen::Matrix<double, LckfKeys::KFStates_COUNT, LckfKeys::KFStates_COUNT> J_units = Eigen::Matrix<double, LckfKeys::KFStates_COUNT, LckfKeys::KFStates_COUNT>::Identity();
+    // J_units.topLeftCorner<3, 3>().diagonal().setConstant(std::numbers::pi_v<double> / 180.0); // FIXME: Is this scaling necessary here?
+    if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED)
+    {
+        const Eigen::Vector3d& lla_position = _inertialIntegrator.getLatestState().value().get().position;
+
+        J_units.block<3, 3>(6, 6).diagonal() = 1.0
+                                               / n_F_dr_dv(lla_position.x(),
+                                                           lla_position.z(),
+                                                           R_N,
+                                                           R_E)
+                                                     .diagonal()
+                                                     .array();
+
+        J_units.block<2, 2>(6, 6).diagonal() *= 1.0 / SCALE_FACTOR_LAT_LON;
+    }
+
+    KeyedMatrix<double, LckfKeys::KFStatesQuat, LckfKeys::KFStatesQuat, LckfKeys::KFQuat_COUNT, LckfKeys::KFQuat_COUNT> covMatrix(Eigen::Matrix<double, LckfKeys::KFQuat_COUNT, LckfKeys::KFQuat_COUNT>::Zero(), LckfKeys::StatesQuat, LckfKeys::StatesQuat);
+    covMatrix.block<18>(LckfKeys::StatesQuat, LckfKeys::StatesQuat) = J * (J_units * _kalmanFilter.P(all, all) * J_units.transpose()) * J.transpose(); // TODO: Check if Quaternion order in J matches that in 'LckfKeys::StatesQuat'
+
+    return covMatrix;
+}
+
+NAV::KeyedVector<double, NAV::LckfKeys::KFStates, NAV::LckfKeys::KFStates_COUNT> NAV::LooselyCoupledKF::getTotalStateVectorRPY() const
+{
+    KeyedVector<double, LckfKeys::KFStates, LckfKeys::KFStates_COUNT> totalStateVector(Eigen::Matrix<double, LckfKeys::KFStates_COUNT, 1>::Zero(), LckfKeys::States);
+    totalStateVector.segment(LckfKeys::KFAtt) = trafo::quat2eulerZYX(_inertialIntegrator.getLatestState().value().get().attitude);
+    totalStateVector.segment(LckfKeys::KFVel) = _inertialIntegrator.getLatestState().value().get().velocity;
+    totalStateVector.segment(LckfKeys::KFPos) = _inertialIntegrator.getLatestState().value().get().position;
+    totalStateVector.segment(LckfKeys::KFAccBias) = _inertialIntegrator.getLatestState().value().get().p_biasAcceleration;
+    totalStateVector.segment(LckfKeys::KFGyrBias) = _inertialIntegrator.getLatestState().value().get().p_biasAngularRate;
+    totalStateVector(LckfKeys::HeightBias) = _heightBiasTotal;
+    totalStateVector(LckfKeys::HeightScale) = _heightScaleTotal;
+
+    return totalStateVector;
+}
+
+NAV::KeyedVector<double, NAV::LckfKeys::KFStatesQuat, NAV::LckfKeys::KFQuat_COUNT> NAV::LooselyCoupledKF::getTotalStateVectorQuat() const
+{
+    KeyedVector<double, LckfKeys::KFStatesQuat, LckfKeys::KFQuat_COUNT> totalStateVector(Eigen::Matrix<double, LckfKeys::KFQuat_COUNT, 1>::Zero(), LckfKeys::StatesQuat);
+    totalStateVector.segment(LckfKeys::KFAttQuat) = _inertialIntegrator.getLatestState().value().get().attitude.coeffs();
+    totalStateVector.segment(LckfKeys::KFVelQuat) = _inertialIntegrator.getLatestState().value().get().velocity;
+    totalStateVector.segment(LckfKeys::KFPosQuat) = _inertialIntegrator.getLatestState().value().get().position;
+    totalStateVector.segment(LckfKeys::KFAccBiasQuat) = _inertialIntegrator.getLatestState().value().get().p_biasAcceleration;
+    totalStateVector.segment(LckfKeys::KFGyrBiasQuat) = _inertialIntegrator.getLatestState().value().get().p_biasAngularRate;
+    totalStateVector(LckfKeys::QHeightBias) = _heightBiasTotal;
+    totalStateVector(LckfKeys::QHeightScale) = _heightScaleTotal;
+
+    return totalStateVector;
 }
 
 // ###########################################################################################################
 //                                             System matrix 𝐅
 // ###########################################################################################################
 
-NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>
+NAV::KeyedMatrix<double, NAV::LckfKeys::KFStates, NAV::LckfKeys::KFStates, NAV::LckfKeys::KFStates_COUNT, NAV::LckfKeys::KFStates_COUNT>
     NAV::LooselyCoupledKF::n_systemMatrix_F(const Eigen::Quaterniond& n_Quat_b,
                                             const Eigen::Vector3d& b_specForce_ib,
                                             const Eigen::Vector3d& n_omega_in,
@@ -1933,46 +2096,46 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
 
     // System matrix 𝐅
     // Math: \mathbf{F}^n = \begin{pmatrix} \mathbf{F}_{\dot{\psi},\psi}^n & \mathbf{F}_{\dot{\psi},\delta v}^n & \mathbf{F}_{\dot{\psi},\delta r}^n & \mathbf{0}_3 & \mathbf{C}_b^n \\ \mathbf{F}_{\delta \dot{v},\psi}^n & \mathbf{F}_{\delta \dot{v},\delta v}^n & \mathbf{F}_{\delta \dot{v},\delta r}^n & \mathbf{C}_b^n & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{F}_{\delta \dot{r},\delta v}^n & \mathbf{F}_{\delta \dot{r},\delta r}^n & \mathbf{0}_3 & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 \vee -\mathbf{\beta} & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 \vee -\mathbf{\beta} \end{pmatrix}
-    KeyedMatrix<double, KFStates, KFStates, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>
-        F(Eigen::Matrix<double, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>::Zero(), States);
+    KeyedMatrix<double, LckfKeys::KFStates, LckfKeys::KFStates, NAV::LckfKeys::KFStates_COUNT, NAV::LckfKeys::KFStates_COUNT>
+        F(Eigen::Matrix<double, NAV::LckfKeys::KFStates_COUNT, NAV::LckfKeys::KFStates_COUNT>::Zero(), LckfKeys::States);
 
-    F.block<3>(KFAtt, KFAtt) = n_F_dpsi_dpsi(n_omega_in);
-    F.block<3>(KFAtt, KFVel) = n_F_dpsi_dv(latitude, altitude, R_N, R_E);
-    F.block<3>(KFAtt, KFPos) = n_F_dpsi_dr(latitude, altitude, n_velocity, R_N, R_E);
-    F.block<3>(KFAtt, KFGyrBias) = n_F_dpsi_dw(n_Quat_b.toRotationMatrix());
-    F.block<3>(KFVel, KFAtt) = n_F_dv_dpsi(n_Quat_b * b_specForce_ib);
-    F.block<3>(KFVel, KFVel) = n_F_dv_dv(n_velocity, latitude, altitude, R_N, R_E);
-    F.block<3>(KFVel, KFPos) = n_F_dv_dr(n_velocity, latitude, altitude, R_N, R_E, g_0, r_eS_e);
-    F.block<3>(KFVel, KFAccBias) = n_F_dv_df(n_Quat_b.toRotationMatrix());
-    F.block<3>(KFPos, KFVel) = n_F_dr_dv(latitude, altitude, R_N, R_E);
-    F.block<3>(KFPos, KFPos) = n_F_dr_dr(n_velocity, latitude, altitude, R_N, R_E);
+    F.block<3>(LckfKeys::KFAtt, LckfKeys::KFAtt) = n_F_dpsi_dpsi(n_omega_in);
+    F.block<3>(LckfKeys::KFAtt, LckfKeys::KFVel) = n_F_dpsi_dv(latitude, altitude, R_N, R_E);
+    F.block<3>(LckfKeys::KFAtt, LckfKeys::KFPos) = n_F_dpsi_dr(latitude, altitude, n_velocity, R_N, R_E);
+    F.block<3>(LckfKeys::KFAtt, LckfKeys::KFGyrBias) = n_F_dpsi_dw(n_Quat_b.toRotationMatrix());
+    F.block<3>(LckfKeys::KFVel, LckfKeys::KFAtt) = n_F_dv_dpsi(n_Quat_b * b_specForce_ib);
+    F.block<3>(LckfKeys::KFVel, LckfKeys::KFVel) = n_F_dv_dv(n_velocity, latitude, altitude, R_N, R_E);
+    F.block<3>(LckfKeys::KFVel, LckfKeys::KFPos) = n_F_dv_dr(n_velocity, latitude, altitude, R_N, R_E, g_0, r_eS_e);
+    F.block<3>(LckfKeys::KFVel, LckfKeys::KFAccBias) = n_F_dv_df(n_Quat_b.toRotationMatrix());
+    F.block<3>(LckfKeys::KFPos, LckfKeys::KFVel) = n_F_dr_dv(latitude, altitude, R_N, R_E);
+    F.block<3>(LckfKeys::KFPos, LckfKeys::KFPos) = n_F_dr_dr(n_velocity, latitude, altitude, R_N, R_E);
     if (_qCalculationAlgorithm == QCalculationAlgorithm::VanLoan)
     {
-        F.block<3>(KFAccBias, KFAccBias) = n_F_df_df(_randomProcessAccel == RandomProcess::RandomWalk ? Eigen::Vector3d::Zero() : beta_bad);
-        F.block<3>(KFGyrBias, KFGyrBias) = n_F_dw_dw(_randomProcessGyro == RandomProcess::RandomWalk ? Eigen::Vector3d::Zero() : beta_bgd);
+        F.block<3>(LckfKeys::KFAccBias, LckfKeys::KFAccBias) = n_F_df_df(_randomProcessAccel == RandomProcess::RandomWalk ? Eigen::Vector3d::Zero() : beta_bad);
+        F.block<3>(LckfKeys::KFGyrBias, LckfKeys::KFGyrBias) = n_F_dw_dw(_randomProcessGyro == RandomProcess::RandomWalk ? Eigen::Vector3d::Zero() : beta_bgd);
     }
 
-    F.middleRows<3>(KFAtt) *= SCALE_FACTOR_ATTITUDE; // 𝜓' [deg / s] = 180/π * ... [rad / s]
-    F.middleCols<3>(KFAtt) *= 1. / SCALE_FACTOR_ATTITUDE;
+    F.middleRows<3>(LckfKeys::KFAtt) *= SCALE_FACTOR_ATTITUDE; // 𝜓' [deg / s] = 180/π * ... [rad / s]
+    F.middleCols<3>(LckfKeys::KFAtt) *= 1. / SCALE_FACTOR_ATTITUDE;
 
     // F.middleRows<3>(Vel) *= 1.; // 𝛿v' [m / s^2] = 1 * [m / s^2]
     // F.middleCols<3>(Vel) *= 1. / 1.;
 
-    F.middleRows<2>(std::array{ PosLat, PosLon }) *= SCALE_FACTOR_LAT_LON; // 𝛿ϕ' [pseudometre / s] = R0 * [rad / s]
-    F.middleCols<2>(std::array{ PosLat, PosLon }) *= 1. / SCALE_FACTOR_LAT_LON;
+    F.middleRows<2>(std::array{ LckfKeys::PosLat, LckfKeys::PosLon }) *= SCALE_FACTOR_LAT_LON; // 𝛿ϕ' [pseudometre / s] = R0 * [rad / s]
+    F.middleCols<2>(std::array{ LckfKeys::PosLat, LckfKeys::PosLon }) *= 1. / SCALE_FACTOR_LAT_LON;
     // F.row(PosAlt) *= 1.; // 𝛿h' [m / s] = 1 * [m / s]
     // F.col(PosAlt) *= 1. / 1.;
 
-    F.middleRows<3>(KFAccBias) *= SCALE_FACTOR_ACCELERATION; // 𝛿f' [mg / s] = 1e3 / g * [m / s^3]
-    F.middleCols<3>(KFAccBias) *= 1. / SCALE_FACTOR_ACCELERATION;
+    F.middleRows<3>(LckfKeys::KFAccBias) *= SCALE_FACTOR_ACCELERATION; // 𝛿f' [mg / s] = 1e3 / g * [m / s^3]
+    F.middleCols<3>(LckfKeys::KFAccBias) *= 1. / SCALE_FACTOR_ACCELERATION;
 
-    F.middleRows<3>(KFGyrBias) *= SCALE_FACTOR_ANGULAR_RATE; // 𝛿ω' [mrad / s^2] = 1e3 * [rad / s^2]
-    F.middleCols<3>(KFGyrBias) *= 1. / SCALE_FACTOR_ANGULAR_RATE;
+    F.middleRows<3>(LckfKeys::KFGyrBias) *= SCALE_FACTOR_ANGULAR_RATE; // 𝛿ω' [mrad / s^2] = 1e3 * [rad / s^2]
+    F.middleCols<3>(LckfKeys::KFGyrBias) *= 1. / SCALE_FACTOR_ANGULAR_RATE;
 
     return F;
 }
 
-NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>
+NAV::KeyedMatrix<double, NAV::LckfKeys::KFStates, NAV::LckfKeys::KFStates, NAV::LckfKeys::KFStates_COUNT, NAV::LckfKeys::KFStates_COUNT>
     NAV::LooselyCoupledKF::e_systemMatrix_F(const Eigen::Quaterniond& e_Quat_b,
                                             const Eigen::Vector3d& b_specForce_ib,
                                             const Eigen::Vector3d& e_position,
@@ -1987,24 +2150,24 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
 
     // System matrix 𝐅
     // Math: \mathbf{F}^e = \begin{pmatrix} \mathbf{F}_{\dot{\psi},\psi}^n & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{C}_b^e \\ \mathbf{F}_{\delta \dot{v},\psi}^n & \mathbf{F}_{\delta \dot{v},\delta v}^n & \mathbf{F}_{\delta \dot{v},\delta r}^n & \mathbf{C}_b^e & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{F}_{\delta \dot{r},\delta v}^n & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 \vee -\mathbf{\beta} & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 \vee -\mathbf{\beta} \end{pmatrix}
-    KeyedMatrix<double, KFStates, KFStates, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>
-        F(Eigen::Matrix<double, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>::Zero(), States);
+    KeyedMatrix<double, LckfKeys::KFStates, LckfKeys::KFStates, NAV::LckfKeys::KFStates_COUNT, NAV::LckfKeys::KFStates_COUNT>
+        F(Eigen::Matrix<double, NAV::LckfKeys::KFStates_COUNT, NAV::LckfKeys::KFStates_COUNT>::Zero(), LckfKeys::States);
 
-    F.block<3>(KFAtt, KFAtt) = e_F_dpsi_dpsi(e_omega_ie.z());
-    F.block<3>(KFAtt, KFGyrBias) = e_F_dpsi_dw(e_Quat_b.toRotationMatrix());
-    F.block<3>(KFVel, KFAtt) = e_F_dv_dpsi(e_Quat_b * b_specForce_ib);
-    F.block<3>(KFVel, KFVel) = e_F_dv_dv<double>(e_omega_ie.z());
-    F.block<3>(KFVel, KFPos) = e_F_dv_dr(e_position, e_gravitation, r_eS_e, e_omega_ie);
-    F.block<3>(KFVel, KFAccBias) = e_F_dv_df_b(e_Quat_b.toRotationMatrix());
-    F.block<3>(KFPos, KFVel) = e_F_dr_dv<double>();
+    F.block<3>(LckfKeys::KFAtt, LckfKeys::KFAtt) = e_F_dpsi_dpsi(e_omega_ie.z());
+    F.block<3>(LckfKeys::KFAtt, LckfKeys::KFGyrBias) = e_F_dpsi_dw(e_Quat_b.toRotationMatrix());
+    F.block<3>(LckfKeys::KFVel, LckfKeys::KFAtt) = e_F_dv_dpsi(e_Quat_b * b_specForce_ib);
+    F.block<3>(LckfKeys::KFVel, LckfKeys::KFVel) = e_F_dv_dv<double>(e_omega_ie.z());
+    F.block<3>(LckfKeys::KFVel, LckfKeys::KFPos) = e_F_dv_dr(e_position, e_gravitation, r_eS_e, e_omega_ie);
+    F.block<3>(LckfKeys::KFVel, LckfKeys::KFAccBias) = e_F_dv_df_b(e_Quat_b.toRotationMatrix());
+    F.block<3>(LckfKeys::KFPos, LckfKeys::KFVel) = e_F_dr_dv<double>();
     if (_qCalculationAlgorithm == QCalculationAlgorithm::VanLoan)
     {
-        F.block<3>(KFAccBias, KFAccBias) = e_F_df_df(_randomProcessAccel == RandomProcess::RandomWalk ? Eigen::Vector3d::Zero() : beta_bad);
-        F.block<3>(KFGyrBias, KFGyrBias) = e_F_dw_dw(_randomProcessGyro == RandomProcess::RandomWalk ? Eigen::Vector3d::Zero() : beta_bgd);
+        F.block<3>(LckfKeys::KFAccBias, LckfKeys::KFAccBias) = e_F_df_df(_randomProcessAccel == RandomProcess::RandomWalk ? Eigen::Vector3d::Zero() : beta_bad);
+        F.block<3>(LckfKeys::KFGyrBias, LckfKeys::KFGyrBias) = e_F_dw_dw(_randomProcessGyro == RandomProcess::RandomWalk ? Eigen::Vector3d::Zero() : beta_bgd);
     }
 
-    F.middleRows<3>(KFAtt) *= SCALE_FACTOR_ATTITUDE; // 𝜓' [deg / s] = 180/π * ... [rad / s]
-    F.middleCols<3>(KFAtt) *= 1. / SCALE_FACTOR_ATTITUDE;
+    F.middleRows<3>(LckfKeys::KFAtt) *= SCALE_FACTOR_ATTITUDE; // 𝜓' [deg / s] = 180/π * ... [rad / s]
+    F.middleCols<3>(LckfKeys::KFAtt) *= 1. / SCALE_FACTOR_ATTITUDE;
 
     // F.middleRows<3>(Vel) *= 1.; // 𝛿v' [m / s^2] = 1 * [m / s^2]
     // F.middleCols<3>(Vel) *= 1. / 1.;
@@ -2012,11 +2175,11 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
     // F.middleRows<3>(Pos) *= 1.; // 𝛿r' [m / s] = 1 * [m / s]
     // F.middleCols<3>(Pos) *= 1. / 1.;
 
-    F.middleRows<3>(KFAccBias) *= SCALE_FACTOR_ACCELERATION; // 𝛿f' [mg / s] = 1e3 / g * [m / s^3]
-    F.middleCols<3>(KFAccBias) *= 1. / SCALE_FACTOR_ACCELERATION;
+    F.middleRows<3>(LckfKeys::KFAccBias) *= SCALE_FACTOR_ACCELERATION; // 𝛿f' [mg / s] = 1e3 / g * [m / s^3]
+    F.middleCols<3>(LckfKeys::KFAccBias) *= 1. / SCALE_FACTOR_ACCELERATION;
 
-    F.middleRows<3>(KFGyrBias) *= SCALE_FACTOR_ANGULAR_RATE; // 𝛿ω' [mrad / s^2] = 1e3 * [rad / s^2]
-    F.middleCols<3>(KFGyrBias) *= 1. / SCALE_FACTOR_ANGULAR_RATE;
+    F.middleRows<3>(LckfKeys::KFGyrBias) *= SCALE_FACTOR_ANGULAR_RATE; // 𝛿ω' [mrad / s^2] = 1e3 * [rad / s^2]
+    F.middleCols<3>(LckfKeys::KFGyrBias) *= 1. / SCALE_FACTOR_ANGULAR_RATE;
 
     return F;
 }
@@ -2026,33 +2189,33 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
 //                                     System noise covariance matrix 𝐐
 // ###########################################################################################################
 
-NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>
+NAV::KeyedMatrix<double, NAV::LckfKeys::KFStates, NAV::LckfKeys::KFStates, NAV::LckfKeys::KFStates_COUNT, NAV::LckfKeys::KFStates_COUNT>
     NAV::LooselyCoupledKF::noiseInputMatrix_G(const Eigen::Quaterniond& ien_Quat_b)
 {
     // DCM matrix from body to navigation frame
     Eigen::Matrix3d ien_Dcm_b = ien_Quat_b.toRotationMatrix();
 
     // Math: \mathbf{G}_{a} = \begin{bmatrix} -\mathbf{C}_b^{i,e,n} & 0 & 0 & 0 \\ 0 & \mathbf{C}_b^{i,e,n} & 0 & 0 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & \mathbf{I}_3 & 0 \\ 0 & 0 & 0 & \mathbf{I}_3 \end{bmatrix}
-    KeyedMatrix<double, KFStates, KFStates, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>
-        G(Eigen::Matrix<double, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>::Zero(), States, States);
+    KeyedMatrix<double, LckfKeys::KFStates, LckfKeys::KFStates, NAV::LckfKeys::KFStates_COUNT, NAV::LckfKeys::KFStates_COUNT>
+        G(Eigen::Matrix<double, NAV::LckfKeys::KFStates_COUNT, NAV::LckfKeys::KFStates_COUNT>::Zero(), LckfKeys::States, LckfKeys::States);
 
-    G.block<3>(KFAtt, KFAtt) = SCALE_FACTOR_ATTITUDE * ien_Dcm_b;
-    G.block<3>(KFVel, KFVel) = ien_Dcm_b;
-    G.block<3>(KFAccBias, KFAccBias) = SCALE_FACTOR_ACCELERATION * Eigen::Matrix3d::Identity();
-    G.block<3>(KFGyrBias, KFGyrBias) = SCALE_FACTOR_ANGULAR_RATE * Eigen::Matrix3d::Identity();
-    G(KFStates::HeightBias, KFStates::HeightBias) = 1.0;
-    G(KFStates::HeightScale, KFStates::HeightScale) = 1.0;
+    G.block<3>(LckfKeys::KFAtt, LckfKeys::KFAtt) = SCALE_FACTOR_ATTITUDE * ien_Dcm_b;
+    G.block<3>(LckfKeys::KFVel, LckfKeys::KFVel) = ien_Dcm_b;
+    G.block<3>(LckfKeys::KFAccBias, LckfKeys::KFAccBias) = SCALE_FACTOR_ACCELERATION * Eigen::Matrix3d::Identity();
+    G.block<3>(LckfKeys::KFGyrBias, LckfKeys::KFGyrBias) = SCALE_FACTOR_ANGULAR_RATE * Eigen::Matrix3d::Identity();
+    G(LckfKeys::KFStates::HeightBias, LckfKeys::KFStates::HeightBias) = 1.0;
+    G(LckfKeys::KFStates::HeightScale, LckfKeys::KFStates::HeightScale) = 1.0;
     return G;
 }
 
-Eigen::Matrix<double, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>
+Eigen::Matrix<double, NAV::LckfKeys::KFStates_COUNT, NAV::LckfKeys::KFStates_COUNT>
     NAV::LooselyCoupledKF::noiseScaleMatrix_W(const Eigen::Vector3d& sigma_ra, const Eigen::Vector3d& sigma_rg,
                                               const Eigen::Vector3d& sigma_bad, const Eigen::Vector3d& sigma_bgd,
                                               const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
                                               const double& sigma_heightBias, const double& sigma_heightScale)
 {
-    Eigen::Matrix<double, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT> W =
-        Eigen::Matrix<double, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>::Zero();
+    Eigen::Matrix<double, NAV::LckfKeys::KFStates_COUNT, NAV::LckfKeys::KFStates_COUNT> W =
+        Eigen::Matrix<double, NAV::LckfKeys::KFStates_COUNT, NAV::LckfKeys::KFStates_COUNT>::Zero();
 
     W.diagonal() << sigma_rg.array().square(),
         sigma_ra.array().square(),
@@ -2065,7 +2228,7 @@ Eigen::Matrix<double, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupled
     return W;
 }
 
-NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>
+NAV::KeyedMatrix<double, NAV::LckfKeys::KFStates, NAV::LckfKeys::KFStates, NAV::LckfKeys::KFStates_COUNT, NAV::LckfKeys::KFStates_COUNT>
     NAV::LooselyCoupledKF::n_systemNoiseCovarianceMatrix_Q(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
                                                            const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
                                                            const double& sigma_heightBias, const double& sigma_heightScale,
@@ -2081,47 +2244,47 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
 
     Eigen::Matrix3d b_Dcm_n = n_Dcm_b.transpose();
 
-    KeyedMatrix<double, KFStates, KFStates, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>
-        Q(Eigen::Matrix<double, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>::Zero(), States, States);
-    Q.block<3>(KFAtt, KFAtt) = Q_psi_psi(S_rg, S_bgd, tau_s);                              // Q_11
-    Q.block<3>(KFVel, KFAtt) = ien_Q_dv_psi(S_rg, S_bgd, n_F_21, tau_s);                   // Q_21
-    Q.block<3>(KFVel, KFVel) = ien_Q_dv_dv(S_ra, S_bad, S_rg, S_bgd, n_F_21, tau_s);       // Q_22
-    Q.block<3>(KFVel, KFGyrBias) = ien_Q_dv_domega(S_bgd, n_F_21, n_Dcm_b, tau_s);         // Q_25
-    Q.block<3>(KFPos, KFAtt) = n_Q_dr_psi(S_rg, S_bgd, n_F_21, T_rn_p, tau_s);             // Q_31
-    Q.block<3>(KFPos, KFVel) = n_Q_dr_dv(S_ra, S_bad, S_rg, S_bgd, n_F_21, T_rn_p, tau_s); // Q_32
-    Q.block<3>(KFPos, KFPos) = n_Q_dr_dr(S_ra, S_bad, S_rg, S_bgd, n_F_21, T_rn_p, tau_s); // Q_33
-    Q.block<3>(KFPos, KFAccBias) = n_Q_dr_df(S_bgd, T_rn_p, n_Dcm_b, tau_s);               // Q_34
-    Q.block<3>(KFPos, KFGyrBias) = n_Q_dr_domega(S_bgd, n_F_21, T_rn_p, n_Dcm_b, tau_s);   // Q_35
-    Q.block<3>(KFAccBias, KFVel) = Q_df_dv(S_bad, b_Dcm_n, tau_s);                         // Q_42
-    Q.block<3>(KFAccBias, KFAccBias) = Q_df_df(S_bad, tau_s);                              // Q_44
-    Q.block<3>(KFGyrBias, KFAtt) = Q_domega_psi(S_bgd, b_Dcm_n, tau_s);                    // Q_51
-    Q.block<3>(KFGyrBias, KFGyrBias) = Q_domega_domega(S_bgd, tau_s);                      // Q_55
+    KeyedMatrix<double, LckfKeys::KFStates, LckfKeys::KFStates, NAV::LckfKeys::KFStates_COUNT, NAV::LckfKeys::KFStates_COUNT>
+        Q(Eigen::Matrix<double, NAV::LckfKeys::KFStates_COUNT, NAV::LckfKeys::KFStates_COUNT>::Zero(), LckfKeys::States, LckfKeys::States);
+    Q.block<3>(LckfKeys::KFAtt, LckfKeys::KFAtt) = Q_psi_psi(S_rg, S_bgd, tau_s);                              // Q_11
+    Q.block<3>(LckfKeys::KFVel, LckfKeys::KFAtt) = ien_Q_dv_psi(S_rg, S_bgd, n_F_21, tau_s);                   // Q_21
+    Q.block<3>(LckfKeys::KFVel, LckfKeys::KFVel) = ien_Q_dv_dv(S_ra, S_bad, S_rg, S_bgd, n_F_21, tau_s);       // Q_22
+    Q.block<3>(LckfKeys::KFVel, LckfKeys::KFGyrBias) = ien_Q_dv_domega(S_bgd, n_F_21, n_Dcm_b, tau_s);         // Q_25
+    Q.block<3>(LckfKeys::KFPos, LckfKeys::KFAtt) = n_Q_dr_psi(S_rg, S_bgd, n_F_21, T_rn_p, tau_s);             // Q_31
+    Q.block<3>(LckfKeys::KFPos, LckfKeys::KFVel) = n_Q_dr_dv(S_ra, S_bad, S_rg, S_bgd, n_F_21, T_rn_p, tau_s); // Q_32
+    Q.block<3>(LckfKeys::KFPos, LckfKeys::KFPos) = n_Q_dr_dr(S_ra, S_bad, S_rg, S_bgd, n_F_21, T_rn_p, tau_s); // Q_33
+    Q.block<3>(LckfKeys::KFPos, LckfKeys::KFAccBias) = n_Q_dr_df(S_bgd, T_rn_p, n_Dcm_b, tau_s);               // Q_34
+    Q.block<3>(LckfKeys::KFPos, LckfKeys::KFGyrBias) = n_Q_dr_domega(S_bgd, n_F_21, T_rn_p, n_Dcm_b, tau_s);   // Q_35
+    Q.block<3>(LckfKeys::KFAccBias, LckfKeys::KFVel) = Q_df_dv(S_bad, b_Dcm_n, tau_s);                         // Q_42
+    Q.block<3>(LckfKeys::KFAccBias, LckfKeys::KFAccBias) = Q_df_df(S_bad, tau_s);                              // Q_44
+    Q.block<3>(LckfKeys::KFGyrBias, LckfKeys::KFAtt) = Q_domega_psi(S_bgd, b_Dcm_n, tau_s);                    // Q_51
+    Q.block<3>(LckfKeys::KFGyrBias, LckfKeys::KFGyrBias) = Q_domega_domega(S_bgd, tau_s);                      // Q_55
 
-    Q.block<3>(KFAtt, KFVel) = Q.block<3>(KFVel, KFAtt).transpose();         // Q_21^T
-    Q.block<3>(KFAtt, KFPos) = Q.block<3>(KFPos, KFAtt).transpose();         // Q_31^T
-    Q.block<3>(KFVel, KFPos) = Q.block<3>(KFPos, KFVel).transpose();         // Q_32^T
-    Q.block<3>(KFAccBias, KFPos) = Q.block<3>(KFPos, KFAccBias).transpose(); // Q_34^T
-    Q.block<3>(KFGyrBias, KFVel) = Q.block<3>(KFVel, KFGyrBias).transpose(); // Q_25^T
-    Q.block<3>(KFGyrBias, KFPos) = Q.block<3>(KFPos, KFGyrBias).transpose(); // Q_35^T
-    Q.block<3>(KFVel, KFAccBias) = Q.block<3>(KFAccBias, KFVel).transpose(); // Q_42^T
-    Q.block<3>(KFAtt, KFGyrBias) = Q.block<3>(KFGyrBias, KFAtt).transpose(); // Q_51^T
-    Q(KFStates::HeightBias, KFStates::HeightBias) = sigma_heightBias * sigma_heightBias * tau_s;
-    Q(KFStates::HeightScale, KFStates::HeightScale) = sigma_heightScale * sigma_heightScale * tau_s;
+    Q.block<3>(LckfKeys::KFAtt, LckfKeys::KFVel) = Q.block<3>(LckfKeys::KFVel, LckfKeys::KFAtt).transpose();         // Q_21^T
+    Q.block<3>(LckfKeys::KFAtt, LckfKeys::KFPos) = Q.block<3>(LckfKeys::KFPos, LckfKeys::KFAtt).transpose();         // Q_31^T
+    Q.block<3>(LckfKeys::KFVel, LckfKeys::KFPos) = Q.block<3>(LckfKeys::KFPos, LckfKeys::KFVel).transpose();         // Q_32^T
+    Q.block<3>(LckfKeys::KFAccBias, LckfKeys::KFPos) = Q.block<3>(LckfKeys::KFPos, LckfKeys::KFAccBias).transpose(); // Q_34^T
+    Q.block<3>(LckfKeys::KFGyrBias, LckfKeys::KFVel) = Q.block<3>(LckfKeys::KFVel, LckfKeys::KFGyrBias).transpose(); // Q_25^T
+    Q.block<3>(LckfKeys::KFGyrBias, LckfKeys::KFPos) = Q.block<3>(LckfKeys::KFPos, LckfKeys::KFGyrBias).transpose(); // Q_35^T
+    Q.block<3>(LckfKeys::KFVel, LckfKeys::KFAccBias) = Q.block<3>(LckfKeys::KFAccBias, LckfKeys::KFVel).transpose(); // Q_42^T
+    Q.block<3>(LckfKeys::KFAtt, LckfKeys::KFGyrBias) = Q.block<3>(LckfKeys::KFGyrBias, LckfKeys::KFAtt).transpose(); // Q_51^T
+    Q(LckfKeys::KFStates::HeightBias, LckfKeys::KFStates::HeightBias) = sigma_heightBias * sigma_heightBias * tau_s;
+    Q(LckfKeys::KFStates::HeightScale, LckfKeys::KFStates::HeightScale) = sigma_heightScale * sigma_heightScale * tau_s;
 
-    Q.middleRows<3>(KFAtt) *= SCALE_FACTOR_ATTITUDE;
-    Q.middleRows<2>(std::array{ PosLat, PosLon }) *= SCALE_FACTOR_LAT_LON;
-    Q.middleRows<3>(KFAccBias) *= SCALE_FACTOR_ACCELERATION;
-    Q.middleRows<3>(KFGyrBias) *= SCALE_FACTOR_ANGULAR_RATE;
+    Q.middleRows<3>(LckfKeys::KFAtt) *= SCALE_FACTOR_ATTITUDE;
+    Q.middleRows<2>(std::array{ LckfKeys::PosLat, LckfKeys::PosLon }) *= SCALE_FACTOR_LAT_LON;
+    Q.middleRows<3>(LckfKeys::KFAccBias) *= SCALE_FACTOR_ACCELERATION;
+    Q.middleRows<3>(LckfKeys::KFGyrBias) *= SCALE_FACTOR_ANGULAR_RATE;
 
-    Q.middleCols<3>(KFAtt) *= SCALE_FACTOR_ATTITUDE;
-    Q.middleCols<2>(std::array{ PosLat, PosLon }) *= SCALE_FACTOR_LAT_LON;
-    Q.middleCols<3>(KFAccBias) *= SCALE_FACTOR_ACCELERATION;
-    Q.middleCols<3>(KFGyrBias) *= SCALE_FACTOR_ANGULAR_RATE;
+    Q.middleCols<3>(LckfKeys::KFAtt) *= SCALE_FACTOR_ATTITUDE;
+    Q.middleCols<2>(std::array{ LckfKeys::PosLat, LckfKeys::PosLon }) *= SCALE_FACTOR_LAT_LON;
+    Q.middleCols<3>(LckfKeys::KFAccBias) *= SCALE_FACTOR_ACCELERATION;
+    Q.middleCols<3>(LckfKeys::KFGyrBias) *= SCALE_FACTOR_ANGULAR_RATE;
 
     return Q;
 }
 
-NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>
+NAV::KeyedMatrix<double, NAV::LckfKeys::KFStates, NAV::LckfKeys::KFStates, NAV::LckfKeys::KFStates_COUNT, NAV::LckfKeys::KFStates_COUNT>
     NAV::LooselyCoupledKF::e_systemNoiseCovarianceMatrix_Q(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
                                                            const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
                                                            const double& sigma_heightBias, const double& sigma_heightScale,
@@ -2137,40 +2300,40 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
 
     Eigen::Matrix3d b_Dcm_e = e_Dcm_b.transpose();
 
-    KeyedMatrix<double, KFStates, KFStates, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>
-        Q(Eigen::Matrix<double, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>::Zero(), States, States);
-    Q.block<3>(KFAtt, KFAtt) = Q_psi_psi(S_rg, S_bgd, tau_s);                        // Q_11
-    Q.block<3>(KFVel, KFAtt) = ien_Q_dv_psi(S_rg, S_bgd, e_F_21, tau_s);             // Q_21
-    Q.block<3>(KFVel, KFVel) = ien_Q_dv_dv(S_ra, S_bad, S_rg, S_bgd, e_F_21, tau_s); // Q_22
-    Q.block<3>(KFVel, KFGyrBias) = ien_Q_dv_domega(S_bgd, e_F_21, e_Dcm_b, tau_s);   // Q_25
-    Q.block<3>(KFPos, KFAtt) = ie_Q_dr_psi(S_rg, S_bgd, e_F_21, tau_s);              // Q_31
-    Q.block<3>(KFPos, KFVel) = ie_Q_dr_dv(S_ra, S_bad, S_rg, S_bgd, e_F_21, tau_s);  // Q_32
-    Q.block<3>(KFPos, KFPos) = ie_Q_dr_dr(S_ra, S_bad, S_rg, S_bgd, e_F_21, tau_s);  // Q_33
-    Q.block<3>(KFPos, KFAccBias) = ie_Q_dr_df(S_bgd, e_Dcm_b, tau_s);                // Q_34
-    Q.block<3>(KFPos, KFGyrBias) = ie_Q_dr_domega(S_bgd, e_F_21, e_Dcm_b, tau_s);    // Q_35
-    Q.block<3>(KFAccBias, KFVel) = Q_df_dv(S_bad, b_Dcm_e, tau_s);                   // Q_42
-    Q.block<3>(KFAccBias, KFAccBias) = Q_df_df(S_bad, tau_s);                        // Q_44
-    Q.block<3>(KFGyrBias, KFAtt) = Q_domega_psi(S_bgd, b_Dcm_e, tau_s);              // Q_51
-    Q.block<3>(KFGyrBias, KFGyrBias) = Q_domega_domega(S_bgd, tau_s);                // Q_55
+    KeyedMatrix<double, LckfKeys::KFStates, LckfKeys::KFStates, NAV::LckfKeys::KFStates_COUNT, NAV::LckfKeys::KFStates_COUNT>
+        Q(Eigen::Matrix<double, NAV::LckfKeys::KFStates_COUNT, NAV::LckfKeys::KFStates_COUNT>::Zero(), LckfKeys::States, LckfKeys::States);
+    Q.block<3>(LckfKeys::KFAtt, LckfKeys::KFAtt) = Q_psi_psi(S_rg, S_bgd, tau_s);                        // Q_11
+    Q.block<3>(LckfKeys::KFVel, LckfKeys::KFAtt) = ien_Q_dv_psi(S_rg, S_bgd, e_F_21, tau_s);             // Q_21
+    Q.block<3>(LckfKeys::KFVel, LckfKeys::KFVel) = ien_Q_dv_dv(S_ra, S_bad, S_rg, S_bgd, e_F_21, tau_s); // Q_22
+    Q.block<3>(LckfKeys::KFVel, LckfKeys::KFGyrBias) = ien_Q_dv_domega(S_bgd, e_F_21, e_Dcm_b, tau_s);   // Q_25
+    Q.block<3>(LckfKeys::KFPos, LckfKeys::KFAtt) = ie_Q_dr_psi(S_rg, S_bgd, e_F_21, tau_s);              // Q_31
+    Q.block<3>(LckfKeys::KFPos, LckfKeys::KFVel) = ie_Q_dr_dv(S_ra, S_bad, S_rg, S_bgd, e_F_21, tau_s);  // Q_32
+    Q.block<3>(LckfKeys::KFPos, LckfKeys::KFPos) = ie_Q_dr_dr(S_ra, S_bad, S_rg, S_bgd, e_F_21, tau_s);  // Q_33
+    Q.block<3>(LckfKeys::KFPos, LckfKeys::KFAccBias) = ie_Q_dr_df(S_bgd, e_Dcm_b, tau_s);                // Q_34
+    Q.block<3>(LckfKeys::KFPos, LckfKeys::KFGyrBias) = ie_Q_dr_domega(S_bgd, e_F_21, e_Dcm_b, tau_s);    // Q_35
+    Q.block<3>(LckfKeys::KFAccBias, LckfKeys::KFVel) = Q_df_dv(S_bad, b_Dcm_e, tau_s);                   // Q_42
+    Q.block<3>(LckfKeys::KFAccBias, LckfKeys::KFAccBias) = Q_df_df(S_bad, tau_s);                        // Q_44
+    Q.block<3>(LckfKeys::KFGyrBias, LckfKeys::KFAtt) = Q_domega_psi(S_bgd, b_Dcm_e, tau_s);              // Q_51
+    Q.block<3>(LckfKeys::KFGyrBias, LckfKeys::KFGyrBias) = Q_domega_domega(S_bgd, tau_s);                // Q_55
 
-    Q.block<3>(KFAtt, KFVel) = Q.block<3>(KFVel, KFAtt).transpose();         // Q_21^T
-    Q.block<3>(KFAtt, KFPos) = Q.block<3>(KFPos, KFAtt).transpose();         // Q_31^T
-    Q.block<3>(KFVel, KFPos) = Q.block<3>(KFPos, KFVel).transpose();         // Q_32^T
-    Q.block<3>(KFAccBias, KFPos) = Q.block<3>(KFPos, KFAccBias).transpose(); // Q_34^T
-    Q.block<3>(KFGyrBias, KFVel) = Q.block<3>(KFVel, KFGyrBias).transpose(); // Q_25^T
-    Q.block<3>(KFGyrBias, KFPos) = Q.block<3>(KFPos, KFGyrBias).transpose(); // Q_35^T
-    Q.block<3>(KFVel, KFAccBias) = Q.block<3>(KFAccBias, KFVel).transpose(); // Q_42^T
-    Q.block<3>(KFAtt, KFGyrBias) = Q.block<3>(KFGyrBias, KFAtt).transpose(); // Q_51^T
-    Q(KFStates::HeightBias, KFStates::HeightBias) = sigma_heightBias * sigma_heightBias * tau_s;
-    Q(KFStates::HeightScale, KFStates::HeightScale) = sigma_heightScale * sigma_heightScale * tau_s;
+    Q.block<3>(LckfKeys::KFAtt, LckfKeys::KFVel) = Q.block<3>(LckfKeys::KFVel, LckfKeys::KFAtt).transpose();         // Q_21^T
+    Q.block<3>(LckfKeys::KFAtt, LckfKeys::KFPos) = Q.block<3>(LckfKeys::KFPos, LckfKeys::KFAtt).transpose();         // Q_31^T
+    Q.block<3>(LckfKeys::KFVel, LckfKeys::KFPos) = Q.block<3>(LckfKeys::KFPos, LckfKeys::KFVel).transpose();         // Q_32^T
+    Q.block<3>(LckfKeys::KFAccBias, LckfKeys::KFPos) = Q.block<3>(LckfKeys::KFPos, LckfKeys::KFAccBias).transpose(); // Q_34^T
+    Q.block<3>(LckfKeys::KFGyrBias, LckfKeys::KFVel) = Q.block<3>(LckfKeys::KFVel, LckfKeys::KFGyrBias).transpose(); // Q_25^T
+    Q.block<3>(LckfKeys::KFGyrBias, LckfKeys::KFPos) = Q.block<3>(LckfKeys::KFPos, LckfKeys::KFGyrBias).transpose(); // Q_35^T
+    Q.block<3>(LckfKeys::KFVel, LckfKeys::KFAccBias) = Q.block<3>(LckfKeys::KFAccBias, LckfKeys::KFVel).transpose(); // Q_42^T
+    Q.block<3>(LckfKeys::KFAtt, LckfKeys::KFGyrBias) = Q.block<3>(LckfKeys::KFGyrBias, LckfKeys::KFAtt).transpose(); // Q_51^T
+    Q(LckfKeys::KFStates::HeightBias, LckfKeys::KFStates::HeightBias) = sigma_heightBias * sigma_heightBias * tau_s;
+    Q(LckfKeys::KFStates::HeightScale, LckfKeys::KFStates::HeightScale) = sigma_heightScale * sigma_heightScale * tau_s;
 
-    Q.middleRows<3>(KFAtt) *= SCALE_FACTOR_ATTITUDE;
-    Q.middleRows<3>(KFAccBias) *= SCALE_FACTOR_ACCELERATION;
-    Q.middleRows<3>(KFGyrBias) *= SCALE_FACTOR_ANGULAR_RATE;
+    Q.middleRows<3>(LckfKeys::KFAtt) *= SCALE_FACTOR_ATTITUDE;
+    Q.middleRows<3>(LckfKeys::KFAccBias) *= SCALE_FACTOR_ACCELERATION;
+    Q.middleRows<3>(LckfKeys::KFGyrBias) *= SCALE_FACTOR_ANGULAR_RATE;
 
-    Q.middleCols<3>(KFAtt) *= SCALE_FACTOR_ATTITUDE;
-    Q.middleCols<3>(KFAccBias) *= SCALE_FACTOR_ACCELERATION;
-    Q.middleCols<3>(KFGyrBias) *= SCALE_FACTOR_ANGULAR_RATE;
+    Q.middleCols<3>(LckfKeys::KFAtt) *= SCALE_FACTOR_ATTITUDE;
+    Q.middleCols<3>(LckfKeys::KFAccBias) *= SCALE_FACTOR_ACCELERATION;
+    Q.middleCols<3>(LckfKeys::KFGyrBias) *= SCALE_FACTOR_ANGULAR_RATE;
 
     return Q;
 }
@@ -2179,7 +2342,7 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
 //                                         Error covariance matrix P
 // ###########################################################################################################
 
-NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>
+NAV::KeyedMatrix<double, NAV::LckfKeys::KFStates, NAV::LckfKeys::KFStates, NAV::LckfKeys::KFStates_COUNT, NAV::LckfKeys::KFStates_COUNT>
     NAV::LooselyCoupledKF::initialErrorCovarianceMatrix_P0(const Eigen::Vector3d& variance_angles,
                                                            const Eigen::Vector3d& variance_vel,
                                                            const Eigen::Vector3d& variance_pos,
@@ -2191,8 +2354,8 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
     double scaleFactorPosition = _inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED ? SCALE_FACTOR_LAT_LON : 1.0;
 
     // 𝐏 Error covariance matrix
-    Eigen::Matrix<double, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT> P =
-        Eigen::Matrix<double, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>::Zero();
+    Eigen::Matrix<double, NAV::LckfKeys::KFStates_COUNT, NAV::LckfKeys::KFStates_COUNT> P =
+        Eigen::Matrix<double, NAV::LckfKeys::KFStates_COUNT, NAV::LckfKeys::KFStates_COUNT>::Zero();
 
     P.diagonal() << std::pow(SCALE_FACTOR_ATTITUDE, 2) * variance_angles, // Flight Angles covariance
         variance_vel,                                                     // Velocity covariance
@@ -2203,93 +2366,93 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
         std::pow(SCALE_FACTOR_ANGULAR_RATE, 2) * variance_gyroBias,       // Gyroscope Bias covariance
         variance_heightBias,                                              // Height Bias covariance
         variance_heightScale;                                             // Height Scale covariance
-    return { P, States };
+    return { P, LckfKeys::States };
 }
 
 // ###########################################################################################################
 //                                                Correction
 // ###########################################################################################################
 
-NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFStates, 6, NAV::LooselyCoupledKF::KFStates_COUNT>
+NAV::KeyedMatrix<double, NAV::LckfKeys::KFMeas, NAV::LckfKeys::KFStates, 6, NAV::LckfKeys::KFStates_COUNT>
     NAV::LooselyCoupledKF::n_measurementMatrix_H(const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& n_Dcm_b, const Eigen::Vector3d& b_omega_ib, const Eigen::Vector3d& b_leverArm_InsGnss, const Eigen::Matrix3d& n_Omega_ie)
 {
     // Math: \mathbf{H}_{G,k}^n = \begin{pmatrix} \mathbf{H}_{r1}^n & \mathbf{0}_3 & -\mathbf{I}_3 & \mathbf{0}_3 & \mathbf{0}_3 \\ \mathbf{H}_{v1}^n & -\mathbf{I}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{H}_{v5}^n \end{pmatrix}_k \qquad \text{P. Groves}\,(14.113)
     // G denotes GNSS indicated
 
-    NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFStates, 6, NAV::LooselyCoupledKF::KFStates_COUNT>
-        H(Eigen::Matrix<double, 6, NAV::LooselyCoupledKF::KFStates_COUNT>::Zero(), Meas, States);
+    NAV::KeyedMatrix<double, NAV::LckfKeys::KFMeas, NAV::LckfKeys::KFStates, 6, NAV::LckfKeys::KFStates_COUNT>
+        H(Eigen::Matrix<double, 6, NAV::LckfKeys::KFStates_COUNT>::Zero(), LckfKeys::Meas, LckfKeys::States);
 
     // Math: \mathbf{H}_{r1}^n \approx \mathbf{\hat{T}}_{r(n)}^p \begin{bmatrix} \begin{pmatrix} \mathbf{C}_b^n \mathbf{l}_{ba}^p \end{pmatrix} \wedge \end{bmatrix} \qquad \text{P. Groves}\,(14.114)
-    H.block<3>(dPos, KFAtt) = T_rn_p * math::skewSymmetricMatrix(n_Dcm_b * b_leverArm_InsGnss);
-    H.block<3>(dPos, KFPos) = -Eigen::Matrix3d::Identity();
+    H.block<3>(LckfKeys::dPos, LckfKeys::KFAtt) = T_rn_p * math::skewSymmetricMatrix(n_Dcm_b * b_leverArm_InsGnss);
+    H.block<3>(LckfKeys::dPos, LckfKeys::KFPos) = -Eigen::Matrix3d::Identity();
     // Math: \mathbf{H}_{v1}^n \approx \begin{bmatrix} \begin{Bmatrix} \mathbf{C}_b^n (\mathbf{\hat{\omega}}_{ib}^b \wedge \mathbf{l}_{ba}^b) - \mathbf{\hat{\Omega}}_{ie}^n \mathbf{C}_b^n \mathbf{l}_{ba}^b \end{Bmatrix} \wedge \end{bmatrix} \qquad \text{P. Groves}\,(14.114)
-    H.block<3>(dVel, KFAtt) = math::skewSymmetricMatrix(n_Dcm_b * (b_omega_ib.cross(b_leverArm_InsGnss)) - n_Omega_ie * n_Dcm_b * b_leverArm_InsGnss);
-    H.block<3>(dVel, KFVel) = -Eigen::Matrix3d::Identity();
+    H.block<3>(LckfKeys::dVel, LckfKeys::KFAtt) = math::skewSymmetricMatrix(n_Dcm_b * (b_omega_ib.cross(b_leverArm_InsGnss)) - n_Omega_ie * n_Dcm_b * b_leverArm_InsGnss);
+    H.block<3>(LckfKeys::dVel, LckfKeys::KFVel) = -Eigen::Matrix3d::Identity();
     // Math: \mathbf{H}_{v5}^n = \mathbf{C}_b^n \begin{bmatrix} \mathbf{l}_{ba}^b \wedge \end{bmatrix} \qquad \text{P. Groves}\,(14.114)
-    H.block<3>(dVel, KFGyrBias) = n_Dcm_b * math::skewSymmetricMatrix(b_leverArm_InsGnss);
+    H.block<3>(LckfKeys::dVel, LckfKeys::KFGyrBias) = n_Dcm_b * math::skewSymmetricMatrix(b_leverArm_InsGnss);
 
-    H.middleRows<2>(std::array{ dPosLat, dPosLon }) *= SCALE_FACTOR_LAT_LON;
+    H.middleRows<2>(std::array{ LckfKeys::dPosLat, LckfKeys::dPosLon }) *= SCALE_FACTOR_LAT_LON;
 
-    H.middleCols<3>(KFAtt) *= 1. / SCALE_FACTOR_ATTITUDE;
-    H.middleCols<2>(std::array{ PosLat, PosLon }) *= 1. / SCALE_FACTOR_LAT_LON;
+    H.middleCols<3>(LckfKeys::KFAtt) *= 1. / SCALE_FACTOR_ATTITUDE;
+    H.middleCols<2>(std::array{ LckfKeys::PosLat, LckfKeys::PosLon }) *= 1. / SCALE_FACTOR_LAT_LON;
     // H.middleCols<3>(AccBias) *= 1. / SCALE_FACTOR_ACCELERATION; // Only zero elements
-    H.middleCols<3>(KFGyrBias) *= 1. / SCALE_FACTOR_ANGULAR_RATE;
+    H.middleCols<3>(LckfKeys::KFGyrBias) *= 1. / SCALE_FACTOR_ANGULAR_RATE;
 
     return H;
 }
 
-NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFStates, 1, NAV::LooselyCoupledKF::KFStates_COUNT>
+NAV::KeyedMatrix<double, NAV::LckfKeys::KFMeas, NAV::LckfKeys::KFStates, 1, NAV::LckfKeys::KFStates_COUNT>
     NAV::LooselyCoupledKF::n_measurementMatrix_H(const double& height, const double& scale)
 {
-    NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFStates, 1, NAV::LooselyCoupledKF::KFStates_COUNT>
-        H(Eigen::Matrix<double, 1, NAV::LooselyCoupledKF::KFStates_COUNT>::Zero(), std::array{ KFMeas::dHgt }, States);
+    NAV::KeyedMatrix<double, NAV::LckfKeys::KFMeas, NAV::LckfKeys::KFStates, 1, NAV::LckfKeys::KFStates_COUNT>
+        H(Eigen::Matrix<double, 1, NAV::LckfKeys::KFStates_COUNT>::Zero(), std::array{ LckfKeys::KFMeas::dHgt }, LckfKeys::States);
 
-    H(KFMeas::dHgt, PosAlt) = -scale;
-    H(KFMeas::dHgt, HeightBias) = 1.0;
-    H(KFMeas::dHgt, HeightScale) = height;
+    H(LckfKeys::KFMeas::dHgt, LckfKeys::PosAlt) = -scale;
+    H(LckfKeys::KFMeas::dHgt, LckfKeys::HeightBias) = 1.0;
+    H(LckfKeys::KFMeas::dHgt, LckfKeys::HeightScale) = height;
 
     return H;
 }
 
-NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFStates, 6, NAV::LooselyCoupledKF::KFStates_COUNT>
+NAV::KeyedMatrix<double, NAV::LckfKeys::KFMeas, NAV::LckfKeys::KFStates, 6, NAV::LckfKeys::KFStates_COUNT>
     NAV::LooselyCoupledKF::e_measurementMatrix_H(const Eigen::Matrix3d& e_Dcm_b, const Eigen::Vector3d& b_omega_ib, const Eigen::Vector3d& b_leverArm_InsGnss, const Eigen::Matrix3d& e_Omega_ie)
 {
     // Math: \mathbf{H}_{G,k}^e = \begin{pmatrix} \mathbf{H}_{r1}^e & \mathbf{0}_3 & -\mathbf{I}_3 & \mathbf{0}_3 & \mathbf{0}_3 \\ \mathbf{H}_{v1}^e & -\mathbf{I}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{H}_{v5}^e \end{pmatrix}_k \qquad \text{P. Groves}\,(14.113)
     // G denotes GNSS indicated
 
-    NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFStates, 6, NAV::LooselyCoupledKF::KFStates_COUNT>
-        H(Eigen::Matrix<double, 6, NAV::LooselyCoupledKF::KFStates_COUNT>::Zero(), Meas, States);
+    NAV::KeyedMatrix<double, NAV::LckfKeys::KFMeas, NAV::LckfKeys::KFStates, 6, NAV::LckfKeys::KFStates_COUNT>
+        H(Eigen::Matrix<double, 6, NAV::LckfKeys::KFStates_COUNT>::Zero(), LckfKeys::Meas, LckfKeys::States);
 
     // Math: \mathbf{H}_{r1}^e \approx \begin{bmatrix} \begin{pmatrix} \mathbf{C}_b^e \mathbf{l}_{ba}^p \end{pmatrix} \wedge \end{bmatrix} \qquad \text{P. Groves}\,(14.114)
-    H.block<3>(dPos, KFAtt) = math::skewSymmetricMatrix(e_Dcm_b * b_leverArm_InsGnss);
-    H.block<3>(dPos, KFPos) = -Eigen::Matrix3d::Identity();
+    H.block<3>(LckfKeys::dPos, LckfKeys::KFAtt) = math::skewSymmetricMatrix(e_Dcm_b * b_leverArm_InsGnss);
+    H.block<3>(LckfKeys::dPos, LckfKeys::KFPos) = -Eigen::Matrix3d::Identity();
     // Math: \mathbf{H}_{v1}^e \approx \begin{bmatrix} \begin{Bmatrix} \mathbf{C}_b^e (\mathbf{\hat{\omega}}_{ib}^b \wedge \mathbf{l}_{ba}^b) - \mathbf{\hat{\Omega}}_{ie}^e \mathbf{C}_b^e \mathbf{l}_{ba}^b \end{Bmatrix} \wedge \end{bmatrix} \qquad \text{P. Groves}\,(14.114)
-    H.block<3>(dVel, KFAtt) = math::skewSymmetricMatrix(e_Dcm_b * (b_omega_ib.cross(b_leverArm_InsGnss)) - e_Omega_ie * e_Dcm_b * b_leverArm_InsGnss);
-    H.block<3>(dVel, KFVel) = -Eigen::Matrix3d::Identity();
+    H.block<3>(LckfKeys::dVel, LckfKeys::KFAtt) = math::skewSymmetricMatrix(e_Dcm_b * (b_omega_ib.cross(b_leverArm_InsGnss)) - e_Omega_ie * e_Dcm_b * b_leverArm_InsGnss);
+    H.block<3>(LckfKeys::dVel, LckfKeys::KFVel) = -Eigen::Matrix3d::Identity();
     // Math: \mathbf{H}_{v5}^e = \mathbf{C}_b^e \begin{bmatrix} \mathbf{l}_{ba}^b \wedge \end{bmatrix} \qquad \text{P. Groves}\,(14.114)
-    H.block<3>(dVel, KFGyrBias) = e_Dcm_b * math::skewSymmetricMatrix(b_leverArm_InsGnss);
+    H.block<3>(LckfKeys::dVel, LckfKeys::KFGyrBias) = e_Dcm_b * math::skewSymmetricMatrix(b_leverArm_InsGnss);
 
-    H.middleCols<3>(KFAtt) *= 1. / SCALE_FACTOR_ATTITUDE;
+    H.middleCols<3>(LckfKeys::KFAtt) *= 1. / SCALE_FACTOR_ATTITUDE;
     // H.middleCols<3>(AccBias) *= 1. / SCALE_FACTOR_ACCELERATION; // Only zero elements
-    H.middleCols<3>(KFGyrBias) *= 1. / SCALE_FACTOR_ANGULAR_RATE;
+    H.middleCols<3>(LckfKeys::KFGyrBias) *= 1. / SCALE_FACTOR_ANGULAR_RATE;
 
     return H;
 }
 
-NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFStates, 1, NAV::LooselyCoupledKF::KFStates_COUNT>
+NAV::KeyedMatrix<double, NAV::LckfKeys::KFMeas, NAV::LckfKeys::KFStates, 1, NAV::LckfKeys::KFStates_COUNT>
     NAV::LooselyCoupledKF::e_measurementMatrix_H(const Eigen::Vector3d& e_positionEstimate, const double& height, const double& scale)
 {
-    NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFStates, 1, NAV::LooselyCoupledKF::KFStates_COUNT>
-        H(Eigen::Matrix<double, 1, NAV::LooselyCoupledKF::KFStates_COUNT>::Zero(), std::array{ KFMeas::dHgt }, States);
+    NAV::KeyedMatrix<double, NAV::LckfKeys::KFMeas, NAV::LckfKeys::KFStates, 1, NAV::LckfKeys::KFStates_COUNT>
+        H(Eigen::Matrix<double, 1, NAV::LckfKeys::KFStates_COUNT>::Zero(), std::array{ LckfKeys::KFMeas::dHgt }, LckfKeys::States);
 
-    H(KFMeas::dHgt, KFPos) = -scale * e_positionEstimate.normalized().transpose();
-    H(KFMeas::dHgt, HeightBias) = 1.0;
-    H(KFMeas::dHgt, HeightScale) = height;
+    H(LckfKeys::KFMeas::dHgt, LckfKeys::KFPos) = -scale * e_positionEstimate.normalized().transpose();
+    H(LckfKeys::KFMeas::dHgt, LckfKeys::HeightBias) = 1.0;
+    H(LckfKeys::KFMeas::dHgt, LckfKeys::HeightScale) = height;
 
     return H;
 }
 
-NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFMeas, 6, 6>
+NAV::KeyedMatrix<double, NAV::LckfKeys::KFMeas, NAV::LckfKeys::KFMeas, 6, 6>
     NAV::LooselyCoupledKF::n_measurementNoiseCovariance_R(const std::shared_ptr<const PosVel>& posVelObs,
                                                           const Eigen::Vector3d& lla_position,
                                                           double R_N,
@@ -2318,7 +2481,7 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::K
         break;
     }
 
-    KeyedMatrix<double, KFMeas, KFMeas, 6, 6> R(Eigen::Matrix<double, 6, 6>::Zero(), Meas);
+    KeyedMatrix<double, LckfKeys::KFMeas, LckfKeys::KFMeas, 6, 6> R(Eigen::Matrix<double, 6, 6>::Zero(), LckfKeys::Meas);
 
     if (!_gnssMeasurementUncertaintyPositionOverride && !_gnssMeasurementUncertaintyVelocityOverride
         && posVelObs->n_CovarianceMatrix() && posVelObs->n_CovarianceMatrix()->get().hasRows(Keys::PosVel<Keys::MotionModelKey>))
@@ -2328,19 +2491,20 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::K
     else if (!_gnssMeasurementUncertaintyPositionOverride
              && posVelObs->n_CovarianceMatrix() && posVelObs->n_CovarianceMatrix()->get().hasRows(Keys::Pos<Keys::MotionModelKey>))
     {
-        R.block<3>(dPos, dPos) = posVelObs->n_CovarianceMatrix()->get()(Keys::Pos<Keys::MotionModelKey>, Keys::Pos<Keys::MotionModelKey>);
-        R.block<3>(dVel, dVel).diagonal() = gnssSigmaSquaredVelocity;
+        R.block<3>(LckfKeys::dPos, LckfKeys::dPos) = posVelObs->n_CovarianceMatrix()->get()(Keys::Pos<Keys::MotionModelKey>, Keys::Pos<Keys::MotionModelKey>);
+        R.block<3>(LckfKeys::dVel, LckfKeys::dVel).diagonal() = gnssSigmaSquaredVelocity;
     }
     else if (!_gnssMeasurementUncertaintyVelocityOverride
              && posVelObs->n_CovarianceMatrix() && posVelObs->n_CovarianceMatrix()->get().hasRows(Keys::Vel<Keys::MotionModelKey>))
     {
-        R.block<3>(dPos, dPos).diagonal() = gnssSigmaSquaredPosition;
-        R.block<3>(dVel, dVel) = posVelObs->n_CovarianceMatrix()->get()(Keys::Vel<Keys::MotionModelKey>, Keys::Vel<Keys::MotionModelKey>);
+        R.block<3>(LckfKeys::dPos, LckfKeys::dPos).diagonal() = gnssSigmaSquaredPosition;
+        R.block<3>(LckfKeys::dVel, LckfKeys::dVel) = posVelObs->n_CovarianceMatrix()->get()(Keys::Vel<Keys::MotionModelKey>, Keys::Vel<Keys::MotionModelKey>);
     }
     else // if (_gnssMeasurementUncertaintyPositionOverride && _gnssMeasurementUncertaintyVelocityOverride)
     {
-        R.block<3>(dPos, dPos).diagonal() = gnssSigmaSquaredPosition;
-        R.block<3>(dVel, dVel).diagonal() = gnssSigmaSquaredVelocity;
+        R.block<3>(LckfKeys::dPos, LckfKeys::dPos)
+            .diagonal() = gnssSigmaSquaredPosition;
+        R.block<3>(LckfKeys::dVel, LckfKeys::dVel).diagonal() = gnssSigmaSquaredVelocity;
     }
 
     // transform NED covariance into LLA covariance
@@ -2349,22 +2513,22 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::K
     R(all, all) = J * R(all, all) * J.transpose();
 
     // scale units
-    R.middleRows<2>(std::array{ dPosLat, dPosLon }) *= SCALE_FACTOR_LAT_LON;
-    R.middleCols<2>(std::array{ dPosLat, dPosLon }) *= SCALE_FACTOR_LAT_LON;
+    R.middleRows<2>(std::array{ LckfKeys::dPosLat, LckfKeys::dPosLon }) *= SCALE_FACTOR_LAT_LON;
+    R.middleCols<2>(std::array{ LckfKeys::dPosLat, LckfKeys::dPosLon }) *= SCALE_FACTOR_LAT_LON;
 
     return R;
 }
 
-NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFMeas, 1, 1>
+NAV::KeyedMatrix<double, NAV::LckfKeys::KFMeas, NAV::LckfKeys::KFMeas, 1, 1>
     NAV::LooselyCoupledKF::n_measurementNoiseCovariance_R(const double& baroVarianceHeight)
 {
-    KeyedMatrix<double, KFMeas, KFMeas, 1, 1> R(Eigen::Matrix<double, 1, 1>::Zero(), std::array{ KFMeas::dHgt });
-    R(KFMeas::dHgt, KFMeas::dHgt) = baroVarianceHeight;
+    KeyedMatrix<double, LckfKeys::KFMeas, LckfKeys::KFMeas, 1, 1> R(Eigen::Matrix<double, 1, 1>::Zero(), std::array{ LckfKeys::KFMeas::dHgt });
+    R(LckfKeys::KFMeas::dHgt, LckfKeys::KFMeas::dHgt) = baroVarianceHeight;
 
     return R;
 }
 
-NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFMeas, 6, 6>
+NAV::KeyedMatrix<double, NAV::LckfKeys::KFMeas, NAV::LckfKeys::KFMeas, 6, 6>
     NAV::LooselyCoupledKF::e_measurementNoiseCovariance_R(const std::shared_ptr<const PosVel>& posVelObs) const
 {
     // GNSS measurement uncertainty for the position (Variance σ²) in [m^2]
@@ -2390,7 +2554,7 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::K
         break;
     }
 
-    KeyedMatrix<double, KFMeas, KFMeas, 6, 6> R(Eigen::Matrix<double, 6, 6>::Zero(), Meas);
+    KeyedMatrix<double, LckfKeys::KFMeas, LckfKeys::KFMeas, 6, 6> R(Eigen::Matrix<double, 6, 6>::Zero(), LckfKeys::Meas);
 
     if (!_gnssMeasurementUncertaintyPositionOverride && !_gnssMeasurementUncertaintyVelocityOverride
         && posVelObs->e_CovarianceMatrix() && posVelObs->e_CovarianceMatrix()->get().hasRows(Keys::PosVel<Keys::MotionModelKey>))
@@ -2400,25 +2564,25 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::K
     else if (!_gnssMeasurementUncertaintyPositionOverride
              && posVelObs->e_CovarianceMatrix() && posVelObs->e_CovarianceMatrix()->get().hasRows(Keys::Pos<Keys::MotionModelKey>))
     {
-        R.block<3>(dPos, dPos) = posVelObs->e_CovarianceMatrix()->get()(Keys::Pos<Keys::MotionModelKey>, Keys::Pos<Keys::MotionModelKey>);
-        R.block<3>(dVel, dVel).diagonal() = gnssSigmaSquaredVelocity;
+        R.block<3>(LckfKeys::dPos, LckfKeys::dPos) = posVelObs->e_CovarianceMatrix()->get()(Keys::Pos<Keys::MotionModelKey>, Keys::Pos<Keys::MotionModelKey>);
+        R.block<3>(LckfKeys::dVel, LckfKeys::dVel).diagonal() = gnssSigmaSquaredVelocity;
     }
     else if (!_gnssMeasurementUncertaintyVelocityOverride
              && posVelObs->e_CovarianceMatrix() && posVelObs->e_CovarianceMatrix()->get().hasRows(Keys::Vel<Keys::MotionModelKey>))
     {
-        R.block<3>(dPos, dPos).diagonal() = gnssSigmaSquaredPosition;
-        R.block<3>(dVel, dVel) = posVelObs->e_CovarianceMatrix()->get()(Keys::Vel<Keys::MotionModelKey>, Keys::Vel<Keys::MotionModelKey>);
+        R.block<3>(LckfKeys::dPos, LckfKeys::dPos).diagonal() = gnssSigmaSquaredPosition;
+        R.block<3>(LckfKeys::dVel, LckfKeys::dVel) = posVelObs->e_CovarianceMatrix()->get()(Keys::Vel<Keys::MotionModelKey>, Keys::Vel<Keys::MotionModelKey>);
     }
     else // if (_gnssMeasurementUncertaintyPositionOverride && _gnssMeasurementUncertaintyVelocityOverride)
     {
-        R.block<3>(dPos, dPos).diagonal() = gnssSigmaSquaredPosition;
-        R.block<3>(dVel, dVel).diagonal() = gnssSigmaSquaredVelocity;
+        R.block<3>(LckfKeys::dPos, LckfKeys::dPos).diagonal() = gnssSigmaSquaredPosition;
+        R.block<3>(LckfKeys::dVel, LckfKeys::dVel).diagonal() = gnssSigmaSquaredVelocity;
     }
 
     return R;
 }
 
-NAV::KeyedVector<double, NAV::LooselyCoupledKF::KFMeas, 6>
+NAV::KeyedVector<double, NAV::LckfKeys::KFMeas, 6>
     NAV::LooselyCoupledKF::n_measurementInnovation_dz(const Eigen::Vector3d& lla_positionMeasurement, const Eigen::Vector3d& lla_positionEstimate,
                                                       const Eigen::Vector3d& n_velocityMeasurement, const Eigen::Vector3d& n_velocityEstimate,
                                                       const Eigen::Matrix3d& T_rn_p, const Eigen::Quaterniond& n_Quat_b, const Eigen::Vector3d& b_leverArm_InsGnss,
@@ -2433,19 +2597,19 @@ NAV::KeyedVector<double, NAV::LooselyCoupledKF::KFMeas, 6>
     Eigen::Matrix<double, 6, 1> innovation;
     innovation << deltaLLA, deltaVel;
 
-    return { innovation, Meas };
+    return { innovation, LckfKeys::Meas };
 }
 
-NAV::KeyedVector<double, NAV::LooselyCoupledKF::KFMeas, 1>
+NAV::KeyedVector<double, NAV::LckfKeys::KFMeas, 1>
     NAV::LooselyCoupledKF::n_measurementInnovation_dz(const double& baroheight, const double& height, const double& heightbias, const double& heightscale)
 {
     Eigen::Matrix<double, 1, 1> innovation;
     innovation << baroheight - (height * heightscale + heightbias);
 
-    return { innovation, std::array{ KFMeas::dHgt } };
+    return { innovation, std::array{ LckfKeys::KFMeas::dHgt } };
 }
 
-NAV::KeyedVector<double, NAV::LooselyCoupledKF::KFMeas, 6>
+NAV::KeyedVector<double, NAV::LckfKeys::KFMeas, 6>
     NAV::LooselyCoupledKF::e_measurementInnovation_dz(const Eigen::Vector3d& e_positionMeasurement, const Eigen::Vector3d& e_positionEstimate,
                                                       const Eigen::Vector3d& e_velocityMeasurement, const Eigen::Vector3d& e_velocityEstimate,
                                                       const Eigen::Quaterniond& e_Quat_b, const Eigen::Vector3d& b_leverArm_InsGnss,
@@ -2458,14 +2622,5 @@ NAV::KeyedVector<double, NAV::LooselyCoupledKF::KFMeas, 6>
     Eigen::Matrix<double, 6, 1> innovation;
     innovation << deltaPos, deltaVel;
 
-    return { innovation, Meas };
-}
-
-std::ostream& operator<<(std::ostream& os, const NAV::LooselyCoupledKF::KFStates& obj)
-{
-    return os << fmt::format("{}", obj);
-}
-std::ostream& operator<<(std::ostream& os, const NAV::LooselyCoupledKF::KFMeas& obj)
-{
-    return os << fmt::format("{}", obj);
+    return { innovation, LckfKeys::Meas };
 }

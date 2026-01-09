@@ -205,6 +205,7 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataProcessor/WiFi/WiFiPositioning.hpp"
 #include "Nodes/DataProcessor/Filter/LowPassFilter.hpp"
 #include "Nodes/DataProcessor/Barometer/PressToHgt.hpp"
+#include "Nodes/DataProcessor/MultipleModelAdaptiveEstimation/MultipleModelAdaptiveEstimation.hpp"
 // Data Provider
 #include "Nodes/DataProvider/CSV/CsvFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/RinexNavFile.hpp"
@@ -285,6 +286,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<PressToHgt>();
     registerNodeType<ImuFusion>();
     registerNodeType<WiFiPositioning>();
+    registerNodeType<MultipleModelAdaptiveEstimation>();
     // Data Provider
     registerNodeType<CsvFile>();
     registerNodeType<RinexNavFile>();
@@ -337,6 +339,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
 #include "NodeData/IMU/ImuObsWDelta.hpp"
 #include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
+#include "NodeData/State/MmaeSolution.hpp"
 #include "NodeData/State/InsGnssLCKFSolution.hpp"
 #include "NodeData/State/InsGnssTCKFSolution.hpp"
 #include "NodeData/State/Pos.hpp"
@@ -369,6 +372,7 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
     registerNodeDataType<KvhObs>();
     registerNodeDataType<VectorNavBinaryOutput>();
     // State
+    registerNodeDataType<MmaeSolution>();
     registerNodeDataType<InsGnssLCKFSolution>();
     registerNodeDataType<Pos>();
     registerNodeDataType<PosVel>();
@@ -396,6 +400,7 @@ std::vector<std::string> NAV::NodeRegistry::GetStaticDataDescriptors(const std::
     if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { WiFiObs::type() })) { return WiFiObs::GetStaticDataDescriptors(); }
     // Pos
     if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { InsGnssTCKFSolution::type() })) { return InsGnssTCKFSolution::GetStaticDataDescriptors(); }
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { MmaeSolution::type() })) { return MmaeSolution::GetStaticDataDescriptors(); }
     if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { InsGnssLCKFSolution::type() })) { return InsGnssLCKFSolution::GetStaticDataDescriptors(); }
     if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { PosVelAtt::type() })) { return PosVelAtt::GetStaticDataDescriptors(); }
     if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { RtkSolution::type() })) { return RtkSolution::GetStaticDataDescriptors(); }
@@ -423,7 +428,8 @@ bool NAV::NodeRegistry::TypeHasDynamicData(const std::string& type)
            || type == GnssObs::type()
            || type == RtkSolution::type()
            || type == SppSolution::type()
-           || type == VectorNavBinaryOutput::type();
+           || type == VectorNavBinaryOutput::type()
+           || type == MmaeSolution::type();
 }
 
 std::shared_ptr<NAV::NodeData> NAV::NodeRegistry::CopyNodeData(const std::shared_ptr<const NodeData>& nodeData)
@@ -448,6 +454,7 @@ std::shared_ptr<NAV::NodeData> NAV::NodeRegistry::CopyNodeData(const std::shared
     if (nodeData->getType() == KvhObs::type()) { return std::make_shared<KvhObs>(*std::static_pointer_cast<const KvhObs>(nodeData)); }
     if (nodeData->getType() == VectorNavBinaryOutput::type()) { return std::make_shared<VectorNavBinaryOutput>(*std::static_pointer_cast<const VectorNavBinaryOutput>(nodeData)); }
     // State
+    if (nodeData->getType() == MmaeSolution::type()) { return std::make_shared<MmaeSolution>(*std::static_pointer_cast<const MmaeSolution>(nodeData)); }
     if (nodeData->getType() == InsGnssLCKFSolution::type()) { return std::make_shared<InsGnssLCKFSolution>(*std::static_pointer_cast<const InsGnssLCKFSolution>(nodeData)); }
     if (nodeData->getType() == InsGnssTCKFSolution::type()) { return std::make_shared<InsGnssTCKFSolution>(*std::static_pointer_cast<const InsGnssTCKFSolution>(nodeData)); }
     if (nodeData->getType() == Pos::type()) { return std::make_shared<Pos>(*std::static_pointer_cast<const Pos>(nodeData)); }

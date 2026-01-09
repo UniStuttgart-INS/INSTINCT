@@ -15,9 +15,17 @@
 
 #include "PosVelAtt.hpp"
 #include <cstdint>
+#include <optional>
+#include <variant>
+#include "Navigation/INS/InertialIntegrator.hpp"
+#include "Nodes/DataProcessor/KalmanFilter/LckfKeys.hpp"
+#include "util/Assert.h"
+#include "util/Container/KeyedMatrix.hpp"
 #include "util/Container/UncertainValue.hpp"
 #include "Navigation/Transformations/Units.hpp"
 #include <Eigen/src/Core/Matrix.h>
+#include <Eigen/src/Core/MatrixBase.h>
+#include <Eigen/src/Geometry/Quaternion.h>
 
 namespace NAV
 {
@@ -227,6 +235,30 @@ class InsGnssLCKFSolution : public PosVelAtt
 
     /// Barometric height scale in [m/m]
     UncertainValue<double> heightScale = { .value = std::nan(""), .stdDev = std::nan("") };
+
+    /// Struct containing data for Multiple Model Adaptive Estimation (MMAE)
+    struct MMAEdata
+    {
+        /// Inertial integrator: integration frame
+        InertialIntegrator::IntegrationFrame integrationFrame;
+
+        /// LCKF total state vector x
+        std::variant<LckfKeys::StateVector, LckfKeys::StateVectorQuat> kfTotalStateVector;
+        /// LCKF error covariance matrix P
+        std::variant<LckfKeys::StateMatrix, LckfKeys::StateMatrixQuat> kfErrorCovMatrix;
+
+        /// PosVel innovation vector: z - H*x
+        std::optional<KeyedVector<double, LckfKeys::KFMeas, 6>> innovationVector;
+        /// PosVel innovation covariance matrix S
+        std::optional<KeyedMatrix<double, LckfKeys::KFMeas, LckfKeys::KFMeas, 6, 6>> innovationCovMatrix;
+
+        /// Baro innovation vector: z - H*x
+        std::optional<KeyedVector<double, LckfKeys::KFMeas, 1>> innovationVectorBaro;
+        /// Baro innovation covariance matrix S
+        std::optional<KeyedMatrix<double, LckfKeys::KFMeas, LckfKeys::KFMeas, 1, 1>> innovationCovMatrixBaro;
+    };
+    /// LCKF data that is used for Multiple Model Adaptive Estimation (MMAE)
+    std::optional<MMAEdata> mmaeData;
 };
 
 } // namespace NAV

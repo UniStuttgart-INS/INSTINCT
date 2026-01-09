@@ -28,22 +28,15 @@
 #include "NodeRegistry.hpp"
 
 #include "internal/gui/NodeEditorApplication.hpp"
-#include "internal/gui/widgets/HelpMarker.hpp"
 #include "internal/gui/widgets/Splitter.hpp"
-#include "internal/gui/widgets/imgui_ex.hpp"
-#include "internal/gui/windows/ImPlotStyleEditor.hpp"
 #include "internal/gui/windows/Screenshotter.hpp"
 #include "util/ImPlot.hpp"
 #include "util/Json.hpp"
-#include "util/StringUtil.hpp"
-#include "util/Container/STL.hpp"
 
 #include "util/Container/Vector.hpp"
 
-#include "util/Time/TimeBase.hpp"
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
-#include "Navigation/Transformations/Units.hpp"
 
 #include <implot_internal.h>
 #include <muParser.h>
@@ -2091,6 +2084,10 @@ void NAV::Plot::plotFlowData(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
             if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(sourcePin->dataIdentifier, { InsGnssTCKFSolution::type() }))
             {
                 plotData(std::static_pointer_cast<const InsGnssTCKFSolution>(nodeData), pinIdx, i, Pos::GetStaticDescriptorCount());
+            }
+            else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(sourcePin->dataIdentifier, { MmaeSolution::type() }))
+            {
+                plotData(std::static_pointer_cast<const MmaeSolution>(nodeData), pinIdx, i, Pos::GetStaticDescriptorCount());
             }
             else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(sourcePin->dataIdentifier, { InsGnssLCKFSolution::type() }))
             {

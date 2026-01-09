@@ -45,6 +45,7 @@
 #include "NodeData/IMU/ImuObsWDelta.hpp"
 #include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
+#include "NodeData/State/MmaeSolution.hpp"
 #include "NodeData/State/InsGnssLCKFSolution.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
 #include "NodeData/State/InsGnssTCKFSolution.hpp"
@@ -345,6 +346,7 @@ class Plot : public Node, public CommonLog
         KvhObs::type(),
         VectorNavBinaryOutput::type(),
         // State
+        MmaeSolution::type(),
         InsGnssLCKFSolution::type(),
         Pos::type(),
         PosVel::type(),

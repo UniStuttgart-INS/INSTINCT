@@ -35,6 +35,7 @@
 #include "NodeData/IMU/ImuObsWDelta.hpp"
 #include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
+#include "NodeData/State/MmaeSolution.hpp"
 #include "NodeData/State/InsGnssLCKFSolution.hpp"
 #include "NodeData/State/InsGnssTCKFSolution.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
@@ -89,6 +90,7 @@ class Combiner : public Node, public CommonLog
     static inline std::vector<std::string> _dataIdentifier = { Pos::type(),
                                                                PosVel::type(),
                                                                PosVelAtt::type(),
+                                                               MmaeSolution::type(),
                                                                InsGnssLCKFSolution::type(),
                                                                InsGnssTCKFSolution::type(),
                                                                GnssCombination::type(),

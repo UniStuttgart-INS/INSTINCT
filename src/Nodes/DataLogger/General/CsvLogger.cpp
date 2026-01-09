@@ -28,7 +28,7 @@ NAV::CsvLogger::CsvLogger()
     _fileType = FileType::ASCII;
 
     _hasConfig = true;
-    _guiConfigDefaultWindowSize = { 380, 70 };
+    _guiConfigDefaultWindowSize = { 604, 173 };
 
     CreateInputPin("writeObservation", Pin::Type::Flow,
                    { NodeData::type() },

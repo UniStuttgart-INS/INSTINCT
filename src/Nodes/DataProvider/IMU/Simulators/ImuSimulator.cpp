@@ -8,9 +8,11 @@
 
 #include "ImuSimulator.hpp"
 
+#include <algorithm>
 #include <cmath>
 #include <ctime>
 #include <optional>
+#include <ranges>
 
 #include "Navigation/Time/InsTime.hpp"
 #include "util/Logger.hpp"
@@ -170,19 +172,30 @@ void NAV::ImuSimulator::guiConfig()
         }
         if (_trajectoryType == TrajectoryType::Csv)
         {
-            auto TextColoredIfExists = [this](int index, const char* text, const char* type) {
+            auto TextColoredIfExists = [this](int index, const char* displayText, std::vector<const char*> searchText, const char* type) {
                 ImGui::TableSetColumnIndex(index);
                 auto displayTable = [&]() {
                     if (auto csvData = getInputValue<CsvData>(INPUT_PORT_INDEX_CSV);
-                        csvData && std::ranges::find(csvData->v->description, text) != csvData->v->description.end())
+                        csvData && std::ranges::find_if(csvData->v->description, [&searchText](const std::string& header) {
+                                       auto headerStartsWithSearchText = false;
+                                       for (const char* searchIdx : searchText)
+                                       {
+                                           if (header.starts_with(searchIdx))
+                                           {
+                                               headerStartsWithSearchText = true;
+                                               continue;
+                                           }
+                                       }
+                                       return headerStartsWithSearchText;
+                                   }) != csvData->v->description.end())
                     {
-                        ImGui::TextUnformatted(text);
+                        ImGui::TextUnformatted(displayText);
                         ImGui::TableNextColumn();
                         ImGui::TextUnformatted(type);
                     }
                     else
                     {
-                        ImGui::TextDisabled("%s", text);
+                        ImGui::TextDisabled("%s", displayText);
                         ImGui::TableNextColumn();
                         ImGui::TextDisabled("%s", type);
                     }
@@ -206,20 +219,20 @@ void NAV::ImuSimulator::guiConfig()
                     ImGui::TableHeadersRow();
 
                     ImGui::TableNextRow();
-                    TextColoredIfExists(0, "GpsCycle", "uint");
-                    TextColoredIfExists(3, "YearUTC", "uint");
+                    TextColoredIfExists(0, "GpsCycle", { "GpsCycle" }, "uint");
+                    TextColoredIfExists(3, "YearUTC", { "YearUTC" }, "uint");
                     ImGui::TableNextRow();
-                    TextColoredIfExists(0, "GpsWeek", "uint");
-                    TextColoredIfExists(3, "MonthUTC", "uint");
+                    TextColoredIfExists(0, "GpsWeek", { "GpsWeek" }, "uint");
+                    TextColoredIfExists(3, "MonthUTC", { "MonthUTC" }, "uint");
                     ImGui::TableNextRow();
-                    TextColoredIfExists(0, "GpsToW [s]", "uint");
-                    TextColoredIfExists(3, "DayUTC", "uint");
+                    TextColoredIfExists(0, "GpsToW [s]", { "GpsToW [s]" }, "uint");
+                    TextColoredIfExists(3, "DayUTC", { "DayUTC" }, "uint");
                     ImGui::TableNextRow();
-                    TextColoredIfExists(3, "HourUTC", "uint");
+                    TextColoredIfExists(3, "HourUTC", { "HourUTC" }, "uint");
                     ImGui::TableNextRow();
-                    TextColoredIfExists(3, "MinUTC", "uint");
+                    TextColoredIfExists(3, "MinUTC", { "MinUTC" }, "uint");
                     ImGui::TableNextRow();
-                    TextColoredIfExists(3, "SecUTC", "double");
+                    TextColoredIfExists(3, "SecUTC", { "SecUTC" }, "double");
 
                     ImGui::EndTable();
                 }
@@ -238,14 +251,14 @@ void NAV::ImuSimulator::guiConfig()
                     ImGui::TableHeadersRow();
 
                     ImGui::TableNextRow();
-                    TextColoredIfExists(0, "X-ECEF [m]", "double");
-                    TextColoredIfExists(3, "Latitude [deg]", "double");
+                    TextColoredIfExists(0, "X-ECEF [m]", { "X-ECEF [m]", "Pos ECEF X [m]" }, "double");
+                    TextColoredIfExists(3, "Latitude [deg]", { "Latitude [deg]" }, "double");
                     ImGui::TableNextRow();
-                    TextColoredIfExists(0, "Y-ECEF [m]", "double");
-                    TextColoredIfExists(3, "Longitude [deg]", "double");
+                    TextColoredIfExists(0, "Y-ECEF [m]", { "Y-ECEF [m]", "Pos ECEF Y [m]" }, "double");
+                    TextColoredIfExists(3, "Longitude [deg]", { "Longitude [deg]" }, "double");
                     ImGui::TableNextRow();
-                    TextColoredIfExists(0, "Z-ECEF [m]", "double");
-                    TextColoredIfExists(3, "Altitude [m]", "double");
+                    TextColoredIfExists(0, "Z-ECEF [m]", { "Z-ECEF [m]", "Pos ECEF Z [m]" }, "double");
+                    TextColoredIfExists(3, "Altitude [m]", { "Altitude [m]" }, "double");
 
                     ImGui::EndTable();
                 }
@@ -264,16 +277,16 @@ void NAV::ImuSimulator::guiConfig()
                     ImGui::TableHeadersRow();
 
                     ImGui::TableNextRow();
-                    TextColoredIfExists(0, "Roll [deg]", "double");
-                    TextColoredIfExists(3, "n_Quat_b w", "double");
+                    TextColoredIfExists(0, "Roll [deg]", { "Roll [deg]" }, "double");
+                    TextColoredIfExists(3, "n_Quat_b w", { "n_Quat_b w" }, "double");
                     ImGui::TableNextRow();
-                    TextColoredIfExists(0, "Pitch [deg]", "double");
-                    TextColoredIfExists(3, "n_Quat_b x", "double");
+                    TextColoredIfExists(0, "Pitch [deg]", { "Pitch [deg]" }, "double");
+                    TextColoredIfExists(3, "n_Quat_b x", { "n_Quat_b x" }, "double");
                     ImGui::TableNextRow();
-                    TextColoredIfExists(0, "Yaw [deg]", "double");
-                    TextColoredIfExists(3, "n_Quat_b y", "double");
+                    TextColoredIfExists(0, "Yaw [deg]", { "Yaw [deg]" }, "double");
+                    TextColoredIfExists(3, "n_Quat_b y", { "n_Quat_b y" }, "double");
                     ImGui::TableNextRow();
-                    TextColoredIfExists(3, "n_Quat_b z", "double");
+                    TextColoredIfExists(3, "n_Quat_b z", { "n_Quat_b z" }, "double");
 
                     ImGui::EndTable();
                 }
@@ -889,9 +902,18 @@ std::optional<NAV::InsTime> NAV::ImuSimulator::getTimeFromCsvLine(const CsvData:
 
 std::optional<Eigen::Vector3d> NAV::ImuSimulator::e_getPositionFromCsvLine(const CsvData::CsvLine& line, const std::vector<std::string>& description) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    auto posXIter = std::ranges::find(description, "X-ECEF [m]");
-    auto posYIter = std::ranges::find(description, "Y-ECEF [m]");
-    auto posZIter = std::ranges::find(description, "Z-ECEF [m]");
+    auto IdxIfExists = [](const std::vector<std::string>& description, const std::vector<const char*>& searchText) {
+        std::ranges::borrowed_iterator_t<decltype(description)> idx = description.begin();
+        for (const char* searchIdx : searchText)
+        {
+            idx = std::ranges::find(description, searchIdx);
+        }
+        return idx;
+    };
+    auto posXIter = IdxIfExists(description, { "X-ECEF [m]", "Pos ECEF X [m]" });
+    auto posYIter = IdxIfExists(description, { "Y-ECEF [m]", "Pos ECEF Y [m]" });
+    auto posZIter = IdxIfExists(description, { "Z-ECEF [m]", "Pos ECEF Z [m]" });
+
     if (posXIter != description.end() && posYIter != description.end() && posZIter != description.end())
     {
         const auto* posX = std::get_if<double>(&line.at(static_cast<size_t>(posXIter - description.begin())));

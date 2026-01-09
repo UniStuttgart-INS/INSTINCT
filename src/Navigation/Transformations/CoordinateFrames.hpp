@@ -46,6 +46,9 @@
 #include "Navigation/Constants.hpp"
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
 #include "Navigation/Transformations/Units.hpp"
+#include <Eigen/src/Core/Matrix.h>
+#include <Eigen/src/Geometry/AngleAxis.h>
+#include <Eigen/src/Geometry/Quaternion.h>
 
 namespace NAV::trafo
 {
@@ -158,6 +161,20 @@ template<typename Derived>
     // TODO: When Eigen 5.0.0 is usable (conflict with ceres 2.2.0)
     // For Tait-Bryan angle configurations (a0 != a2), the returned angles are in the ranges [-pi:pi]x[-pi/2:pi/2]x[-pi:pi].
     // return q.toRotationMatrix().canonicalEulerAngles(2, 1, 0).reverse();
+}
+
+/// @brief Converts the Euler rotation angles to a quaternion
+/// @param[in] v Euler angles to convert
+/// @return Quaternion
+template<typename Derived>
+[[nodiscard]] Eigen::Quaternion<Derived> euler2quat(const Eigen::Vector3<Derived>& v)
+{
+    Eigen::AngleAxis<Derived> roll(v(0), Eigen::Vector3<Derived>::UnitX());
+    Eigen::AngleAxis<Derived> pitch(v(1), Eigen::Vector3<Derived>::UnitY());
+    Eigen::AngleAxis<Derived> yaw(v(2), Eigen::Vector3<Derived>::UnitZ());
+
+    Eigen::Quaternion<Derived> q = yaw * pitch * roll;
+    return q.normalized();
 }
 
 /// @brief Calculates the Jacobian to convert an attitude represented in Euler angels (roll, pitch, yaw) into a covariance for a quaternion

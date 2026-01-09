@@ -150,16 +150,25 @@ void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
             double eastWest = calcGeographicalDistance(obs->latitude(), obs->longitude(),
                                                        obs->latitude(), refPos_lla.y());
 
+            LOG_TRACE("PosVel   [{}]: northSouth: {}", messageCounter_LCKF_PosVel, northSouth);
             REQUIRE(northSouth <= (obs->insTime < timeOfFirstGnssObs ? allowedPositionOffsetImuOnly_n(0) : allowedPositionOffsetCombined_n(0)));
+            LOG_TRACE("PosVel   [{}]: eastWest: {}", messageCounter_LCKF_PosVel, eastWest);
             REQUIRE(eastWest <= (obs->insTime < timeOfFirstGnssObs ? allowedPositionOffsetImuOnly_n(1) : allowedPositionOffsetCombined_n(1)));
+            LOG_TRACE("PosVel   [{}]: delta altitude: {}", messageCounter_LCKF_PosVel, std::abs(obs->altitude() - refPos_lla(2)));
             REQUIRE(std::abs(obs->altitude() - refPos_lla(2)) <= (obs->insTime < timeOfFirstGnssObs ? allowedPositionOffsetImuOnly_n(2) : allowedPositionOffsetCombined_n(2)));
 
+            LOG_TRACE("PosVel   [{}]: e_velocity(0): {}", messageCounter_LCKF_PosVel, obs->e_velocity()(0));
             REQUIRE(obs->e_velocity()(0) <= (obs->insTime < timeOfFirstGnssObs ? allowedVelocityErrorImuOnly_e(0) : allowedVelocityErrorCombined_e(0)));
+            LOG_TRACE("PosVel   [{}]: e_velocity(1): {}", messageCounter_LCKF_PosVel, obs->e_velocity()(1));
             REQUIRE(obs->e_velocity()(1) <= (obs->insTime < timeOfFirstGnssObs ? allowedVelocityErrorImuOnly_e(1) : allowedVelocityErrorCombined_e(1)));
+            LOG_TRACE("PosVel   [{}]: e_velocity(2): {}", messageCounter_LCKF_PosVel, obs->e_velocity()(2));
             REQUIRE(obs->e_velocity()(2) <= (obs->insTime < timeOfFirstGnssObs ? allowedVelocityErrorImuOnly_e(2) : allowedVelocityErrorCombined_e(2)));
 
+            LOG_TRACE("PosVel   [{}]: delta roll: {}", messageCounter_LCKF_PosVel, rad2deg(obs->rollPitchYaw()(0)) - refRollPitchYaw(0));
             REQUIRE(std::abs(rad2deg(obs->rollPitchYaw()(0)) - refRollPitchYaw(0)) <= (obs->insTime < timeOfFirstGnssObs ? allowedRollPitchYawOffsetImuOnly(0) : allowedRollPitchYawOffsetCombined(0)));
+            LOG_TRACE("PosVel   [{}]: delta pitch: {}", messageCounter_LCKF_PosVel, rad2deg(obs->rollPitchYaw()(1)) - refRollPitchYaw(1));
             REQUIRE(std::abs(rad2deg(obs->rollPitchYaw()(1)) - refRollPitchYaw(1)) <= (obs->insTime < timeOfFirstGnssObs ? allowedRollPitchYawOffsetImuOnly(1) : allowedRollPitchYawOffsetCombined(1)));
+            LOG_TRACE("PosVel   [{}]: delta yaw: {}", messageCounter_LCKF_PosVel, rad2deg(obs->rollPitchYaw()(2)) - refRollPitchYaw(2));
             REQUIRE(std::abs(rad2deg(obs->rollPitchYaw()(2)) - refRollPitchYaw(2)) <= (obs->insTime < timeOfFirstGnssObs ? allowedRollPitchYawOffsetImuOnly(2) : allowedRollPitchYawOffsetCombined(2)));
         });
 
