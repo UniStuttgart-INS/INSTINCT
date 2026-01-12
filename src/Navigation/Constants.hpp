@@ -27,8 +27,8 @@ class InsConst
     /// @brief Default Constructor
     InsConst() = delete;
 
-    /// @brief Conversion factor between latitude and longitude in [rad] to [pseudometre]
-    static constexpr double pseudometre = 6370000;
+    /// @brief Conversion factor between latitude and longitude in [rad] to [pseudometre] (mean Earth radius)
+    static constexpr double pseudometre = 6371000;
 
     /// Speed of light [m/s]
     static constexpr double C = 299792458.0;
