@@ -77,12 +77,11 @@ class KalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     /// @brief Shows the GUI input to select the options
     /// @param[in] id Unique id for ImGui.
     /// @param[in] useDoppler Whether to use doppler measurements
-    /// @param[in] multiConstellation Whether to use multiple constellations
     /// @param[in] estimateInterFrequencyBiases Whether to use estimate inter frequency biases
     /// @param[in] itemWidth Width of the widgets
     /// @param[in] unitWidth  Width on unit inputs
     /// @return True when something was changed
-    bool ShowGuiWidgets(const char* id, bool useDoppler, bool multiConstellation, bool estimateInterFrequencyBiases, float itemWidth, float unitWidth);
+    bool ShowGuiWidgets(const char* id, bool useDoppler, bool estimateInterFrequencyBiases, float itemWidth, float unitWidth);
 
     /// @brief Set the P matrix entry for the covariance of the clock phase drift
     /// @param clkPhaseDrift Clock phase drift variance in [m^2 / s]
@@ -150,16 +149,6 @@ class KalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     double _gui_initCovarianceClockDrift = 1e-6 /* [ s / s ] */;
     /// @brief Covariance of the P matrix initialization clock drift uncertainty [m²/s²]
     double _initCovarianceClockDrift = std::pow(1e-6 * InsConst::C, 2);
-
-    // ###########################################################################################################
-
-    /// Gui selection for the Unit of the P matrix initialization inter system clock drift uncertainty
-    InitCovarianceClockDriftUnits _gui_initCovarianceInterSysClockDriftUnit = InitCovarianceClockDriftUnits::s_s;
-
-    /// @brief GUI selection for the P matrix initialization inter system clock drift uncertainty
-    double _gui_initCovarianceInterSysClockDrift = 1e-6 /* [ s / s ] */;
-    /// @brief Covariance of the P matrix initialization inter system clock drift uncertainty [m²/s²]
-    double _initCovarianceInterSysClockDrift = std::pow(1e-6 * InsConst::C, 2);
 
     // ###########################################################################################################
     // ###########################################################################################################

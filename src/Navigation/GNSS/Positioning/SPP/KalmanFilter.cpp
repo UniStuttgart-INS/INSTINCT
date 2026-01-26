@@ -60,23 +60,6 @@ void KalmanFilter::reset(const std::vector<SatelliteSystem>& satelliteSystems)
         break;
     }
 
-    // Covariance of the P matrix initialization inter system clock drift uncertainty [m²/s²]
-    switch (_gui_initCovarianceInterSysClockDriftUnit)
-    {
-    case InitCovarianceClockDriftUnits::m_s:
-        _initCovarianceInterSysClockDrift = std::pow(_gui_initCovarianceInterSysClockDrift, 2);
-        break;
-    case InitCovarianceClockDriftUnits::s_s:
-        _initCovarianceInterSysClockDrift = std::pow(_gui_initCovarianceInterSysClockDrift * InsConst::C, 2);
-        break;
-    case InitCovarianceClockDriftUnits::m2_s2:
-        _initCovarianceInterSysClockDrift = _gui_initCovarianceInterSysClockDrift;
-        break;
-    case InitCovarianceClockDriftUnits::s2_s2:
-        _initCovarianceInterSysClockDrift = _gui_initCovarianceInterSysClockDrift * std::pow(InsConst::C, 2);
-        break;
-    }
-
     // ###########################################################################################################
 
     // Reset values to 0 and remove inter system states
@@ -104,17 +87,15 @@ void KalmanFilter::initialize(const KeyedVectorXd<States::StateKeyType>& states,
     _kalmanFilter.x(states.rowKeys()) = states(all);
     _kalmanFilter.P(variance.rowKeys(), variance.colKeys()) = variance(all, all) * 100.0; // LSQ variance is very small. So make bigger
 
-    if (!states.hasAnyRows(VelKey)) // We always estimate velocity in the KF, but LSQ could not, so set a default value
+    // We always estimate velocity in the KF, but LSQ could not, so set a default value
+    if (!states.hasAnyRows(VelKey))
     {
         _kalmanFilter.P(VelKey, VelKey).diagonal() << Eigen::Vector3d::Ones() * _initCovarianceVelocity;
     }
     // We always estimate receiver clock drift in the KF, but LSQ could not, so set a default value
-    for (const auto& key : _kalmanFilter.P.rowKeys())
+    if (!states.hasRow(Keys::RecvClkDrift{}))
     {
-        if (std::holds_alternative<Keys::RecvClkDrift>(key) && !states.hasRow(key))
-        {
-            _kalmanFilter.P(key, key) = _initCovarianceClockDrift;
-        }
+        _kalmanFilter.P(Keys::RecvClkDrift{}, Keys::RecvClkDrift{}) = _initCovarianceClockDrift;
     }
 
     _initialized = true;
@@ -194,7 +175,7 @@ void KalmanFilter::addInterFrequencyBias(const Frequency& freq)
                                         _kalmanFilter.W);
 }
 
-bool KalmanFilter::ShowGuiWidgets(const char* id, bool useDoppler, bool multiConstellation, bool estimateInterFrequencyBiases, float itemWidth, float unitWidth)
+bool KalmanFilter::ShowGuiWidgets(const char* id, bool useDoppler, bool estimateInterFrequencyBiases, float itemWidth, float unitWidth)
 {
     bool changed = false;
 
@@ -243,21 +224,6 @@ bool KalmanFilter::ShowGuiWidgets(const char* id, bool useDoppler, bool multiCon
             {
                 LOG_DEBUG("{}: _gui_initCovarianceClockDrift changed to {}", id, _gui_initCovarianceClockDrift);
                 LOG_DEBUG("{}: _gui_initCovarianceClockDriftUnit changed to {}", id, fmt::underlying(_gui_initCovarianceClockDriftUnit));
-                changed = true;
-            }
-            if (multiConstellation
-                && gui::widgets::InputDoubleWithUnit(fmt::format("{} of the inter system clock drift uncertainty##{}",
-                                                                 (_gui_initCovarianceInterSysClockDriftUnit == InitCovarianceClockDriftUnits::m_s
-                                                                  || _gui_initCovarianceInterSysClockDriftUnit == InitCovarianceClockDriftUnits::s_s)
-                                                                     ? "Standard deviation"
-                                                                     : "Variance",
-                                                                 id)
-                                                         .c_str(),
-                                                     configWidth, unitWidth, &_gui_initCovarianceInterSysClockDrift, _gui_initCovarianceInterSysClockDriftUnit, "m/s\0s/s\0m^2/s^2\0s^2/s^2\0\0",
-                                                     0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
-            {
-                LOG_DEBUG("{}: _gui_initCovarianceInterSysClockDrift changed to {}", id, _gui_initCovarianceInterSysClockDrift);
-                LOG_DEBUG("{}: _gui_initCovarianceInterSysClockDriftUnit changed to {}", id, fmt::underlying(_gui_initCovarianceInterSysClockDriftUnit));
                 changed = true;
             }
 

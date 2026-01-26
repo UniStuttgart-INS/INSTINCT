@@ -55,8 +55,8 @@ bool Algorithm::ShowGuiWidgets(const char* id, float itemWidth, float unitWidth)
     if (_estimatorType == EstimatorType::KalmanFilter)
     {
         changed |= _kalmanFilter.ShowGuiWidgets(id, _obsFilter.isObsTypeUsed(GnssObs::Doppler),
-                                                _obsFilter.getSystemFilter().toVector().size() != 1,
-                                                _estimateInterFreqBiases && canEstimateInterFrequencyBias(), itemWidth, unitWidth);
+                                                _estimateInterFreqBiases && canEstimateInterFrequencyBias(),
+                                                itemWidth, unitWidth);
     }
 
     return changed;
