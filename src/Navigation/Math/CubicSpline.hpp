@@ -170,6 +170,17 @@ class CubicSpline
         coef_c0 = (boundaryConditionLeft.type == BoundaryCondition::FirstDerivative) ? 0.0 : coef_c[0];
     }
 
+    /// @brief Get the X Points
+    [[nodiscard]] const std::vector<Scalar>& getPointsX() const noexcept
+    {
+        return vals_x;
+    }
+    /// @brief Get the Y Points
+    [[nodiscard]] const std::vector<Scalar>& getPointsY() const noexcept
+    {
+        return vals_y;
+    }
+
     /// @brief Returns the size of the spline vector
     [[nodiscard]] size_t size() const noexcept
     {

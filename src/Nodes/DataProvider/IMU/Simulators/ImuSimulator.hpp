@@ -26,6 +26,7 @@
 #include "NodeData/General/CsvData.hpp"
 
 #include <array>
+#include <cstdint>
 
 namespace NAV
 {
@@ -204,6 +205,34 @@ class ImuSimulator : public Imu
 
     // ###########################################################################################################
 
+    /// Oscillations to add onto the trajectory
+    struct Oscillation
+    {
+        /// Target to add the oscillation to
+        enum Target : uint8_t
+        {
+            ECEF_X,
+            ECEF_Y,
+            ECEF_Z,
+            North,
+            East,
+            Up,
+            Roll,
+            Pitch,
+            Yaw,
+            COUNT,
+        };
+
+        Target target = Up;     ///< Target to put the oscillation on
+        double amplitude = 10.; ///< Amplitude in the unit of the target
+        int number = 5;         ///< Number of oscillations
+    };
+
+    /// Oscillations to add onto the trajectory
+    std::vector<Oscillation> _oscillations;
+
+    // ###########################################################################################################
+
     /// Possible stop conditions for the simulation
     enum StopCondition : uint8_t
     {
@@ -335,6 +364,23 @@ class ImuSimulator : public Imu
     /// @param[in] n_Quat_b Rotation quaternion from body frame to the local-navigation frame
     /// @return ω_nb_n [rad/s]
     [[nodiscard]] Eigen::Vector3d n_calcOmega_nb(double time, const Eigen::Vector3d& rollPitchYaw, const Eigen::Quaterniond& n_Quat_b) const;
+
+    friend const char* to_string(Oscillation::Target value);
+    friend void to_json(json& j, const Oscillation& obj);
+    friend void from_json(const json& j, Oscillation& obj);
 };
+
+/// @brief Converts the enum to a string
+/// @param[in] value Enum value to convert into text
+/// @return String representation of the enum
+const char* to_string(ImuSimulator::Oscillation::Target value);
+/// @brief Converts the provided object into json
+/// @param[out] j Json object which gets filled with the info
+/// @param[in] obj Object to convert into json
+void to_json(json& j, const ImuSimulator::Oscillation& obj);
+/// @brief Converts the provided json object into a node object
+/// @param[in] j Json object with the needed values
+/// @param[out] obj Object to fill from the json
+void from_json(const json& j, ImuSimulator::Oscillation& obj);
 
 } // namespace NAV
