@@ -188,8 +188,40 @@ struct AmbiguityResolutionResult
     size_t nFixed = 0;                      ///< Number of fixed ambiguities (differs from vector size in case of partial fixing)
     std::vector<FixedAmbiguity> fixedAmb;   ///< Sorted vector of fixed ambiguities and their norms
     Eigen::Vector<Scalar, nReal> b;         ///< Fixed non-integer float states (e.g. Pos, Vel, ...)
-    Eigen::Matrix<Scalar, nReal, nReal> Qb; ///< Fixed variance/covariance matrix of the non-integer float states
+    Eigen::Matrix<Scalar, nReal, nReal> Qb; ///< Fixed covariance matrix of the non-integer float states
 };
+
+/// @brief Applies the fixed ambiguities to the float state
+/// @param a Float ambiguity vector [cycles]
+/// @param afixed Fixed ambiguity vector [cycles]
+/// @param QaInv Inverse of the covariance matrix of the ambiguities
+/// @param b Non-integer float states (e.g. Pos, Vel, ...)
+/// @param Qba Lower left part of the variance/covariance matrix (correlation between ambiguities and other states)
+/// @return Fixed non-integer float states (e.g. Pos, Vel, ...)
+template<typename DerivedA, typename DerivedAfixed, typename DerivedQa, typename DerivedB, typename DerivedQba>
+typename DerivedB::PlainObject ApplyFixToFloatVariables(const Eigen::MatrixBase<DerivedA>& a,
+                                                        const Eigen::MatrixBase<DerivedAfixed>& afixed,
+                                                        const Eigen::MatrixBase<DerivedQa>& QaInv,
+                                                        const Eigen::MatrixBase<DerivedB>& b,
+                                                        const Eigen::MatrixBase<DerivedQba>& Qba)
+{
+    return b - Qba * QaInv * (a - afixed);
+}
+
+/// @brief Applies the fixed ambiguities to the float covariance
+/// @param QaInv Inverse of the covariance matrix of the ambiguities
+/// @param Qb Variance/covariance matrix of the non-integer float states
+/// @param Qab Upper right part of the variance/covariance matrix (correlation between ambiguities and other states)
+/// @param Qba Lower left part of the variance/covariance matrix (correlation between ambiguities and other states)
+/// @return Fixed covariance matrix of the non-integer float states
+template<typename DerivedQa, typename DerivedQb, typename DerivedQab, typename DerivedQba>
+typename DerivedQb::PlainObject ApplyFixToFloatCovariance(const Eigen::MatrixBase<DerivedQa>& QaInv,
+                                                          const Eigen::MatrixBase<DerivedQb>& Qb,
+                                                          const Eigen::MatrixBase<DerivedQab>& Qab,
+                                                          const Eigen::MatrixBase<DerivedQba>& Qba)
+{
+    return Qb - Qba * QaInv * Qab;
+}
 
 /// @brief Tries resolving the ambiguities
 /// @param a Float ambiguity vector [cycles]
@@ -439,8 +471,9 @@ AmbiguityResolutionResult<typename DerivedA::Scalar, DerivedA::RowsAtCompileTime
         }
     }
 
-    result.b = b - Qba * Qa.inverse() * (a - cands.col(0));
-    result.Qb = Qb - Qba * Qa.inverse() * Qab;
+    typename DerivedQa::PlainObject QaInv = Qa.inverse();
+    result.b = ApplyFixToFloatVariables(a, cands.col(0), QaInv, b, Qba); // b - Qba * Qa.inverse() * (a - cands.col(0));
+    result.Qb = ApplyFixToFloatCovariance(QaInv, Qb, Qab, Qba);          // Qb - Qba * Qa.inverse() * Qab;
 
     for (Eigen::Index i = 0; i < cands.cols(); i++)
     {

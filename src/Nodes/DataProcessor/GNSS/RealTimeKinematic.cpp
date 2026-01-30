@@ -347,34 +347,6 @@ void RealTimeKinematic::guiConfig()
             ImGui::SameLine();
             gui::widgets::HelpMarker("Minimum amount of satellites with carrier observations\nin order to attempt ambiguity holding.");
         }
-        if (ImGui::Checkbox(fmt::format("Apply fixed ambiguities with KF update##{}", size_t(id)).c_str(), &_applyFixedAmbiguitiesWithUpdate))
-        {
-            flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        gui::widgets::HelpMarker("Make a Kalman Filter update with the fixed ambiguities when checked.\n"
-                                 "Otherwise apply via\n"
-                                 "- a = a_fix\n"
-                                 "- b = b_float - Q_ba * Q_aa^-1 (a_fix - a_float)");
-
-        if (_applyFixedAmbiguitiesWithUpdate
-            && gui::widgets::InputDoubleWithUnit(fmt::format("Apply fixed ambiguities measurement noise##{}", size_t(id)).c_str(),
-                                                 cWidth, unitWidth, &_gui_ambFixUpdateStdDev,
-                                                 _gui_ambFixUpdateStdDevUnits, "cycle\0\0",
-                                                 0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
-        {
-            LOG_DEBUG("{}: ambFixUpdateStdDev changed to {}", nameId(), _gui_ambFixUpdateStdDev);
-            LOG_DEBUG("{}: ambFixUpdateStdDevUnits changed to {}", nameId(), fmt::underlying(_gui_ambFixUpdateStdDevUnits));
-
-            switch (_gui_ambFixUpdateStdDevUnits)
-            {
-            case StdevAmbiguityUnits::Cycle:
-                _ambFixUpdateVariance = std::pow(_gui_ambFixUpdateStdDev, 2);
-                break;
-            }
-
-            flow::ApplyChanges();
-        }
 
         ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
         if (ImGui::TreeNode(fmt::format("Cycle-slip detection##Tree{}", size_t(id)).c_str()))
@@ -499,9 +471,6 @@ void RealTimeKinematic::guiConfig()
     j["nMinSatForAmbFix"] = _nMinSatForAmbFix;
     j["nMinSatForAmbHold"] = _nMinSatForAmbHold;
     j["maxPosVar"] = _maxPosVar;
-    j["applyFixedAmbiguitiesWithUpdate"] = _applyFixedAmbiguitiesWithUpdate;
-    j["ambFixUpdateStdDev"] = _gui_ambFixUpdateStdDev;
-    j["ambFixUpdateStdDevUnits"] = _gui_ambFixUpdateStdDevUnits;
 
     j["cycleSlipDetector"] = _cycleSlipDetector;
     j["eventFilterRegex"] = _eventFilterRegex;
@@ -539,18 +508,6 @@ void RealTimeKinematic::restore(json const& j)
     if (j.contains("nMinSatForAmbFix")) { j.at("nMinSatForAmbFix").get_to(_nMinSatForAmbFix); }
     if (j.contains("nMinSatForAmbHold")) { j.at("nMinSatForAmbHold").get_to(_nMinSatForAmbHold); }
     if (j.contains("maxPosVar")) { j.at("maxPosVar").get_to(_maxPosVar); }
-    if (j.contains("applyFixedAmbiguitiesWithUpdate")) { j.at("applyFixedAmbiguitiesWithUpdate").get_to(_applyFixedAmbiguitiesWithUpdate); }
-    if (j.contains("ambFixUpdateStdDevUnits")) { j.at("ambFixUpdateStdDevUnits").get_to(_gui_ambFixUpdateStdDevUnits); }
-    if (j.contains("ambFixUpdateStdDev"))
-    {
-        j.at("ambFixUpdateStdDev").get_to(_gui_ambFixUpdateStdDev);
-        switch (_gui_ambFixUpdateStdDevUnits)
-        {
-        case StdevAmbiguityUnits::Cycle:
-            _ambFixUpdateVariance = std::pow(_gui_ambFixUpdateStdDev, 2);
-            break;
-        }
-    }
 
     if (j.contains("cycleSlipDetector")) { j.at("cycleSlipDetector").get_to(_cycleSlipDetector); }
     if (j.contains("eventFilterRegex")) { j.at("eventFilterRegex").get_to(_eventFilterRegex); }
@@ -2544,6 +2501,7 @@ bool RealTimeKinematic::resolveAmbiguities(size_t nCarrierMeasUniqueSatellite, c
         }
     }
     size_t nAmbs = ambKeys.size();
+    auto floatKeys = States::PosVel;
 
     if (nCarrierMeasUniqueSatellite < _nMinSatForAmbFix)
     {
@@ -2632,7 +2590,27 @@ bool RealTimeKinematic::resolveAmbiguities(size_t nCarrierMeasUniqueSatellite, c
             fixedAmb(static_cast<int>(k)) = _ambiguitiesHold.at(satSigId);
         }
         rtkSol->nAmbiguitiesFixed = ambKeys.size() + 1; // + 1 to also count the pivot
-        applyFixedAmbiguities(fixedAmb, ambKeys, ambMeasKeys);
+
+        Eigen::MatrixXd QaInv = _kalmanFilter.P(ambKeys, ambKeys).inverse();
+
+        _kalmanFilter.x(floatKeys) = ApplyFixToFloatVariables(_kalmanFilter.x(ambKeys), fixedAmb, QaInv, _kalmanFilter.x(floatKeys), _kalmanFilter.P(floatKeys, ambKeys));
+        _kalmanFilter.x(ambKeys) = fixedAmb;
+
+        _kalmanFilter.P(floatKeys, floatKeys) = ApplyFixToFloatCovariance(QaInv,
+                                                                          _kalmanFilter.P(floatKeys, floatKeys),
+                                                                          _kalmanFilter.P(ambKeys, floatKeys),
+                                                                          _kalmanFilter.P(floatKeys, ambKeys));
+        _kalmanFilter.P(ambKeys, ambKeys).setZero();
+        _kalmanFilter.P(ambKeys, floatKeys).setZero();
+        _kalmanFilter.P(floatKeys, ambKeys).setZero();
+        LOG_DATA("{}: x(fixed.b) =\n{}", nameId(), _kalmanFilter.x.transposed());
+        // LOG_DATA("{}: P(fixed.Qb) =\n{}", nameId(), _kalmanFilter.P);
+
+        LOG_DATA("{}: dx_ecef (fix, update  - fix         ) = {}", nameId(), (_kalmanFilter.x.segment<3>(States::Pos) - _receiver[Rover].e_posMarker).transpose());
+        LOG_DATA("{}: dv_ecef (fix, update  - fix         ) = {}", nameId(), (_kalmanFilter.x.segment<3>(States::Vel) - _receiver[Rover].e_vel).transpose());
+        _receiver[Rover].e_posMarker = _kalmanFilter.x.segment<3>(States::Pos);
+        _receiver[Rover].e_vel = _kalmanFilter.x.segment<3>(States::Vel);
+        _receiver[Rover].lla_posMarker = trafo::ecef2lla_WGS84(_receiver[Rover].e_posMarker);
 
         if (_nMinSatForAmbHoldTriggered)
         {
@@ -2654,7 +2632,6 @@ bool RealTimeKinematic::resolveAmbiguities(size_t nCarrierMeasUniqueSatellite, c
     }
 
     LOG_DATA("{}: [{}] Estimating ambiguities", nameId(), _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST));
-    auto floatKeys = States::PosVel;
     size_t partialFixTries = 0;
     do
     {
@@ -2669,16 +2646,15 @@ bool RealTimeKinematic::resolveAmbiguities(size_t nCarrierMeasUniqueSatellite, c
 
         if (fixed.failure == AmbiguityResolutionFailure::None)
         {
+            _kalmanFilter.x(ambKeys) = fixed.fixedAmb.front().a;
             _kalmanFilter.x(floatKeys) = fixed.b;
-            LOG_DATA("{}: x(fixed.b) =\n{}", nameId(), _kalmanFilter.x.transposed());
 
-            if (_applyFixedAmbiguitiesWithUpdate) { applyFixedAmbiguities(fixed.fixedAmb.front().a, ambKeys, ambMeasKeys); }
-            else
-            {
-                _kalmanFilter.x(ambKeys) = fixed.fixedAmb.front().a;
-                // _kalmanFilter.P(floatKeys, floatKeys) = fixed.Qb;
-                // LOG_DATA("{}: P(fixed.Qb) =\n{}", nameId(), _kalmanFilter.P);
-            }
+            _kalmanFilter.P(floatKeys, floatKeys) = fixed.Qb;
+            _kalmanFilter.P(ambKeys, ambKeys).setZero();
+            _kalmanFilter.P(ambKeys, floatKeys).setZero();
+            _kalmanFilter.P(floatKeys, ambKeys).setZero();
+            LOG_DATA("{}: x(fixed.b) =\n{}", nameId(), _kalmanFilter.x.transposed());
+            // LOG_DATA("{}: P(fixed.Qb) =\n{}", nameId(), _kalmanFilter.P);
 
             LOG_DATA("{}: dx_ecef (fix, update  - fix         ) = {}", nameId(), (_kalmanFilter.x.segment<3>(States::Pos) - _receiver[Rover].e_posMarker).transpose());
             LOG_DATA("{}: dv_ecef (fix, update  - fix         ) = {}", nameId(), (_kalmanFilter.x.segment<3>(States::Vel) - _receiver[Rover].e_vel).transpose());
@@ -2731,41 +2707,6 @@ bool RealTimeKinematic::resolveAmbiguities(size_t nCarrierMeasUniqueSatellite, c
     }
 
     return false;
-}
-
-void RealTimeKinematic::applyFixedAmbiguities(const Eigen::VectorXd& fixedAmb, const std::vector<States::StateKeyType>& ambKeys, const std::vector<Meas::MeasKeyTypes>& ambMeasKeys)
-{
-#if LOG_LEVEL <= LOG_LEVEL_DATA
-    if (((_kalmanFilter.x(ambKeys).array() * 1e2).round() * 1e-2).matrix() != fixedAmb)
-    {
-        auto ambPrint = KeyedMatrixXd<States::StateKeyType>(
-            (Eigen::MatrixXd(static_cast<int>(ambKeys.size()), 2) << _kalmanFilter.x(ambKeys), fixedAmb).finished(),
-            ambKeys, std::vector<States::StateKeyType>{ States::AmbiguityDD(SatSigId(Code::G1C, 200)), States::AmbiguityDD(SatSigId(Code::G1C, 201)) });
-        LOG_DATA("{}: [{}] Ambiguity estimate changed (relative to pivot) (200 = prev, 201 = new)\n{}", nameId(), _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), ambPrint.transposed());
-        LOG_DATA("P(amb) =\n{}", _kalmanFilter.P(ambKeys, ambKeys));
-    }
-#endif
-
-    // Make a KF update with the fixed ambiguities as observation in order to adapt the P matrix
-    _kalmanFilter.setMeasurements(ambMeasKeys);
-
-    // Update the Measurement sensitivity Matrix (𝐇), the Measurement noise covariance matrix (𝐑) and the Measurement vector (𝐳)
-    _kalmanFilter.z.segment(ambMeasKeys) = fixedAmb - _kalmanFilter.x(ambKeys);
-    _kalmanFilter.H(ambMeasKeys, ambKeys).setIdentity();
-
-    // R matrix
-    _kalmanFilter.R(all, all).diagonal().setConstant(_ambFixUpdateVariance);
-
-    LOG_DATA("{}: z =\n{}", nameId(), _kalmanFilter.z.transposed());
-    LOG_DATA("{}: H =\n{}", nameId(), _kalmanFilter.H);
-    LOG_DATA("{}: R =\n{}", nameId(), _kalmanFilter.R);
-
-    _kalmanFilter.correctWithMeasurementInnovation();
-
-    LOG_DATA("{}: x (fix, update , t   = {}) = (Ambiguity update)\n{}", nameId(), _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _kalmanFilter.x.transposed());
-    // Apply the integer values, otherwise values not exact
-    _kalmanFilter.x(ambKeys) = fixedAmb;
-    LOG_DATA("{}: x (fix, update , t   = {}) = (Ambiguity integers)\n{}", nameId(), _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _kalmanFilter.x.transposed());
 }
 
 const char* to_string(const RealTimeKinematic::ReceiverType& receiver)

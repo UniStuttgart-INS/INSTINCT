@@ -158,17 +158,6 @@ class RealTimeKinematic : public Node
     /// Do not attempt to fix if the position variance is above the threshold
     double _maxPosVar = 0.4;
 
-    /// Make an update with the fixed ambiguities when true.
-    /// Otherwise apply via $$a = a_fix$$ and $$b = b_float - Q_ba * Q_aa^-1 (a_fix - a_float)$$
-    bool _applyFixedAmbiguitiesWithUpdate = true;
-
-    /// Measurement noise standard deviation used when fixing ambiguities in [cycles] (GUI value)
-    double _gui_ambFixUpdateStdDev = 1e-2;
-    /// Gui selection for the Unit of the input for the StDev of the ambiguities (while float solution)
-    StdevAmbiguityUnits _gui_ambFixUpdateStdDevUnits = StdevAmbiguityUnits::Cycle;
-    /// Measurement noise variance used when fixing ambiguities in [cycles^2] (Value used for calculation)
-    double _ambFixUpdateVariance = _gui_ambFixUpdateStdDev * _gui_ambFixUpdateStdDev;
-
     bool _maxPosVarTriggered = false;               ///< Trigger state of the check
     bool _outlierMaxPosVarStartupTriggered = false; ///< Trigger state of the check
     bool _nMinSatForAmbFixTriggered = false;        ///< Trigger state of the check
@@ -422,12 +411,6 @@ class RealTimeKinematic : public Node
     /// @param[in, out] rtkSol RtkSolution to update
     /// @return True if the ambiguities could be fixed
     bool resolveAmbiguities(size_t nCarrierMeasUniqueSatellite, const std::shared_ptr<RtkSolution>& rtkSol);
-
-    /// @brief Apply the fixed ambiguities to the kalman filter state
-    /// @param[in] fixedAmb Fixed ambiguities
-    /// @param[in] ambKeys Ambiguity state keys
-    /// @param[in] ambMeasKeys Ambiguity measurement keys
-    void applyFixedAmbiguities(const Eigen::VectorXd& fixedAmb, const std::vector<RTK::States::StateKeyType>& ambKeys, const std::vector<RTK::Meas::MeasKeyTypes>& ambMeasKeys);
 };
 
 /// @brief Converts the enum to a string
