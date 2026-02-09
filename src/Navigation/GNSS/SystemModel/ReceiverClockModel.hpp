@@ -118,18 +118,14 @@ class ReceiverClockModel
                     std::vector<StateKeyType> keys = { *bias, drift };
                     if (algorithm == SystemModelCalcAlgorithm::VanLoan)
                     {
-                        auto [PhiMot, QMot] = NAV::calcPhiAndQWithVanLoanMethod(
-                            F.template block<2>(keys, keys),
-                            G.template block<2>(keys, keys),
-                            W.template block<2>(keys, keys),
-                            dt);
-                        Phi.template block<2>(keys, keys) = PhiMot;
-                        Q.template block<2>(keys, keys) = QMot;
+                        auto [PhiClk, QClk] = NAV::calcPhiAndQWithVanLoanMethod(F(keys, keys), G(keys, keys), W(keys, keys), dt);
+                        Phi(keys, keys) = PhiClk;
+                        Q(keys, keys) = QClk;
                     }
                     else // QCalculationAlgorithm::Taylor1
                     {
-                        Phi.template block<2>(keys, keys) = transitionMatrix_Phi_Taylor(F.template block<2>(keys, keys), dt, 1);
-                        Q.template block<2>(keys, keys) = calcProcessNoiseMatrixTaylor(dt, bias->satSys, keys)(all, all);
+                        Phi(keys, keys) = transitionMatrix_Phi_Taylor(F(keys, keys), dt, 1);
+                        Q(keys, keys) = calcProcessNoiseMatrixTaylor(dt, bias->satSys, keys)(all, all);
                     }
                 }
                 else
