@@ -85,7 +85,7 @@ void KalmanFilter::initialize(const KeyedVectorXd<States::StateKeyType>& states,
 {
     LOG_DATA("x_KF(pre-init) = \n{}", _kalmanFilter.x.transposed());
     _kalmanFilter.x(states.rowKeys()) = states(all);
-    _kalmanFilter.P(variance.rowKeys(), variance.colKeys()) = variance(all, all) * 100.0; // LSQ variance is very small. So make bigger
+    _kalmanFilter.P(variance.rowKeys(), variance.colKeys()) = variance(all, all); // LSQ variance is very small. So make bigger
 
     // We always estimate velocity in the KF, but LSQ could not, so set a default value
     if (!states.hasAnyRows(VelKey))
@@ -110,10 +110,6 @@ void KalmanFilter::predict(const double& dt, const Eigen::Vector3d& lla_pos, [[m
 {
     // Update the State transition matrix (𝚽) and the Process noise covariance matrix (𝐐)
 
-    LOG_DATA("{}: F =\n{}", nameId, _kalmanFilter.F);
-    LOG_DATA("{}: G =\n{}", nameId, _kalmanFilter.G);
-    LOG_DATA("{}: W =\n{}", nameId, _kalmanFilter.W);
-
     _motionModel.updatePhiAndQ(_kalmanFilter.Phi,
                                _kalmanFilter.Q,
                                _kalmanFilter.G,
@@ -135,6 +131,10 @@ void KalmanFilter::predict(const double& dt, const Eigen::Vector3d& lla_pos, [[m
     _interFrequencyBiasModel.updatePhiAndQ(_kalmanFilter.Phi,
                                            _kalmanFilter.Q,
                                            dt);
+
+    LOG_DATA("{}: F =\n{}", nameId, _kalmanFilter.F);
+    LOG_DATA("{}: G =\n{}", nameId, _kalmanFilter.G);
+    LOG_DATA("{}: W =\n{}", nameId, _kalmanFilter.W);
 
     LOG_DATA("{}: Phi =\n{}", nameId, _kalmanFilter.Phi);
     LOG_DATA("{}: Q =\n{}", nameId, _kalmanFilter.Q);

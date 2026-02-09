@@ -301,9 +301,9 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
                 std::string msg = fmt::format("Potential clock jump detected. Reinitializing KF with WLSQ.\nPosition difference to previous epoch {:.1f}m", posDiff);
                 LOG_WARN("{}: [{}] {}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), msg);
                 sppSol->addEvent(msg);
-                // _kalmanFilter.deinitialize();
-                // nIter = N_ITER_MAX_LSQ + 1;
-                // continue;
+                _kalmanFilter.deinitialize();
+                nIter = N_ITER_MAX_LSQ + 1;
+                continue;
             }
 
             assignKalmanFilterResult(_kalmanFilter.getState(), _kalmanFilter.getErrorCovarianceMatrix(), nameId);
