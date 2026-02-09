@@ -141,9 +141,11 @@ class PolynomialRegressor
     }
 
     /// @brief Calculates the polynomial
-    [[nodiscard]] std::optional<Polynomial<Scalar>> calcPolynomial() const
+    /// @param[in] strictDegree Only calculate the polynomial if enough data available for the required degree (otherwise reduce degree)
+    [[nodiscard]] std::optional<Polynomial<Scalar>> calcPolynomial(bool strictDegree = true) const
     {
-        if (_data.size() <= _polyDegree) { return std::nullopt; }
+        auto polyDegree = strictDegree || _data.empty() ? _polyDegree : std::min(_data.size() - 1, _polyDegree);
+        if (_data.size() <= polyDegree) { return std::nullopt; }
 
         auto prepareDataVectors = [&]() {
             auto n = static_cast<int>(_data.size());
@@ -166,22 +168,22 @@ class PolynomialRegressor
         case Strategy::LeastSquares:
         {
             auto [x, y] = prepareDataVectors();
-            return { LeastSquares<Scalar>::calcCoefficients(x, y, _polyDegree) };
+            return { LeastSquares<Scalar>::calcCoefficients(x, y, polyDegree) };
         }
         case Strategy::HouseholderQR:
         {
             auto [x, y] = prepareDataVectors();
-            return { HouseholderQr<Scalar>::calcCoefficients(x, y, _polyDegree) };
+            return { HouseholderQr<Scalar>::calcCoefficients(x, y, polyDegree) };
         }
         case Strategy::BDCSVD:
         {
             auto [x, y] = prepareDataVectors();
-            return { BDCSVD<Scalar>::calcCoefficients(x, y, _polyDegree) };
+            return { BDCSVD<Scalar>::calcCoefficients(x, y, polyDegree) };
         }
         case Strategy::COD:
         {
             auto [x, y] = prepareDataVectors();
-            return { COD<Scalar>::calcCoefficients(x, y, _polyDegree) };
+            return { COD<Scalar>::calcCoefficients(x, y, polyDegree) };
         }
         case Strategy::COUNT:
             break;

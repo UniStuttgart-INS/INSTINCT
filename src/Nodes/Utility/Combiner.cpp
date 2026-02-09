@@ -594,20 +594,6 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
                 LOG_DATA("{}:           {}", nameId(), data->insTime.toYMDHMS(GPST));
             }
 
-            // Check for all combinations with new info:
-
-            if (std::ranges::any_of(comb.terms, [&](const auto& t) {
-                    bool termHasNoData = t.rawData.empty();
-                    if (termHasNoData)
-                    {
-                        LOG_DATA("{}:       Skipping, because no data on other term '{}' yet", nameId(), t.description(this, getDataDescriptors(t.pinIndex)));
-                    }
-                    return termHasNoData;
-                }))
-            {
-                continue;
-            }
-
             if (!_sendRequests.empty()) { LOG_DATA("{}:       Checking if term is in a send request", nameId()); }
             for (auto& [sendRequestTime, sendRequests] : _sendRequests)
             {
@@ -662,7 +648,7 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
                         }
                         else
                         {
-                            if (auto poly = term.polyReg.calcPolynomial())
+                            if (auto poly = term.polyReg.calcPolynomial(false))
                             {
                                 LOG_DATA("{}:           Updating send request: {} += {:.2f} * {:.3g} (by interpolating to time [{:.3f}s])", nameId(),
                                          sendRequest.result, term.factor, poly->f(math::round(calcTimeIntoRun(sendRequestTime), 8)),
