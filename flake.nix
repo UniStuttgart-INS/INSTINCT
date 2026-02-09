@@ -5,74 +5,71 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
-  outputs =
-    { self, nixpkgs }:
-    let
-      forAllSystems = nixpkgs.lib.genAttrs [
-        "x86_64-linux"
-        "aarch64-linux"
-      ];
-    in
-    {
-      devShells = forAllSystems (
-        system:
-        let
-          pkgs = nixpkgs.legacyPackages.${system};
-        in
-        {
-          default = pkgs.mkShell {
-            nativeBuildInputs = with pkgs; [
-              cmake
-              conan
-              gdb
-              gcovr
-              mold
+  outputs = {
+    self,
+    nixpkgs,
+  }: let
+    forAllSystems = nixpkgs.lib.genAttrs [
+      "x86_64-linux"
+      "aarch64-linux"
+    ];
+  in {
+    devShells = forAllSystems (
+      system: let
+        pkgs = nixpkgs.legacyPackages.${system};
+      in {
+        default = pkgs.mkShell {
+          nativeBuildInputs = with pkgs; [
+            cmake
+            conan
+            gdb
+            gcovr
+            mold
 
-              lldb
-              libcxx
-              clang-tools
-              clang
+            lldb
+            libcxx
+            clang-tools
+            clang
 
-              gcc
+            gcc
 
-              # ccache is currently incompatible with clang
-              ccache
-              ccacheStdenv
+            # ccache is currently incompatible with clang
+            ccache
+            ccacheStdenv
 
-              doxygen
-              texliveFull
-              graphviz
-              mscgen
-              dia
-              ghostscript
-              pdf2svg
+            doxygen
+            texliveFull
+            graphviz
+            mscgen
+            dia
+            ghostscript
+            pdf2svg
 
-              gv
-              valgrind
-              kdePackages.kcachegrind
+            gv
+            valgrind
+            kdePackages.kcachegrind
 
-              xclip
-              wl-clipboard
-            ];
-            buildInputs = with pkgs; [
-              xorg.libX11.dev
+            xclip
+            wl-clipboard
+          ];
+          buildInputs = with pkgs; [
+            xorg.libX11.dev
+            glfw
+            gl3w
+            libGLU
+            libunwind
+            gperftools
+          ];
+          LD_LIBRARY_PATH = with pkgs;
+            lib.makeLibraryPath [
+              libGL
               glfw
-              gl3w
               libGLU
-              libunwind
+              stdenv.cc.cc.lib
               gperftools
             ];
-            LD_LIBRARY_PATH = with pkgs;
-              lib.makeLibraryPath [
-                glibc
-                libGL
-                glfw
-                libGLU
-                stdenv.cc.cc.lib
-                gperftools
-              ];
-          };
-        }
-      );
-    };
+        };
+      }
+    );
+  };
 }
