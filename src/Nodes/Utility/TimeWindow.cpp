@@ -7,6 +7,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "TimeWindow.hpp"
+#include <imgui.h>
 
 #include "internal/FlowManager.hpp"
 
@@ -49,6 +50,12 @@ std::string NAV::TimeWindow::category()
 
 void NAV::TimeWindow::guiConfig()
 {
+    if (ImGui::Checkbox(fmt::format("Disable Window##{}", size_t(id)).c_str(), &_disableWindow))
+    {
+        flow::ApplyChanges();
+    }
+    ImGui::SameLine(0.0F, 20.0F);
+    if (_disableWindow) { ImGui::BeginDisabled(); }
     if (ImGui::Checkbox(fmt::format("Inverse Window##{}", size_t(id)).c_str(), &_inverseWindow))
     {
         flow::ApplyChanges();
@@ -76,6 +83,7 @@ void NAV::TimeWindow::guiConfig()
 
         ImGui::EndTable();
     }
+    if (_disableWindow) { ImGui::EndDisabled(); }
 }
 
 json NAV::TimeWindow::save() const
@@ -87,6 +95,7 @@ json NAV::TimeWindow::save() const
     j["startEndTime"] = _startEndTime;
     j["timeEditFormat"] = _timeEditFormat;
     j["inverseWindow"] = _inverseWindow;
+    j["disableWindow"] = _disableWindow;
 
     return j;
 }
@@ -95,18 +104,10 @@ void NAV::TimeWindow::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
 
-    if (j.contains("startEndTime"))
-    {
-        j.at("startEndTime").get_to(_startEndTime);
-    }
-    if (j.contains("timeEditFormat"))
-    {
-        j.at("timeEditFormat").get_to(_timeEditFormat);
-    }
-    if (j.contains("inverseWindow"))
-    {
-        j.at("inverseWindow").get_to(_inverseWindow);
-    }
+    if (j.contains("startEndTime")) { j.at("startEndTime").get_to(_startEndTime); }
+    if (j.contains("timeEditFormat")) { j.at("timeEditFormat").get_to(_timeEditFormat); }
+    if (j.contains("inverseWindow")) { j.at("inverseWindow").get_to(_inverseWindow); }
+    if (j.contains("disableWindow")) { j.at("disableWindow").get_to(_disableWindow); }
 }
 
 bool NAV::TimeWindow::initialize()
@@ -182,6 +183,11 @@ void NAV::TimeWindow::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t /* 
 {
     // Check whether timestamp is within the time window
     auto obs = queue.extract_front();
+    if (_disableWindow)
+    {
+        invokeCallbacks(OUTPUT_PORT_INDEX_FLOW, obs);
+        return;
+    }
     if (_inverseWindow)
     {
         if (obs->insTime < _startEndTime[0] || obs->insTime > _startEndTime[1])

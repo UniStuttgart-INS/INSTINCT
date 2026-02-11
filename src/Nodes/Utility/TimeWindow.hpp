@@ -90,5 +90,8 @@ class TimeWindow : public Node
 
     /// If true, the window lets only times pass through, which are out of the time frame
     bool _inverseWindow = false;
+
+    /// If true, the window is disabled and the node just passes the results to the output
+    bool _disableWindow = false;
 };
 } // namespace NAV
