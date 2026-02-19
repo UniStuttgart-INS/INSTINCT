@@ -517,6 +517,7 @@ void ImuSimulator::guiConfig()
             }
         }
 
+        ImGui::SetNextItemOpen(!_oscillations.empty(), ImGuiCond_Once);
         if (ImGui::TreeNode("Oscillations"))
         {
             int delIdx = -1;
@@ -530,18 +531,23 @@ void ImuSimulator::guiConfig()
                 }
                 ImGui::SameLine();
                 ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
-                if (ImGui::InputDouble(fmt::format("Amplitude##{} {}", i, size_t(id)).c_str(), &_oscillations[i].amplitude, 0., 0., "%.3f"))
+                if (ImGui::InputDouble(fmt::format("Amplitude##{} {}", i, size_t(id)).c_str(), &_oscillations[i].amplitude, 0., 0.,
+                                       _oscillations[i].target == Oscillation::Roll || _oscillations[i].target == Oscillation::Pitch || _oscillations[i].target == Oscillation::Yaw
+                                           ? "%.3f°"
+                                           : "%.3f m"))
                 {
                     flow::ApplyChanges();
                     doDeinitialize();
                 }
-                ImGui::SameLine();
+                ImGui::SameLine(0.0F, 20.0F);
                 ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
                 if (ImGui::InputInt(fmt::format("Num##{} {}", i, size_t(id)).c_str(), &_oscillations[i].number))
                 {
                     flow::ApplyChanges();
                     doDeinitialize();
                 }
+                ImGui::SameLine();
+                gui::widgets::HelpMarker("Amount of cycles over the simulation duration");
                 ImGui::SameLine();
                 if (ImGui::Button(fmt::format("X##Delete {} {}", i, size_t(id)).c_str()))
                 {
@@ -1490,14 +1496,18 @@ bool ImuSimulator::initializeSplines()
         std::vector<long double> splineRoll = _splines.roll.getPointsY();
         std::vector<long double> splinePitch = _splines.pitch.getPointsY();
         std::vector<long double> splineYaw = _splines.yaw.getPointsY();
+        LOG_DATA("{}: Adding oscillations.", nameId());
+        LOG_DATA("{}: Duration = {}", nameId(), simDuration);
         for (const auto& osc : _oscillations)
         {
+            LOG_DATA("{}: Type = {}", nameId(), NAV::to_string(osc.target));
             Eigen::Quaterniond e_quatCenter_n = trafo::e_Quat_n(_startPosition.latitude(), _startPosition.longitude());
 
             for (uint64_t i = 0; i < splineTime.size(); i++)
             {
                 double phi = static_cast<double>(osc.number) * static_cast<double>(splineTime[i]) / simDuration * 2 * std::numbers::pi;
                 double delta = osc.amplitude * std::sin(phi);
+                LOG_DATA("{}:   [{:.3f}] phi = {:.4f}, delta = {:.4f}", nameId(), splineTime[i], phi, delta);
 
                 if (osc.target == Oscillation::North || osc.target == Oscillation::East || osc.target == Oscillation::Up)
                 {
@@ -1517,9 +1527,9 @@ bool ImuSimulator::initializeSplines()
                 }
                 else if (osc.target == Oscillation::Roll || osc.target == Oscillation::Pitch || osc.target == Oscillation::Yaw)
                 {
-                    splineRoll[i] += static_cast<double>(osc.target == Oscillation::Roll) * delta;
-                    splinePitch[i] += static_cast<double>(osc.target == Oscillation::Pitch) * delta;
-                    splineYaw[i] += static_cast<double>(osc.target == Oscillation::Yaw) * delta;
+                    splineRoll[i] += static_cast<double>(osc.target == Oscillation::Roll) * deg2rad(delta);
+                    splinePitch[i] += static_cast<double>(osc.target == Oscillation::Pitch) * deg2rad(delta);
+                    splineYaw[i] += static_cast<double>(osc.target == Oscillation::Yaw) * deg2rad(delta);
                 }
             }
         }
