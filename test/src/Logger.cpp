@@ -15,10 +15,17 @@
 #include "internal/ConfigManager.hpp"
 #include "util/StringUtil.hpp"
 
-[[nodiscard]] Logger NAV::TESTS::initializeTestLogger()
+[[nodiscard]] Logger NAV::TESTS::initializeTestLogger(const char* logFilter)
 {
+    std::vector<const char*> args = argv;
+    std::string logFilterStr = "--log-filter=";
+    if (logFilter)
+    {
+        logFilterStr += logFilter;
+        args.insert(args.end() - 1, logFilterStr.c_str());
+    }
     NAV::ConfigManager::initialize();
-    NAV::ConfigManager::FetchConfigs(static_cast<int>(argv.size() - 1), argv.data());
+    NAV::ConfigManager::FetchConfigs(static_cast<int>(args.size() - 1), args.data());
 
     std::string testName = Catch::getResultCapture().getCurrentTestName();
 

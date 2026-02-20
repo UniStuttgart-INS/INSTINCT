@@ -19,6 +19,7 @@ namespace NAV::TESTS
 {
 
 /// @brief Initializes the logger for testing
-[[nodiscard]] Logger initializeTestLogger();
+/// @param[in] logFilter Log filter
+[[nodiscard]] Logger initializeTestLogger(const char* logFilter = nullptr);
 
 } // namespace NAV::TESTS

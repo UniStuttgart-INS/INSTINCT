@@ -27,8 +27,7 @@ std::vector<const char*> argv = { "",
                                   "outputPath",
                                   "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
                                   "--file-log-level=trace",    // trace/debug/info/warning/error/critical/off
-
-                                  //   "--flush-log-level=trace",   // trace/debug/info/warning/error/critical/off
+                                  "--flush-log-level=trace",   // trace/debug/info/warning/error/critical/off
                                   //   "--log-filter=GnssObsComparisons|UbloxGnssObsConverterTests|UbloxGnssObsConverter.cpp",
                                   nullptr };
 
@@ -43,14 +42,15 @@ bool NAV::TESTS::testFlow(const char* path, bool useTestDirectories, int duratio
     std::string inputPath = "--input-path=" + folder + "data";
     std::string outputPath = "--output-path=" + folder + "logs";
 
-    argv.at(3) = path;
-    argv.at(4) = inputPath.c_str();
-    argv.at(5) = outputPath.c_str();
+    std::vector<const char*> args = argv;
+    args.at(3) = path;
+    args.at(4) = inputPath.c_str();
+    args.at(5) = outputPath.c_str();
 
     std::string durationArg = fmt::format("--duration={}", duration);
-    if (duration >= 0) { argv.insert(argv.cend() - 1, durationArg.c_str()); }
+    if (duration >= 0) { args.insert(args.cend() - 1, durationArg.c_str()); }
 
-    int executionFailure = NAV::AppLogic::processCommandLineArguments(static_cast<int>(argv.size() - 1), argv.data());
+    int executionFailure = NAV::AppLogic::processCommandLineArguments(static_cast<int>(args.size() - 1), args.data());
 
     flow::ClearRegisteredCallbacks();
 

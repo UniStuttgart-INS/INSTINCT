@@ -64,7 +64,7 @@ TEST_CASE("[TimeWindow][flow] Simulate IMU and cut off start and end time", "[Ti
         messageCounterOutput++;
     });
 
-    REQUIRE(testFlow("test/flow/Nodes/util/TimeWindow.flow"));
+    REQUIRE(testFlow("test/flow/Nodes/Utility/TimeWindow.flow"));
 
     REQUIRE(messageCounterInput == 101);
     REQUIRE(messageCounterOutput == 71);
@@ -110,7 +110,7 @@ TEST_CASE("[TimeWindow][flow] Simulate IMU and cut off middle part", "[TimeWindo
         messageCounterOutput++;
     });
 
-    REQUIRE(testFlow("test/flow/Nodes/util/TimeWindow.flow"));
+    REQUIRE(testFlow("test/flow/Nodes/Utility/TimeWindow.flow"));
 
     REQUIRE(messageCounterInput == 101);
     REQUIRE(messageCounterOutput == 30);
