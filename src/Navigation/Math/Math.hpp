@@ -374,17 +374,24 @@ template<typename Derived>
 [[nodiscard]] typename Derived::PlainObject inverseSqrt(const Eigen::MatrixBase<Derived>& matrix)
 {
     INS_ASSERT_USER_ERROR(matrix.rows() == matrix.cols(), "Only square matrix supported");
-    if constexpr (std::is_floating_point_v<typename Derived::Scalar>)
-    {
-        return matrix.inverse().sqrt(); // Eigen::SelfAdjointEigenSolver<Eigen::MatrixX<T>>{ covMatrix }.operatorInverseSqrt();
-    }
-    else // Eigen gets problems with ceres::Jet in the .sqrt() function
-    {
-        Eigen::JacobiSVD<Eigen::MatrixX<typename Derived::Scalar>> svd(matrix.inverse(), Eigen::ComputeFullV);
-        typename Derived::PlainObject sqrtInverse = svd.matrixV() * svd.singularValues().cwiseSqrt().asDiagonal() * svd.matrixV().transpose();
-        INS_ASSERT_USER_ERROR(!sqrtInverse.hasNaN(), "The matrix is not invertible");
-        return sqrtInverse;
-    }
+    // INS_ASSERT_USER_ERROR(!matrix.isZero(), "You cannot calculate the inverse of a zero matrix"); // This can fail with very small matrices
+
+    // if constexpr (std::is_floating_point_v<typename Derived::Scalar>)
+    // {
+    //     return matrix.inverse().sqrt(); // Eigen::SelfAdjointEigenSolver<Eigen::MatrixX<T>>{ covMatrix }.operatorInverseSqrt();
+    // }
+    // else // Eigen gets problems with ceres::Jet in the .sqrt() function
+    // {
+    // Eigen::JacobiSVD<Eigen::MatrixX<typename Derived::Scalar>> svd(matrix.inverse(), Eigen::ComputeFullV);
+    // LOG_DATA("svd.V = \n{}", svd.matrixV());
+    // LOG_DATA("svd.S = \n{}", svd.singularValues());
+    // typename Derived::PlainObject sqrtInverse = svd.matrixV() * svd.singularValues().cwiseSqrt().asDiagonal() * svd.matrixV().transpose();
+
+    typename Derived::PlainObject sqrtInverse = matrix.inverse().llt().matrixL();
+    LOG_DATA("sqrtInverse = \n{}", sqrtInverse);
+    INS_ASSERT_USER_ERROR(!sqrtInverse.hasNaN(), "The matrix is not invertible");
+    return sqrtInverse;
+    // }
 }
 
 /// @brief Change the sign of x according to the value of y

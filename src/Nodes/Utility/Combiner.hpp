@@ -113,15 +113,16 @@ class Combiner : public Node, public CommonLog
             double factor = 1.0;                                         ///< Factor to multiply the term with
             size_t pinIndex = 0;                                         ///< Pin Index
             std::variant<size_t, std::string> dataSelection = size_t(0); ///< Data Index or Data identifier
+            bool pivotTerm = false;                                      ///< One Term will be selected to send solutions at
 
             PolynomialRegressor<double> polyReg{ 1, 2 };                   ///< Polynomial Regressor to interpolate data
             ScrollingBuffer<std::shared_ptr<const NodeData>> rawData{ 2 }; ///< Last raw data to add if we send
 
             /// @brief Get a string description of the combination
             /// @param node Combiner node pointer
-            /// @param descriptors Data descriptors
-            [[nodiscard]] std::string description(const Combiner* node, const std::vector<std::string>& descriptors) const
+            [[nodiscard]] std::string description(const Combiner* node) const
             {
+                const auto& descriptors = node->getDataDescriptors(pinIndex);
                 if (std::holds_alternative<size_t>(dataSelection) && std::get<size_t>(dataSelection) < descriptors.size())
                 {
                     return fmt::format("{} {} ({})", factor == 1.0 ? "+" : (factor == -1.0 ? "-" : fmt::format("{:.2f}", factor)),
@@ -147,8 +148,7 @@ class Combiner : public Node, public CommonLog
             std::string desc;
             for (const auto& term : terms)
             {
-                auto descriptors = node->getDataDescriptors(term.pinIndex);
-                auto termDescription = term.description(node, descriptors);
+                auto termDescription = term.description(node);
 
                 if (!desc.empty())
                 {
@@ -185,12 +185,6 @@ class Combiner : public Node, public CommonLog
     /// Data per pin
     std::vector<PinData> _pinData;
 
-    /// Reference pin
-    size_t _refPinIdx = 0;
-
-    /// Output missing combinations with NaN instead of removing
-    bool _outputMissingAsNaN = false;
-
     bool _noOutputIfTimeDiffLarge = true;         ///< Wether to not output a term if the interpolation time point is too far away
     double _maxTimeDiffMultiplierFrequency = 2.1; ///< Multiply frequency with this to get maximum allowed time difference to interpolate to
 
@@ -203,7 +197,6 @@ class Combiner : public Node, public CommonLog
         size_t combIndex = 0;                                                         ///< Combination Index
         std::unordered_set<size_t> termIndices;                                       ///< Term indices, which are already calculated
         double result = 0.0;                                                          ///< Calculation result
-        bool termNullopt = false;                                                     ///< True if one of the terms values returned std::nullopt
         std::vector<std::pair<std::string, std::shared_ptr<const NodeData>>> rawData; ///< List of the raw data of all terms contributing to the result
     };
 
@@ -231,6 +224,15 @@ class Combiner : public Node, public CommonLog
     /// @brief Returns a list of descriptors for the pin
     /// @param pinIndex Pin Index to look for the descriptor
     [[nodiscard]] std::vector<std::string> getDataDescriptors(size_t pinIndex) const;
+
+    /// @brief Sends all requests which have all combinations calculated. Stops when a request cannot be sent yet.
+    void sendFinishedRequests();
+
+    /// @brief Discards empty send requests
+    void discardEmptySendRequests();
+
+    /// @brief Flushes all sendable solutions at the end
+    void flushRemainingSolutions();
 
     /// @brief Receive Data Function
     /// @param[in] queue Queue with all the received data messages

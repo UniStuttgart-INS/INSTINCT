@@ -1,0 +1,1974 @@
+{
+    "bottomViewHeight": 200.0,
+    "colormaps": [],
+    "commonLog": {
+        "originPosition": {
+            "frame": "LLA",
+            "position": {
+                "0": {
+                    "0": -2.6241149069970244e-22
+                },
+                "1": {
+                    "0": 0.004491576411396717
+                },
+                "2": {
+                    "0": 0.019598199178490924
+                }
+            }
+        },
+        "useGuiInputs": false
+    },
+    "fonts": {
+        "useBigDefaultFont": false,
+        "useBigMonoFont": false,
+        "useBigPanelFont": false,
+        "useBigWindowFont": false
+    },
+    "gridLinesEnabled": 0.1568627506494522,
+    "header": {
+        "colors": {
+            "deinitialized": {
+                "a": 255,
+                "b": 128,
+                "g": 128,
+                "r": 255
+            },
+            "disabled": {
+                "a": 255,
+                "b": 192,
+                "g": 192,
+                "r": 192
+            },
+            "initialized": {
+                "a": 255,
+                "b": 128,
+                "g": 255,
+                "r": 128
+            }
+        }
+    },
+    "hideFPS": false,
+    "leftPane": {
+        "hide": false,
+        "leftWidth": 350.0,
+        "rightWidth": 850.0
+    },
+    "lightMode": false,
+    "links": {
+        "link-19": {
+            "endPinId": 14,
+            "id": 19,
+            "startPinId": 8
+        },
+        "link-20": {
+            "endPinId": 15,
+            "id": 20,
+            "startPinId": 2
+        },
+        "link-21": {
+            "endPinId": 18,
+            "id": 21,
+            "startPinId": 13
+        },
+        "link-24": {
+            "endPinId": 22,
+            "id": 24,
+            "startPinId": 16
+        },
+        "link-35": {
+            "endPinId": 34,
+            "id": 35,
+            "startPinId": 33
+        },
+        "link-37": {
+            "endPinId": 36,
+            "id": 37,
+            "startPinId": 33
+        },
+        "link-50": {
+            "endPinId": 49,
+            "id": 50,
+            "startPinId": 13
+        },
+        "link-51": {
+            "endPinId": 48,
+            "id": 51,
+            "startPinId": 2
+        },
+        "link-52": {
+            "endPinId": 47,
+            "id": 52,
+            "startPinId": 8
+        }
+    },
+    "nodes": {
+        "node-11": {
+            "data": {
+                "Imu": {
+                    "imuPos": {
+                        "b_positionIMU_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_quat_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        }
+                    }
+                },
+                "angularRateEarthRotationEnabled": true,
+                "angularRateTransportRateEnabled": true,
+                "centrifgalAccelerationEnabled": true,
+                "circularHarmonicAmplitudeFactor": 0.1,
+                "circularHarmonicFrequency": 0,
+                "circularTrajectoryCircleCountForStop": 1.0,
+                "coriolisAccelerationEnabled": true,
+                "fixedTrajectoryStartOrientation": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "gnssFrequency": 5.0,
+                "gravitationModel": 5,
+                "imuFrequency": 5.0,
+                "imuInternalFrequency": 5.0,
+                "linearTrajectoryDistanceForStop": 100.0,
+                "n_linearTrajectoryStartVelocity": {
+                    "0": {
+                        "0": 1.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "oscillations": [],
+                "rosePetDenom": 1,
+                "rosePetNum": 2,
+                "roseStepLengthMax": 0.1,
+                "roseTrajectoryCountForStop": 1.0,
+                "simulationDuration": 1.0,
+                "simulationStopCondition": 0,
+                "splineSampleInterval": 0.03,
+                "startPosition": {
+                    "frame": "LLA",
+                    "position": {
+                        "0": {
+                            "0": 5e-05
+                        },
+                        "1": {
+                            "0": 0.0
+                        },
+                        "2": {
+                            "0": 0.0
+                        }
+                    }
+                },
+                "startTime": {
+                    "mjd_day": 51543,
+                    "mjd_frac": 0.999849537037037
+                },
+                "startTimeEditFormat": {
+                    "format": 0,
+                    "system": "GPST"
+                },
+                "startTimeSource": 0,
+                "trajectoryDirection": 1,
+                "trajectoryHorizontalSpeed": 10.0,
+                "trajectoryRadius": 500.0,
+                "trajectoryRotationAngle": 0.0,
+                "trajectoryType": 1,
+                "trajectoryVerticalSpeed": 0.0
+            },
+            "enabled": true,
+            "id": 11,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "Linear 0.0",
+            "outputPins": [
+                {
+                    "id": 12,
+                    "name": "ImuObs"
+                },
+                {
+                    "id": 13,
+                    "name": "PosVelAtt 5Hz"
+                }
+            ],
+            "pos": {
+                "x": 38.0,
+                "y": 418.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "ImuSimulator"
+        },
+        "node-17": {
+            "data": {
+                "combinations": [
+                    {
+                        "terms": [
+                            {
+                                "dataSelection": {
+                                    "index": 0,
+                                    "value": 3
+                                },
+                                "factor": 1.0,
+                                "pinIndex": 0
+                            },
+                            {
+                                "dataSelection": {
+                                    "index": 0,
+                                    "value": 3
+                                },
+                                "factor": -1.0,
+                                "pinIndex": 1
+                            }
+                        ]
+                    },
+                    {
+                        "terms": [
+                            {
+                                "dataSelection": {
+                                    "index": 0,
+                                    "value": 3
+                                },
+                                "factor": 1.0,
+                                "pinIndex": 2
+                            },
+                            {
+                                "dataSelection": {
+                                    "index": 0,
+                                    "value": 3
+                                },
+                                "factor": -1.0,
+                                "pinIndex": 3
+                            }
+                        ]
+                    }
+                ],
+                "dynamicInputPins": {
+                    "nDynamicInputPins": 4
+                },
+                "maxTimeDiffMultiplierFrequency": 2.1,
+                "maxTimeStepMultiplierFrequency": 5.0,
+                "noOutputIfTimeDiffLarge": false,
+                "noOutputIfTimeStepLarge": true
+            },
+            "enabled": true,
+            "id": 17,
+            "inputPins": [
+                {
+                    "id": 14,
+                    "name": "C0.0 5Hz"
+                },
+                {
+                    "id": 15,
+                    "name": "C0.0 1Hz"
+                },
+                {
+                    "id": 18,
+                    "name": "L0.0 5Hz"
+                },
+                {
+                    "id": 34,
+                    "name": "L0.1 5Hz"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "Combiner",
+            "outputPins": [
+                {
+                    "id": 16,
+                    "name": "Comb"
+                }
+            ],
+            "pos": {
+                "x": 369.0,
+                "y": 305.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Combiner"
+        },
+        "node-23": {
+            "data": {
+                "dynamicInputPins": {
+                    "nDynamicInputPins": 5
+                },
+                "nPlots": 3,
+                "overridePositionStartValues": false,
+                "pinData": [
+                    {
+                        "dataIdentifier": "DynamicData",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPST Time"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            }
+                        ],
+                        "size": 0,
+                        "stride": 1
+                    },
+                    {
+                        "dataIdentifier": "PosVelAtt",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPST Time"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "Latitude [deg]"
+                            },
+                            {
+                                "displayName": "Longitude [deg]"
+                            },
+                            {
+                                "displayName": "Altitude [m]"
+                            },
+                            {
+                                "displayName": "North/South [m]"
+                            },
+                            {
+                                "displayName": "East/West [m]"
+                            },
+                            {
+                                "displayName": "X-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "X-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "XY-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "XZ-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "YZ-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "North StDev [m]"
+                            },
+                            {
+                                "displayName": "East StDev [m]"
+                            },
+                            {
+                                "displayName": "Down StDev [m]"
+                            },
+                            {
+                                "displayName": "NE StDev [m]"
+                            },
+                            {
+                                "displayName": "ND StDev [m]"
+                            },
+                            {
+                                "displayName": "ED StDev [m]"
+                            },
+                            {
+                                "displayName": "Velocity norm [m/s]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "North velocity [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "XY velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "XZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "YZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "North velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "NE velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ND velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ED velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "Roll [deg]"
+                            },
+                            {
+                                "displayName": "Pitch [deg]"
+                            },
+                            {
+                                "displayName": "Yaw [deg]"
+                            },
+                            {
+                                "displayName": "Roll StdDev [deg]"
+                            },
+                            {
+                                "displayName": "Pitch StdDev [deg]"
+                            },
+                            {
+                                "displayName": "Yaw StdDev [deg]"
+                            },
+                            {
+                                "displayName": "n_Quat_b x"
+                            },
+                            {
+                                "displayName": "n_Quat_b y"
+                            },
+                            {
+                                "displayName": "n_Quat_b z"
+                            },
+                            {
+                                "displayName": "n_Quat_b w"
+                            },
+                            {
+                                "displayName": "n_Quat_b x StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b y StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b z StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b w StdDev"
+                            }
+                        ],
+                        "size": 0,
+                        "stride": 1
+                    },
+                    {
+                        "dataIdentifier": "PosVelAtt",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPST Time"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "Latitude [deg]"
+                            },
+                            {
+                                "displayName": "Longitude [deg]"
+                            },
+                            {
+                                "displayName": "Altitude [m]"
+                            },
+                            {
+                                "displayName": "North/South [m]"
+                            },
+                            {
+                                "displayName": "East/West [m]"
+                            },
+                            {
+                                "displayName": "X-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "X-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "XY-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "XZ-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "YZ-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "North StDev [m]"
+                            },
+                            {
+                                "displayName": "East StDev [m]"
+                            },
+                            {
+                                "displayName": "Down StDev [m]"
+                            },
+                            {
+                                "displayName": "NE StDev [m]"
+                            },
+                            {
+                                "displayName": "ND StDev [m]"
+                            },
+                            {
+                                "displayName": "ED StDev [m]"
+                            },
+                            {
+                                "displayName": "Velocity norm [m/s]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "North velocity [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "XY velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "XZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "YZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "North velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "NE velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ND velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ED velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "Roll [deg]"
+                            },
+                            {
+                                "displayName": "Pitch [deg]"
+                            },
+                            {
+                                "displayName": "Yaw [deg]"
+                            },
+                            {
+                                "displayName": "Roll StdDev [deg]"
+                            },
+                            {
+                                "displayName": "Pitch StdDev [deg]"
+                            },
+                            {
+                                "displayName": "Yaw StdDev [deg]"
+                            },
+                            {
+                                "displayName": "n_Quat_b x"
+                            },
+                            {
+                                "displayName": "n_Quat_b y"
+                            },
+                            {
+                                "displayName": "n_Quat_b z"
+                            },
+                            {
+                                "displayName": "n_Quat_b w"
+                            },
+                            {
+                                "displayName": "n_Quat_b x StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b y StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b z StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b w StdDev"
+                            }
+                        ],
+                        "size": 0,
+                        "stride": 1
+                    },
+                    {
+                        "dataIdentifier": "PosVelAtt",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPST Time"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "Latitude [deg]"
+                            },
+                            {
+                                "displayName": "Longitude [deg]"
+                            },
+                            {
+                                "displayName": "Altitude [m]"
+                            },
+                            {
+                                "displayName": "North/South [m]"
+                            },
+                            {
+                                "displayName": "East/West [m]"
+                            },
+                            {
+                                "displayName": "X-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "X-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "XY-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "XZ-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "YZ-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "North StDev [m]"
+                            },
+                            {
+                                "displayName": "East StDev [m]"
+                            },
+                            {
+                                "displayName": "Down StDev [m]"
+                            },
+                            {
+                                "displayName": "NE StDev [m]"
+                            },
+                            {
+                                "displayName": "ND StDev [m]"
+                            },
+                            {
+                                "displayName": "ED StDev [m]"
+                            },
+                            {
+                                "displayName": "Velocity norm [m/s]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "North velocity [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "XY velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "XZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "YZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "North velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "NE velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ND velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ED velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "Roll [deg]"
+                            },
+                            {
+                                "displayName": "Pitch [deg]"
+                            },
+                            {
+                                "displayName": "Yaw [deg]"
+                            },
+                            {
+                                "displayName": "Roll StdDev [deg]"
+                            },
+                            {
+                                "displayName": "Pitch StdDev [deg]"
+                            },
+                            {
+                                "displayName": "Yaw StdDev [deg]"
+                            },
+                            {
+                                "displayName": "n_Quat_b x"
+                            },
+                            {
+                                "displayName": "n_Quat_b y"
+                            },
+                            {
+                                "displayName": "n_Quat_b z"
+                            },
+                            {
+                                "displayName": "n_Quat_b w"
+                            },
+                            {
+                                "displayName": "n_Quat_b x StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b y StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b z StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b w StdDev"
+                            }
+                        ],
+                        "size": 0,
+                        "stride": 1
+                    },
+                    {
+                        "dataIdentifier": "PosVelAtt",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPST Time"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "Latitude [deg]"
+                            },
+                            {
+                                "displayName": "Longitude [deg]"
+                            },
+                            {
+                                "displayName": "Altitude [m]"
+                            },
+                            {
+                                "displayName": "North/South [m]"
+                            },
+                            {
+                                "displayName": "East/West [m]"
+                            },
+                            {
+                                "displayName": "X-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "X-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "XY-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "XZ-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "YZ-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "North StDev [m]"
+                            },
+                            {
+                                "displayName": "East StDev [m]"
+                            },
+                            {
+                                "displayName": "Down StDev [m]"
+                            },
+                            {
+                                "displayName": "NE StDev [m]"
+                            },
+                            {
+                                "displayName": "ND StDev [m]"
+                            },
+                            {
+                                "displayName": "ED StDev [m]"
+                            },
+                            {
+                                "displayName": "Velocity norm [m/s]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "North velocity [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "XY velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "XZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "YZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "North velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "NE velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ND velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ED velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "Roll [deg]"
+                            },
+                            {
+                                "displayName": "Pitch [deg]"
+                            },
+                            {
+                                "displayName": "Yaw [deg]"
+                            },
+                            {
+                                "displayName": "Roll StdDev [deg]"
+                            },
+                            {
+                                "displayName": "Pitch StdDev [deg]"
+                            },
+                            {
+                                "displayName": "Yaw StdDev [deg]"
+                            },
+                            {
+                                "displayName": "n_Quat_b x"
+                            },
+                            {
+                                "displayName": "n_Quat_b y"
+                            },
+                            {
+                                "displayName": "n_Quat_b z"
+                            },
+                            {
+                                "displayName": "n_Quat_b w"
+                            },
+                            {
+                                "displayName": "n_Quat_b x StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b y StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b z StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b w StdDev"
+                            }
+                        ],
+                        "size": 0,
+                        "stride": 1
+                    }
+                ],
+                "plots": [
+                    {
+                        "headerText": "Plot 1",
+                        "leftPaneWidth": 180.0,
+                        "lineFlags": 12288,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 3,
+                                "displayName": "+ North/South [m] (C0.0 5Hz) - North/South [m] (C0.0 1Hz)",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 3,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "+ North/South [m] (C0.0 5Hz) - North/South [m] (C0.0 1Hz) (Pin 1)",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 3,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 5.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 2.0,
+                                    "markers": true,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 0,
+                        "selectedXdata": [
+                            1,
+                            1,
+                            1,
+                            1,
+                            1
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Plot 1",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "xAxisScale": 0,
+                        "y1AxisLabel": "",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "yAxisFlags": 0
+                    },
+                    {
+                        "headerText": "Plot 2",
+                        "leftPaneWidth": 180.0,
+                        "lineFlags": 12288,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 4,
+                                "displayName": "+ North/South [m] (L0.0 5Hz) - North/South [m] (L0.1 5Hz)",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 4,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "+ North/South [m] (L0.0 5Hz) - North/South [m] (L0.1 5Hz) (Pin 1)",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 4,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 5.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 2.0,
+                                    "markers": true,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 0,
+                        "selectedXdata": [
+                            1,
+                            1,
+                            1,
+                            1,
+                            1
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Plot 2",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "xAxisScale": 0,
+                        "y1AxisLabel": "",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "yAxisFlags": 2048
+                    },
+                    {
+                        "headerText": "Plot 3",
+                        "leftPaneWidth": 180.0,
+                        "lineFlags": 12288,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 6,
+                                "displayName": "North/South [m]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 6,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "North/South [m] (Pin 2)",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 6,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 5.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 2.0,
+                                    "markers": true,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 6,
+                                "displayName": "North/South [m]",
+                                "pinIndex": 2,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 6,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "North/South [m] (Pin 3)",
+                                    "lineType": 0,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 6,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 5.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 2.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 6,
+                                "displayName": "North/South [m]",
+                                "pinIndex": 3,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 6,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "North/South [m] (Pin 4)",
+                                    "lineType": 0,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 6,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 5.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 2.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 6,
+                                "displayName": "North/South [m]",
+                                "pinIndex": 4,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 6,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "North/South [m] (Pin 5)",
+                                    "lineType": 0,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 6,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 5.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 2.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 4,
+                        "selectedXdata": [
+                            1,
+                            1,
+                            1,
+                            1,
+                            1
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Plot 3",
+                        "xAxisFlags": 2048,
+                        "xAxisLabel": "",
+                        "xAxisScale": 0,
+                        "y1AxisLabel": "",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": "",
+                        "yAxesScale": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "yAxisFlags": 2048
+                    }
+                ]
+            },
+            "enabled": true,
+            "id": 23,
+            "inputPins": [
+                {
+                    "id": 22,
+                    "name": "Pin 1"
+                },
+                {
+                    "id": 47,
+                    "name": "Pin 2"
+                },
+                {
+                    "id": 48,
+                    "name": "Pin 3"
+                },
+                {
+                    "id": 49,
+                    "name": "Pin 4"
+                },
+                {
+                    "id": 36,
+                    "name": "Pin 5"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "Plot",
+            "outputPins": [],
+            "pos": {
+                "x": 664.0,
+                "y": 298.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Plot"
+        },
+        "node-3": {
+            "data": {
+                "Imu": {
+                    "imuPos": {
+                        "b_positionIMU_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_quat_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        }
+                    }
+                },
+                "angularRateEarthRotationEnabled": true,
+                "angularRateTransportRateEnabled": true,
+                "centrifgalAccelerationEnabled": true,
+                "circularHarmonicAmplitudeFactor": 0.1,
+                "circularHarmonicFrequency": 0,
+                "circularTrajectoryCircleCountForStop": 1.0,
+                "coriolisAccelerationEnabled": true,
+                "fixedTrajectoryStartOrientation": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "gnssFrequency": 1.0,
+                "gravitationModel": 5,
+                "imuFrequency": 1.0,
+                "imuInternalFrequency": 1.0,
+                "linearTrajectoryDistanceForStop": 100.0,
+                "n_linearTrajectoryStartVelocity": {
+                    "0": {
+                        "0": 1.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "oscillations": [],
+                "rosePetDenom": 1,
+                "rosePetNum": 2,
+                "roseStepLengthMax": 0.1,
+                "roseTrajectoryCountForStop": 1.0,
+                "simulationDuration": 2.0,
+                "simulationStopCondition": 0,
+                "splineSampleInterval": 0.03,
+                "startPosition": {
+                    "frame": "LLA",
+                    "position": {
+                        "0": {
+                            "0": 0.0
+                        },
+                        "1": {
+                            "0": 0.0
+                        },
+                        "2": {
+                            "0": 0.0
+                        }
+                    }
+                },
+                "startTime": {
+                    "mjd_day": 51543,
+                    "mjd_frac": 0.999849537037037
+                },
+                "startTimeEditFormat": {
+                    "format": 0,
+                    "system": "GPST"
+                },
+                "startTimeSource": 0,
+                "trajectoryDirection": 1,
+                "trajectoryHorizontalSpeed": 10.0,
+                "trajectoryRadius": 500.0,
+                "trajectoryRotationAngle": 0.0,
+                "trajectoryType": 2,
+                "trajectoryVerticalSpeed": 0.0
+            },
+            "enabled": true,
+            "id": 3,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "Circle 0.0",
+            "outputPins": [
+                {
+                    "id": 1,
+                    "name": "ImuObs"
+                },
+                {
+                    "id": 2,
+                    "name": "PosVelAtt 1Hz"
+                }
+            ],
+            "pos": {
+                "x": 38.0,
+                "y": 306.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "ImuSimulator"
+        },
+        "node-31": {
+            "data": {
+                "Imu": {
+                    "imuPos": {
+                        "b_positionIMU_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_quat_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        }
+                    }
+                },
+                "angularRateEarthRotationEnabled": true,
+                "angularRateTransportRateEnabled": true,
+                "centrifgalAccelerationEnabled": true,
+                "circularHarmonicAmplitudeFactor": 0.1,
+                "circularHarmonicFrequency": 0,
+                "circularTrajectoryCircleCountForStop": 1.0,
+                "coriolisAccelerationEnabled": true,
+                "fixedTrajectoryStartOrientation": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "gnssFrequency": 5.0,
+                "gravitationModel": 5,
+                "imuFrequency": 5.0,
+                "imuInternalFrequency": 5.0,
+                "linearTrajectoryDistanceForStop": 100.0,
+                "n_linearTrajectoryStartVelocity": {
+                    "0": {
+                        "0": 1.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "oscillations": [],
+                "rosePetDenom": 1,
+                "rosePetNum": 2,
+                "roseStepLengthMax": 0.1,
+                "roseTrajectoryCountForStop": 1.0,
+                "simulationDuration": 1.0,
+                "simulationStopCondition": 0,
+                "splineSampleInterval": 0.03,
+                "startPosition": {
+                    "frame": "LLA",
+                    "position": {
+                        "0": {
+                            "0": 5e-05
+                        },
+                        "1": {
+                            "0": 0.0
+                        },
+                        "2": {
+                            "0": 0.0
+                        }
+                    }
+                },
+                "startTime": {
+                    "mjd_day": 51543,
+                    "mjd_frac": 0.9998506944444444
+                },
+                "startTimeEditFormat": {
+                    "format": 0,
+                    "system": "GPST"
+                },
+                "startTimeSource": 0,
+                "trajectoryDirection": 1,
+                "trajectoryHorizontalSpeed": 10.0,
+                "trajectoryRadius": 500.0,
+                "trajectoryRotationAngle": 0.0,
+                "trajectoryType": 1,
+                "trajectoryVerticalSpeed": 0.0
+            },
+            "enabled": true,
+            "id": 31,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "Linear 0.1",
+            "outputPins": [
+                {
+                    "id": 32,
+                    "name": "ImuObs"
+                },
+                {
+                    "id": 33,
+                    "name": "PosVelAtt 5Hz"
+                }
+            ],
+            "pos": {
+                "x": 38.0,
+                "y": 530.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "ImuSimulator"
+        },
+        "node-6": {
+            "data": {
+                "Imu": {
+                    "imuPos": {
+                        "b_positionIMU_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "b_quat_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        }
+                    }
+                },
+                "angularRateEarthRotationEnabled": true,
+                "angularRateTransportRateEnabled": true,
+                "centrifgalAccelerationEnabled": true,
+                "circularHarmonicAmplitudeFactor": 0.1,
+                "circularHarmonicFrequency": 0,
+                "circularTrajectoryCircleCountForStop": 1.0,
+                "coriolisAccelerationEnabled": true,
+                "fixedTrajectoryStartOrientation": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "gnssFrequency": 5.0,
+                "gravitationModel": 5,
+                "imuFrequency": 5.0,
+                "imuInternalFrequency": 5.0,
+                "linearTrajectoryDistanceForStop": 100.0,
+                "n_linearTrajectoryStartVelocity": {
+                    "0": {
+                        "0": 1.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "oscillations": [],
+                "rosePetDenom": 1,
+                "rosePetNum": 2,
+                "roseStepLengthMax": 0.1,
+                "roseTrajectoryCountForStop": 1.0,
+                "simulationDuration": 2.0,
+                "simulationStopCondition": 0,
+                "splineSampleInterval": 0.03,
+                "startPosition": {
+                    "frame": "LLA",
+                    "position": {
+                        "0": {
+                            "0": 0.0
+                        },
+                        "1": {
+                            "0": 0.0
+                        },
+                        "2": {
+                            "0": 0.0
+                        }
+                    }
+                },
+                "startTime": {
+                    "mjd_day": 51543,
+                    "mjd_frac": 0.999849537037037
+                },
+                "startTimeEditFormat": {
+                    "format": 0,
+                    "system": "GPST"
+                },
+                "startTimeSource": 0,
+                "trajectoryDirection": 1,
+                "trajectoryHorizontalSpeed": 10.0,
+                "trajectoryRadius": 500.0,
+                "trajectoryRotationAngle": 0.0,
+                "trajectoryType": 2,
+                "trajectoryVerticalSpeed": 0.0
+            },
+            "enabled": true,
+            "id": 6,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "Circle 0.0",
+            "outputPins": [
+                {
+                    "id": 7,
+                    "name": "ImuObs"
+                },
+                {
+                    "id": 8,
+                    "name": "PosVelAtt 5Hz"
+                }
+            ],
+            "pos": {
+                "x": 34.0,
+                "y": 194.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "ImuSimulator"
+        }
+    },
+    "transparentWindows": 0.9399999976158142
+}
