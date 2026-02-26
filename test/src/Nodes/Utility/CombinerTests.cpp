@@ -83,7 +83,7 @@ TEST_CASE("[Combiner][flow] Simulate IMU and cut off start and end time", "[Comb
     flow::RegisterWatcherCallbackToInputPin(14, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         CAPTURE(messageCounter1);
         InsTime expectedTime = startTime + std::chrono::milliseconds(messageCounter1 * 200);
-        REQUIRE_THAT(queue.front()->insTime, Catch::Matchers::WithinAbs(expectedTime, std::chrono::microseconds(1)));
+        REQUIRE(std::chrono::abs(queue.front()->insTime - expectedTime) < std::chrono::microseconds(1));
         messageCounter1++;
     });
 
@@ -91,7 +91,7 @@ TEST_CASE("[Combiner][flow] Simulate IMU and cut off start and end time", "[Comb
     flow::RegisterWatcherCallbackToInputPin(15, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         CAPTURE(messageCounter2);
         InsTime expectedTime = startTime + std::chrono::seconds(messageCounter2);
-        REQUIRE_THAT(queue.front()->insTime, Catch::Matchers::WithinAbs(expectedTime, std::chrono::microseconds(1)));
+        REQUIRE(std::chrono::abs(queue.front()->insTime - expectedTime) < std::chrono::microseconds(1));
         messageCounter2++;
     });
 
@@ -99,7 +99,7 @@ TEST_CASE("[Combiner][flow] Simulate IMU and cut off start and end time", "[Comb
     flow::RegisterWatcherCallbackToInputPin(18, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         CAPTURE(messageCounter3);
         InsTime expectedTime = startTime + std::chrono::milliseconds(messageCounter3 * 200);
-        REQUIRE_THAT(queue.front()->insTime, Catch::Matchers::WithinAbs(expectedTime, std::chrono::microseconds(1)));
+        REQUIRE(std::chrono::abs(queue.front()->insTime - expectedTime) < std::chrono::microseconds(1));
         messageCounter3++;
     });
 
@@ -107,7 +107,7 @@ TEST_CASE("[Combiner][flow] Simulate IMU and cut off start and end time", "[Comb
     flow::RegisterWatcherCallbackToInputPin(34, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         CAPTURE(messageCounter4);
         InsTime expectedTime = startTime + std::chrono::milliseconds(100 + messageCounter4 * 200);
-        REQUIRE_THAT(queue.front()->insTime, Catch::Matchers::WithinAbs(expectedTime, std::chrono::microseconds(1)));
+        REQUIRE(std::chrono::abs(queue.front()->insTime - expectedTime) < std::chrono::microseconds(1));
         messageCounter4++;
     });
 
@@ -136,7 +136,7 @@ TEST_CASE("[Combiner][flow] Simulate IMU and cut off start and end time", "[Comb
             expectedTime = startTime + std::chrono::milliseconds(2000);
             CHECK(descriptors.front() == "+ North/South [m] (C0.0 5Hz) - North/South [m] (C0.0 1Hz)");
         }
-        CHECK_THAT(queue.front()->insTime, Catch::Matchers::WithinAbs(expectedTime, std::chrono::microseconds(1)));
+        CHECK(std::chrono::abs(queue.front()->insTime - expectedTime) < std::chrono::microseconds(1));
         LOG_DATA("CombinerTests: [{}] {}", queue.front()->insTime.toYMDHMS(GPST), queue.front()->dynamicDataDescriptors());
 
         messageCounterComb++;
