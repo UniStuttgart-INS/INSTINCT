@@ -103,8 +103,8 @@ template<typename Scalar, typename StateKeyType, typename MeasKeyType>
 KeyedLeastSquaresResult<Scalar, StateKeyType>
     solveWeightedLinearLeastSquaresUncertainties(const KeyedMatrixX<Scalar, MeasKeyType, StateKeyType>& H, const KeyedMatrixX<Scalar, MeasKeyType, MeasKeyType>& W, const KeyedVectorX<Scalar, MeasKeyType>& dz)
 {
-    // Amount of equations
-    auto m = static_cast<int>(H.rows());
+    // // Amount of equations
+    // auto m = static_cast<int>(H.rows());
     // Amount of variables
     auto n = static_cast<int>(H.cols());
 
@@ -118,21 +118,21 @@ KeyedLeastSquaresResult<Scalar, StateKeyType>
     dx(all) = Q(all, all) * H(all, all).transpose() * W(all, all) * dz(all);
     LOG_DATA("dx = {}", dx(all).transpose());
 
-    // Residual sum of squares
-    double RSS = dz(all).transpose() * W(all, all) * dz(all);
-    LOG_DATA("RSS = {}", RSS);
+    // // Residual sum of squares
+    // double RSS = dz(all).transpose() * W(all, all) * dz(all);
+    // LOG_DATA("RSS = {}", RSS);
 
-    // Statistical degrees of freedom
-    auto dof = m - n;
-    LOG_DATA("dof = {}", dof);
+    // // Statistical degrees of freedom
+    // auto dof = m - n;
+    // LOG_DATA("dof = {}", dof);
 
-    // Estimated error variance (reduced chi-squared statistic)
-    double sigma2 = RSS / static_cast<double>(dof);
-    LOG_DATA("sigma2 = {}", sigma2);
+    // // Estimated error variance (reduced chi-squared statistic)
+    // double sigma2 = RSS / static_cast<double>(dof);
+    // LOG_DATA("sigma2 = {}", sigma2);
 
-    // Covariance matrix
-    Q(all, all) *= sigma2;
-    LOG_DATA("Covariance matrix = \n{}", Q(all, all));
+    // // Covariance matrix
+    // Q(all, all) *= sigma2;
+    // LOG_DATA("Covariance matrix = \n{}", Q(all, all));
 
     return { .solution = dx, .variance = Q };
 }

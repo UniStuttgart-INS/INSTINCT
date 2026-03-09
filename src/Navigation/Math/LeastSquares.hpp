@@ -118,25 +118,25 @@ LeastSquaresResult<Eigen::Vector<typename DerivedA::Scalar, DerivedA::ColsAtComp
     Eigen::Vector<typename DerivedA::Scalar, DerivedA::ColsAtCompileTime> dx = Q * H.transpose() * W * dz;
     LOG_DATA("dx = {}", dx.transpose());
 
-    // Residual sum of squares
-    double RSS = dz.transpose() * W * dz;
-    LOG_DATA("RSS = {}", RSS);
+    // // Residual sum of squares
+    // double RSS = dz.transpose() * W * dz;
+    // LOG_DATA("RSS = {}", RSS);
 
-    // Amount of equations
-    auto m = H.rows();
-    // Amount of variables
-    auto n = H.cols();
-    // Statistical degrees of freedom
-    auto dof = m - n;
-    LOG_DATA("dof = {}", dof);
+    // // Amount of equations
+    // auto m = H.rows();
+    // // Amount of variables
+    // auto n = H.cols();
+    // // Statistical degrees of freedom
+    // auto dof = m - n;
+    // LOG_DATA("dof = {}", dof);
 
-    // Estimated error variance (reduced chi-squared statistic)
-    double sigma2 = RSS / static_cast<double>(dof);
-    LOG_DATA("sigma2 = {}", sigma2);
+    // // Estimated error variance (reduced chi-squared statistic)
+    // double sigma2 = RSS / static_cast<double>(dof);
+    // LOG_DATA("sigma2 = {}", sigma2);
 
-    // Covariance matrix
-    Q *= sigma2;
-    LOG_DATA("Covariance matrix = \n{}", Q);
+    // // Covariance matrix
+    // Q *= sigma2;
+    // LOG_DATA("Covariance matrix = \n{}", Q);
 
     return { .solution = dx, .variance = Q };
 }
