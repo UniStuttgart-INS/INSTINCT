@@ -218,6 +218,7 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataProvider/GNSS/Sensors/UbloxSensor.hpp"
 #include "Nodes/DataProvider/IMU/FileReader/ImuFile.hpp"
 #include "Nodes/DataProvider/IMU/FileReader/KvhFile.hpp"
+#include "Nodes/DataProvider/IMU/FileReader/SpirentSimSENSORFile.hpp"
 #include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/KvhSensor.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/Navio2Sensor.hpp"
@@ -299,6 +300,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<UbloxSensor>();
     registerNodeType<ImuFile>();
     registerNodeType<KvhFile>();
+    registerNodeType<SpirentSimSENSORFile>();
     registerNodeType<VectorNavFile>();
     registerNodeType<KvhSensor>();
     registerNodeType<Navio2Sensor>();
