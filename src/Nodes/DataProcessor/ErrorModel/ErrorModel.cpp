@@ -247,8 +247,8 @@ void NAV::ErrorModel::guiConfig()
     {
         ImGui::TextUnformatted("Random walk noise:");
         ImGui::Indent();
-        noiseGuiInput("Accelerometer RW (Std. dev)", _imuAccelerometerRW, _imuAccelerometerRWUnit, MakeComboItems<Units::ImuAccelerometerNoiseUnits>().c_str(), "%.2g", _imuAccelerometerRWRng);
-        noiseGuiInput("Gyroscope RW (Std. dev)", _imuGyroscopeRW, _imuGyroscopeRWUnit, MakeComboItems<Units::ImuGyroscopeNoiseUnits>().c_str(), "%.2g", _imuGyroscopeRWRng);
+        noiseGuiInput("Accelerometer RW (Std. dev)", _imuAccelerometerRW, _imuAccelerometerRWUnit, MakeComboItems<Units::ImuAccelerometerRWUnits>().c_str(), "%.2g", _imuAccelerometerRWRng);
+        noiseGuiInput("Gyroscope RW (Std. dev)", _imuGyroscopeRW, _imuGyroscopeRWUnit, MakeComboItems<Units::ImuGyroscopeRWUnits>().c_str(), "%.2g", _imuGyroscopeRWRng);
         ImGui::Unindent();
         ImGui::TextUnformatted("Integrated Random walk noise:");
         ImGui::Indent();

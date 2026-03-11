@@ -105,6 +105,52 @@ void from_json(const json& j, ImuGyroscopeNoiseUnits& data)
     }
 }
 
+void to_json(json& j, const ImuAccelerometerRWUnits& data)
+{
+    j = to_string(data);
+}
+void from_json(const json& j, ImuAccelerometerRWUnits& data)
+{
+    if (!j.is_string())
+    {
+        LOG_WARN("Could not parse '{}' into ImuAccelerometerRWUnits. Consider resaving the flow", j.dump());
+        return;
+    }
+    std::string str = j.get<std::string>();
+    for (size_t i = 0; i < static_cast<size_t>(ImuAccelerometerRWUnits::COUNT); i++)
+    {
+        auto enumItem = static_cast<ImuAccelerometerRWUnits>(i);
+        if (str == to_string(enumItem))
+        {
+            data = enumItem;
+            return;
+        }
+    }
+}
+
+void to_json(json& j, const ImuGyroscopeRWUnits& data)
+{
+    j = to_string(data);
+}
+void from_json(const json& j, ImuGyroscopeRWUnits& data)
+{
+    if (!j.is_string())
+    {
+        LOG_WARN("Could not parse '{}' into ImuGyroscopeRWUnits. Consider resaving the flow", j.dump());
+        return;
+    }
+    std::string str = j.get<std::string>();
+    for (size_t i = 0; i < static_cast<size_t>(ImuGyroscopeRWUnits::COUNT); i++)
+    {
+        auto enumItem = static_cast<ImuGyroscopeRWUnits>(i);
+        if (str == to_string(enumItem))
+        {
+            data = enumItem;
+            return;
+        }
+    }
+}
+
 void to_json(json& j, const ImuAccelerometerIRWUnits& data)
 {
     j = to_string(data);
@@ -277,10 +323,10 @@ std::string NAV::to_string(Units::ImuAccelerometerNoiseUnits unit)
 {
     switch (unit)
     {
-    case Units::ImuAccelerometerNoiseUnits::m_s2_sqrts:
-        return "m/s^2/√(s)";
-    case Units::ImuAccelerometerNoiseUnits::m_s2_sqrth:
-        return "m/s^2/√(h)";
+    case Units::ImuAccelerometerNoiseUnits::m_s_sqrts:
+        return "m/s/√(s)";
+    case Units::ImuAccelerometerNoiseUnits::m_s_sqrth:
+        return "m/s/√(h)";
     case Units::ImuAccelerometerNoiseUnits::COUNT:
         break;
     }
@@ -291,15 +337,47 @@ std::string NAV::to_string(Units::ImuGyroscopeNoiseUnits unit)
 {
     switch (unit)
     {
-    case Units::ImuGyroscopeNoiseUnits::rad_s_sqrts:
-        return "rad/s/√(s)";
-    case Units::ImuGyroscopeNoiseUnits::rad_s_sqrth:
-        return "rad/s/√(h)";
-    case Units::ImuGyroscopeNoiseUnits::deg_s_sqrts:
-        return "deg/s/√(s)";
-    case Units::ImuGyroscopeNoiseUnits::deg_s_sqrth:
-        return "deg/s/√(h)";
+    case Units::ImuGyroscopeNoiseUnits::rad_sqrts:
+        return "rad/√(s)";
+    case Units::ImuGyroscopeNoiseUnits::rad_sqrth:
+        return "rad/√(h)";
+    case Units::ImuGyroscopeNoiseUnits::deg_sqrts:
+        return "deg/√(s)";
+    case Units::ImuGyroscopeNoiseUnits::deg_sqrth:
+        return "deg/√(h)";
     case Units::ImuGyroscopeNoiseUnits::COUNT:
+        break;
+    }
+    return "";
+}
+
+std::string NAV::to_string(Units::ImuAccelerometerRWUnits unit)
+{
+    switch (unit)
+    {
+    case Units::ImuAccelerometerRWUnits::m_s2_sqrts:
+        return "m/s^2/√(s)";
+    case Units::ImuAccelerometerRWUnits::m_s2_sqrth:
+        return "m/s^2/√(h)";
+    case Units::ImuAccelerometerRWUnits::COUNT:
+        break;
+    }
+    return "";
+}
+
+std::string NAV::to_string(Units::ImuGyroscopeRWUnits unit)
+{
+    switch (unit)
+    {
+    case Units::ImuGyroscopeRWUnits::rad_s_sqrts:
+        return "rad/s/√(s)";
+    case Units::ImuGyroscopeRWUnits::rad_s_sqrth:
+        return "rad/s/√(h)";
+    case Units::ImuGyroscopeRWUnits::deg_s_sqrts:
+        return "deg/s/√(s)";
+    case Units::ImuGyroscopeRWUnits::deg_s_sqrth:
+        return "deg/s/√(h)";
+    case Units::ImuGyroscopeRWUnits::COUNT:
         break;
     }
     return "";

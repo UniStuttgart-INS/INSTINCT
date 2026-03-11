@@ -169,28 +169,28 @@ class ErrorModel : public Node
     // ---------------------------------------------------------------- Noise ------------------------------------------------------------------
 
     /// Selected unit for the accelerometer noise in the GUI
-    Units::ImuAccelerometerNoiseUnits _imuAccelerometerNoiseUnit = Units::ImuAccelerometerNoiseUnits::m_s2_sqrts;
+    Units::ImuAccelerometerNoiseUnits _imuAccelerometerNoiseUnit = Units::ImuAccelerometerNoiseUnits::m_s_sqrts;
     /// Noise of the accelerometer (Unit as selected)
     Eigen::Vector3d _imuAccelerometerNoise = Eigen::Vector3d::Zero();
     /// Random number generator for the accelerometer noise
     RandomNumberGenerator _imuAccelerometerRng;
 
     /// Selected unit for the gyroscope noise in the GUI
-    Units::ImuGyroscopeNoiseUnits _imuGyroscopeNoiseUnit = Units::ImuGyroscopeNoiseUnits::rad_s_sqrts;
+    Units::ImuGyroscopeNoiseUnits _imuGyroscopeNoiseUnit = Units::ImuGyroscopeNoiseUnits::rad_sqrts;
     /// Noise of the gyroscope (Unit as selected)
     Eigen::Vector3d _imuGyroscopeNoise = Eigen::Vector3d::Zero();
     /// Random number generator for the gyroscope noise
     RandomNumberGenerator _imuGyroscopeRng;
 
     /// Selected unit for the accelerometer RW noise in the GUI
-    Units::ImuAccelerometerNoiseUnits _imuAccelerometerRWUnit = Units::ImuAccelerometerNoiseUnits::m_s2_sqrts;
+    Units::ImuAccelerometerRWUnits _imuAccelerometerRWUnit = Units::ImuAccelerometerRWUnits::m_s2_sqrts;
     /// RW noise of the accelerometer (Unit as selected)
     Eigen::Vector3d _imuAccelerometerRW = Eigen::Vector3d::Zero();
     /// Random number generator for the accelerometer RW noise
     RandomNumberGenerator _imuAccelerometerRWRng;
 
     /// Selected unit for the accelerometer RW noise in the GUI
-    Units::ImuGyroscopeNoiseUnits _imuGyroscopeRWUnit = Units::ImuGyroscopeNoiseUnits::rad_s_sqrts;
+    Units::ImuGyroscopeRWUnits _imuGyroscopeRWUnit = Units::ImuGyroscopeRWUnits::rad_s_sqrts;
     /// RW noise of the accelerometer (Unit as selected)
     Eigen::Vector3d _imuGyroscopeRW = Eigen::Vector3d::Zero();
     /// Random number generator for the accelerometer RW noise

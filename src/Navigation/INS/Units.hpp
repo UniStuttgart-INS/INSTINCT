@@ -46,13 +46,31 @@ enum class ImuGyroscopeUnits : uint8_t
 /// Possible units to specify an accelerometer noise
 enum class ImuAccelerometerNoiseUnits : uint8_t
 {
+    m_s_sqrts, ///< [m/s/sqrt(s)] (Standard deviation)
+    m_s_sqrth, ///< [m/s/sqrt(h)] (Standard deviation)
+    COUNT,     ///< Amount of items in the enum
+};
+
+/// Possible units to specify an gyro noise
+enum class ImuGyroscopeNoiseUnits : uint8_t
+{
+    rad_sqrts, ///< [rad/sqrt(s)] (Standard deviation)
+    rad_sqrth, ///< [rad/sqrt(h)] (Standard deviation)
+    deg_sqrts, ///< [deg/sqrt(s)] (Standard deviation)
+    deg_sqrth, ///< [deg/sqrt(h)] (Standard deviation)
+    COUNT,     ///< Amount of items in the enum
+};
+
+/// Possible units to specify an accelerometer RW
+enum class ImuAccelerometerRWUnits : uint8_t
+{
     m_s2_sqrts, ///< [m/s^2/sqrt(s)] (Standard deviation)
     m_s2_sqrth, ///< [m/s^2/sqrt(h)] (Standard deviation)
     COUNT,      ///< Amount of items in the enum
 };
 
-/// Possible units to specify an gyro noise
-enum class ImuGyroscopeNoiseUnits : uint8_t
+/// Possible units to specify an gyro RW
+enum class ImuGyroscopeRWUnits : uint8_t
 {
     rad_s_sqrts, ///< [rad/s/sqrt(s)] (Standard deviation)
     rad_s_sqrth, ///< [rad/s/sqrt(h)] (Standard deviation)
@@ -150,6 +168,24 @@ void to_json(json& j, const ImuGyroscopeNoiseUnits& data);
 /// @param[in] j Json object with the needed values
 /// @param[out] data Object to fill from the json
 void from_json(const json& j, ImuGyroscopeNoiseUnits& data);
+
+/// @brief Converts the provided data into a json object
+/// @param[out] j Json object which gets filled with the info
+/// @param[in] data Data to convert into json
+void to_json(json& j, const ImuAccelerometerRWUnits& data);
+/// @brief Converts the provided json object into the data object
+/// @param[in] j Json object with the needed values
+/// @param[out] data Object to fill from the json
+void from_json(const json& j, ImuAccelerometerRWUnits& data);
+
+/// @brief Converts the provided data into a json object
+/// @param[out] j Json object which gets filled with the info
+/// @param[in] data Data to convert into json
+void to_json(json& j, const ImuGyroscopeRWUnits& data);
+/// @brief Converts the provided json object into the data object
+/// @param[in] j Json object with the needed values
+/// @param[out] data Object to fill from the json
+void from_json(const json& j, ImuGyroscopeRWUnits& data);
 
 /// @brief Converts the provided data into a json object
 /// @param[out] j Json object which gets filled with the info
@@ -254,9 +290,9 @@ template<typename Derived>
 {
     switch (unit)
     {
-    case Units::ImuAccelerometerNoiseUnits::m_s2_sqrts:
+    case Units::ImuAccelerometerNoiseUnits::m_s_sqrts:
         return value;
-    case Units::ImuAccelerometerNoiseUnits::m_s2_sqrth:
+    case Units::ImuAccelerometerNoiseUnits::m_s_sqrth:
         return value / 60.0;
     case Units::ImuAccelerometerNoiseUnits::COUNT:
         break;
@@ -273,15 +309,57 @@ template<typename Derived>
 {
     switch (unit)
     {
-    case Units::ImuGyroscopeNoiseUnits::rad_s_sqrts:
+    case Units::ImuGyroscopeNoiseUnits::rad_sqrts:
         return value;
-    case Units::ImuGyroscopeNoiseUnits::rad_s_sqrth:
+    case Units::ImuGyroscopeNoiseUnits::rad_sqrth:
         return value / 60.0;
-    case Units::ImuGyroscopeNoiseUnits::deg_s_sqrts:
+    case Units::ImuGyroscopeNoiseUnits::deg_sqrts:
         return deg2rad(value);
-    case Units::ImuGyroscopeNoiseUnits::deg_s_sqrth:
+    case Units::ImuGyroscopeNoiseUnits::deg_sqrth:
         return deg2rad(value) / 60.0;
     case Units::ImuGyroscopeNoiseUnits::COUNT:
+        break;
+    }
+    return value;
+}
+
+/// @brief Converts the value depending on the unit provided
+/// @param[in] value Value to convert
+/// @param[in] unit Unit the value is in
+/// @return Value in unit of the first item in the Unit enum
+template<typename Derived>
+[[nodiscard]] typename Derived::PlainObject convertUnit(const Eigen::MatrixBase<Derived>& value, Units::ImuAccelerometerRWUnits unit)
+{
+    switch (unit)
+    {
+    case Units::ImuAccelerometerRWUnits::m_s2_sqrts:
+        return value;
+    case Units::ImuAccelerometerRWUnits::m_s2_sqrth:
+        return value / 60.0;
+    case Units::ImuAccelerometerRWUnits::COUNT:
+        break;
+    }
+    return value;
+}
+
+/// @brief Converts the value depending on the unit provided
+/// @param[in] value Value to convert
+/// @param[in] unit Unit the value is in
+/// @return Value in unit of the first item in the Unit enum
+template<typename Derived>
+[[nodiscard]] typename Derived::PlainObject convertUnit(const Eigen::MatrixBase<Derived>& value, Units::ImuGyroscopeRWUnits unit)
+{
+    switch (unit)
+    {
+    case Units::ImuGyroscopeRWUnits::rad_s_sqrts:
+        return value;
+    case Units::ImuGyroscopeRWUnits::rad_s_sqrth:
+        return value / 60.0;
+    case Units::ImuGyroscopeRWUnits::deg_s_sqrts:
+        return deg2rad(value);
+    case Units::ImuGyroscopeRWUnits::deg_s_sqrth:
+        return deg2rad(value) / 60.0;
+    case Units::ImuGyroscopeRWUnits::COUNT:
         break;
     }
     return value;
@@ -425,6 +503,12 @@ template<typename Derived>
 /// @brief Converts the unit into a string
 /// @param[in] unit Unit
 [[nodiscard]] std::string to_string(Units::ImuGyroscopeNoiseUnits unit);
+/// @brief Converts the unit into a string
+/// @param[in] unit Unit
+[[nodiscard]] std::string to_string(Units::ImuAccelerometerRWUnits unit);
+/// @brief Converts the unit into a string
+/// @param[in] unit Unit
+[[nodiscard]] std::string to_string(Units::ImuGyroscopeRWUnits unit);
 /// @brief Converts the unit into a string
 /// @param[in] unit Unit
 [[nodiscard]] std::string to_string(Units::ImuAccelerometerIRWUnits unit);
