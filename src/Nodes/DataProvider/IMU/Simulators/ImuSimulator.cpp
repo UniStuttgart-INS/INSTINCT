@@ -982,17 +982,33 @@ std::optional<Eigen::Vector3d> ImuSimulator::e_getPositionFromCsvLine(const CsvD
     }
     else
     {
-        auto latIter = std::ranges::find(description, "Latitude [deg]");
-        auto lonIter = std::ranges::find(description, "Longitude [deg]");
-        auto altIter = std::ranges::find(description, "Altitude [m]");
-        if (latIter != description.end() && lonIter != description.end() && altIter != description.end())
+        auto posXIter = std::ranges::find(description, "Pos ECEF X [m]");
+        auto posYIter = std::ranges::find(description, "Pos ECEF Y [m]");
+        auto posZIter = std::ranges::find(description, "Pos ECEF Z [m]");
+        if (posXIter != description.end() && posYIter != description.end() && posZIter != description.end())
         {
-            const auto* lat = std::get_if<double>(&line.at(static_cast<size_t>(latIter - description.begin())));
-            const auto* lon = std::get_if<double>(&line.at(static_cast<size_t>(lonIter - description.begin())));
-            const auto* alt = std::get_if<double>(&line.at(static_cast<size_t>(altIter - description.begin())));
-            if (lat && lon && alt && !std::isnan(*lat) && !std::isnan(*lon) && !std::isnan(*alt))
+            const auto* posX = std::get_if<double>(&line.at(static_cast<size_t>(posXIter - description.begin())));
+            const auto* posY = std::get_if<double>(&line.at(static_cast<size_t>(posYIter - description.begin())));
+            const auto* posZ = std::get_if<double>(&line.at(static_cast<size_t>(posZIter - description.begin())));
+            if (posX && posY && posZ && !std::isnan(*posX) && !std::isnan(*posY) && !std::isnan(*posZ))
             {
-                return trafo::lla2ecef_WGS84(Eigen::Vector3d(deg2rad(*lat), deg2rad(*lon), *alt));
+                return Eigen::Vector3d{ *posX, *posY, *posZ };
+            }
+        }
+        else
+        {
+            auto latIter = std::ranges::find(description, "Latitude [deg]");
+            auto lonIter = std::ranges::find(description, "Longitude [deg]");
+            auto altIter = std::ranges::find(description, "Altitude [m]");
+            if (latIter != description.end() && lonIter != description.end() && altIter != description.end())
+            {
+                const auto* lat = std::get_if<double>(&line.at(static_cast<size_t>(latIter - description.begin())));
+                const auto* lon = std::get_if<double>(&line.at(static_cast<size_t>(lonIter - description.begin())));
+                const auto* alt = std::get_if<double>(&line.at(static_cast<size_t>(altIter - description.begin())));
+                if (lat && lon && alt && !std::isnan(*lat) && !std::isnan(*lon) && !std::isnan(*alt))
+                {
+                    return trafo::lla2ecef_WGS84(Eigen::Vector3d(deg2rad(*lat), deg2rad(*lon), *alt));
+                }
             }
         }
     }
@@ -1505,9 +1521,10 @@ bool ImuSimulator::initializeSplines()
 
             for (uint64_t i = 0; i < splineTime.size(); i++)
             {
-                double phi = static_cast<double>(osc.number) * static_cast<double>(splineTime[i]) / simDuration * 2 * std::numbers::pi;
+                auto time = static_cast<double>(splineTime[i]);
+                double phi = static_cast<double>(osc.number) * time / simDuration * 2 * std::numbers::pi;
                 double delta = osc.amplitude * std::sin(phi);
-                LOG_DATA("{}:   [{:.3f}] phi = {:.4f}, delta = {:.4f}", nameId(), splineTime[i], phi, delta);
+                LOG_DATA("{}:   [{:.3f}] phi = {:.4f}, delta = {:.4f}", nameId(), time, phi, delta);
 
                 if (osc.target == Oscillation::North || osc.target == Oscillation::East || osc.target == Oscillation::Up)
                 {
