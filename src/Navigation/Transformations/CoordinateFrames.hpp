@@ -180,6 +180,36 @@ template<typename Derived>
 /// @brief Calculates the Jacobian to convert an attitude represented in Euler angels (roll, pitch, yaw) into a covariance for a quaternion
 /// @param n_quat_b Quaternion for rotations from body to navigation frame
 template<typename Derived>
+[[nodiscard]] Eigen::Matrix<typename Derived::Scalar, 4, 3> covDpsi2DquatJacobian(const Eigen::QuaternionBase<Derived>& n_quat_b)
+{
+    Eigen::Matrix<typename Derived::Scalar, 4, 3> J;
+    // clang-format off
+    // J << -n_quat_b.x(), -n_quat_b.y(), -n_quat_b.z(), // w
+    //       n_quat_b.w(),  n_quat_b.z(), -n_quat_b.y(), // x
+    //      -n_quat_b.z(),  n_quat_b.w(),  n_quat_b.x(), // y
+    //       n_quat_b.y(), -n_quat_b.x(),  n_quat_b.w(); // z
+    //
+    J <<  n_quat_b.w(),  n_quat_b.z(), -n_quat_b.y(), // x
+         -n_quat_b.z(),  n_quat_b.w(),  n_quat_b.x(), // y
+          n_quat_b.y(), -n_quat_b.x(),  n_quat_b.w(), // z
+         -n_quat_b.x(), -n_quat_b.y(), -n_quat_b.z(); // w
+
+    // J << -n_quat_b.x(), -n_quat_b.y(), -n_quat_b.z(), // w
+    //       n_quat_b.w(), -n_quat_b.z(),  n_quat_b.y(), // x
+    //      -n_quat_b.z(),  n_quat_b.w(), -n_quat_b.x(), // y
+    //       n_quat_b.y(),  n_quat_b.x(),  n_quat_b.w(); // z
+    //
+    // J <<  n_quat_b.w(), -n_quat_b.z(),  n_quat_b.y(), // x
+    //      -n_quat_b.z(),  n_quat_b.w(), -n_quat_b.x(), // y
+    //       n_quat_b.y(),  n_quat_b.x(),  n_quat_b.w(), // z
+    //      -n_quat_b.x(), -n_quat_b.y(), -n_quat_b.z(); // w
+    // clang-format on
+    return 0.5 * J;
+}
+
+/// @brief Calculates the Jacobian to convert an attitude represented in Euler angels (roll, pitch, yaw) into a covariance for a quaternion
+/// @param n_quat_b Quaternion for rotations from body to navigation frame
+template<typename Derived>
 [[nodiscard]] Eigen::Matrix<typename Derived::Scalar, 4, 3> covRPY2quatJacobian(const Eigen::QuaternionBase<Derived>& n_quat_b)
 {
     auto RPY = trafo::quat2eulerZYX(n_quat_b);
@@ -193,17 +223,37 @@ template<typename Derived>
     auto scc = std::sin(RPY(0) / 2.0) * std::cos(RPY(1) / 2.0) * std::cos(RPY(2) / 2.0);
     auto csc = std::cos(RPY(0) / 2.0) * std::sin(RPY(1) / 2.0) * std::cos(RPY(2) / 2.0);
     auto ccs = std::cos(RPY(0) / 2.0) * std::cos(RPY(1) / 2.0) * std::sin(RPY(2) / 2.0);
-    auto ssc = std::sin(RPY(0) / 2.0) * std::cos(RPY(1) / 2.0) * std::cos(RPY(2) / 2.0);
+    auto ssc = std::sin(RPY(0) / 2.0) * std::sin(RPY(1) / 2.0) * std::cos(RPY(2) / 2.0);
     auto scs = std::sin(RPY(0) / 2.0) * std::cos(RPY(1) / 2.0) * std::sin(RPY(2) / 2.0);
     auto css = std::cos(RPY(0) / 2.0) * std::sin(RPY(1) / 2.0) * std::sin(RPY(2) / 2.0);
     auto sss = std::sin(RPY(0) / 2.0) * std::sin(RPY(1) / 2.0) * std::sin(RPY(2) / 2.0);
 
     Eigen::Matrix<typename Derived::Scalar, 4, 3> J;
     // clang-format off
-    J <<  (ccc + sss) / 2.0, -(ccs + ssc) / 2.0, -(csc + scs) / 2.0,
-          (ccs - ssc) / 2.0,  (ccc - sss) / 2.0,  (scc - css) / 2.0,
-         -(csc + scs) / 2.0, -(css + scc) / 2.0,  (ccc + sss) / 2.0,
-          (css - scc) / 2.0,  (scs - csc) / 2.0,  (ssc - ccs) / 2.0;
+    //          roll               pitch                yaw
+    J <<  (ccc + sss) / 2.0, -(ssc + ccs) / 2.0, -(csc + scs) / 2.0, // x
+          (ccs - ssc) / 2.0,  (ccc - sss) / 2.0,  (scc - css) / 2.0, // y
+         -(csc + scs) / 2.0, -(css + scc) / 2.0,  (ccc + sss) / 2.0, // z
+          (css - scc) / 2.0,  (scs - csc) / 2.0,  (ssc - ccs) / 2.0; // w
+
+    // Blanco-Claraco
+    //           yaw                 pitch               roll
+    // J <<  (ssc - ccs) / 2.0,  (scs - csc) / 2.0,  (css - scc) / 2.0, // w
+    //      -(csc + scs) / 2.0, -(ssc + ccs) / 2.0,  (ccc + sss) / 2.0, // x
+    //       (scc - css) / 2.0,  (ccc - sss) / 2.0,  (ccs - ssc) / 2.0, // y
+    //       (ccc + sss) / 2.0, -(css + scc) / 2.0, -(csc + scs) / 2.0; // z
+    //
+    //           yaw                 pitch               roll
+    // J << -(csc + scs) / 2.0, -(ssc + ccs) / 2.0,  (ccc + sss) / 2.0, // x
+    //       (scc - css) / 2.0,  (ccc - sss) / 2.0,  (ccs - ssc) / 2.0, // y
+    //       (ccc + sss) / 2.0, -(css + scc) / 2.0, -(csc + scs) / 2.0, // z
+    //       (ssc - ccs) / 2.0,  (scs - csc) / 2.0,  (css - scc) / 2.0; // w
+    //
+    //          roll               pitch                yaw
+    // J << -(ssc + ccs) / 2.0,  (ccc + sss) / 2.0, -(csc + scs) / 2.0, // x
+    //       (ccc - sss) / 2.0,  (ccs - ssc) / 2.0,  (scc - css) / 2.0, // y
+    //      -(css + scc) / 2.0, -(csc + scs) / 2.0,  (ccc + sss) / 2.0, // z
+    //       (scs - csc) / 2.0,  (css - scc) / 2.0,  (ssc - ccs) / 2.0; // w
     // clang-format on
     return J;
 }
@@ -288,11 +338,28 @@ template<typename Derived>
 {
     Eigen::Matrix<typename Derived::Scalar, 3, 4> J;
     J << // clang-format off
-    2.0 * quat.w(), -2.0 * quat.z(),  2.0 * quat.y(), -2.0 * quat.x(),
-    2.0 * quat.z(),  2.0 * quat.w(), -2.0 * quat.x(), -2.0 * quat.y(),
-   -2.0 * quat.y(),  2.0 * quat.x(),  2.0 * quat.w(), -2.0 * quat.z();
+         quat.w(), -quat.z(),  quat.y(), -quat.x(),
+         quat.z(),  quat.w(), -quat.x(), -quat.y(),
+        -quat.y(),  quat.x(),  quat.w(), -quat.z();
          // clang-format on
-    return J;
+    return 2.0 * J;
+}
+
+/// @brief Calculates the Jacobian to convert an attitude represented in quaternions into the difference of the vector part of two quaternions
+///
+/// If the residual is 2 Delta q.vec() = 2 (qMeas * qEst.conj()).vec()
+/// Then this function gets called with the qMeas
+/// @param quat Quaternion for which the Jacobian is wanted
+template<typename Derived>
+[[nodiscard]] Eigen::Matrix<typename Derived::Scalar, 3, 4> covQuatDiffLeftJacobian(const Eigen::QuaternionBase<Derived>& quat)
+{
+    Eigen::Matrix<typename Derived::Scalar, 3, 4> J;
+    J << // clang-format off
+        -quat.w(),  quat.z(), -quat.y(), quat.x(),
+        -quat.z(), -quat.w(),  quat.x(), quat.y(),
+         quat.y(), -quat.x(), -quat.w(), quat.z();
+         // clang-format on
+    return 2.0 * J;
 }
 
 /// @brief Quaternion for rotations from inertial to Earth-centered-Earth-fixed frame

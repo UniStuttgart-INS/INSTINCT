@@ -25,6 +25,7 @@
 #include <fmt/format.h>
 
 #include "util/Assert.h"
+#include "util/Logger.hpp"
 
 namespace NAV::math
 {

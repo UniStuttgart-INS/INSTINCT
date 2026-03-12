@@ -830,22 +830,40 @@ TEST_CASE("[InsTransformations] Transformation chains", "[InsTransformations]")
     CHECK_THAT(e_Dcm_b_ref, Catch::Matchers::WithinAbs(e_Dcm_b_quat, 1e-13));
 }
 
-// TEST_CASE("[InsTransformations] Covariance RPY <--> Quat", "[InsTransformations]")
-// {
-//     auto logger = initializeTestLogger();
+TEST_CASE("[InsTransformations] RPY <--> n_Quat_b", "[InsTransformations]")
+{
+    auto logger = initializeTestLogger();
 
-//     Eigen::Matrix3d covRPYorig;
-//     covRPYorig << 1, 2, 3,
-//         4, 5, 6,
-//         7, 8, 9;
+    double R = deg2rad(25.0);
+    double P = deg2rad(80.0);
+    double Y = deg2rad(120.0);
 
-//     Eigen::Quaterniond n_Quat_b = trafo::n_Quat_b(deg2rad(25.0), deg2rad(80.0), deg2rad(120.0));
+    Eigen::Quaterniond n_Quat_b = trafo::n_Quat_b(R, P, Y);
+    Eigen::Quaterniond n_QuatRPY_b(
+        cos(R / 2.) * cos(P / 2.) * cos(Y / 2.) + sin(R / 2.) * sin(P / 2.) * sin(Y / 2.),
+        sin(R / 2.) * cos(P / 2.) * cos(Y / 2.) - cos(R / 2.) * sin(P / 2.) * sin(Y / 2.),
+        cos(R / 2.) * sin(P / 2.) * cos(Y / 2.) + sin(R / 2.) * cos(P / 2.) * sin(Y / 2.),
+        cos(R / 2.) * cos(P / 2.) * sin(Y / 2.) - sin(R / 2.) * sin(P / 2.) * cos(Y / 2.));
 
-//     Eigen::Matrix4d covQuat = trafo::covRPY2quat(covRPYorig, n_Quat_b);
+    CHECK_THAT(n_QuatRPY_b.coeffs(), Catch::Matchers::WithinAbs(n_Quat_b.coeffs(), 1e-8));
+}
 
-//     Eigen::Matrix3d covRPY = trafo::covQuat2RPY(covQuat, n_Quat_b);
+TEST_CASE("[InsTransformations] RPY <--> n_Quat_b Covariance", "[InsTransformations]")
+{
+    auto logger = initializeTestLogger();
 
-//     CHECK_THAT(covRPYorig, Catch::Matchers::WithinAbs(covRPY, 1e-8));
-// }
+    Eigen::Quaterniond n_Quat_b = trafo::n_Quat_b(deg2rad(35.0), deg2rad(-80.0), deg2rad(195.0));
+
+    Eigen::Matrix3d covRPYorig;
+    covRPYorig << 1, 2, 3,
+        4, 5, 6,
+        7, 8, 9;
+
+    Eigen::Matrix4d covQuat = trafo::covRPY2quat(covRPYorig, n_Quat_b);
+
+    Eigen::Matrix3d covRPY = trafo::covQuat2RPY(covQuat, n_Quat_b);
+
+    CHECK_THAT(covRPYorig, Catch::Matchers::WithinAbs(covRPY, 1e-8));
+}
 
 } // namespace NAV::TESTS::CoordinateFramesTests

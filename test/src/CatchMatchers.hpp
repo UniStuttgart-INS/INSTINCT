@@ -20,6 +20,7 @@
 #include "Navigation/Time/InsTime.hpp"
 #include "Navigation/Math/Math.hpp"
 
+#include <chrono>
 #include <fmt/ostream.h>
 #include <iomanip>
 #include <limits>
