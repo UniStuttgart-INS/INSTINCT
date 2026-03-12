@@ -112,6 +112,11 @@ void NAV::ErrorModel::guiConfig()
         ImGui::TextUnformatted("Please connect the input pin to show the options");
         return;
     }
+    if (ImGui::Checkbox(fmt::format("Disable Errors##{}", size_t(id)).c_str(), &_disableErrors))
+    {
+        flow::ApplyChanges();
+    }
+    if (_disableErrors) { ImGui::BeginDisabled(); }
 
     float itemWidth = 470 * gui::NodeEditorApplication::windowFontRatio();
     float unitWidth = 180 * gui::NodeEditorApplication::windowFontRatio();
@@ -138,36 +143,11 @@ void NAV::ErrorModel::guiConfig()
         }
     };
 
-    auto rngInput = [&](const char* title, RandomNumberGenerator& rng) {
-        float currentCursorX = ImGui::GetCursorPosX();
-        if (ImGui::Checkbox(fmt::format("##rng.useSeed {} {}", title, size_t(id)).c_str(), &rng.useSeed))
-        {
-            LOG_DEBUG("{}: {} rng.useSeed changed to {}", nameId(), title, rng.useSeed);
-            flow::ApplyChanges();
-        }
-        if (ImGui::IsItemHovered()) { ImGui::SetTooltip("Use seed?"); }
-        ImGui::SameLine();
-        if (!rng.useSeed)
-        {
-            ImGui::BeginDisabled();
-        }
-        ImGui::SetNextItemWidth(itemWidth - (ImGui::GetCursorPosX() - currentCursorX));
-        if (ImGui::SliderULong(fmt::format("{} Seed##{}", title, size_t(id)).c_str(), &rng.seed, 0, std::numeric_limits<uint64_t>::max() / 2, "%lu"))
-        {
-            LOG_DEBUG("{}: {} rng.seed changed to {}", nameId(), title, rng.seed);
-            flow::ApplyChanges();
-        }
-        if (!rng.useSeed)
-        {
-            ImGui::EndDisabled();
-        }
-    };
-
     auto noiseGuiInput = [&]<typename T>(const char* title, T& data, auto& unit, const char* combo_items_separated_by_zeros, const char* format, RandomNumberGenerator& rng) {
         if constexpr (std::is_same_v<T, double>) { inputDoubleWithUnit(title, data, unit, combo_items_separated_by_zeros, format); }
         else if constexpr (std::is_same_v<T, Eigen::Vector3d>) { inputVector3WithUnit(title, data, unit, combo_items_separated_by_zeros, format); }
 
-        rngInput(title, rng);
+        rng.showGui(title, itemWidth, nameId());
     };
 
     if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.front().dataIdentifier, { ImuObs::type() })
@@ -278,7 +258,7 @@ void NAV::ErrorModel::guiConfig()
                 LOG_DEBUG("{}: Ambiguity upper bound changed to {}", nameId(), _gui_ambiguityLimits[1]);
                 flow::ApplyChanges();
             }
-            rngInput("Ambiguity", _ambiguityRng);
+            _ambiguityRng.showGui("Ambiguity", itemWidth, nameId());
         }
         ImGui::Unindent();
 
@@ -507,7 +487,10 @@ void NAV::ErrorModel::guiConfig()
                                     });
                                     if (cycleIter != _cycleSlips.end()) { color = ImColor(240, 128, 128); }
                                     else if (ambiguities->second.back().first == time) { color = ImGui::GetStyle().Colors[ImGuiCol_Text]; }
-                                    else { color = ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]; }
+                                    else
+                                    {
+                                        color = ImGui::GetStyle().Colors[ImGuiCol_TextDisabled];
+                                    }
                                     ImGui::TextColored(color, "%s%s",
                                                        fmt::format("{}", iter->second).c_str(),
                                                        cycleIter != _cycleSlips.end() && cycleIter->LLI ? " (LLI)" : "");
@@ -533,6 +516,8 @@ void NAV::ErrorModel::guiConfig()
             ImGui::TreePop();
         }
     }
+
+    if (_disableErrors) { ImGui::EndDisabled(); }
 }
 
 json NAV::ErrorModel::save() const
@@ -540,6 +525,8 @@ json NAV::ErrorModel::save() const
     LOG_TRACE("{}: called", nameId());
 
     json j;
+
+    j["disableErrors"] = _disableErrors;
 
     j["imuAccelerometerBiasUnit"] = _imuAccelerometerBiasUnit;
     j["imuAccelerometerBias_p"] = _imuAccelerometerBias_p;
@@ -615,6 +602,8 @@ json NAV::ErrorModel::save() const
 void NAV::ErrorModel::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
+
+    if (j.contains("disableErrors")) { j.at("disableErrors").get_to(_disableErrors); }
 
     if (j.contains("imuAccelerometerBiasUnit")) { j.at("imuAccelerometerBiasUnit").get_to(_imuAccelerometerBiasUnit); }
     if (j.contains("imuAccelerometerBias_p")) { j.at("imuAccelerometerBias_p").get_to(_imuAccelerometerBias_p); }
@@ -786,6 +775,11 @@ void NAV::ErrorModel::afterDeleteLink(OutputPin& startPin, InputPin& endPin)
 void NAV::ErrorModel::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     auto obs = queue.extract_front();
+    if (_disableErrors)
+    {
+        invokeCallbacks(OUTPUT_PORT_INDEX_FLOW, obs);
+        return;
+    }
     if (!_lastObservationTime.empty()) { _dt = static_cast<double>((obs->insTime - _lastObservationTime).count()); }
 
     // Accelerometer Bias in platform frame coordinates [m/s^2]

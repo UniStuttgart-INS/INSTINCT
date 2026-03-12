@@ -93,6 +93,13 @@ class RandomNumberGenerator
         return std::normal_distribution<RealType>(mean, stddev)(_generator);
     }
 
+    /// @brief Show the Gui for the rng
+    /// @param[in] title Title to show
+    /// @param[in] itemWidth Item width
+    /// @param[in] nameId Node name and id
+    /// @return True if the user changed something
+    bool showGui(const char* title, float itemWidth, const std::string& nameId);
+
     bool useSeed = true; ///< Flag whether to use the seed instead of the system time
     uint64_t seed = 0;   ///< Seed for the random number generator
 

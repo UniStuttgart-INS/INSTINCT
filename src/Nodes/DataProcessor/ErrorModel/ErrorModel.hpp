@@ -132,6 +132,9 @@ class ErrorModel : public Node
     /// Time interval of the messages [s]
     double _dt = 0.0;
 
+    /// If true, the node is disabled and just passes the results to the output
+    bool _disableErrors = false;
+
     // #########################################################################################################################################
     //                                                                 ImuObs
     // #########################################################################################################################################

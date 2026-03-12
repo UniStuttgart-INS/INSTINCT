@@ -13,8 +13,40 @@
 
 #include "RandomNumberGenerator.hpp"
 
+#include <imgui.h>
+#include "util/Logger.hpp"
+#include "internal/gui/widgets/imgui_ex.hpp"
+
 namespace NAV
 {
+
+bool RandomNumberGenerator::showGui(const char* title, float itemWidth, const std::string& nameId)
+{
+    bool changed = false;
+    float currentCursorX = ImGui::GetCursorPosX();
+    if (ImGui::Checkbox(fmt::format("##rng.useSeed {} {}", title, nameId).c_str(), &useSeed))
+    {
+        LOG_DEBUG("{}: {} rng.useSeed changed to {}", nameId, title, useSeed);
+        changed = true;
+    }
+    if (ImGui::IsItemHovered()) { ImGui::SetTooltip("Use seed?"); }
+    ImGui::SameLine();
+    if (!useSeed)
+    {
+        ImGui::BeginDisabled();
+    }
+    ImGui::SetNextItemWidth(itemWidth - (ImGui::GetCursorPosX() - currentCursorX));
+    if (ImGui::SliderULong(fmt::format("{} Seed##{}", title, nameId).c_str(), &seed, 0, std::numeric_limits<uint64_t>::max() / 2, "%lu"))
+    {
+        LOG_DEBUG("{}: {} rng.seed changed to {}", nameId, title, seed);
+        changed = true;
+    }
+    if (!useSeed)
+    {
+        ImGui::EndDisabled();
+    }
+    return changed;
+}
 
 void to_json(json& j, const RandomNumberGenerator& rng)
 {
