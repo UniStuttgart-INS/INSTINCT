@@ -10,14 +10,20 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdint>
 #include <ctime>
 #include <imgui.h>
+#include <limits>
 #include <optional>
 #include <ranges>
+#include <string>
 
 #include "Navigation/Time/InsTime.hpp"
+#include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "internal/gui/widgets/EnumCombo.hpp"
+#include "internal/gui/widgets/FileDialog.hpp"
 #include "util/Logger.hpp"
+#include "util/StringUtil.hpp"
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
 #include "Navigation/INS/Functions.hpp"
 #include "Navigation/INS/LocalNavFrame/Mechanization.hpp"
@@ -25,6 +31,7 @@
 #include "Navigation/Math/Math.hpp"
 #include "Navigation/Transformations/Units.hpp"
 
+#include <Eigen/src/Core/Matrix.h>
 #include <Eigen/src/Geometry/AngleAxis.h>
 #include <Eigen/src/Geometry/Quaternion.h>
 #include "internal/FlowManager.hpp"
@@ -34,6 +41,8 @@
 
 #include "NodeData/IMU/ImuObsSimulated.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
+#include <fmt/format.h>
+#include <gcem_incl/sgn.hpp>
 
 namespace NAV
 {
@@ -174,6 +183,15 @@ void ImuSimulator::guiConfig()
                 }
             }
             ImGui::EndCombo();
+        }
+        if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::RoseFigure)
+        {
+            ImGui::SameLine();
+            if (ImGui::Checkbox(fmt::format("Constant height##{}", size_t(id)).c_str(), &_baseTrajectoryWithoutHeightChange))
+            {
+                flow::ApplyChanges();
+                doDeinitialize();
+            }
         }
         if (_trajectoryType == TrajectoryType::Csv)
         {
@@ -417,12 +435,14 @@ void ImuSimulator::guiConfig()
 
                 ImGui::TableNextColumn();
                 ImGui::SetNextItemWidth(columnWidth);
+                if (_baseTrajectoryWithoutHeightChange) { ImGui::BeginDisabled(); }
                 if (ImGui::InputDouble(fmt::format("Vertical speed (Up)##{}", size_t(id)).c_str(), &_trajectoryVerticalSpeed, 0.0, 0.0, "%.3f m/s"))
                 {
                     LOG_DEBUG("{}: circularTrajectoryVerticalSpeed changed to {}", nameId(), _trajectoryVerticalSpeed);
                     flow::ApplyChanges();
                     doDeinitialize();
                 }
+                if (_baseTrajectoryWithoutHeightChange) { ImGui::EndDisabled(); }
                 // ####################################################################################################
                 ImGui::TableNextColumn();
                 auto tableStartX = ImGui::GetCursorPosX();
@@ -515,6 +535,128 @@ void ImuSimulator::guiConfig()
 
                 ImGui::EndTable();
             }
+            if (_trajectoryType == TrajectoryType::RoseFigure)
+            {
+                ImGui::SetNextItemWidth(2.0F * columnWidth);
+                if (ImGui::InputText(fmt::format("Segment Reordering##{}", size_t(id)).c_str(), &_reorderInput))
+                {
+                    flow::ApplyChanges();
+                    doDeinitialize();
+                }
+                ImGui::SameLine();
+                gui::widgets::HelpMarker("Splits the figure into N segments and reorders them.\n"
+                                         "e.g. 1,-5,-4,-3,-2,6,7,8 (N = 8)\n"
+                                         "- Segments start counting from 1\n"
+                                         "- Minus reverses the data in the segment\n"
+                                         "- All numbers need to be present, e.g. wrong: 1,-3,4 (2 is missing)");
+            }
+            if (ImGui::Checkbox(fmt::format("Calc Pitch by Velocity##{}", size_t(id)).c_str(), &_pitchByVelocity))
+            {
+                flow::ApplyChanges();
+                doDeinitialize();
+            }
+            if (_pitchByVelocity)
+            {
+                ImGui::SameLine(0.0F, ImGui::CalcTextSize("Calc Roll by Acceleration").x - ImGui::CalcTextSize("Calc Pitch by Velocity").x + ImGui::GetStyle().ItemSpacing.x);
+                ImGui::SetNextItemWidth(columnWidth / 2.0F);
+                if (ImGui::InputDouble(fmt::format("Pitch Multiplier##{}", size_t(id)).c_str(), &_pitchMultiplier, 0.0, 0.0, "%.3g"))
+                {
+                    flow::ApplyChanges();
+                    doDeinitialize();
+                }
+            }
+            if (ImGui::Checkbox(fmt::format("Calc Roll by Acceleration##{}", size_t(id)).c_str(), &_rollByAcceleration))
+            {
+                flow::ApplyChanges();
+                doDeinitialize();
+            }
+            if (_rollByAcceleration)
+            {
+                ImGui::SameLine();
+                ImGui::SetNextItemWidth(columnWidth / 2.0F);
+                if (ImGui::InputDouble(fmt::format("Roll Multiplier##{}", size_t(id)).c_str(), &_rollMultiplier, 0.0, 0.0, "%.3g"))
+                {
+                    flow::ApplyChanges();
+                    doDeinitialize();
+                }
+            }
+        }
+
+        ImGui::SetNextItemOpen(!_smoothings.empty(), ImGuiCond_Once);
+        if (ImGui::TreeNode("Smoothing"))
+        {
+            int delIdx = -1;
+            for (size_t i = 0; i < _smoothings.size(); i++)
+            {
+                ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
+                if (gui::widgets::EnumCombo(fmt::format("##Target {} {}", i, size_t(id)).c_str(), _smoothings[i].target))
+                {
+                    flow::ApplyChanges();
+                    doDeinitialize();
+                }
+                ImGui::SameLine();
+                ImGui::SetNextItemWidth(140.0F * gui::NodeEditorApplication::windowFontRatio());
+                if (ImGui::InputDoubleL(fmt::format("Window [s]##{} {}", i, size_t(id)).c_str(), &_smoothings[i].windowSizeSeconds, 0.0, std::numeric_limits<double>::max(), 1.0, 10.0, "%.2f"))
+                {
+                    if (_smoothings[i].lockWindowToSigma)
+                    {
+                        double dt = _roseStepLengthMax / _trajectoryHorizontalSpeed;
+                        auto windowSize = _smoothings[i].windowSizeSeconds / dt + 1.0;
+                        _smoothings[i].sigma = windowSize / 6.0;
+                    }
+                    flow::ApplyChanges();
+                    doDeinitialize();
+                }
+                ImGui::SameLine(0.0F, 20.0F);
+                if (ImGui::Checkbox(fmt::format("Lock##{} {}", i, size_t(id)).c_str(), &_smoothings[i].lockWindowToSigma))
+                {
+                    if (_smoothings[i].lockWindowToSigma)
+                    {
+                        double dt = _roseStepLengthMax / _trajectoryHorizontalSpeed;
+                        auto windowSize = _smoothings[i].windowSizeSeconds / dt + 1.0;
+                        _smoothings[i].sigma = windowSize / 6.0;
+                    }
+                    flow::ApplyChanges();
+                }
+                ImGui::SameLine(0.0F, 20.0F);
+                ImGui::SetNextItemWidth(140.0F * gui::NodeEditorApplication::windowFontRatio());
+                if (_smoothings[i].lockWindowToSigma) { ImGui::BeginDisabled(); }
+                if (ImGui::InputDoubleL(fmt::format("Sigma##{} {}", i, size_t(id)).c_str(), &_smoothings[i].sigma, 0.0, std::numeric_limits<double>::max(), 1.0, 10.0, "%.2f"))
+                {
+                    flow::ApplyChanges();
+                    doDeinitialize();
+                }
+                if (_smoothings[i].lockWindowToSigma) { ImGui::EndDisabled(); }
+                ImGui::SameLine();
+                gui::widgets::HelpMarker("Window: How many data points the filter looks at.\n"
+                                         "        A larger window creates a wider, more gradual transition around your jumps.\n"
+                                         "Sigma: The standard deviation of the Gaussian bell curve.\n"
+                                         "       A higher sigma heavily smooths the noise but makes the curve flatter.\n\n"
+                                         "A good rule of thumb is setting window_size to roughly 6 * sigma.");
+                ImGui::SameLine();
+                if (ImGui::Button(fmt::format("X##Delete {} {}", i, size_t(id)).c_str()))
+                {
+                    delIdx = static_cast<int>(i);
+                }
+            }
+            if (delIdx != -1)
+            {
+                _smoothings.erase(_smoothings.begin() + delIdx);
+                flow::ApplyChanges();
+                doDeinitialize();
+            }
+
+            if (ImGui::Button(fmt::format("Add##{}", size_t(id)).c_str()))
+            {
+                _smoothings.emplace_back();
+
+                double dt = _roseStepLengthMax / _trajectoryHorizontalSpeed;
+                auto windowSize = _smoothings.back().windowSizeSeconds / dt + 1.0;
+                _smoothings.back().sigma = windowSize / 6.0;
+                flow::ApplyChanges();
+                doDeinitialize();
+            }
+            ImGui::TreePop();
         }
 
         ImGui::SetNextItemOpen(!_oscillations.empty(), ImGuiCond_Once);
@@ -541,27 +683,68 @@ void ImuSimulator::guiConfig()
                 }
                 ImGui::SameLine(0.0F, 20.0F);
                 ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
-                if (ImGui::InputInt(fmt::format("Num##{} {}", i, size_t(id)).c_str(), &_oscillations[i].number))
+                if (ImGui::InputDouble(fmt::format("Num##{} {}", i, size_t(id)).c_str(), &_oscillations[i].number, 1.0, 0.0, "%.2g"))
+                {
+                    flow::ApplyChanges();
+                    doDeinitialize();
+                }
+                ImGui::SameLine(0.0F, 20.0F);
+                ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
+                if (ImGui::InputDouble(fmt::format("Offset##{} {}", i, size_t(id)).c_str(), &_oscillations[i].offset, 0.5, 0.0, "%.2g"))
                 {
                     flow::ApplyChanges();
                     doDeinitialize();
                 }
                 ImGui::SameLine();
-                gui::widgets::HelpMarker("Amount of cycles over the simulation duration");
+                gui::widgets::HelpMarker("Num: Amount of cycles over the simulation duration\n"
+                                         "Offset: Phase multiples of Pi to shift the oscillation.");
                 ImGui::SameLine();
                 if (ImGui::Button(fmt::format("X##Delete {} {}", i, size_t(id)).c_str()))
                 {
                     delIdx = static_cast<int>(i);
                 }
             }
-            if (delIdx != -1) { _oscillations.erase(_oscillations.begin() + delIdx); }
+            if (delIdx != -1)
+            {
+                _oscillations.erase(_oscillations.begin() + delIdx);
+                flow::ApplyChanges();
+                doDeinitialize();
+            }
 
             if (ImGui::Button(fmt::format("Add##{}", size_t(id)).c_str()))
             {
                 _oscillations.emplace_back();
+                flow::ApplyChanges();
+                doDeinitialize();
             }
             ImGui::TreePop();
         }
+
+        ImGui::SetNextItemOpen(_startupEnabled, ImGuiCond_Once);
+        if (ImGui::TreeNode("Startup phase"))
+        {
+            if (ImGui::Checkbox(fmt::format("Enable##{}", size_t(id)).c_str(), &_startupEnabled))
+            {
+                flow::ApplyChanges();
+                doDeinitialize();
+            }
+            ImGui::SetNextItemWidth(columnWidth);
+            if (ImGui::InputDoubleL(fmt::format("Static Duration##{}", size_t(id)).c_str(), &_startupStaticDuration, 0.0, std::numeric_limits<double>::max(), 0.0, 0.0, "%.3f s"))
+            {
+                flow::ApplyChanges();
+                if (_startupEnabled) { doDeinitialize(); }
+            }
+
+            ImGui::SetNextItemWidth(3.0F * columnWidth);
+            if (ImGui::InputDouble3(fmt::format("Startup location delta NED [m]##{}", size_t(id)).c_str(), _startupLocationDelta.data(), "%.6f"))
+            {
+                flow::ApplyChanges();
+                if (_startupEnabled) { doDeinitialize(); }
+            }
+
+            ImGui::TreePop();
+        }
+
         ImGui::TreePop();
     }
 
@@ -660,6 +843,15 @@ void ImuSimulator::guiConfig()
                 if (ImGui::InputDoubleL(fmt::format("Sample Distance##{}", size_t(id)).c_str(), &_roseStepLengthMax, 0.0, std::numeric_limits<double>::max(), 0.0, 0.0, "%.3e m"))
                 {
                     LOG_DEBUG("{}: Spline sample distance (rose figure) changed to {}", nameId(), _roseStepLengthMax);
+                    for (auto& smo : _smoothings)
+                    {
+                        if (smo.lockWindowToSigma)
+                        {
+                            double dt = _roseStepLengthMax / _trajectoryHorizontalSpeed;
+                            auto windowSize = smo.windowSizeSeconds / dt + 1.0;
+                            smo.sigma = windowSize / 6.0;
+                        }
+                    }
                     flow::ApplyChanges();
                     doDeinitialize();
                 }
@@ -708,6 +900,26 @@ void ImuSimulator::guiConfig()
     }
 
     Imu::guiConfig();
+
+#ifndef _WIN32
+    if (ImGui::Checkbox(fmt::format("Write spline points to file##{}", size_t(id)).c_str(), &_writeSplineToFile))
+    {
+        flow::ApplyChanges();
+    }
+    ImGui::SameLine();
+    if (!_writeSplineToFile) { ImGui::BeginDisabled(); }
+    if (ImGui::Checkbox(fmt::format("Limit to sim duration##{}", size_t(id)).c_str(), &_writeSplineLimitToSimDuration))
+    {
+        flow::ApplyChanges();
+    }
+    ImGui::SameLine();
+    ImGui::SetNextItemWidth(1.5F * columnWidth);
+    if (gui::widgets::FileDialogSave(_writeSplineCsvFilepath, "Write spline points to file", ".csv", { ".csv" }, flow::GetOutputPath(), size_t(id), nameId()))
+    {
+        flow::ApplyChanges();
+    }
+    if (!_writeSplineToFile) { ImGui::EndDisabled(); }
+#endif
 }
 
 json ImuSimulator::save() const
@@ -725,6 +937,7 @@ json ImuSimulator::save() const
     j["gnssFrequency"] = _gnssFrequency;
     // ###########################################################################################################
     j["trajectoryType"] = _trajectoryType;
+    j["baseTrajectoryWithoutHeightChange"] = _baseTrajectoryWithoutHeightChange;
     j["startPosition"] = _startPosition;
     j["fixedTrajectoryStartOrientation"] = _fixedTrajectoryStartOrientation;
     j["n_linearTrajectoryStartVelocity"] = _n_linearTrajectoryStartVelocity;
@@ -737,6 +950,10 @@ json ImuSimulator::save() const
     j["trajectoryDirection"] = _trajectoryDirection;
     j["rosePetNum"] = _rosePetNum;
     j["rosePetDenom"] = _rosePetDenom;
+    j["reorderInput"] = _reorderInput;
+    j["pitchByVelocity"] = _pitchByVelocity;
+    j["pitchMultiplier"] = _pitchMultiplier;
+    j["smoothings"] = _smoothings;
     j["oscillations"] = _oscillations;
     //  ###########################################################################################################
     j["simulationStopCondition"] = _simulationStopCondition;
@@ -744,6 +961,10 @@ json ImuSimulator::save() const
     j["linearTrajectoryDistanceForStop"] = _linearTrajectoryDistanceForStop;
     j["circularTrajectoryCircleCountForStop"] = _circularTrajectoryCircleCountForStop;
     j["roseTrajectoryCountForStop"] = _roseTrajectoryCountForStop;
+    // ###########################################################################################################
+    j["startupEnabled"] = _startupEnabled;
+    j["startupStaticDuration"] = _startupStaticDuration;
+    j["startupLocationDelta"] = _startupLocationDelta;
     // ###########################################################################################################
     j["splineSampleInterval"] = _splines.sampleInterval;
     j["roseStepLengthMax"] = _roseStepLengthMax;
@@ -754,6 +975,12 @@ json ImuSimulator::save() const
     j["angularRateTransportRateEnabled"] = _angularRateTransportRateEnabled;
     // ###########################################################################################################
     j["Imu"] = Imu::save();
+
+#ifndef _WIN32
+    j["writeSplineToFile"] = _writeSplineToFile;
+    j["writeSplineLimitToSimDuration"] = _writeSplineLimitToSimDuration;
+    j["writeSplineCsvFilepath"] = _writeSplineCsvFilepath;
+#endif
 
     return j;
 }
@@ -801,6 +1028,7 @@ void ImuSimulator::restore(json const& j)
             DeleteInputPin(0);
         }
     }
+    if (j.contains("baseTrajectoryWithoutHeightChange")) { j.at("baseTrajectoryWithoutHeightChange").get_to(_baseTrajectoryWithoutHeightChange); }
     if (j.contains("startPosition"))
     {
         j.at("startPosition").get_to(_startPosition);
@@ -849,10 +1077,14 @@ void ImuSimulator::restore(json const& j)
     {
         j.at("rosePetDenom").get_to(_rosePetDenom);
     }
-    if (j.contains("oscillations"))
+    if (j.contains("reorderInput"))
     {
-        j.at("oscillations").get_to(_oscillations);
+        j.at("reorderInput").get_to(_reorderInput);
     }
+    if (j.contains("pitchByVelocity")) { j.at("pitchByVelocity").get_to(_pitchByVelocity); }
+    if (j.contains("pitchMultiplier")) { j.at("pitchMultiplier").get_to(_pitchMultiplier); }
+    if (j.contains("smoothings")) { j.at("smoothings").get_to(_smoothings); }
+    if (j.contains("oscillations")) { j.at("oscillations").get_to(_oscillations); }
     //  ###########################################################################################################
     if (j.contains("simulationStopCondition"))
     {
@@ -874,6 +1106,10 @@ void ImuSimulator::restore(json const& j)
     {
         j.at("roseTrajectoryCountForStop").get_to(_roseTrajectoryCountForStop);
     }
+    // ###########################################################################################################
+    if (j.contains("startupEnabled")) { j.at("startupEnabled").get_to(_startupEnabled); }
+    if (j.contains("startupStaticDuration")) { j.at("startupStaticDuration").get_to(_startupStaticDuration); }
+    if (j.contains("startupLocationDelta")) { j.at("startupLocationDelta").get_to(_startupLocationDelta); }
     // ###########################################################################################################
     if (j.contains("splineSampleInterval"))
     {
@@ -908,6 +1144,12 @@ void ImuSimulator::restore(json const& j)
     {
         Imu::restore(j.at("Imu"));
     }
+
+#ifndef _WIN32
+    if (j.contains("writeSplineToFile")) { j.at("writeSplineToFile").get_to(_writeSplineToFile); }
+    if (j.contains("writeSplineLimitToSimDuration")) { j.at("writeSplineLimitToSimDuration").get_to(_writeSplineLimitToSimDuration); }
+    if (j.contains("writeSplineCsvFilepath")) { j.at("writeSplineCsvFilepath").get_to(_writeSplineCsvFilepath); }
+#endif
 }
 
 std::optional<InsTime> ImuSimulator::getTimeFromCsvLine(const CsvData::CsvLine& line, const std::vector<std::string>& description) const // NOLINT(readability-convert-member-functions-to-static)
@@ -1058,6 +1300,80 @@ std::optional<Eigen::Quaterniond> ImuSimulator::n_getAttitudeQuaternionFromCsvLi
 bool ImuSimulator::initializeSplines()
 {
     std::vector<long double> splineTime;
+    std::vector<long double> splineX;
+    std::vector<long double> splineY;
+    std::vector<long double> splineZ;
+    std::vector<long double> splineRoll;
+    std::vector<long double> splinePitch;
+    std::vector<long double> splineYaw;
+    std::vector<size_t> splineSplitIndices;
+
+    auto smoothData = []<typename T>(const std::vector<T>& data, size_t window_size, double sigma, size_t start_idx = 0, size_t end_idx = SIZE_MAX) -> std::vector<T> {
+        if (data.empty() || window_size <= 1) { return data; }
+
+        size_t n = data.size();
+
+        // Sanitize the input range bounds
+        if (start_idx >= n) { return data; }
+        end_idx = std::min(end_idx, n);
+        if (start_idx >= end_idx) { return data; }
+
+        // Helper function to create a Gaussian kernel
+        auto createGaussianKernel = [](size_t window_size, double sigma) -> std::vector<double> {
+            std::vector<double> kernel(window_size);
+            double sum = 0.0;
+            int half_width = static_cast<int>(window_size / 2); // FIX: Use signed int
+
+            for (size_t i = 0; i < window_size; ++i)
+            {
+                int x = static_cast<int>(i) - half_width; // FIX: Prevents size_t underflow
+                // Gaussian formula
+                kernel[i] = std::exp(-static_cast<double>(x * x) / (2.0 * sigma * sigma));
+                sum += kernel[i];
+            }
+
+            // Normalize so the kernel sums to 1.0
+            for (size_t i = 0; i < window_size; ++i)
+            {
+                kernel[i] /= sum;
+            }
+            return kernel;
+        };
+
+        // Ensure window size is odd so there is a true center point
+        if (window_size % 2 == 0) { window_size++; }
+
+        // Copy original data so everything outside the range remains untouched
+        std::vector<T> smoothed = data;
+        std::vector<double> kernel = createGaussianKernel(window_size, sigma);
+
+        size_t half_width = window_size / 2;
+
+        // Only iterate over the specified range
+        for (size_t i = start_idx; i < end_idx; ++i)
+        {
+            double smoothed_value = 0.0; // Use double to prevent precision loss during accumulation
+            double weight_sum = 0.0;
+
+            for (size_t j = 0; j < window_size; ++j)
+            {
+                size_t data_idx = i + j - half_width;
+
+                // Handle edges by clamping to the boundaries of the WHOLE vector
+                // (Allows smooth transitions reading into the unsmoothed data)
+                data_idx = std::max<size_t>(data_idx, 0);
+                if (data_idx >= n) { data_idx = n - 1; }
+
+                smoothed_value += static_cast<double>(data[data_idx]) * kernel[j];
+                weight_sum += kernel[j];
+            }
+
+            // Divide by weight_sum to correct for edge clamping and cast back to T
+            smoothed[i] = static_cast<T>(smoothed_value / weight_sum);
+        }
+
+        return smoothed;
+    };
 
     auto unwrapAngle = [](auto angle, auto prevAngle, auto rangeMax) {
         auto x = angle - prevAngle;
@@ -1071,7 +1387,7 @@ bool ImuSimulator::initializeSplines()
         return prevAngle + x;
     };
 
-    constexpr double OFFSET = 1.0; // [s]
+    const double OFFSET = _startupEnabled ? 0.0 : 1.0; // [s]
 
     double simDuration = _simulationDuration;
     if (_trajectoryType == TrajectoryType::Fixed)
@@ -1083,13 +1399,13 @@ bool ImuSimulator::initializeSplines()
         LOG_DATA("{}: Sim Time [{:.3f}, {:.3f}] with dt = {:.3f} (simDuration = {:.3f})", nameId(),
                  static_cast<double>(splineTime.front()), static_cast<double>(splineTime.back()), static_cast<double>(splineTime.at(1) - splineTime.at(0)), simDuration);
 
-        _splines.x.setPoints(splineTime, std::vector<long double>(splineTime.size(), _startPosition.e_position[0]));
-        _splines.y.setPoints(splineTime, std::vector<long double>(splineTime.size(), _startPosition.e_position[1]));
-        _splines.z.setPoints(splineTime, std::vector<long double>(splineTime.size(), _startPosition.e_position[2]));
+        splineX = std::vector<long double>(splineTime.size(), _startPosition.e_position[0]);
+        splineY = std::vector<long double>(splineTime.size(), _startPosition.e_position[1]);
+        splineZ = std::vector<long double>(splineTime.size(), _startPosition.e_position[2]);
 
-        _splines.roll.setPoints(splineTime, std::vector<long double>(splineTime.size(), _fixedTrajectoryStartOrientation.x()));
-        _splines.pitch.setPoints(splineTime, std::vector<long double>(splineTime.size(), _fixedTrajectoryStartOrientation.y()));
-        _splines.yaw.setPoints(splineTime, std::vector<long double>(splineTime.size(), _fixedTrajectoryStartOrientation.z()));
+        splineRoll = std::vector<long double>(splineTime.size(), _fixedTrajectoryStartOrientation.x());
+        splinePitch = std::vector<long double>(splineTime.size(), _fixedTrajectoryStartOrientation.y());
+        splineYaw = std::vector<long double>(splineTime.size(), _fixedTrajectoryStartOrientation.z());
     }
     else if (_trajectoryType == TrajectoryType::Linear)
     {
@@ -1101,12 +1417,12 @@ bool ImuSimulator::initializeSplines()
         size_t nOverhead = static_cast<size_t>(std::round(OFFSET / _splines.sampleInterval)) + 1;
 
         splineTime = std::vector<long double>(nOverhead, 0.0);
-        std::vector<long double> splineX(nOverhead, e_startPosition[0]);
-        std::vector<long double> splineY(nOverhead, e_startPosition[1]);
-        std::vector<long double> splineZ(nOverhead, e_startPosition[2]);
-        std::vector<long double> splineRoll(nOverhead, roll);
-        std::vector<long double> splinePitch(nOverhead, pitch);
-        std::vector<long double> splineYaw(nOverhead, yaw);
+        splineX = std::vector<long double>(nOverhead, e_startPosition[0]);
+        splineY = std::vector<long double>(nOverhead, e_startPosition[1]);
+        splineZ = std::vector<long double>(nOverhead, e_startPosition[2]);
+        splineRoll = std::vector<long double>(nOverhead, roll);
+        splinePitch = std::vector<long double>(nOverhead, pitch);
+        splineYaw = std::vector<long double>(nOverhead, yaw);
 
         Eigen::Vector3d lla_lastPosition = _startPosition.latLonAlt();
         for (size_t i = 2; i <= nOverhead; i++) // Calculate one second backwards
@@ -1162,14 +1478,6 @@ bool ImuSimulator::initializeSplines()
                 }
             }
         }
-
-        _splines.x.setPoints(splineTime, splineX);
-        _splines.y.setPoints(splineTime, splineY);
-        _splines.z.setPoints(splineTime, splineZ);
-
-        _splines.roll.setPoints(splineTime, splineRoll);
-        _splines.pitch.setPoints(splineTime, splinePitch);
-        _splines.yaw.setPoints(splineTime, splineYaw);
     }
     else if (_trajectoryType == TrajectoryType::Circular)
     {
@@ -1186,9 +1494,9 @@ bool ImuSimulator::initializeSplines()
         LOG_DATA("{}: Sim Time [{:.3f}, {:.3f}] with dt = {:.3f} (simDuration = {:.3f})", nameId(),
                  static_cast<double>(splineTime.front()), static_cast<double>(splineTime.back()), static_cast<double>(splineTime.at(1) - splineTime.at(0)), simDuration);
 
-        std::vector<long double> splineX(splineTime.size());
-        std::vector<long double> splineY(splineTime.size());
-        std::vector<long double> splineZ(splineTime.size());
+        splineX = std::vector<long double>(splineTime.size());
+        splineY = std::vector<long double>(splineTime.size());
+        splineZ = std::vector<long double>(splineTime.size());
 
         Eigen::Vector3d e_origin = _startPosition.e_position;
         Eigen::Vector3d lla_origin = _startPosition.latLonAlt();
@@ -1210,14 +1518,17 @@ bool ImuSimulator::initializeSplines()
 
             Eigen::Vector3d e_position = e_origin + e_relativePosition;
 
+            if (_baseTrajectoryWithoutHeightChange)
+            {
+                Eigen::Vector3d lla_position = trafo::ecef2lla_WGS84(e_position);
+                lla_position.z() = _startPosition.altitude();
+                e_position = trafo::lla2ecef_WGS84(lla_position);
+            }
+
             splineX[i] = e_position[0];
             splineY[i] = e_position[1];
             splineZ[i] = e_position[2];
         }
-
-        _splines.x.setPoints(splineTime, splineX);
-        _splines.y.setPoints(splineTime, splineY);
-        _splines.z.setPoints(splineTime, splineZ);
     }
     else if (_trajectoryType == TrajectoryType::RoseFigure)
     {
@@ -1271,10 +1582,13 @@ bool ImuSimulator::initializeSplines()
         }
 
         auto nVirtPoints = static_cast<size_t>(1.0 / (_roseStepLengthMax / 50.0));
-        splineTime.resize(nVirtPoints); // Preallocate points to make the spline start at the right point
-        std::vector<long double> splineX(splineTime.size());
-        std::vector<long double> splineY(splineTime.size());
-        std::vector<long double> splineZ(splineTime.size());
+        if (!_startupEnabled)
+        {
+            splineTime.resize(nVirtPoints); // Preallocate points to make the spline start at the right point
+            splineX = std::vector<long double>(splineTime.size());
+            splineY = std::vector<long double>(splineTime.size());
+            splineZ = std::vector<long double>(splineTime.size());
+        }
 
         Eigen::Vector3d e_origin = trafo::lla2ecef_WGS84(_startPosition.latLonAlt());
 
@@ -1293,8 +1607,19 @@ bool ImuSimulator::initializeSplines()
 
         _roseSimDuration = 0.0;
 
+        std::vector<std::pair<bool, int16_t>> reordering;
+        if (!_reorderInput.empty())
+        {
+            std::ranges::transform(str::split(_reorderInput, ','), std::back_inserter(reordering), [](const std::string& str) {
+                auto num = std::stoi(str);
+                return std::make_pair(str.at(0) == '-', std::abs(num) - 1);
+            });
+            // LOG_DATA("{}: reordering = {}", nameId(), fmt::join(reordering, " "));
+        }
+
+        size_t reorderingIndex = 0;
         // We cannot input negative values or zero
-        for (double phi = dPhi; phi <= maxPhi + static_cast<double>(nVirtPoints) * dPhi; phi += dPhi) // NOLINT(clang-analyzer-security.FloatLoopCounter, cert-flp30-c)
+        for (double phi = dPhi; phi <= maxPhi + static_cast<double>(nVirtPoints) * dPhi + 1e-6; phi += dPhi) // NOLINT(clang-analyzer-security.FloatLoopCounter, cert-flp30-c)
         {
             double length = _trajectoryRadius / roseK * math::calcEllipticalIntegral(roseK * phi, 1.0 - std::pow(roseK, 2.0));
             double dL = length - lengthOld;
@@ -1315,14 +1640,59 @@ bool ImuSimulator::initializeSplines()
 
             double time = length / _trajectoryHorizontalSpeed;
             splineTime.push_back(time);
-            Eigen::Vector3d n_relativePosition{ _trajectoryRadius * std::cos(roseK * phi) * std::sin(phi * (_trajectoryDirection == Direction::CW ? -1.0 : 1.0) + _trajectoryRotationAngle), // [m]
-                                                _trajectoryRadius * std::cos(roseK * phi) * std::cos(phi * (_trajectoryDirection == Direction::CW ? -1.0 : 1.0) + _trajectoryRotationAngle), // [m]
-                                                -_trajectoryVerticalSpeed * time };                                                                                                          // [m]
+
+            double newPhi = phi;
+            for (size_t i = 0; i < reordering.size(); i++)
+            {
+                double frac = phi / maxPhi;
+                auto di = static_cast<double>(i);
+                auto nSplits = static_cast<double>(reordering.size());
+                double upperLimit = (di + 1.0) / nSplits;
+                if (frac <= upperLimit)
+                {
+                    if (reorderingIndex < i)
+                    {
+                        if (reordering[i - 1].first != reordering[i].first)
+                        {
+                            LOG_DEBUG("{}: Splitting spline at idx [{}], time = {:.4f}", nameId(), splineTime.size() - 1, static_cast<double>(splineTime.back()));
+                            splineSplitIndices.push_back(splineTime.size() - 1);
+                        }
+                        reorderingIndex = i;
+                    }
+                    const auto& [inverse, newRange] = reordering.at(i);
+                    double newLowerLimit = newRange / nSplits;
+                    if (inverse)
+                    {
+                        newPhi = (-(frac - upperLimit) + newLowerLimit) * maxPhi;
+                        // LOG_DATA("{}: phi = {:.3f} ({:.3f}), newPhi = {:.3f}, i = {}, upperLimit = {:.2f}, newLowerLimit = {:.2f} (inverse)",
+                        //          nameId(), phi, frac, newPhi, i, upperLimit, newLowerLimit);
+                    }
+                    else
+                    {
+                        double lowerLimit = di / nSplits;
+                        newPhi = ((frac - lowerLimit) + newLowerLimit) * maxPhi;
+                        // LOG_DATA("{}: phi = {:.3f} ({:.3f}), newPhi = {:.3f}, i = {}, upperLimit = {:.2f}, newLowerLimit = {:.2f}, lowerLimit = {:.2f}",
+                        //          nameId(), phi, frac, newPhi, i, upperLimit, newLowerLimit, lowerLimit);
+                    }
+                    break;
+                }
+            }
+
+            Eigen::Vector3d n_relativePosition{ _trajectoryRadius * std::cos(roseK * newPhi) * std::sin(newPhi * (_trajectoryDirection == Direction::CW ? -1.0 : 1.0) + _trajectoryRotationAngle), // [m]
+                                                _trajectoryRadius * std::cos(roseK * newPhi) * std::cos(newPhi * (_trajectoryDirection == Direction::CW ? -1.0 : 1.0) + _trajectoryRotationAngle), // [m]
+                                                -_trajectoryVerticalSpeed * time };                                                                                                                // [m]
 
             Eigen::Vector3d e_relativePosition = e_quatCenter_n * n_relativePosition;
             Eigen::Vector3d e_position = e_origin + e_relativePosition;
 
-            // LOG_DATA("{}: t={: 8.3f}s | l={:8.6}m | phi={:6.3f}", nameId(), time, length, rad2deg(phi));
+            if (_baseTrajectoryWithoutHeightChange)
+            {
+                Eigen::Vector3d lla_position = trafo::ecef2lla_WGS84(e_position);
+                lla_position.z() = _startPosition.altitude();
+                e_position = trafo::lla2ecef_WGS84(lla_position);
+            }
+
+            // LOG_DATA("{}: [{}] t={: 8.3f}s | l={:8.6}m | phi={:6.3f}", nameId(), splineTime.size() - 1, time, length, rad2deg(phi));
 
             splineX.push_back(e_position[0]);
             splineY.push_back(e_position[1]);
@@ -1332,6 +1702,7 @@ bool ImuSimulator::initializeSplines()
             {
                 LOG_TRACE("{}: Rose figure simulation duration: {:8.6}s | l={:8.6}m", nameId(), time, length);
                 _roseSimDuration = time;
+                simDuration = _roseSimDuration;
             }
             else if (_simulationStopCondition == StopCondition::Duration && _roseSimDuration == 0.0 && time > simDuration)
             {
@@ -1340,34 +1711,40 @@ bool ImuSimulator::initializeSplines()
             }
         }
 
-        maxPhi = integrationFactor * M_PI + 1e-15; // For exactly 2*pi the elliptical integral is failing. Bug in the function.
-        // LOG_DATA("maxPhi {:6.2f}", rad2deg(maxPhi));
-        double endLength = _trajectoryRadius / roseK * math::calcEllipticalIntegral(roseK * maxPhi, 1.0 - std::pow(roseK, 2.0));
-        // LOG_DATA("endLength {:8.6}m", endLength);
-        for (size_t i = 0; i < nVirtPoints; i++)
+        if (!_startupEnabled)
         {
-            double phi = maxPhi - static_cast<double>(i) * dPhi;
-            double length = _trajectoryRadius / roseK * math::calcEllipticalIntegral(roseK * phi, 1.0 - std::pow(roseK, 2.0));
-            double time = (length - endLength) / _trajectoryHorizontalSpeed;
-            splineTime[nVirtPoints - i - 1] = time;
+            maxPhi = integrationFactor * M_PI + 1e-15; // For exactly 2*pi the elliptical integral is failing. Bug in the function.
+            // LOG_DATA("{}: maxPhi {:6.2f}", nameId(), rad2deg(maxPhi));
+            double endLength = _trajectoryRadius / roseK * math::calcEllipticalIntegral(roseK * maxPhi, 1.0 - std::pow(roseK, 2.0));
+            // LOG_DATA("{}: endLength {:8.6}m", nameId(), endLength);
+            for (size_t i = 0; i < nVirtPoints; i++)
+            {
+                double phi = maxPhi - static_cast<double>(i) * dPhi;
+                double length = _trajectoryRadius / roseK * math::calcEllipticalIntegral(roseK * phi, 1.0 - std::pow(roseK, 2.0));
+                double time = (length - endLength) / _trajectoryHorizontalSpeed;
+                splineTime[nVirtPoints - i - 1] = time;
 
-            Eigen::Vector3d n_relativePosition{ _trajectoryRadius * std::cos(roseK * phi) * std::sin(phi * (_trajectoryDirection == Direction::CW ? -1.0 : 1.0) + _trajectoryRotationAngle), // [m]
-                                                _trajectoryRadius * std::cos(roseK * phi) * std::cos(phi * (_trajectoryDirection == Direction::CW ? -1.0 : 1.0) + _trajectoryRotationAngle), // [m]
-                                                -_trajectoryVerticalSpeed * time };                                                                                                          // [m]
+                Eigen::Vector3d n_relativePosition{ _trajectoryRadius * std::cos(roseK * phi) * std::sin(phi * (_trajectoryDirection == Direction::CW ? -1.0 : 1.0) + _trajectoryRotationAngle), // [m]
+                                                    _trajectoryRadius * std::cos(roseK * phi) * std::cos(phi * (_trajectoryDirection == Direction::CW ? -1.0 : 1.0) + _trajectoryRotationAngle), // [m]
+                                                    -_trajectoryVerticalSpeed * time };                                                                                                          // [m]
 
-            Eigen::Vector3d e_relativePosition = e_quatCenter_n * n_relativePosition;
-            Eigen::Vector3d e_position = e_origin + e_relativePosition;
+                Eigen::Vector3d e_relativePosition = e_quatCenter_n * n_relativePosition;
+                Eigen::Vector3d e_position = e_origin + e_relativePosition;
 
-            // LOG_DATA("{}: t={: 8.3f}s | l={:8.6}m | phi={:6.3f}", nameId(), time, length, rad2deg(phi));
+                if (_baseTrajectoryWithoutHeightChange)
+                {
+                    Eigen::Vector3d lla_position = trafo::ecef2lla_WGS84(e_position);
+                    lla_position.z() = _startPosition.altitude();
+                    e_position = trafo::lla2ecef_WGS84(lla_position);
+                }
 
-            splineX[nVirtPoints - i - 1] = e_position[0];
-            splineY[nVirtPoints - i - 1] = e_position[1];
-            splineZ[nVirtPoints - i - 1] = e_position[2];
+                // LOG_DATA("{}: [{}] t={: 8.3f}s | l={:8.6}m | phi={:6.3f}", nameId(), nVirtPoints - i - 1, time, length, rad2deg(phi));
+
+                splineX[nVirtPoints - i - 1] = e_position[0];
+                splineY[nVirtPoints - i - 1] = e_position[1];
+                splineZ[nVirtPoints - i - 1] = e_position[2];
+            }
         }
-
-        _splines.x.setPoints(splineTime, splineX);
-        _splines.y.setPoints(splineTime, splineY);
-        _splines.z.setPoints(splineTime, splineZ);
     }
     else if (_trajectoryType == TrajectoryType::Csv)
     {
@@ -1382,12 +1759,12 @@ bool ImuSimulator::initializeSplines()
 
             constexpr size_t nVirtPoints = 0;
             splineTime.resize(nVirtPoints); // Preallocate points to make the spline start at the right point
-            std::vector<long double> splineX(splineTime.size());
-            std::vector<long double> splineY(splineTime.size());
-            std::vector<long double> splineZ(splineTime.size());
-            std::vector<long double> splineRoll(splineTime.size());
-            std::vector<long double> splinePitch(splineTime.size());
-            std::vector<long double> splineYaw(splineTime.size());
+            splineX = std::vector<long double>(splineTime.size());
+            splineY = std::vector<long double>(splineTime.size());
+            splineZ = std::vector<long double>(splineTime.size());
+            splineRoll = std::vector<long double>(splineTime.size());
+            splinePitch = std::vector<long double>(splineTime.size());
+            splineYaw = std::vector<long double>(splineTime.size());
 
             for (size_t i = 0; i < csvData->v->lines.size(); i++)
             {
@@ -1449,14 +1826,6 @@ bool ImuSimulator::initializeSplines()
                 splinePitch.push_back(splinePitch[splinePitch.size() - 1] + h * (splinePitch[splinePitch.size() - 1] - splinePitch[splinePitch.size() - 2]) / dt);
                 splineYaw.push_back(splineYaw[splineYaw.size() - 1] + h * (splineYaw[splineYaw.size() - 1] - splineYaw[splineYaw.size() - 2]) / dt);
             }
-
-            _splines.x.setPoints(splineTime, splineX);
-            _splines.y.setPoints(splineTime, splineY);
-            _splines.z.setPoints(splineTime, splineZ);
-
-            _splines.roll.setPoints(splineTime, splineRoll);
-            _splines.pitch.setPoints(splineTime, splinePitch);
-            _splines.yaw.setPoints(splineTime, splineYaw);
         }
         else
         {
@@ -1465,54 +1834,9 @@ bool ImuSimulator::initializeSplines()
         }
     }
 
-    if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::RoseFigure)
-    {
-        std::vector<long double> splineRoll(splineTime.size());
-        std::vector<long double> splinePitch(splineTime.size());
-        std::vector<long double> splineYaw(splineTime.size());
-
-        for (uint64_t i = 0; i < splineTime.size(); i++)
-        {
-            Eigen::Vector3d e_pos{ static_cast<double>(_splines.x(splineTime[i])),
-                                   static_cast<double>(_splines.y(splineTime[i])),
-                                   static_cast<double>(_splines.z(splineTime[i])) };
-            Eigen::Vector3d e_vel{ static_cast<double>(_splines.x.derivative(1, splineTime[i])),
-                                   static_cast<double>(_splines.y.derivative(1, splineTime[i])),
-                                   static_cast<double>(_splines.z.derivative(1, splineTime[i])) };
-
-            Eigen::Vector3d lla_position = trafo::ecef2lla_WGS84(e_pos);
-            Eigen::Vector3d n_velocity = trafo::n_Quat_e(lla_position(0), lla_position(1)) * e_vel;
-
-            Eigen::Vector3d e_normalVectorCenterCircle{ std::cos(_startPosition.latLonAlt()(0)) * std::cos(_startPosition.latLonAlt()(1)),
-                                                        std::cos(_startPosition.latLonAlt()(0)) * std::sin(_startPosition.latLonAlt()(1)),
-                                                        std::sin(_startPosition.latLonAlt()(0)) };
-
-            Eigen::Vector3d e_normalVectorCurrentPosition{ std::cos(lla_position(0)) * std::cos(lla_position(1)),
-                                                           std::cos(lla_position(0)) * std::sin(lla_position(1)),
-                                                           std::sin(lla_position(0)) };
-
-            auto yaw = calcYawFromVelocity(n_velocity);
-
-            splineYaw[i] = i > 0 ? unwrapAngle(yaw, splineYaw[i - 1], M_PI) : yaw;
-            splineRoll[i] = 0.0;
-            splinePitch[i] = n_velocity.head<2>().norm() > 1e-8 ? calcPitchFromVelocity(n_velocity) : 0;
-            // LOG_DATA("{}: [t={:.3f}] yaw = {:.3f}°", nameId(), static_cast<double>(splineTime.at(i)), rad2deg(splineYaw[i]));
-        }
-
-        _splines.roll.setPoints(splineTime, splineRoll);
-        _splines.pitch.setPoints(splineTime, splinePitch);
-        _splines.yaw.setPoints(splineTime, splineYaw);
-    }
-
     if (!_oscillations.empty())
     {
-        std::vector<long double> splineX = _splines.x.getPointsY();
-        std::vector<long double> splineY = _splines.y.getPointsY();
-        std::vector<long double> splineZ = _splines.z.getPointsY();
-        std::vector<long double> splineRoll = _splines.roll.getPointsY();
-        std::vector<long double> splinePitch = _splines.pitch.getPointsY();
-        std::vector<long double> splineYaw = _splines.yaw.getPointsY();
-        LOG_DATA("{}: Adding oscillations.", nameId());
+        LOG_DEBUG("{}: Adding position oscillations.", nameId());
         LOG_DATA("{}: Duration = {}", nameId(), simDuration);
         for (const auto& osc : _oscillations)
         {
@@ -1522,12 +1846,12 @@ bool ImuSimulator::initializeSplines()
             for (uint64_t i = 0; i < splineTime.size(); i++)
             {
                 auto time = static_cast<double>(splineTime[i]);
-                double phi = static_cast<double>(osc.number) * time / simDuration * 2 * std::numbers::pi;
+                double phi = static_cast<double>(osc.number) * time / simDuration * 2 * std::numbers::pi + osc.offset * std::numbers::pi;
                 double delta = osc.amplitude * std::sin(phi);
-                LOG_DATA("{}:   [{:.3f}] phi = {:.4f}, delta = {:.4f}", nameId(), time, phi, delta);
 
                 if (osc.target == Oscillation::North || osc.target == Oscillation::East || osc.target == Oscillation::Up)
                 {
+                    // LOG_DATA("{}:   [{:.3f}] phi = {:.4f}, delta = {:.4f}", nameId(), time, phi, delta);
                     Eigen::Vector3d n_relativePosition{ static_cast<double>(osc.target == Oscillation::North) * delta,
                                                         static_cast<double>(osc.target == Oscillation::East) * delta,
                                                         static_cast<double>(osc.target == Oscillation::Up) * -delta };
@@ -1538,32 +1862,353 @@ bool ImuSimulator::initializeSplines()
                 }
                 else if (osc.target == Oscillation::ECEF_X || osc.target == Oscillation::ECEF_Y || osc.target == Oscillation::ECEF_Z)
                 {
+                    // LOG_DATA("{}:   [{:.3f}] phi = {:.4f}, delta = {:.4f}", nameId(), time, phi, delta);
                     splineX[i] += static_cast<double>(osc.target == Oscillation::ECEF_X) * delta;
                     splineY[i] += static_cast<double>(osc.target == Oscillation::ECEF_Y) * delta;
                     splineZ[i] += static_cast<double>(osc.target == Oscillation::ECEF_Z) * delta;
                 }
-                else if (osc.target == Oscillation::Roll || osc.target == Oscillation::Pitch || osc.target == Oscillation::Yaw)
+            }
+        }
+    }
+
+    double startupDuration = 0.0;
+    size_t startupLength = 0;
+    if (_startupEnabled)
+    {
+        std::tie(startupDuration, startupLength) = addStartupPhase(splineTime, splineX, splineY, splineZ);
+    }
+
+    // Set it here, because the angle calculation need derivatives
+    _splines.x.setPoints(splineTime, splineX);
+    _splines.y.setPoints(splineTime, splineY);
+    _splines.z.setPoints(splineTime, splineZ);
+
+    if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::RoseFigure)
+    {
+        splineRoll = std::vector<long double>(splineTime.size());
+        splinePitch = std::vector<long double>(splineTime.size());
+        splineYaw = std::vector<long double>(splineTime.size());
+
+        for (uint64_t i = 0; i < splineTime.size(); i++)
+        {
+            Eigen::Vector3d e_pos{ static_cast<double>(_splines.x(splineTime[i])),
+                                   static_cast<double>(_splines.y(splineTime[i])),
+                                   static_cast<double>(_splines.z(splineTime[i])) };
+            Eigen::Vector3d e_vel{ static_cast<double>(_splines.x.derivative(1, splineTime[i])),
+                                   static_cast<double>(_splines.y.derivative(1, splineTime[i])),
+                                   static_cast<double>(_splines.z.derivative(1, splineTime[i])) };
+            Eigen::Vector3d e_accel{ static_cast<double>(_splines.x.derivative(2, splineTime[i])),
+                                     static_cast<double>(_splines.y.derivative(2, splineTime[i])),
+                                     static_cast<double>(_splines.z.derivative(2, splineTime[i])) };
+
+            Eigen::Vector3d lla_position = trafo::ecef2lla_WGS84(e_pos);
+            Eigen::Quaterniond n_quat_e = trafo::n_Quat_e(lla_position(0), lla_position(1));
+            Eigen::Vector3d n_velocity = n_quat_e * e_vel;
+
+            double yaw = calcYawFromVelocity(n_velocity);
+            double pitch = _pitchByVelocity && n_velocity.head<2>().norm() > 1e-8
+                               ? _pitchMultiplier * calcPitchFromVelocity(n_velocity)
+                               : 0;
+
+            // Set the roll to the acceleration y axis
+            Eigen::Vector3d b_accel = trafo::b_Quat_n(0.0, pitch, yaw) * n_quat_e * e_accel;
+
+            splineYaw[i] = i > 0 ? unwrapAngle(yaw, splineYaw[i - 1], M_PI) : yaw;
+            splineRoll[i] = _rollByAcceleration ? _rollMultiplier * b_accel.y() : 0.0;
+            splinePitch[i] = pitch;
+            // LOG_DATA("{}: [t={:.3f}] yaw = {:.3f}°", nameId(), static_cast<double>(splineTime.at(i)), rad2deg(splineYaw[i]));
+        }
+
+        if (_startupEnabled)
+        {
+            for (size_t i = 0; i < startupLength; i++)
+            {
+                splineRoll[i] = splineRoll[startupLength];
+                splinePitch[i] = splinePitch[startupLength];
+                splineYaw[i] = splineYaw[startupLength];
+            }
+        }
+
+        if (!_smoothings.empty())
+        {
+            auto dt = static_cast<double>(splineTime[splineTime.size() / 2] - splineTime[splineTime.size() / 2 - 1]);
+
+            for (const auto& smo : _smoothings)
+            {
+                auto windowSize = static_cast<size_t>(smo.windowSizeSeconds / dt + 1);
+                auto sigma = smo.lockWindowToSigma ? static_cast<double>(windowSize) / 6.0 : smo.sigma;
+
+                auto smoothSpline = [&](size_t start_idx = 0, size_t end_idx = SIZE_MAX) {
+                    LOG_DEBUG("{}: Smoothing {} spline [{}, {}] (windowSize = {}, sigma = {}, dt = {})",
+                              nameId(), NAV::to_string(smo.target), start_idx, end_idx, windowSize, sigma, dt);
+                    switch (smo.target)
+                    {
+                    case Smoothing::ECEF_X:
+                        splineX = smoothData(splineX, windowSize, sigma, start_idx, end_idx);
+                        break;
+                    case Smoothing::ECEF_Y:
+                        splineY = smoothData(splineY, windowSize, sigma, start_idx, end_idx);
+                        break;
+                    case Smoothing::ECEF_Z:
+                        splineZ = smoothData(splineZ, windowSize, sigma, start_idx, end_idx);
+                        break;
+                    case Smoothing::Roll:
+                        splineRoll = smoothData(splineRoll, windowSize, sigma, start_idx, end_idx);
+                        break;
+                    case Smoothing::Pitch:
+                        splinePitch = smoothData(splinePitch, windowSize, sigma, start_idx, end_idx);
+                        break;
+                    case Smoothing::Yaw:
+                        splineYaw = smoothData(splineYaw, windowSize, sigma, start_idx, end_idx);
+                        break;
+                    case Smoothing::COUNT:
+                        break;
+                    }
+                };
+
+                smoothSpline();
+            }
+        }
+    }
+
+    if (!_oscillations.empty())
+    {
+        LOG_DATA("{}: Adding roll, pitch, yaw oscillations.", nameId());
+        LOG_DATA("{}: Duration = {}", nameId(), simDuration);
+        for (const auto& osc : _oscillations)
+        {
+            LOG_DATA("{}: Type = {}", nameId(), NAV::to_string(osc.target));
+            for (uint64_t i = 0; i < splineTime.size(); i++)
+            {
+                auto time = static_cast<double>(splineTime[i]);
+                double phi = static_cast<double>(osc.number) * time / simDuration * 2 * std::numbers::pi + osc.offset * std::numbers::pi;
+                double delta = osc.amplitude * std::sin(phi);
+
+                if (osc.target == Oscillation::Roll || osc.target == Oscillation::Pitch || osc.target == Oscillation::Yaw)
                 {
+                    // LOG_DATA("{}:   [{:.3f}] phi = {:.4f}, delta = {:.4f}", nameId(), time, phi, delta);
                     splineRoll[i] += static_cast<double>(osc.target == Oscillation::Roll) * deg2rad(delta);
                     splinePitch[i] += static_cast<double>(osc.target == Oscillation::Pitch) * deg2rad(delta);
                     splineYaw[i] += static_cast<double>(osc.target == Oscillation::Yaw) * deg2rad(delta);
                 }
             }
         }
-        _splines.x.setPoints(splineTime, splineX);
-        _splines.y.setPoints(splineTime, splineY);
-        _splines.z.setPoints(splineTime, splineZ);
-        _splines.roll.setPoints(splineTime, splineRoll);
-        _splines.pitch.setPoints(splineTime, splinePitch);
-        _splines.yaw.setPoints(splineTime, splineYaw);
     }
 
+    if (_startupEnabled)
+    {
+        for (auto& t : splineTime)
+        {
+            t += startupDuration;
+        }
+        simDuration += startupDuration;
+        _roseSimDuration += startupDuration;
+
+        // auto dt = static_cast<double>(splineTime[1] - splineTime[0]);
+        // auto windowSize = static_cast<size_t>(20.0 / dt + 1);
+        // auto sigma = static_cast<double>(windowSize) / 6.0;
+
+        // size_t end_idx = startupLength + windowSize;
+        // LOG_DEBUG("{}: Smoothing splines at startup [{}, {}] (windowSize = {}, sigma = {}, dt = {})",
+        //           nameId(), 0, end_idx, windowSize, sigma, dt);
+        // splineX = smoothData(splineX, windowSize, sigma, 0, end_idx);
+        // splineY = smoothData(splineY, windowSize, sigma, 0, end_idx);
+        // splineZ = smoothData(splineZ, windowSize, sigma, 0, end_idx);
+        // splineRoll = smoothData(splineRoll, windowSize, sigma, 0, end_idx);
+        // splinePitch = smoothData(splinePitch, windowSize, sigma, 0, end_idx);
+        // splineYaw = smoothData(splineYaw, windowSize, sigma, 0, end_idx);
+    }
+
+    _splines.x.setPoints(splineTime, splineX);
+    _splines.y.setPoints(splineTime, splineY);
+    _splines.z.setPoints(splineTime, splineZ);
+    _splines.roll.setPoints(splineTime, splineRoll);
+    _splines.pitch.setPoints(splineTime, splinePitch);
+    _splines.yaw.setPoints(splineTime, splineYaw);
+
+#ifndef _WIN32
+    if (_writeSplineToFile)
+    {
+        auto write_splines_to_csv = [](const std::string& path, const std::string& header,
+                                       long double time_limit_lower, long double time_limit_upper,
+                                       const auto& time_vec, const auto&... rest_vecs) {
+            std::ofstream file(path);
+            if (!file.is_open())
+            {
+                throw std::runtime_error("Could not open file for writing: " + path);
+            }
+
+            // Write the header
+            file << header << "\n";
+            // Set precision
+            file << std::setprecision(15);
+
+            // Since you guaranteed they are the same length, we can just use time_vec's size
+            size_t num_rows = time_vec.size();
+
+            for (size_t i = 0; i < num_rows; ++i)
+            {
+                // Do not write line if the time exceeds the lower limit
+                if (time_vec[i] < time_limit_lower)
+                {
+                    continue;
+                }
+                // Stop writing if the time exceeds the upper limit
+                if (time_vec[i] > time_limit_upper)
+                {
+                    break;
+                }
+
+                // Write the first column (Time)
+                file << time_vec[i];
+
+                // C++17 fold expression: writes a comma then the value for all remaining columns
+                if constexpr (sizeof...(rest_vecs) > 0)
+                {
+                    ((file << "," << rest_vecs[i]), ...);
+                }
+
+                file << "\n";
+            }
+        };
+
+        write_splines_to_csv(flow::GetOutputPath() / _writeSplineCsvFilepath,
+                             "Time [s], ECEF X [m], ECEF Y [m], ECEF Z [m], Roll [rad], Pitch [rad], Yaw [rad]",
+                             _writeSplineLimitToSimDuration ? 0.0 : std::numeric_limits<long double>::lowest(),
+                             _writeSplineLimitToSimDuration ? static_cast<long double>(simDuration) : std::numeric_limits<long double>::max(),
+                             splineTime, splineX, splineY, splineZ, splineRoll, splinePitch, splineYaw);
+    }
+#endif
+
     return true;
+}
+
+std::pair<double, size_t> ImuSimulator::addStartupPhase(std::vector<long double>& splineTime,
+                                                        std::vector<long double>& splineX, std::vector<long double>& splineY, std::vector<long double>& splineZ) const
+{
+    if (splineTime.empty())
+    {
+        return { 0.0, 0 };
+    }
+
+    // Cache the original initial state
+    long double t_orig_0 = splineTime.front();
+    Eigen::Vector3ld e_pos0(splineX.front(), splineY.front(), splineZ.front());
+
+    // Calculate the static startup positions
+    Eigen::Vector3d e_startupLocationDelta = trafo::e_Quat_n(_startPosition.latitude(), _startPosition.longitude()) * _startupLocationDelta;
+    Eigen::Vector3ld e_start = e_pos0 + e_startupLocationDelta.cast<long double>();
+
+    auto lla_pos0 = trafo::ecef2lla_WGS84(e_pos0);
+    auto lla_start = trafo::ecef2lla_WGS84(e_start);
+    lla_start.z() = lla_pos0.z() + _startupLocationDelta.z();
+    e_start = trafo::lla2ecef_WGS84(lla_start);
+
+    // Setup sampling intervals and calculate point counts
+    auto dt = splineTime[splineTime.size() / 2] - splineTime[splineTime.size() / 2 - 1];
+    auto num_hidden = static_cast<size_t>(std::round(30.0 / dt));
+    auto num_static = static_cast<size_t>(std::round(_startupStaticDuration / dt));
+
+    double velMax = _trajectoryHorizontalSpeed; // [m/s]
+    double distance = static_cast<double>((e_pos0 - e_start).norm());
+
+    // Calculate the exact acceleration needed to hit velMax at the end of 'distance'
+    double accelMax = std::pow(velMax, 2.0) / (2.0 * distance);
+
+    // Total time is just the time it takes to accelerate to velMax
+    double transitTime = velMax / accelMax;
+
+    LOG_DEBUG("{}: distance = {:.2f}, transitTime = {:.2f}, accelMax = {:.2f}", nameId(), distance, transitTime, accelMax);
+    auto num_transition = static_cast<size_t>(std::round(transitTime / dt));
+
+    auto total_new_points = num_hidden + num_static + num_transition;
+
+    if (_startupStaticDuration + transitTime <= 1e-6)
+    {
+        return { 0.0, 0 };
+    }
+
+    // Calculate the starting time in the negative direction
+    long double total_startup_duration = total_new_points * dt;
+    long double t_start = t_orig_0 - total_startup_duration;
+
+    // Pre-allocate temporary ranges to hold the new points
+    std::vector<long double> pre_time;
+    std::vector<long double> pre_x;
+    std::vector<long double> pre_y;
+    std::vector<long double> pre_z;
+    pre_time.reserve(total_new_points);
+    pre_x.reserve(total_new_points);
+    pre_y.reserve(total_new_points);
+    pre_z.reserve(total_new_points);
+
+    // Generate the Hidden and static Phase points
+    for (size_t i = 0; i < num_hidden + num_static; ++i)
+    {
+        pre_time.push_back(t_start + i * dt);
+        pre_x.push_back(e_start.x());
+        pre_y.push_back(e_start.y());
+        pre_z.push_back(e_start.z());
+    }
+
+    // Generate the Transition Phase points
+    for (size_t i = 0; i < num_transition; ++i)
+    {
+        pre_time.push_back(t_start + (num_hidden + num_static + i) * dt);
+
+        double t_current = static_cast<double>(i) * static_cast<double>(dt);
+
+        // Since it's all one phase, we just use the simple acceleration distance formula
+        double distanceTraveled = 0.5 * accelMax * std::pow(t_current, 2.0);
+
+        // Calculate physical fraction of distance traveled
+        double fraction = distanceTraveled / distance;
+
+        // Clamp to 1.0 to prevent floating-point overshoot at the end
+        fraction = std::min(fraction, 1.0);
+
+        pre_x.push_back(std::lerp(e_start.x(), e_pos0.x(), fraction));
+        pre_y.push_back(std::lerp(e_start.y(), e_pos0.y(), fraction));
+        pre_z.push_back(std::lerp(e_start.z(), e_pos0.z(), fraction));
+    }
+
+    // Prepend
+    splineTime.insert(splineTime.begin(), pre_time.begin(), pre_time.end());
+    splineX.insert(splineX.begin(), pre_x.begin(), pre_x.end());
+    splineY.insert(splineY.begin(), pre_y.begin(), pre_y.end());
+    splineZ.insert(splineZ.begin(), pre_z.begin(), pre_z.end());
+
+    return { static_cast<double>((num_static + num_transition) * dt), total_new_points };
 }
 
 bool ImuSimulator::initialize()
 {
     LOG_TRACE("{}: called", nameId());
+
+    if (_trajectoryType == TrajectoryType::RoseFigure && !_reorderInput.empty())
+    {
+        std::vector<int16_t> reordering;
+        std::ranges::transform(str::split(_reorderInput, ','), std::back_inserter(reordering), [](const std::string& str) {
+            return std::abs(std::stoi(str)) - 1;
+        });
+        LOG_DATA("{}: Rose reordering = {}", nameId(), fmt::join(reordering, " "));
+
+        auto max_iter = std::ranges::max_element(reordering);
+        if (max_iter == reordering.end())
+        {
+            LOG_ERROR("{}: The rose figure reordering must be integers separated by comma.", nameId());
+            return false;
+        }
+
+        for (int16_t i = 0; i < *max_iter; i++)
+        {
+            if (std::ranges::none_of(reordering, [&i](const auto& el) { return i == el; }))
+            {
+                LOG_ERROR("{}: The rose figure reordering must include all numbers in the range [1, {}]. {} is missing.", nameId(), *max_iter + 1, i + 1);
+                return false;
+            }
+        }
+    }
 
     return initializeSplines();
 }
@@ -1965,6 +2610,45 @@ const char* ImuSimulator::to_string(Direction value)
     return "";
 }
 
+const char* to_string(ImuSimulator::Smoothing::Target value)
+{
+    switch (value)
+    {
+    case ImuSimulator::Smoothing::Target::ECEF_X:
+        return "ECEF X";
+    case ImuSimulator::Smoothing::Target::ECEF_Y:
+        return "ECEF Y";
+    case ImuSimulator::Smoothing::Target::ECEF_Z:
+        return "ECEF Z";
+    case ImuSimulator::Smoothing::Target::Roll:
+        return "Roll";
+    case ImuSimulator::Smoothing::Target::Pitch:
+        return "Pitch";
+    case ImuSimulator::Smoothing::Target::Yaw:
+        return "Yaw";
+    case ImuSimulator::Smoothing::Target::COUNT:
+        return "";
+    }
+    return "";
+}
+
+void to_json(json& j, const ImuSimulator::Smoothing& obj)
+{
+    j = json{
+        { "target", obj.target },
+        { "windowSizeSeconds", obj.windowSizeSeconds },
+        { "lockWindowToSigma", obj.lockWindowToSigma },
+        { "sigma", obj.sigma },
+    };
+}
+void from_json(const json& j, ImuSimulator::Smoothing& obj)
+{
+    if (j.contains("target")) { j.at("target").get_to(obj.target); }
+    if (j.contains("windowSizeSeconds")) { j.at("windowSizeSeconds").get_to(obj.windowSizeSeconds); }
+    if (j.contains("lockWindowToSigma")) { j.at("lockWindowToSigma").get_to(obj.lockWindowToSigma); }
+    if (j.contains("sigma")) { j.at("sigma").get_to(obj.sigma); }
+}
+
 const char* to_string(ImuSimulator::Oscillation::Target value)
 {
     switch (value)
@@ -1999,6 +2683,7 @@ void to_json(json& j, const ImuSimulator::Oscillation& obj)
         { "target", obj.target },
         { "amplitude", obj.amplitude },
         { "number", obj.number },
+        { "offset", obj.offset },
     };
 }
 void from_json(const json& j, ImuSimulator::Oscillation& obj)
@@ -2006,6 +2691,7 @@ void from_json(const json& j, ImuSimulator::Oscillation& obj)
     if (j.contains("target")) { j.at("target").get_to(obj.target); }
     if (j.contains("amplitude")) { j.at("amplitude").get_to(obj.amplitude); }
     if (j.contains("number")) { j.at("number").get_to(obj.number); }
+    if (j.contains("offset")) { j.at("offset").get_to(obj.offset); }
 }
 
 } // namespace NAV

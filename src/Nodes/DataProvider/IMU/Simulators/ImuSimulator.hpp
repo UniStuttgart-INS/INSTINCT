@@ -24,6 +24,7 @@
 #include "internal/gui/widgets/PositionInput.hpp"
 
 #include "NodeData/General/CsvData.hpp"
+#include <Eigen/src/Core/Matrix.h>
 
 #include <array>
 #include <cstdint>
@@ -146,6 +147,9 @@ class ImuSimulator : public Imu
     /// Selected trajectory type in the GUI
     TrajectoryType _trajectoryType = TrajectoryType::Fixed;
 
+    /// Keep the altitude constant
+    bool _baseTrajectoryWithoutHeightChange = false;
+
     /// Start position in local navigation coordinates (latitude, longitude, altitude) [rad, rad, m]
     ///
     /// - Fixed, Linear: Start position
@@ -203,6 +207,48 @@ class ImuSimulator : public Imu
     /// Simulation duration needed for the rose figure
     double _roseSimDuration = 0.0;
 
+    /// @brief Reorder the segments of the rose figure
+    /// e.g. 1,-5,-4,-3,-2,6,7,8
+    /// - Segments start counting from 1
+    /// - Minus reverses the data in the segment
+    std::string _reorderInput;
+
+    bool _pitchByVelocity = true;  ///< Calculate the pitch angle from the velocity
+    double _pitchMultiplier = 1.0; ///< Scale the pitch angle by the factor
+
+    bool _rollByAcceleration = true; ///< Calculate the roll angle from the body frame y axis acceleration
+    double _rollMultiplier = 1.0;    ///< Scale the roll angle by the factor
+
+    struct Smoothing
+    {
+        /// Target to add the oscillation to
+        enum Target : uint8_t
+        {
+            ECEF_X,
+            ECEF_Y,
+            ECEF_Z,
+            Roll,
+            Pitch,
+            Yaw,
+            COUNT,
+        };
+
+        /// Target to smooth
+        Target target = Target::Roll;
+        /// How many data points the filter looks at.
+        /// A larger window creates a wider, more gradual transition around your jumps.
+        double windowSizeSeconds = 10.0;
+        /// Locks the window size to roughly 6 times sigma.
+        bool lockWindowToSigma = true;
+        /// The standard deviation of the Gaussian bell curve.
+        /// A higher sigma heavily smooths the noise but makes the curve flatter.
+        /// A good rule of thumb is setting window_size to roughly 6 times sigma.
+        double sigma = 25.0;
+    };
+
+    /// Smoothings to perform
+    std::vector<Smoothing> _smoothings;
+
     // ###########################################################################################################
 
     /// Oscillations to add onto the trajectory
@@ -225,7 +271,8 @@ class ImuSimulator : public Imu
 
         Target target = Up;     ///< Target to put the oscillation on
         double amplitude = 10.; ///< Amplitude in the unit of the target
-        int number = 5;         ///< Number of oscillations
+        double number = 5.0;    ///< Number of oscillations
+        double offset = 0.0;    ///< Multiple of pi to shift the oscillation by
     };
 
     /// Oscillations to add onto the trajectory
@@ -259,6 +306,12 @@ class ImuSimulator : public Imu
     double _roseTrajectoryCountForStop = 1.0;
     // ###########################################################################################################
 
+    bool _startupEnabled = false;               ///< Wether to add a startup phase
+    double _startupStaticDuration = 5.0 * 60.0; ///< Duration of the static part of the startup in [s]
+    Eigen::Vector3d _startupLocationDelta;      ///< Position to start the simulation
+
+    // ###########################################################################################################
+
     /// Gravitation model selected in the GUI
     GravitationModel _gravitationModel = GravitationModel::EGM96;
 
@@ -273,6 +326,19 @@ class ImuSimulator : public Imu
 
     /// Apply the transport rate to the measured angular rates
     bool _angularRateTransportRateEnabled = true;
+
+    // ###########################################################################################################
+
+#ifndef _WIN32
+    /// Write a spline to a file
+    bool _writeSplineToFile = false;
+
+    /// Limit the spline to the simulation duration
+    bool _writeSplineLimitToSimDuration = true;
+
+    /// Filepath to output the spline to
+    std::string _writeSplineCsvFilepath = "spline.csv";
+#endif
 
     // ###########################################################################################################
 
@@ -309,6 +375,14 @@ class ImuSimulator : public Imu
     /// @brief Initializes the spline values
     /// @return True if everything succeeded
     bool initializeSplines();
+
+    /// @brief Adds a startup phase to the splines
+    /// @param[in, out] splineTime Time [s]
+    /// @param[in, out] splineX ECEF X Position [m]
+    /// @param[in, out] splineY ECEF Y Position [m]
+    /// @param[in, out] splineZ ECEF Z Position [m]
+    /// @return Startup duration in [s] and items added
+    std::pair<double, size_t> addStartupPhase(std::vector<long double>& splineTime, std::vector<long double>& splineX, std::vector<long double>& splineY, std::vector<long double>& splineZ) const;
 
     /// Counter to calculate the internal IMU update time
     uint64_t _imuInternalUpdateCnt = 0.0;
@@ -365,10 +439,27 @@ class ImuSimulator : public Imu
     /// @return ω_nb_n [rad/s]
     [[nodiscard]] Eigen::Vector3d n_calcOmega_nb(double time, const Eigen::Vector3d& rollPitchYaw, const Eigen::Quaterniond& n_Quat_b) const;
 
+    friend const char* to_string(Smoothing::Target value);
+    friend void to_json(json& j, const Smoothing& obj);
+    friend void from_json(const json& j, Smoothing& obj);
+
     friend const char* to_string(Oscillation::Target value);
     friend void to_json(json& j, const Oscillation& obj);
     friend void from_json(const json& j, Oscillation& obj);
 };
+
+/// @brief Converts the enum to a string
+/// @param[in] value Enum value to convert into text
+/// @return String representation of the enum
+const char* to_string(ImuSimulator::Smoothing::Target value);
+/// @brief Converts the provided object into json
+/// @param[out] j Json object which gets filled with the info
+/// @param[in] obj Object to convert into json
+void to_json(json& j, const ImuSimulator::Smoothing& obj);
+/// @brief Converts the provided json object into a node object
+/// @param[in] j Json object with the needed values
+/// @param[out] obj Object to fill from the json
+void from_json(const json& j, ImuSimulator::Smoothing& obj);
 
 /// @brief Converts the enum to a string
 /// @param[in] value Enum value to convert into text
