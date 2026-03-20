@@ -2090,7 +2090,6 @@ bool ImuSimulator::initializeSplines()
         {
             t += startupDuration;
         }
-        simDuration += startupDuration;
         _roseSimDuration += startupDuration;
 
         // auto dt = static_cast<double>(splineTime[1] - splineTime[0]);

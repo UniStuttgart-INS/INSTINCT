@@ -69,7 +69,7 @@ Eigen::Vector3<typename Derived::Scalar> lla2ecef(const Eigen::MatrixBase<Derive
 
     // Radius of curvature of the ellipsoid in the prime vertical plane,
     // i.e., the plane containing the normal at P and perpendicular to the meridian (eq. 1.81)
-    auto R_E = calcEarthRadius_E(latitude, static_cast<typename Derived::Scalar>(a), static_cast<typename Derived::Scalar>(e_squared));
+    auto R_E = calcEarthRadius_E(latitude, a, e_squared);
 
     // Jekeli, 2001 (eq. 1.80) (see  Torge, 1991, for further details)
     return { (R_E + altitude) * std::cos(latitude) * std::cos(longitude),
