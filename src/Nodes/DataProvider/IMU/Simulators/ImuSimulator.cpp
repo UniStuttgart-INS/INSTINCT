@@ -902,12 +902,99 @@ void ImuSimulator::guiConfig()
     Imu::guiConfig();
 
 #ifndef _WIN32
-    if (ImGui::Checkbox(fmt::format("Write spline points to file##{}", size_t(id)).c_str(), &_writeSplineToFile))
+    if (_trajectoryType != TrajectoryType::RoseFigure) { ImGui::BeginDisabled(); }
+    if (ImGui::Button(fmt::format("Write spline points to file##{}", size_t(id)).c_str()))
     {
-        flow::ApplyChanges();
+        auto write_splines_to_csv = [](const std::string& path, const std::string& header,
+                                       long double time_limit_lower, long double time_limit_upper,
+                                       const auto& time_vec, const auto&... rest_vecs) {
+            std::ofstream file(path);
+            if (!file.is_open())
+            {
+                throw std::runtime_error("Could not open file for writing: " + path);
+            }
+
+            // Write the header
+            file << header << "\n";
+            // Set precision
+            file << std::setprecision(15);
+
+            // Since you guaranteed they are the same length, we can just use time_vec's size
+            size_t num_rows = time_vec.size();
+
+            for (size_t i = 0; i < num_rows; ++i)
+            {
+                // Do not write line if the time exceeds the lower limit
+                if (time_vec[i] < time_limit_lower)
+                {
+                    continue;
+                }
+                // Stop writing if the time exceeds the upper limit
+                if (time_vec[i] > time_limit_upper)
+                {
+                    break;
+                }
+
+                // Write the first column (Time)
+                file << time_vec[i];
+
+                // C++17 fold expression: writes a comma then the value for all remaining columns
+                if constexpr (sizeof...(rest_vecs) > 0)
+                {
+                    ((file << "," << static_cast<double>(rest_vecs[i])), ...);
+                }
+
+                file << "\n";
+            }
+        };
+
+        bool initialized = isInitialized();
+        if (!isInitialized())
+        {
+            initialized = doInitialize(true);
+        }
+        if (initialized)
+        {
+    #if LOG_LEVEL <= LOG_LEVEL_DATA
+            for (size_t i = 0; i < 5 && i < _splines.x.size(); i++)
+            {
+                LOG_DATA("{}: Time [s] = {}\n  ECEF X [m] = {}\n  ECEF Y [m] = {}\n  ECEF Z [m] = {}\n  Roll [rad] = {}\n  Pitch [rad] = {}\n  Yaw [rad] = {}",
+                         nameId(),
+                         static_cast<double>(_splines.x.getPointsX().at(i)),
+                         static_cast<double>(_splines.x.getPointsY().at(i)), static_cast<double>(_splines.y.getPointsY().at(i)), static_cast<double>(_splines.z.getPointsY().at(i)),
+                         static_cast<double>(_splines.roll.getPointsY().at(i)), static_cast<double>(_splines.pitch.getPointsY().at(i)), static_cast<double>(_splines.yaw.getPointsY().at(i)));
+            }
+    #endif
+
+            // auto wrapAngle = [](auto angle, auto limit) {
+            //     auto fullRange = 2 * limit;
+            //     auto wrapped = std::fmod(angle + limit, fullRange); // fmod returns a value with the same sign as 'angle'
+            //     if (wrapped <= 0) { wrapped += fullRange; }
+            //     return wrapped - limit;
+            // };
+            // auto splineRoll = _splines.roll.getPointsY();
+            // auto splinePitch = _splines.pitch.getPointsY();
+            // auto splineYaw = _splines.yaw.getPointsY();
+            // std::ranges::transform(splineRoll.begin(), splineRoll.end(), splineRoll.begin(), [&](const auto& angle) { return wrapAngle(angle, M_PI); });
+            // std::ranges::transform(splinePitch.begin(), splinePitch.end(), splinePitch.begin(), [&](const auto& angle) { return wrapAngle(angle, M_PI_2); });
+            // std::ranges::transform(splineYaw.begin(), splineYaw.end(), splineYaw.begin(), [&](const auto& angle) { return wrapAngle(angle, M_PI); });
+
+            write_splines_to_csv(flow::GetOutputPath() / _writeSplineCsvFilepath,
+                                 "Time [s], ECEF X [m], ECEF Y [m], ECEF Z [m], Roll [rad], Pitch [rad], Yaw [rad]",
+                                 _writeSplineLimitToSimDuration ? 0.0 : std::numeric_limits<long double>::lowest(),
+                                 _writeSplineLimitToSimDuration ? static_cast<long double>(_roseSimDuration) : std::numeric_limits<long double>::max(),
+                                 _splines.x.getPointsX(),
+                                 _splines.x.getPointsY(), _splines.y.getPointsY(), _splines.z.getPointsY(),
+                                 _splines.roll.getPointsY(), _splines.pitch.getPointsY(), _splines.yaw.getPointsY());
+            //  splineRoll, splinePitch, splineYaw);
+            LOG_INFO("{}: Spline written to {}", nameId(), flow::GetOutputPath() / _writeSplineCsvFilepath);
+        }
+        else
+        {
+            LOG_ERROR("{}: Could not write spline as initialization of node failed.", nameId());
+        }
     }
     ImGui::SameLine();
-    if (!_writeSplineToFile) { ImGui::BeginDisabled(); }
     if (ImGui::Checkbox(fmt::format("Limit to sim duration##{}", size_t(id)).c_str(), &_writeSplineLimitToSimDuration))
     {
         flow::ApplyChanges();
@@ -918,7 +1005,7 @@ void ImuSimulator::guiConfig()
     {
         flow::ApplyChanges();
     }
-    if (!_writeSplineToFile) { ImGui::EndDisabled(); }
+    if (_trajectoryType != TrajectoryType::RoseFigure) { ImGui::EndDisabled(); }
 #endif
 }
 
@@ -977,7 +1064,6 @@ json ImuSimulator::save() const
     j["Imu"] = Imu::save();
 
 #ifndef _WIN32
-    j["writeSplineToFile"] = _writeSplineToFile;
     j["writeSplineLimitToSimDuration"] = _writeSplineLimitToSimDuration;
     j["writeSplineCsvFilepath"] = _writeSplineCsvFilepath;
 #endif
@@ -1146,7 +1232,6 @@ void ImuSimulator::restore(json const& j)
     }
 
 #ifndef _WIN32
-    if (j.contains("writeSplineToFile")) { j.at("writeSplineToFile").get_to(_writeSplineToFile); }
     if (j.contains("writeSplineLimitToSimDuration")) { j.at("writeSplineLimitToSimDuration").get_to(_writeSplineLimitToSimDuration); }
     if (j.contains("writeSplineCsvFilepath")) { j.at("writeSplineCsvFilepath").get_to(_writeSplineCsvFilepath); }
 #endif
@@ -1889,7 +1974,7 @@ bool ImuSimulator::initializeSplines()
         splinePitch = std::vector<long double>(splineTime.size());
         splineYaw = std::vector<long double>(splineTime.size());
 
-        for (uint64_t i = 0; i < splineTime.size(); i++)
+        for (size_t i = 0; i < splineTime.size(); i++)
         {
             Eigen::Vector3d e_pos{ static_cast<double>(_splines.x(splineTime[i])),
                                    static_cast<double>(_splines.y(splineTime[i])),
@@ -1913,10 +1998,9 @@ bool ImuSimulator::initializeSplines()
             // Set the roll to the acceleration y axis
             Eigen::Vector3d b_accel = trafo::b_Quat_n(0.0, pitch, yaw) * n_quat_e * e_accel;
 
-            splineYaw[i] = i > 0 ? unwrapAngle(yaw, splineYaw[i - 1], M_PI) : yaw;
+            splineYaw[i] = yaw;
             splineRoll[i] = _rollByAcceleration ? _rollMultiplier * b_accel.y() : 0.0;
             splinePitch[i] = pitch;
-            // LOG_DATA("{}: [t={:.3f}] yaw = {:.3f}°", nameId(), static_cast<double>(splineTime.at(i)), rad2deg(splineYaw[i]));
         }
 
         if (_startupEnabled)
@@ -1927,6 +2011,11 @@ bool ImuSimulator::initializeSplines()
                 splinePitch[i] = splinePitch[startupLength];
                 splineYaw[i] = splineYaw[startupLength];
             }
+        }
+        for (size_t i = 0; i < splineTime.size(); i++)
+        {
+            splineYaw[i] = i > 0 ? unwrapAngle(splineYaw[i], splineYaw[i - 1], M_PI) : splineYaw[i];
+            LOG_DATA("{}: [t={:.3f}] yaw = {:.3f}°", nameId(), static_cast<double>(splineTime.at(i)), static_cast<double>(rad2deg(splineYaw[i])));
         }
 
         if (!_smoothings.empty())
@@ -2025,60 +2114,6 @@ bool ImuSimulator::initializeSplines()
     _splines.roll.setPoints(splineTime, splineRoll);
     _splines.pitch.setPoints(splineTime, splinePitch);
     _splines.yaw.setPoints(splineTime, splineYaw);
-
-#ifndef _WIN32
-    if (_writeSplineToFile)
-    {
-        auto write_splines_to_csv = [](const std::string& path, const std::string& header,
-                                       long double time_limit_lower, long double time_limit_upper,
-                                       const auto& time_vec, const auto&... rest_vecs) {
-            std::ofstream file(path);
-            if (!file.is_open())
-            {
-                throw std::runtime_error("Could not open file for writing: " + path);
-            }
-
-            // Write the header
-            file << header << "\n";
-            // Set precision
-            file << std::setprecision(15);
-
-            // Since you guaranteed they are the same length, we can just use time_vec's size
-            size_t num_rows = time_vec.size();
-
-            for (size_t i = 0; i < num_rows; ++i)
-            {
-                // Do not write line if the time exceeds the lower limit
-                if (time_vec[i] < time_limit_lower)
-                {
-                    continue;
-                }
-                // Stop writing if the time exceeds the upper limit
-                if (time_vec[i] > time_limit_upper)
-                {
-                    break;
-                }
-
-                // Write the first column (Time)
-                file << time_vec[i];
-
-                // C++17 fold expression: writes a comma then the value for all remaining columns
-                if constexpr (sizeof...(rest_vecs) > 0)
-                {
-                    ((file << "," << rest_vecs[i]), ...);
-                }
-
-                file << "\n";
-            }
-        };
-
-        write_splines_to_csv(flow::GetOutputPath() / _writeSplineCsvFilepath,
-                             "Time [s], ECEF X [m], ECEF Y [m], ECEF Z [m], Roll [rad], Pitch [rad], Yaw [rad]",
-                             _writeSplineLimitToSimDuration ? 0.0 : std::numeric_limits<long double>::lowest(),
-                             _writeSplineLimitToSimDuration ? static_cast<long double>(simDuration) : std::numeric_limits<long double>::max(),
-                             splineTime, splineX, splineY, splineZ, splineRoll, splinePitch, splineYaw);
-    }
-#endif
 
     return true;
 }

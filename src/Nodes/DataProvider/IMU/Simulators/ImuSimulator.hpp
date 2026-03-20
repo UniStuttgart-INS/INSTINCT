@@ -330,9 +330,6 @@ class ImuSimulator : public Imu
     // ###########################################################################################################
 
 #ifndef _WIN32
-    /// Write a spline to a file
-    bool _writeSplineToFile = false;
-
     /// Limit the spline to the simulation duration
     bool _writeSplineLimitToSimDuration = true;
 
