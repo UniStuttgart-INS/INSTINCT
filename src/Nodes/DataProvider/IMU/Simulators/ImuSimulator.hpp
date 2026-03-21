@@ -373,13 +373,29 @@ class ImuSimulator : public Imu
     /// @return True if everything succeeded
     bool initializeSplines();
 
+    /// Startup phase
+    struct StartupPhase
+    {
+        double duration = 0.0;      ///< Startup duration in [s] (without hidden phase)
+        size_t numTotalPoints = 0;  ///< Amount points added
+        size_t numHiddenPoints = 0; ///< Number of hidden points
+    };
+
     /// @brief Adds a startup phase to the splines
     /// @param[in, out] splineTime Time [s]
     /// @param[in, out] splineX ECEF X Position [m]
     /// @param[in, out] splineY ECEF Y Position [m]
     /// @param[in, out] splineZ ECEF Z Position [m]
+    /// @param[in, out] splineRoll Roll angle [rad]
+    /// @param[in, out] splinePitch Pitch angle [rad]
+    /// @param[in, out] splineYaw Yaw angle [rad]
+    /// @param[in] e_endVelocity Velocity at the end of the startup phase in [m/s]
+    /// @param[in] endRollPitchYaw Roll, Pitch, Yaw at the end of the startup phase in [rad]
     /// @return Startup duration in [s] and items added
-    std::pair<double, size_t> addStartupPhase(std::vector<long double>& splineTime, std::vector<long double>& splineX, std::vector<long double>& splineY, std::vector<long double>& splineZ) const;
+    StartupPhase addStartupPhase(std::vector<long double>& splineTime,
+                                 std::vector<long double>& splineX, std::vector<long double>& splineY, std::vector<long double>& splineZ,
+                                 std::vector<long double>& splineRoll, std::vector<long double>& splinePitch, std::vector<long double>& splineYaw,
+                                 const Eigen::Vector3d& e_endVelocity, const Eigen::Vector3d& endRollPitchYaw) const;
 
     /// Counter to calculate the internal IMU update time
     uint64_t _imuInternalUpdateCnt = 0.0;

@@ -1040,6 +1040,8 @@ json ImuSimulator::save() const
     j["reorderInput"] = _reorderInput;
     j["pitchByVelocity"] = _pitchByVelocity;
     j["pitchMultiplier"] = _pitchMultiplier;
+    j["rollByAcceleration"] = _rollByAcceleration;
+    j["rollMultiplier"] = _rollMultiplier;
     j["smoothings"] = _smoothings;
     j["oscillations"] = _oscillations;
     //  ###########################################################################################################
@@ -1169,6 +1171,8 @@ void ImuSimulator::restore(json const& j)
     }
     if (j.contains("pitchByVelocity")) { j.at("pitchByVelocity").get_to(_pitchByVelocity); }
     if (j.contains("pitchMultiplier")) { j.at("pitchMultiplier").get_to(_pitchMultiplier); }
+    if (j.contains("rollByAcceleration")) { j.at("rollByAcceleration").get_to(_rollByAcceleration); }
+    if (j.contains("rollMultiplier")) { j.at("rollMultiplier").get_to(_rollMultiplier); }
     if (j.contains("smoothings")) { j.at("smoothings").get_to(_smoothings); }
     if (j.contains("oscillations")) { j.at("oscillations").get_to(_oscillations); }
     //  ###########################################################################################################
@@ -1472,7 +1476,9 @@ bool ImuSimulator::initializeSplines()
         return prevAngle + x;
     };
 
-    const double OFFSET = _startupEnabled ? 0.0 : 1.0; // [s]
+    const double OFFSET = _startupEnabled ? 0.0 : 100.0; // [s]
+    // auto nVirtPoints = static_cast<size_t>(1.0 / (_roseStepLengthMax / 50.0));
+    constexpr size_t nVirtPoints = 1000;
 
     double simDuration = _simulationDuration;
     if (_trajectoryType == TrajectoryType::Fixed)
@@ -1666,14 +1672,11 @@ bool ImuSimulator::initializeSplines()
             }
         }
 
-        auto nVirtPoints = static_cast<size_t>(1.0 / (_roseStepLengthMax / 50.0));
-        if (!_startupEnabled)
-        {
-            splineTime.resize(nVirtPoints); // Preallocate points to make the spline start at the right point
-            splineX = std::vector<long double>(splineTime.size());
-            splineY = std::vector<long double>(splineTime.size());
-            splineZ = std::vector<long double>(splineTime.size());
-        }
+        LOG_DEBUG("{}: Adding {} points to the start", nameId(), nVirtPoints);
+        splineTime.resize(nVirtPoints); // Preallocate points to make the spline start at the right point
+        splineX = std::vector<long double>(splineTime.size());
+        splineY = std::vector<long double>(splineTime.size());
+        splineZ = std::vector<long double>(splineTime.size());
 
         Eigen::Vector3d e_origin = trafo::lla2ecef_WGS84(_startPosition.latLonAlt());
 
@@ -1739,7 +1742,7 @@ bool ImuSimulator::initializeSplines()
                     {
                         if (reordering[i - 1].first != reordering[i].first)
                         {
-                            LOG_DEBUG("{}: Splitting spline at idx [{}], time = {:.4f}", nameId(), splineTime.size() - 1, static_cast<double>(splineTime.back()));
+                            LOG_DEBUG("{}: Reorder sign change at idx [{}], time = {:.4f}", nameId(), splineTime.size() - 1, static_cast<double>(splineTime.back()));
                             splineSplitIndices.push_back(splineTime.size() - 1);
                         }
                         reorderingIndex = i;
@@ -1749,15 +1752,15 @@ bool ImuSimulator::initializeSplines()
                     if (inverse)
                     {
                         newPhi = (-(frac - upperLimit) + newLowerLimit) * maxPhi;
-                        // LOG_DATA("{}: phi = {:.3f} ({:.3f}), newPhi = {:.3f}, i = {}, upperLimit = {:.2f}, newLowerLimit = {:.2f} (inverse)",
-                        //          nameId(), phi, frac, newPhi, i, upperLimit, newLowerLimit);
+                        LOG_DATA("{}: phi = {:.3f} ({:.3f}), newPhi = {:.3f}, i = {}, upperLimit = {:.2f}, newLowerLimit = {:.2f} (inverse)",
+                                 nameId(), phi, frac, newPhi, i, upperLimit, newLowerLimit);
                     }
                     else
                     {
                         double lowerLimit = di / nSplits;
                         newPhi = ((frac - lowerLimit) + newLowerLimit) * maxPhi;
-                        // LOG_DATA("{}: phi = {:.3f} ({:.3f}), newPhi = {:.3f}, i = {}, upperLimit = {:.2f}, newLowerLimit = {:.2f}, lowerLimit = {:.2f}",
-                        //          nameId(), phi, frac, newPhi, i, upperLimit, newLowerLimit, lowerLimit);
+                        LOG_DATA("{}: phi = {:.3f} ({:.3f}), newPhi = {:.3f}, i = {}, upperLimit = {:.2f}, newLowerLimit = {:.2f}, lowerLimit = {:.2f}",
+                                 nameId(), phi, frac, newPhi, i, upperLimit, newLowerLimit, lowerLimit);
                     }
                     break;
                 }
@@ -1777,13 +1780,14 @@ bool ImuSimulator::initializeSplines()
                 e_position = trafo::lla2ecef_WGS84(lla_position);
             }
 
-            // LOG_DATA("{}: [{}] t={: 8.3f}s | l={:8.6}m | phi={:6.3f}", nameId(), splineTime.size() - 1, time, length, rad2deg(phi));
+            LOG_DATA("{}: [{}] t={: 8.3f}s | l={:8.6}m | phi={:.6f} - {:.6f} = {:.4e} (dphi = {:.4e}) {}", nameId(),
+                     splineTime.size() - 1, time, length, phi, maxPhi, maxPhi - phi, dPhi, std::abs(maxPhi - phi) < 1.0 * dPhi);
 
             splineX.push_back(e_position[0]);
             splineY.push_back(e_position[1]);
             splineZ.push_back(e_position[2]);
 
-            if (_simulationStopCondition == StopCondition::DistanceOrCirclesOrRoses && std::abs(maxPhi - phi) < 1.0 * dPhi)
+            if (_simulationStopCondition == StopCondition::DistanceOrCirclesOrRoses && std::abs(maxPhi - phi) < 2.0 * dPhi)
             {
                 LOG_TRACE("{}: Rose figure simulation duration: {:8.6}s | l={:8.6}m", nameId(), time, length);
                 _roseSimDuration = time;
@@ -1796,39 +1800,36 @@ bool ImuSimulator::initializeSplines()
             }
         }
 
-        if (!_startupEnabled)
+        maxPhi = integrationFactor * M_PI + 1e-15; // For exactly 2*pi the elliptical integral is failing. Bug in the function.
+        // LOG_DATA("{}: maxPhi {:6.2f}", nameId(), rad2deg(maxPhi));
+        double endLength = _trajectoryRadius / roseK * math::calcEllipticalIntegral(roseK * maxPhi, 1.0 - std::pow(roseK, 2.0));
+        // LOG_DATA("{}: endLength {:8.6}m", nameId(), endLength);
+        for (size_t i = 0; i < nVirtPoints; i++)
         {
-            maxPhi = integrationFactor * M_PI + 1e-15; // For exactly 2*pi the elliptical integral is failing. Bug in the function.
-            // LOG_DATA("{}: maxPhi {:6.2f}", nameId(), rad2deg(maxPhi));
-            double endLength = _trajectoryRadius / roseK * math::calcEllipticalIntegral(roseK * maxPhi, 1.0 - std::pow(roseK, 2.0));
-            // LOG_DATA("{}: endLength {:8.6}m", nameId(), endLength);
-            for (size_t i = 0; i < nVirtPoints; i++)
+            double phi = maxPhi - static_cast<double>(i) * dPhi;
+            double length = _trajectoryRadius / roseK * math::calcEllipticalIntegral(roseK * phi, 1.0 - std::pow(roseK, 2.0));
+            double time = (length - endLength) / _trajectoryHorizontalSpeed;
+            splineTime[nVirtPoints - i - 1] = time;
+
+            Eigen::Vector3d n_relativePosition{ _trajectoryRadius * std::cos(roseK * phi) * std::sin(phi * (_trajectoryDirection == Direction::CW ? -1.0 : 1.0) + _trajectoryRotationAngle), // [m]
+                                                _trajectoryRadius * std::cos(roseK * phi) * std::cos(phi * (_trajectoryDirection == Direction::CW ? -1.0 : 1.0) + _trajectoryRotationAngle), // [m]
+                                                -_trajectoryVerticalSpeed * time };                                                                                                          // [m]
+
+            Eigen::Vector3d e_relativePosition = e_quatCenter_n * n_relativePosition;
+            Eigen::Vector3d e_position = e_origin + e_relativePosition;
+
+            if (_baseTrajectoryWithoutHeightChange)
             {
-                double phi = maxPhi - static_cast<double>(i) * dPhi;
-                double length = _trajectoryRadius / roseK * math::calcEllipticalIntegral(roseK * phi, 1.0 - std::pow(roseK, 2.0));
-                double time = (length - endLength) / _trajectoryHorizontalSpeed;
-                splineTime[nVirtPoints - i - 1] = time;
-
-                Eigen::Vector3d n_relativePosition{ _trajectoryRadius * std::cos(roseK * phi) * std::sin(phi * (_trajectoryDirection == Direction::CW ? -1.0 : 1.0) + _trajectoryRotationAngle), // [m]
-                                                    _trajectoryRadius * std::cos(roseK * phi) * std::cos(phi * (_trajectoryDirection == Direction::CW ? -1.0 : 1.0) + _trajectoryRotationAngle), // [m]
-                                                    -_trajectoryVerticalSpeed * time };                                                                                                          // [m]
-
-                Eigen::Vector3d e_relativePosition = e_quatCenter_n * n_relativePosition;
-                Eigen::Vector3d e_position = e_origin + e_relativePosition;
-
-                if (_baseTrajectoryWithoutHeightChange)
-                {
-                    Eigen::Vector3d lla_position = trafo::ecef2lla_WGS84(e_position);
-                    lla_position.z() = _startPosition.altitude();
-                    e_position = trafo::lla2ecef_WGS84(lla_position);
-                }
-
-                // LOG_DATA("{}: [{}] t={: 8.3f}s | l={:8.6}m | phi={:6.3f}", nameId(), nVirtPoints - i - 1, time, length, rad2deg(phi));
-
-                splineX[nVirtPoints - i - 1] = e_position[0];
-                splineY[nVirtPoints - i - 1] = e_position[1];
-                splineZ[nVirtPoints - i - 1] = e_position[2];
+                Eigen::Vector3d lla_position = trafo::ecef2lla_WGS84(e_position);
+                lla_position.z() = _startPosition.altitude();
+                e_position = trafo::lla2ecef_WGS84(lla_position);
             }
+
+            // LOG_DATA("{}: [{}] t={: 8.3f}s | l={:8.6}m | phi={:6.3f}", nameId(), nVirtPoints - i - 1, time, length, rad2deg(phi));
+
+            splineX[nVirtPoints - i - 1] = e_position[0];
+            splineY[nVirtPoints - i - 1] = e_position[1];
+            splineZ[nVirtPoints - i - 1] = e_position[2];
         }
     }
     else if (_trajectoryType == TrajectoryType::Csv)
@@ -1956,13 +1957,6 @@ bool ImuSimulator::initializeSplines()
         }
     }
 
-    double startupDuration = 0.0;
-    size_t startupLength = 0;
-    if (_startupEnabled)
-    {
-        std::tie(startupDuration, startupLength) = addStartupPhase(splineTime, splineX, splineY, splineZ);
-    }
-
     // Set it here, because the angle calculation need derivatives
     _splines.x.setPoints(splineTime, splineX);
     _splines.y.setPoints(splineTime, splineY);
@@ -2002,62 +1996,36 @@ bool ImuSimulator::initializeSplines()
             splineRoll[i] = _rollByAcceleration ? _rollMultiplier * b_accel.y() : 0.0;
             splinePitch[i] = pitch;
         }
+    }
 
-        if (_startupEnabled)
+    StartupPhase startup;
+    if (_startupEnabled)
+    {
+        size_t nPointsToRemove = _trajectoryType == TrajectoryType::RoseFigure ? nVirtPoints - 1 : 0;
+        Eigen::Vector3ld endRollPitchYaw(splineRoll.at(nPointsToRemove),
+                                         splinePitch.at(nPointsToRemove),
+                                         splineYaw.at(nPointsToRemove));
+        Eigen::Vector3d e_vel{ static_cast<double>(_splines.x.derivative(1, splineTime[nPointsToRemove])),
+                               static_cast<double>(_splines.y.derivative(1, splineTime[nPointsToRemove])),
+                               static_cast<double>(_splines.z.derivative(1, splineTime[nPointsToRemove])) };
+        LOG_DEBUG("{}: Erasing first {} points from splines (size = {} before, startTime = {})", nameId(), nPointsToRemove, splineTime.size(), static_cast<double>(splineTime.front()));
+        if (nPointsToRemove > 0)
         {
-            for (size_t i = 0; i < startupLength; i++)
-            {
-                splineRoll[i] = splineRoll[startupLength];
-                splinePitch[i] = splinePitch[startupLength];
-                splineYaw[i] = splineYaw[startupLength];
-            }
+            splineTime.erase(splineTime.begin(), splineTime.begin() + static_cast<int64_t>(nPointsToRemove));
+            splineX.erase(splineX.begin(), splineX.begin() + static_cast<int64_t>(nPointsToRemove));
+            splineY.erase(splineY.begin(), splineY.begin() + static_cast<int64_t>(nPointsToRemove));
+            splineZ.erase(splineZ.begin(), splineZ.begin() + static_cast<int64_t>(nPointsToRemove));
+            splineRoll.erase(splineRoll.begin(), splineRoll.begin() + static_cast<int64_t>(nPointsToRemove));
+            splinePitch.erase(splinePitch.begin(), splinePitch.begin() + static_cast<int64_t>(nPointsToRemove));
+            splineYaw.erase(splineYaw.begin(), splineYaw.begin() + static_cast<int64_t>(nPointsToRemove));
         }
-        for (size_t i = 0; i < splineTime.size(); i++)
-        {
-            splineYaw[i] = i > 0 ? unwrapAngle(splineYaw[i], splineYaw[i - 1], M_PI) : splineYaw[i];
-            LOG_DATA("{}: [t={:.3f}] yaw = {:.3f}°", nameId(), static_cast<double>(splineTime.at(i)), static_cast<double>(rad2deg(splineYaw[i])));
-        }
-
-        if (!_smoothings.empty())
-        {
-            auto dt = static_cast<double>(splineTime[splineTime.size() / 2] - splineTime[splineTime.size() / 2 - 1]);
-
-            for (const auto& smo : _smoothings)
-            {
-                auto windowSize = static_cast<size_t>(smo.windowSizeSeconds / dt + 1);
-                auto sigma = smo.lockWindowToSigma ? static_cast<double>(windowSize) / 6.0 : smo.sigma;
-
-                auto smoothSpline = [&](size_t start_idx = 0, size_t end_idx = SIZE_MAX) {
-                    LOG_DEBUG("{}: Smoothing {} spline [{}, {}] (windowSize = {}, sigma = {}, dt = {})",
-                              nameId(), NAV::to_string(smo.target), start_idx, end_idx, windowSize, sigma, dt);
-                    switch (smo.target)
-                    {
-                    case Smoothing::ECEF_X:
-                        splineX = smoothData(splineX, windowSize, sigma, start_idx, end_idx);
-                        break;
-                    case Smoothing::ECEF_Y:
-                        splineY = smoothData(splineY, windowSize, sigma, start_idx, end_idx);
-                        break;
-                    case Smoothing::ECEF_Z:
-                        splineZ = smoothData(splineZ, windowSize, sigma, start_idx, end_idx);
-                        break;
-                    case Smoothing::Roll:
-                        splineRoll = smoothData(splineRoll, windowSize, sigma, start_idx, end_idx);
-                        break;
-                    case Smoothing::Pitch:
-                        splinePitch = smoothData(splinePitch, windowSize, sigma, start_idx, end_idx);
-                        break;
-                    case Smoothing::Yaw:
-                        splineYaw = smoothData(splineYaw, windowSize, sigma, start_idx, end_idx);
-                        break;
-                    case Smoothing::COUNT:
-                        break;
-                    }
-                };
-
-                smoothSpline();
-            }
-        }
+        LOG_DEBUG("{}: Splines size = {} after, startTime = {}", nameId(), splineTime.size(), static_cast<double>(splineTime.front()));
+        startup = addStartupPhase(splineTime, splineX, splineY, splineZ, splineRoll, splinePitch, splineYaw, e_vel, endRollPitchYaw.cast<double>());
+    }
+    for (size_t i = 0; i < splineTime.size(); i++)
+    {
+        splineYaw[i] = i > 0 ? unwrapAngle(splineYaw[i], splineYaw[i - 1], M_PI) : splineYaw[i];
+        LOG_DATA("{}: [t={:.3f}] yaw = {:.3f}°", nameId(), static_cast<double>(splineTime.at(i)), static_cast<double>(rad2deg(splineYaw[i])));
     }
 
     if (!_oscillations.empty())
@@ -2084,19 +2052,60 @@ bool ImuSimulator::initializeSplines()
         }
     }
 
+    if (!_smoothings.empty())
+    {
+        auto dt = static_cast<double>(splineTime[splineTime.size() / 2] - splineTime[splineTime.size() / 2 - 1]);
+
+        for (const auto& smo : _smoothings)
+        {
+            auto windowSize = static_cast<size_t>(smo.windowSizeSeconds / dt + 1);
+            auto sigma = smo.lockWindowToSigma ? static_cast<double>(windowSize) / 6.0 : smo.sigma;
+
+            auto smoothSpline = [&](size_t start_idx = 0, size_t end_idx = SIZE_MAX) {
+                LOG_DEBUG("{}: Smoothing {} spline [{}, {}] (windowSize = {}, sigma = {}, dt = {})",
+                          nameId(), NAV::to_string(smo.target), start_idx, end_idx, windowSize, sigma, dt);
+                switch (smo.target)
+                {
+                case Smoothing::ECEF_X:
+                    splineX = smoothData(splineX, windowSize, sigma, start_idx, end_idx);
+                    break;
+                case Smoothing::ECEF_Y:
+                    splineY = smoothData(splineY, windowSize, sigma, start_idx, end_idx);
+                    break;
+                case Smoothing::ECEF_Z:
+                    splineZ = smoothData(splineZ, windowSize, sigma, start_idx, end_idx);
+                    break;
+                case Smoothing::Roll:
+                    splineRoll = smoothData(splineRoll, windowSize, sigma, start_idx, end_idx);
+                    break;
+                case Smoothing::Pitch:
+                    splinePitch = smoothData(splinePitch, windowSize, sigma, start_idx, end_idx);
+                    break;
+                case Smoothing::Yaw:
+                    splineYaw = smoothData(splineYaw, windowSize, sigma, start_idx, end_idx);
+                    break;
+                case Smoothing::COUNT:
+                    break;
+                }
+            };
+
+            smoothSpline(startup.numHiddenPoints);
+        }
+    }
+
     if (_startupEnabled)
     {
         for (auto& t : splineTime)
         {
-            t += startupDuration;
+            t += startup.duration;
         }
-        _roseSimDuration += startupDuration;
+        _roseSimDuration += startup.duration;
 
         // auto dt = static_cast<double>(splineTime[1] - splineTime[0]);
         // auto windowSize = static_cast<size_t>(20.0 / dt + 1);
         // auto sigma = static_cast<double>(windowSize) / 6.0;
 
-        // size_t end_idx = startupLength + windowSize;
+        // size_t end_idx = startup.numTotalPoints + windowSize;
         // LOG_DEBUG("{}: Smoothing splines at startup [{}, {}] (windowSize = {}, sigma = {}, dt = {})",
         //           nameId(), 0, end_idx, windowSize, sigma, dt);
         // splineX = smoothData(splineX, windowSize, sigma, 0, end_idx);
@@ -2117,12 +2126,14 @@ bool ImuSimulator::initializeSplines()
     return true;
 }
 
-std::pair<double, size_t> ImuSimulator::addStartupPhase(std::vector<long double>& splineTime,
-                                                        std::vector<long double>& splineX, std::vector<long double>& splineY, std::vector<long double>& splineZ) const
+ImuSimulator::StartupPhase ImuSimulator::addStartupPhase(std::vector<long double>& splineTime,
+                                                         std::vector<long double>& splineX, std::vector<long double>& splineY, std::vector<long double>& splineZ,
+                                                         std::vector<long double>& splineRoll, std::vector<long double>& splinePitch, std::vector<long double>& splineYaw,
+                                                         const Eigen::Vector3d& e_endVelocity, const Eigen::Vector3d& endRollPitchYaw) const
 {
     if (splineTime.empty())
     {
-        return { 0.0, 0 };
+        return {};
     }
 
     // Cache the original initial state
@@ -2139,11 +2150,12 @@ std::pair<double, size_t> ImuSimulator::addStartupPhase(std::vector<long double>
     e_start = trafo::lla2ecef_WGS84(lla_start);
 
     // Setup sampling intervals and calculate point counts
-    auto dt = splineTime[splineTime.size() / 2] - splineTime[splineTime.size() / 2 - 1];
-    auto num_hidden = static_cast<size_t>(std::round(30.0 / dt));
+    // auto dt = splineTime[splineTime.size() / 2] - splineTime[splineTime.size() / 2 - 1];
+    long double dt = 1.0 / 15.0;
+    auto num_hidden = static_cast<size_t>(std::round(120.0 / dt));
     auto num_static = static_cast<size_t>(std::round(_startupStaticDuration / dt));
 
-    double velMax = _trajectoryHorizontalSpeed; // [m/s]
+    double velMax = e_endVelocity.norm(); // [m/s]
     double distance = static_cast<double>((e_pos0 - e_start).norm());
 
     // Calculate the exact acceleration needed to hit velMax at the end of 'distance'
@@ -2152,14 +2164,18 @@ std::pair<double, size_t> ImuSimulator::addStartupPhase(std::vector<long double>
     // Total time is just the time it takes to accelerate to velMax
     double transitTime = velMax / accelMax;
 
-    LOG_DEBUG("{}: distance = {:.2f}, transitTime = {:.2f}, accelMax = {:.2f}", nameId(), distance, transitTime, accelMax);
+    LOG_DEBUG("{}: distance = {:.2f}, transitTime = {:.2f}, accelMax = {:.2f}, dt = {:.3f}", nameId(), distance, transitTime, accelMax, dt);
     auto num_transition = static_cast<size_t>(std::round(transitTime / dt));
 
     auto total_new_points = num_hidden + num_static + num_transition;
+    LOG_DEBUG("{}: hidden = {:.2f}s ({}), static = {:.2f}s ({}), transition = {:.2f}s ({})", nameId(),
+              static_cast<double>(num_hidden * dt), num_hidden,
+              static_cast<double>(num_static * dt), num_static,
+              static_cast<double>(num_transition * dt), num_transition);
 
     if (_startupStaticDuration + transitTime <= 1e-6)
     {
-        return { 0.0, 0 };
+        return {};
     }
 
     // Calculate the starting time in the negative direction
@@ -2171,10 +2187,16 @@ std::pair<double, size_t> ImuSimulator::addStartupPhase(std::vector<long double>
     std::vector<long double> pre_x;
     std::vector<long double> pre_y;
     std::vector<long double> pre_z;
+    std::vector<long double> pre_ro;
+    std::vector<long double> pre_pi;
+    std::vector<long double> pre_ya;
     pre_time.reserve(total_new_points);
     pre_x.reserve(total_new_points);
     pre_y.reserve(total_new_points);
     pre_z.reserve(total_new_points);
+    pre_ro.reserve(total_new_points);
+    pre_pi.reserve(total_new_points);
+    pre_ya.reserve(total_new_points);
 
     // Generate the Hidden and static Phase points
     for (size_t i = 0; i < num_hidden + num_static; ++i)
@@ -2183,6 +2205,9 @@ std::pair<double, size_t> ImuSimulator::addStartupPhase(std::vector<long double>
         pre_x.push_back(e_start.x());
         pre_y.push_back(e_start.y());
         pre_z.push_back(e_start.z());
+        pre_ro.push_back(endRollPitchYaw.x());
+        pre_pi.push_back(endRollPitchYaw.y());
+        pre_ya.push_back(endRollPitchYaw.z());
     }
 
     // Generate the Transition Phase points
@@ -2204,15 +2229,23 @@ std::pair<double, size_t> ImuSimulator::addStartupPhase(std::vector<long double>
         pre_x.push_back(std::lerp(e_start.x(), e_pos0.x(), fraction));
         pre_y.push_back(std::lerp(e_start.y(), e_pos0.y(), fraction));
         pre_z.push_back(std::lerp(e_start.z(), e_pos0.z(), fraction));
+        pre_ro.push_back(endRollPitchYaw.x());
+        pre_pi.push_back(endRollPitchYaw.y());
+        pre_ya.push_back(endRollPitchYaw.z());
     }
+    LOG_DEBUG("{}: time: last pre_time = {:.2f}, first splineTime = {}", nameId(), pre_time.back(), splineTime.front());
 
     // Prepend
     splineTime.insert(splineTime.begin(), pre_time.begin(), pre_time.end());
     splineX.insert(splineX.begin(), pre_x.begin(), pre_x.end());
     splineY.insert(splineY.begin(), pre_y.begin(), pre_y.end());
     splineZ.insert(splineZ.begin(), pre_z.begin(), pre_z.end());
+    splineRoll.insert(splineRoll.begin(), pre_ro.begin(), pre_ro.end());
+    splinePitch.insert(splinePitch.begin(), pre_pi.begin(), pre_pi.end());
+    splineYaw.insert(splineYaw.begin(), pre_ya.begin(), pre_ya.end());
 
-    return { static_cast<double>((num_static + num_transition) * dt), total_new_points };
+    LOG_DEBUG("{}: startupDuration = {:.2f}, totalPoints = {}", nameId(), static_cast<double>((num_static + num_transition) * dt), total_new_points);
+    return { .duration = static_cast<double>((num_static + num_transition) * dt), .numTotalPoints = total_new_points, .numHiddenPoints = num_hidden };
 }
 
 bool ImuSimulator::initialize()
