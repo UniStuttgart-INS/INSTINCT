@@ -22,6 +22,7 @@
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "internal/gui/widgets/EnumCombo.hpp"
 #include "internal/gui/widgets/FileDialog.hpp"
+#include "util/Eigen.hpp"
 #include "util/Logger.hpp"
 #include "util/StringUtil.hpp"
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
@@ -2138,16 +2139,23 @@ ImuSimulator::StartupPhase ImuSimulator::addStartupPhase(std::vector<long double
 
     // Cache the original initial state
     long double t_orig_0 = splineTime.front();
-    Eigen::Vector3ld e_pos0(splineX.front(), splineY.front(), splineZ.front());
+    Eigen::Vector3ld e_posEnd(splineX.front(), splineY.front(), splineZ.front());
 
     // Calculate the static startup positions
-    Eigen::Vector3d e_startupLocationDelta = trafo::e_Quat_n(_startPosition.latitude(), _startPosition.longitude()) * _startupLocationDelta;
-    Eigen::Vector3ld e_start = e_pos0 + e_startupLocationDelta.cast<long double>();
+    Eigen::Quaterniond e_quat_n = trafo::e_Quat_n(_startPosition.latitude(), _startPosition.longitude());
+    Eigen::Vector3d e_startupLocationDelta = e_quat_n * _startupLocationDelta;
+    Eigen::Vector3ld e_posStart = e_posEnd + e_startupLocationDelta.cast<long double>();
 
-    auto lla_pos0 = trafo::ecef2lla_WGS84(e_pos0);
-    auto lla_start = trafo::ecef2lla_WGS84(e_start);
-    lla_start.z() = lla_pos0.z() + _startupLocationDelta.z();
-    e_start = trafo::lla2ecef_WGS84(lla_start);
+    auto lla_posEnd = trafo::ecef2lla_WGS84(e_posEnd);
+    auto lla_posStart = trafo::ecef2lla_WGS84(e_posStart);
+    lla_posStart.z() = lla_posEnd.z() + _startupLocationDelta.z();
+    e_posStart = trafo::lla2ecef_WGS84(lla_posStart);
+
+    Eigen::Vector3d n_direction = e_quat_n.conjugate() * (e_posEnd - e_posStart).cast<double>();
+
+    double rollStart = 0.0;
+    double pitchStart = _pitchMultiplier * calcPitchFromVelocity(n_direction);
+    double yawStart = calcYawFromVelocity(n_direction);
 
     // Setup sampling intervals and calculate point counts
     // auto dt = splineTime[splineTime.size() / 2] - splineTime[splineTime.size() / 2 - 1];
@@ -2156,7 +2164,7 @@ ImuSimulator::StartupPhase ImuSimulator::addStartupPhase(std::vector<long double
     auto num_static = static_cast<size_t>(std::round(_startupStaticDuration / dt));
 
     double velMax = e_endVelocity.norm(); // [m/s]
-    double distance = static_cast<double>((e_pos0 - e_start).norm());
+    double distance = static_cast<double>((e_posEnd - e_posStart).norm());
 
     // Calculate the exact acceleration needed to hit velMax at the end of 'distance'
     double accelMax = std::pow(velMax, 2.0) / (2.0 * distance);
@@ -2164,7 +2172,7 @@ ImuSimulator::StartupPhase ImuSimulator::addStartupPhase(std::vector<long double
     // Total time is just the time it takes to accelerate to velMax
     double transitTime = velMax / accelMax;
 
-    LOG_DEBUG("{}: distance = {:.2f}, transitTime = {:.2f}, accelMax = {:.2f}, dt = {:.3f}", nameId(), distance, transitTime, accelMax, dt);
+    LOG_DATA("{}: distance = {:.2f}, transitTime = {:.2f}, accelMax = {:.2f}, dt = {:.3f}", nameId(), distance, transitTime, accelMax, dt);
     auto num_transition = static_cast<size_t>(std::round(transitTime / dt));
 
     auto total_new_points = num_hidden + num_static + num_transition;
@@ -2202,12 +2210,12 @@ ImuSimulator::StartupPhase ImuSimulator::addStartupPhase(std::vector<long double
     for (size_t i = 0; i < num_hidden + num_static; ++i)
     {
         pre_time.push_back(t_start + i * dt);
-        pre_x.push_back(e_start.x());
-        pre_y.push_back(e_start.y());
-        pre_z.push_back(e_start.z());
-        pre_ro.push_back(endRollPitchYaw.x());
-        pre_pi.push_back(endRollPitchYaw.y());
-        pre_ya.push_back(endRollPitchYaw.z());
+        pre_x.push_back(e_posStart.x());
+        pre_y.push_back(e_posStart.y());
+        pre_z.push_back(e_posStart.z());
+        pre_ro.push_back(rollStart);
+        pre_pi.push_back(pitchStart);
+        pre_ya.push_back(yawStart);
     }
 
     // Generate the Transition Phase points
@@ -2226,14 +2234,14 @@ ImuSimulator::StartupPhase ImuSimulator::addStartupPhase(std::vector<long double
         // Clamp to 1.0 to prevent floating-point overshoot at the end
         fraction = std::min(fraction, 1.0);
 
-        pre_x.push_back(std::lerp(e_start.x(), e_pos0.x(), fraction));
-        pre_y.push_back(std::lerp(e_start.y(), e_pos0.y(), fraction));
-        pre_z.push_back(std::lerp(e_start.z(), e_pos0.z(), fraction));
-        pre_ro.push_back(endRollPitchYaw.x());
-        pre_pi.push_back(endRollPitchYaw.y());
-        pre_ya.push_back(endRollPitchYaw.z());
+        pre_x.push_back(std::lerp(e_posStart.x(), e_posEnd.x(), fraction));
+        pre_y.push_back(std::lerp(e_posStart.y(), e_posEnd.y(), fraction));
+        pre_z.push_back(std::lerp(e_posStart.z(), e_posEnd.z(), fraction));
+        pre_ro.push_back(std::lerp(rollStart, endRollPitchYaw.x(), fraction));
+        pre_pi.push_back(std::lerp(pitchStart, endRollPitchYaw.y(), fraction));
+        pre_ya.push_back(std::lerp(yawStart, endRollPitchYaw.z(), fraction));
     }
-    LOG_DEBUG("{}: time: last pre_time = {:.2f}, first splineTime = {}", nameId(), pre_time.back(), splineTime.front());
+    LOG_DATA("{}: time: last pre_time = {:.2f}, first splineTime = {}", nameId(), pre_time.back(), splineTime.front());
 
     // Prepend
     splineTime.insert(splineTime.begin(), pre_time.begin(), pre_time.end());
