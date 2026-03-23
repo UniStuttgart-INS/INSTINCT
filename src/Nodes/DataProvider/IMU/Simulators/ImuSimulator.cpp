@@ -926,7 +926,7 @@ void ImuSimulator::guiConfig()
             for (size_t i = 0; i < num_rows; ++i)
             {
                 // Do not write line if the time exceeds the lower limit
-                if (time_vec[i] < time_limit_lower)
+                if (time_vec[i] + 1e-8 < time_limit_lower) // ensure 0.0 is printed, often the time is e.g. -1e-12
                 {
                     continue;
                 }
@@ -937,7 +937,7 @@ void ImuSimulator::guiConfig()
                 }
 
                 // Write the first column (Time)
-                file << time_vec[i];
+                file << (std::abs(time_vec[i]) < 1e-8 ? 0.0L : time_vec[i]);
 
                 // C++17 fold expression: writes a comma then the value for all remaining columns
                 if constexpr (sizeof...(rest_vecs) > 0)
@@ -967,18 +967,18 @@ void ImuSimulator::guiConfig()
             }
     #endif
 
-            // auto wrapAngle = [](auto angle, auto limit) {
-            //     auto fullRange = 2 * limit;
-            //     auto wrapped = std::fmod(angle + limit, fullRange); // fmod returns a value with the same sign as 'angle'
-            //     if (wrapped <= 0) { wrapped += fullRange; }
-            //     return wrapped - limit;
-            // };
-            // auto splineRoll = _splines.roll.getPointsY();
-            // auto splinePitch = _splines.pitch.getPointsY();
-            // auto splineYaw = _splines.yaw.getPointsY();
-            // std::ranges::transform(splineRoll.begin(), splineRoll.end(), splineRoll.begin(), [&](const auto& angle) { return wrapAngle(angle, M_PI); });
-            // std::ranges::transform(splinePitch.begin(), splinePitch.end(), splinePitch.begin(), [&](const auto& angle) { return wrapAngle(angle, M_PI_2); });
-            // std::ranges::transform(splineYaw.begin(), splineYaw.end(), splineYaw.begin(), [&](const auto& angle) { return wrapAngle(angle, M_PI); });
+            auto wrapAngle = [](auto angle, auto limit) {
+                auto fullRange = 2 * limit;
+                auto wrapped = std::fmod(angle + limit, fullRange); // fmod returns a value with the same sign as 'angle'
+                if (wrapped <= 0) { wrapped += fullRange; }
+                return wrapped - limit;
+            };
+            auto splineRoll = _splines.roll.getPointsY();
+            auto splinePitch = _splines.pitch.getPointsY();
+            auto splineYaw = _splines.yaw.getPointsY();
+            std::ranges::transform(splineRoll.begin(), splineRoll.end(), splineRoll.begin(), [&](const auto& angle) { return wrapAngle(angle, M_PI); });
+            std::ranges::transform(splinePitch.begin(), splinePitch.end(), splinePitch.begin(), [&](const auto& angle) { return wrapAngle(angle, M_PI_2); });
+            std::ranges::transform(splineYaw.begin(), splineYaw.end(), splineYaw.begin(), [&](const auto& angle) { return wrapAngle(angle, M_PI); });
 
             write_splines_to_csv(flow::GetOutputPath() / _writeSplineCsvFilepath,
                                  "Time [s], ECEF X [m], ECEF Y [m], ECEF Z [m], Roll [rad], Pitch [rad], Yaw [rad]",
@@ -986,8 +986,8 @@ void ImuSimulator::guiConfig()
                                  _writeSplineLimitToSimDuration ? static_cast<long double>(_roseSimDuration) : std::numeric_limits<long double>::max(),
                                  _splines.x.getPointsX(),
                                  _splines.x.getPointsY(), _splines.y.getPointsY(), _splines.z.getPointsY(),
-                                 _splines.roll.getPointsY(), _splines.pitch.getPointsY(), _splines.yaw.getPointsY());
-            //  splineRoll, splinePitch, splineYaw);
+                                 //  _splines.roll.getPointsY(), _splines.pitch.getPointsY(), _splines.yaw.getPointsY());
+                                 splineRoll, splinePitch, splineYaw);
             LOG_INFO("{}: Spline written to {}", nameId(), flow::GetOutputPath() / _writeSplineCsvFilepath);
         }
         else
