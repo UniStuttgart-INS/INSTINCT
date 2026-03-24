@@ -981,7 +981,7 @@ void ImuSimulator::guiConfig()
             std::ranges::transform(splineYaw.begin(), splineYaw.end(), splineYaw.begin(), [&](const auto& angle) { return wrapAngle(angle, M_PI); });
 
             write_splines_to_csv(flow::GetOutputPath() / _writeSplineCsvFilepath,
-                                 "Time [s], ECEF X [m], ECEF Y [m], ECEF Z [m], Roll [rad], Pitch [rad], Yaw [rad]",
+                                 "Time [s],ECEF X [m],ECEF Y [m],ECEF Z [m],Roll [rad],Pitch [rad],Yaw [rad]",
                                  _writeSplineLimitToSimDuration ? 0.0 : std::numeric_limits<long double>::lowest(),
                                  _writeSplineLimitToSimDuration ? static_cast<long double>(_roseSimDuration) : std::numeric_limits<long double>::max(),
                                  _splines.x.getPointsX(),

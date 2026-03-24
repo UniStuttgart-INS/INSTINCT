@@ -32,7 +32,7 @@
 ///
 /// - partial pressure of water vapor in [hPa]
 ///     \anchor eq-Saastamoinen-partial_pressure_water_vapor \f{equation}{ \label{eq:eq-Saastamoinen-partial_pressure_water_vapor}
-///         e = 6.108 \cdot \exp \left\{ \frac{17.15 T-4684.0}{T-38.45} \right\} \cdot \frac{h_{\mathrm{rel}}}{100}
+///         e = 6.108 \cdot \exp \left\{ \frac{17.15 T-4684.0}{T-38.45} \right\} \cdot h_{\mathrm{rel}}
 ///     \f}
 ///
 ///     where
