@@ -1753,15 +1753,15 @@ bool ImuSimulator::initializeSplines()
                     if (inverse)
                     {
                         newPhi = (-(frac - upperLimit) + newLowerLimit) * maxPhi;
-                        LOG_DATA("{}: phi = {:.3f} ({:.3f}), newPhi = {:.3f}, i = {}, upperLimit = {:.2f}, newLowerLimit = {:.2f} (inverse)",
-                                 nameId(), phi, frac, newPhi, i, upperLimit, newLowerLimit);
+                        // LOG_DATA("{}: phi = {:.3f} ({:.3f}), newPhi = {:.3f}, i = {}, upperLimit = {:.2f}, newLowerLimit = {:.2f} (inverse)",
+                        //          nameId(), phi, frac, newPhi, i, upperLimit, newLowerLimit);
                     }
                     else
                     {
                         double lowerLimit = di / nSplits;
                         newPhi = ((frac - lowerLimit) + newLowerLimit) * maxPhi;
-                        LOG_DATA("{}: phi = {:.3f} ({:.3f}), newPhi = {:.3f}, i = {}, upperLimit = {:.2f}, newLowerLimit = {:.2f}, lowerLimit = {:.2f}",
-                                 nameId(), phi, frac, newPhi, i, upperLimit, newLowerLimit, lowerLimit);
+                        // LOG_DATA("{}: phi = {:.3f} ({:.3f}), newPhi = {:.3f}, i = {}, upperLimit = {:.2f}, newLowerLimit = {:.2f}, lowerLimit = {:.2f}",
+                        //          nameId(), phi, frac, newPhi, i, upperLimit, newLowerLimit, lowerLimit);
                     }
                     break;
                 }
@@ -1781,8 +1781,8 @@ bool ImuSimulator::initializeSplines()
                 e_position = trafo::lla2ecef_WGS84(lla_position);
             }
 
-            LOG_DATA("{}: [{}] t={: 8.3f}s | l={:8.6}m | phi={:.6f} - {:.6f} = {:.4e} (dphi = {:.4e}) {}", nameId(),
-                     splineTime.size() - 1, time, length, phi, maxPhi, maxPhi - phi, dPhi, std::abs(maxPhi - phi) < 1.0 * dPhi);
+            // LOG_DATA("{}: [{}] t={: 8.3f}s | l={:8.6}m | phi={:.6f} - {:.6f} = {:.4e} (dphi = {:.4e}) {}", nameId(),
+            //          splineTime.size() - 1, time, length, phi, maxPhi, maxPhi - phi, dPhi, std::abs(maxPhi - phi) < 1.0 * dPhi);
 
             splineX.push_back(e_position[0]);
             splineY.push_back(e_position[1]);
@@ -2023,10 +2023,11 @@ bool ImuSimulator::initializeSplines()
         LOG_DEBUG("{}: Splines size = {} after, startTime = {}", nameId(), splineTime.size(), static_cast<double>(splineTime.front()));
         startup = addStartupPhase(splineTime, splineX, splineY, splineZ, splineRoll, splinePitch, splineYaw, e_vel, endRollPitchYaw.cast<double>());
     }
+    LOG_DATA("{}: Unwrapping Yaw", nameId());
     for (size_t i = 0; i < splineTime.size(); i++)
     {
         splineYaw[i] = i > 0 ? unwrapAngle(splineYaw[i], splineYaw[i - 1], M_PI) : splineYaw[i];
-        LOG_DATA("{}: [t={:.3f}] yaw = {:.3f}°", nameId(), static_cast<double>(splineTime.at(i)), static_cast<double>(rad2deg(splineYaw[i])));
+        // LOG_DATA("{}: [t={:.3f}] yaw = {:.3f}°", nameId(), static_cast<double>(splineTime.at(i)), static_cast<double>(rad2deg(splineYaw[i])));
     }
 
     if (!_oscillations.empty())
@@ -2172,7 +2173,7 @@ ImuSimulator::StartupPhase ImuSimulator::addStartupPhase(std::vector<long double
     // Total time is just the time it takes to accelerate to velMax
     double transitTime = velMax / accelMax;
 
-    LOG_DATA("{}: distance = {:.2f}, transitTime = {:.2f}, accelMax = {:.2f}, dt = {:.3f}", nameId(), distance, transitTime, accelMax, dt);
+    LOG_DATA("{}: distance = {:.2f}, transitTime = {:.2f}, accelMax = {:.2f}, dt = {:.3f}", nameId(), distance, transitTime, accelMax, static_cast<double>(dt));
     auto num_transition = static_cast<size_t>(std::round(transitTime / dt));
 
     auto total_new_points = num_hidden + num_static + num_transition;
@@ -2206,6 +2207,7 @@ ImuSimulator::StartupPhase ImuSimulator::addStartupPhase(std::vector<long double
     pre_pi.reserve(total_new_points);
     pre_ya.reserve(total_new_points);
 
+    LOG_DATA("{}: Generating {} hidden and {} static points", nameId(), num_hidden, num_static);
     // Generate the Hidden and static Phase points
     for (size_t i = 0; i < num_hidden + num_static; ++i)
     {
@@ -2218,6 +2220,7 @@ ImuSimulator::StartupPhase ImuSimulator::addStartupPhase(std::vector<long double
         pre_ya.push_back(yawStart);
     }
 
+    LOG_DATA("{}: Generating {} transition points", nameId(), num_transition);
     // Generate the Transition Phase points
     for (size_t i = 0; i < num_transition; ++i)
     {
@@ -2241,7 +2244,7 @@ ImuSimulator::StartupPhase ImuSimulator::addStartupPhase(std::vector<long double
         pre_pi.push_back(std::lerp(pitchStart, endRollPitchYaw.y(), fraction));
         pre_ya.push_back(std::lerp(yawStart, endRollPitchYaw.z(), fraction));
     }
-    LOG_DATA("{}: time: last pre_time = {:.2f}, first splineTime = {}", nameId(), pre_time.back(), splineTime.front());
+    LOG_DATA("{}: time: last pre_time = {:.2f}, first splineTime = {}", nameId(), static_cast<double>(pre_time.back()), static_cast<double>(splineTime.front()));
 
     // Prepend
     splineTime.insert(splineTime.begin(), pre_time.begin(), pre_time.end());

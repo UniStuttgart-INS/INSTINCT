@@ -1,5 +1,45 @@
 {
+    "bottomViewHeight": 400.0,
     "colormaps": [],
+    "commonLog": {
+        "useGuiInputs": false
+    },
+    "fonts": {
+        "useBigDefaultFont": false,
+        "useBigMonoFont": false,
+        "useBigPanelFont": false,
+        "useBigWindowFont": false
+    },
+    "gridLinesEnabled": 0.1568627506494522,
+    "header": {
+        "colors": {
+            "deinitialized": {
+                "a": 255,
+                "b": 128,
+                "g": 128,
+                "r": 255
+            },
+            "disabled": {
+                "a": 255,
+                "b": 192,
+                "g": 192,
+                "r": 192
+            },
+            "initialized": {
+                "a": 255,
+                "b": 128,
+                "g": 255,
+                "r": 128
+            }
+        }
+    },
+    "hideFPS": false,
+    "leftPane": {
+        "hide": false,
+        "leftWidth": 301.0,
+        "rightWidth": 899.0
+    },
+    "lightMode": false,
     "links": {
         "link-139": {
             "endPinId": 133,
@@ -231,24 +271,48 @@
                     "estimateInterFrequencyBiases": true,
                     "estimatorType": 1,
                     "kalmanFilter": {
-                        "covarianceAccel": [
-                            3.0,
-                            1.5
-                        ],
-                        "covarianceAccelUnit": 0,
-                        "covarianceClkFrequencyDrift": 0.04,
-                        "covarianceClkFrequencyDriftUnit": 1,
-                        "covarianceClkPhaseDrift": 0.01,
-                        "covarianceClkPhaseDriftUnit": 1,
-                        "covarianceInterInterFrequencyBias": 1e-06,
-                        "covarianceInterInterFrequencyBiasUnit": 1,
-                        "covarianceInterSysClkFrequencyDrift": 0.04,
-                        "covarianceInterSysClkFrequencyDriftUnit": 1,
-                        "covarianceInterSysClkPhaseDrift": 0.01,
-                        "covarianceInterSysClkPhaseDriftUnit": 1,
-                        "qCalculationAlgorithm": 0
+                        "interFrequencyBiasModel": {
+                            "covarianceInterFrequencyBias": 1e-06,
+                            "covarianceInterFrequencyBiasUnit": "m^2/s"
+                        },
+                        "motionModel": {
+                            "covarianceAccel": [
+                                3.0,
+                                1.5
+                            ],
+                            "covarianceAccelUnit": "m/√(s^3)"
+                        },
+                        "receiverClockModel": {
+                            "covarianceClkFrequencyDrift": 0.04,
+                            "covarianceClkFrequencyDriftUnit": "m^2/s^3",
+                            "covarianceClkPhaseDrift": 0.01,
+                            "covarianceClkPhaseDriftUnit": "m^2/s"
+                        },
+                        "systemModelCalcAlgorithm": 1
                     },
                     "obsEstimator": {
+                        "antenna": [
+                            [
+                                0,
+                                {
+                                    "autoDetermine": true,
+                                    "correctPCO": true,
+                                    "correctPCV": true,
+                                    "hen_delta": {
+                                        "0": {
+                                            "0": 0.0
+                                        },
+                                        "1": {
+                                            "0": 0.0
+                                        },
+                                        "2": {
+                                            "0": 0.0
+                                        }
+                                    },
+                                    "name": ""
+                                }
+                            ]
+                        ],
                         "gnssMeasurementError": {
                             "carrierStdDev": 0.001,
                             "codeStdDev": 0.1,
@@ -284,10 +348,6 @@
                                 "a": 0.3,
                                 "b": 0.5
                             },
-                            "modelParametersSineType": {
-                                "a": 0.64,
-                                "b": 0.36
-                            },
                             "plotCN0": 30.0
                         },
                         "ionosphereModel": 0,
@@ -296,7 +356,10 @@
                                 0,
                                 {
                                     "pressureModel": 0,
-                                    "temperatureModel": 0,
+                                    "temperatureModel": {
+                                        "constantTemperature": 290.0,
+                                        "model": "ISA"
+                                    },
                                     "waterVaporModel": 0
                                 }
                             ],
@@ -304,7 +367,10 @@
                                 0,
                                 {
                                     "pressureModel": 0,
-                                    "temperatureModel": 0,
+                                    "temperatureModel": {
+                                        "constantTemperature": 290.0,
+                                        "model": "ISA"
+                                    },
                                     "waterVaporModel": 0
                                 }
                             ],
@@ -312,7 +378,10 @@
                                 0,
                                 {
                                     "pressureModel": 0,
-                                    "temperatureModel": 0,
+                                    "temperatureModel": {
+                                        "constantTemperature": 290.0,
+                                        "model": "ISA"
+                                    },
                                     "waterVaporModel": 0
                                 }
                             ],
@@ -320,7 +389,10 @@
                                 0,
                                 {
                                     "pressureModel": 0,
-                                    "temperatureModel": 0,
+                                    "temperatureModel": {
+                                        "constantTemperature": 290.0,
+                                        "model": "ISA"
+                                    },
                                     "waterVaporModel": 0
                                 }
                             ]
@@ -329,7 +401,60 @@
                     "obsFilter": {
                         "codes": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111110011111111001111111",
                         "elevationMask": 10.0,
-                        "excludedSatellites": [],
+                        "excludedSatellites": [
+                            {
+                                "num": 1,
+                                "sys": "BDS"
+                            },
+                            {
+                                "num": 2,
+                                "sys": "BDS"
+                            },
+                            {
+                                "num": 3,
+                                "sys": "BDS"
+                            },
+                            {
+                                "num": 4,
+                                "sys": "BDS"
+                            },
+                            {
+                                "num": 5,
+                                "sys": "BDS"
+                            },
+                            {
+                                "num": 59,
+                                "sys": "BDS"
+                            },
+                            {
+                                "num": 60,
+                                "sys": "BDS"
+                            },
+                            {
+                                "num": 61,
+                                "sys": "BDS"
+                            },
+                            {
+                                "num": 62,
+                                "sys": "BDS"
+                            },
+                            {
+                                "num": 3,
+                                "sys": "QZSS"
+                            },
+                            {
+                                "num": 3,
+                                "sys": "IRNSS"
+                            },
+                            {
+                                "num": 6,
+                                "sys": "IRNSS"
+                            },
+                            {
+                                "num": 7,
+                                "sys": "IRNSS"
+                            }
+                        ],
                         "frequencies": 1,
                         "neededObsType": [
                             0
@@ -894,7 +1019,8 @@
             "data": {
                 "FileReader": {
                     "path": "../test/data/GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/Iono-none_tropo-none/Septentrio-PolaRx5TR_G.nav"
-                }
+                },
+                "allowMissingHeaderLines": false
             },
             "enabled": true,
             "id": 54,
@@ -922,6 +1048,7 @@
                 "FileReader": {
                     "path": "../test/data/GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/Iono-none_tropo-none/Septentrio-PolaRx5TR.obs"
                 },
+                "allowMissingHeaderLines": false,
                 "eraseLessPreciseCodes": true
             },
             "enabled": true,
@@ -1087,103 +1214,61 @@
                                 "displayName": "Number satellites"
                             },
                             {
-                                "displayName": "Receiver clock bias [s]"
+                                "displayName": "Receiver clock bias GPS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias StDev GPS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias GAL [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias StDev GAL [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias GLO [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias StDev GLO [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias BDS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias StDev BDS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias QZSS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias StDev QZSS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias IRNSS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias StDev IRNSS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias SBAS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias StDev SBAS [s]"
                             },
                             {
                                 "displayName": "Receiver clock drift [s/s]"
                             },
                             {
-                                "displayName": "Receiver clock bias StDev [s]"
-                            },
-                            {
                                 "displayName": "Receiver clock drift StDev [s/s]"
                             },
                             {
-                                "displayName": "System time reference system"
+                                "displayName": "HDOP"
                             },
                             {
-                                "displayName": "GPS system time difference [s]"
+                                "displayName": "VDOP"
                             },
                             {
-                                "displayName": "GAL system time difference [s]"
-                            },
-                            {
-                                "displayName": "GLO system time difference [s]"
-                            },
-                            {
-                                "displayName": "BDS system time difference [s]"
-                            },
-                            {
-                                "displayName": "QZSS system time difference [s]"
-                            },
-                            {
-                                "displayName": "IRNSS system time difference [s]"
-                            },
-                            {
-                                "displayName": "SBAS system time difference [s]"
-                            },
-                            {
-                                "displayName": "GPS system time drift difference [s/s]"
-                            },
-                            {
-                                "displayName": "GAL system time drift difference [s/s]"
-                            },
-                            {
-                                "displayName": "GLO system time drift difference [s/s]"
-                            },
-                            {
-                                "displayName": "BDS system time drift difference [s/s]"
-                            },
-                            {
-                                "displayName": "QZSS system time drift difference [s/s]"
-                            },
-                            {
-                                "displayName": "IRNSS system time drift difference [s/s]"
-                            },
-                            {
-                                "displayName": "SBAS system time drift difference [s/s]"
-                            },
-                            {
-                                "displayName": "GPS system time difference StDev [s]"
-                            },
-                            {
-                                "displayName": "GAL system time difference StDev [s]"
-                            },
-                            {
-                                "displayName": "GLO system time difference StDev [s]"
-                            },
-                            {
-                                "displayName": "BDS system time difference StDev [s]"
-                            },
-                            {
-                                "displayName": "QZSS system time difference StDev [s]"
-                            },
-                            {
-                                "displayName": "IRNSS system time difference StDev [s]"
-                            },
-                            {
-                                "displayName": "SBAS system time difference StDev [s]"
-                            },
-                            {
-                                "displayName": "GPS system time drift difference StDev [s/s]"
-                            },
-                            {
-                                "displayName": "GAL system time drift difference StDev [s/s]"
-                            },
-                            {
-                                "displayName": "GLO system time drift difference StDev [s/s]"
-                            },
-                            {
-                                "displayName": "BDS system time drift difference StDev [s/s]"
-                            },
-                            {
-                                "displayName": "QZSS system time drift difference StDev [s/s]"
-                            },
-                            {
-                                "displayName": "IRNSS system time drift difference StDev [s/s]"
-                            },
-                            {
-                                "displayName": "SBAS system time drift difference StDev [s/s]"
+                                "displayName": "PDOP"
                             }
                         ],
                         "size": 0,
@@ -2237,6 +2322,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -2298,6 +2387,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -2359,6 +2452,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -2420,6 +2517,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -2481,6 +2582,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -2542,6 +2647,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -2603,6 +2712,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -2664,6 +2777,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -2763,6 +2880,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -2824,6 +2945,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -2885,6 +3010,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -2946,6 +3075,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -3007,6 +3140,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -3068,6 +3205,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -3129,6 +3270,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -3190,6 +3335,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -3289,6 +3438,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -3350,6 +3503,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -3411,6 +3568,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -3472,6 +3633,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -3533,6 +3698,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -3594,6 +3763,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -3655,6 +3828,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -3716,6 +3893,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -3815,6 +3996,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -3876,6 +4061,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -3937,6 +4126,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -3998,6 +4191,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4059,6 +4256,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4120,6 +4321,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4181,6 +4386,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4242,6 +4451,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4341,6 +4554,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 42,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -4402,6 +4619,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 43,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -4463,6 +4684,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 43,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -4524,6 +4749,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 43,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -4585,6 +4814,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 43,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -4646,6 +4879,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 43,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -4707,6 +4944,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 43,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -4768,6 +5009,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 43,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -4849,557 +5094,7 @@
                         "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 1048576,
-                        "plotItems": [
-                            {
-                                "axis": 3,
-                                "dataIndex": 43,
-                                "displayName": "Receiver clock bias [s]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "colormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "colormapMaskDataCmpIdx": 43,
-                                    "eventMarkerFillColor": {
-                                        "w": 1.0,
-                                        "x": 1.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "eventMarkerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 1.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "eventMarkerSize": 6.0,
-                                    "eventMarkerStyle": 7,
-                                    "eventMarkerWeight": 2.0,
-                                    "eventTooltipFilterRegex": "",
-                                    "eventsEnabled": false,
-                                    "legendName": "Receiver clock bias",
-                                    "lineType": 1,
-                                    "markerColormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "markerColormapMaskDataCmpIdx": 43,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 4,
-                                "dataIndex": 47,
-                                "displayName": "System time reference system",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "colormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "colormapMaskDataCmpIdx": 47,
-                                    "eventMarkerFillColor": {
-                                        "w": 1.0,
-                                        "x": 1.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "eventMarkerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 1.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "eventMarkerSize": 6.0,
-                                    "eventMarkerStyle": 7,
-                                    "eventMarkerWeight": 2.0,
-                                    "eventTooltipFilterRegex": "",
-                                    "eventsEnabled": false,
-                                    "legendName": "System time reference system",
-                                    "lineType": 1,
-                                    "markerColormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "markerColormapMaskDataCmpIdx": 47,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 48,
-                                "displayName": "GPS system time difference [s]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "colormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "colormapMaskDataCmpIdx": 48,
-                                    "eventMarkerFillColor": {
-                                        "w": 1.0,
-                                        "x": 1.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "eventMarkerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 1.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "eventMarkerSize": 6.0,
-                                    "eventMarkerStyle": 7,
-                                    "eventMarkerWeight": 2.0,
-                                    "eventTooltipFilterRegex": "",
-                                    "eventsEnabled": false,
-                                    "legendName": "",
-                                    "lineType": 1,
-                                    "markerColormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "markerColormapMaskDataCmpIdx": 48,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 49,
-                                "displayName": "GAL system time difference [s]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "colormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "colormapMaskDataCmpIdx": 49,
-                                    "eventMarkerFillColor": {
-                                        "w": 1.0,
-                                        "x": 1.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "eventMarkerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 1.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "eventMarkerSize": 6.0,
-                                    "eventMarkerStyle": 7,
-                                    "eventMarkerWeight": 2.0,
-                                    "eventTooltipFilterRegex": "",
-                                    "eventsEnabled": false,
-                                    "legendName": "",
-                                    "lineType": 1,
-                                    "markerColormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "markerColormapMaskDataCmpIdx": 49,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 50,
-                                "displayName": "GLO system time difference [s]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "colormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "colormapMaskDataCmpIdx": 50,
-                                    "eventMarkerFillColor": {
-                                        "w": 1.0,
-                                        "x": 1.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "eventMarkerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 1.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "eventMarkerSize": 6.0,
-                                    "eventMarkerStyle": 7,
-                                    "eventMarkerWeight": 2.0,
-                                    "eventTooltipFilterRegex": "",
-                                    "eventsEnabled": false,
-                                    "legendName": "",
-                                    "lineType": 1,
-                                    "markerColormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "markerColormapMaskDataCmpIdx": 50,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 51,
-                                "displayName": "BDS system time difference [s]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "colormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "colormapMaskDataCmpIdx": 51,
-                                    "eventMarkerFillColor": {
-                                        "w": 1.0,
-                                        "x": 1.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "eventMarkerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 1.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "eventMarkerSize": 6.0,
-                                    "eventMarkerStyle": 7,
-                                    "eventMarkerWeight": 2.0,
-                                    "eventTooltipFilterRegex": "",
-                                    "eventsEnabled": false,
-                                    "legendName": "",
-                                    "lineType": 1,
-                                    "markerColormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "markerColormapMaskDataCmpIdx": 51,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 52,
-                                "displayName": "QZSS system time difference [s]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "colormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "colormapMaskDataCmpIdx": 52,
-                                    "eventMarkerFillColor": {
-                                        "w": 1.0,
-                                        "x": 1.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "eventMarkerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 1.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "eventMarkerSize": 6.0,
-                                    "eventMarkerStyle": 7,
-                                    "eventMarkerWeight": 2.0,
-                                    "eventTooltipFilterRegex": "",
-                                    "eventsEnabled": false,
-                                    "legendName": "",
-                                    "lineType": 1,
-                                    "markerColormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "markerColormapMaskDataCmpIdx": 52,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 53,
-                                "displayName": "IRNSS system time difference [s]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "colormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "colormapMaskDataCmpIdx": 53,
-                                    "eventMarkerFillColor": {
-                                        "w": 1.0,
-                                        "x": 1.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "eventMarkerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 1.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "eventMarkerSize": 6.0,
-                                    "eventMarkerStyle": 7,
-                                    "eventMarkerWeight": 2.0,
-                                    "eventTooltipFilterRegex": "",
-                                    "eventsEnabled": false,
-                                    "legendName": "",
-                                    "lineType": 1,
-                                    "markerColormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "markerColormapMaskDataCmpIdx": 53,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 54,
-                                "displayName": "SBAS system time difference [s]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "colormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "colormapMaskDataCmpIdx": 54,
-                                    "eventMarkerFillColor": {
-                                        "w": 1.0,
-                                        "x": 1.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "eventMarkerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 1.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "eventMarkerSize": 6.0,
-                                    "eventMarkerStyle": 7,
-                                    "eventMarkerWeight": 2.0,
-                                    "eventTooltipFilterRegex": "",
-                                    "eventsEnabled": false,
-                                    "legendName": "",
-                                    "lineType": 1,
-                                    "markerColormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "markerColormapMaskDataCmpIdx": 54,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            }
-                        ],
+                        "plotItems": [],
                         "rightPaneWidth": 406.0,
                         "selectedPin": 0,
                         "selectedXdata": [
@@ -5454,6 +5149,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 27,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -5515,6 +5214,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 27,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -5576,6 +5279,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 27,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -5637,6 +5344,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 27,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -5698,6 +5409,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 27,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -5759,6 +5474,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 27,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -5820,6 +5539,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 27,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -5881,6 +5604,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 27,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -5980,6 +5707,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 17,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -6041,6 +5772,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 17,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -6102,6 +5837,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 17,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -6163,6 +5902,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 17,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -6224,6 +5967,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 17,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -6285,6 +6032,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 17,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -6346,6 +6097,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 17,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -6407,6 +6162,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 17,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -6564,7 +6323,8 @@
             "data": {
                 "FileReader": {
                     "path": "../test/data/GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/Iono-none_tropo-none/Septentrio-PolaRx5TR_R.nav"
-                }
+                },
+                "allowMissingHeaderLines": false
             },
             "enabled": true,
             "id": 86,
@@ -6591,7 +6351,8 @@
             "data": {
                 "FileReader": {
                     "path": "../test/data/GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/Iono-none_tropo-none/Septentrio-PolaRx5TR_E.nav"
-                }
+                },
+                "allowMissingHeaderLines": false
             },
             "enabled": true,
             "id": 93,
@@ -6614,5 +6375,6 @@
             },
             "type": "RinexNavFile"
         }
-    }
+    },
+    "transparentWindows": 1.0
 }

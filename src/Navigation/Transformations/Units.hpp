@@ -50,6 +50,15 @@ template<typename Scalar>
     return rad * 180.0 / std::numbers::pi_v<double>;
 }
 
+/// @brief Convert a latitude, longitude, altitude from radians to degree
+/// @param[in] rad Value to convert in [rad, rad, m]
+/// @return The converted value in [deg, deg, m]
+template<typename Scalar>
+[[nodiscard]] inline Eigen::Vector3<Scalar> rad2deg_lla(const Eigen::Vector3<Scalar>& rad)
+{
+    return { rad2deg(rad(0)), rad2deg(rad(1)), rad(2) };
+}
+
 /// @brief Convert Semicircles to Radians
 /// @param[in] semicircles Value to convert in [semicircles]
 /// @return The converted value in [rad]
