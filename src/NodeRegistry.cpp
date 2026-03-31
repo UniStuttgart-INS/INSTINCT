@@ -171,6 +171,7 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/Utility/Demo.hpp"
 #include "Nodes/Utility/GroupBox.hpp"
 #include "Nodes/Utility/Merger.hpp"
+#include "Nodes/Utility/Skip.hpp"
 #include "Nodes/Utility/Terminator.hpp"
 #include "Nodes/Utility/TimeWindow.hpp"
 // Converter
@@ -253,6 +254,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<Demo>();
     registerNodeType<GroupBox>();
     registerNodeType<Merger>();
+    registerNodeType<Skip>();
     registerNodeType<Terminator>();
     registerNodeType<TimeWindow>();
     // Converter
