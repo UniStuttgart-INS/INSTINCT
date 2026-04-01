@@ -62,11 +62,17 @@ class ImuObsSimulated final : public ImuObsWDelta
         desc.emplace_back("AngularRateX ECEF (ω_nb_e) [rad/s]");
         desc.emplace_back("AngularRateY ECEF (ω_nb_e) [rad/s]");
         desc.emplace_back("AngularRateZ ECEF (ω_nb_e) [rad/s]");
+        desc.emplace_back("AccelBiasX [m/s^2]");
+        desc.emplace_back("AccelBiasY [m/s^2]");
+        desc.emplace_back("AccelBiasZ [m/s^2]");
+        desc.emplace_back("GyroBiasX [rad/s]");
+        desc.emplace_back("GyroBiasY [rad/s]");
+        desc.emplace_back("GyroBiasZ [rad/s]");
         return desc;
     }
 
     /// @brief Get the amount of descriptors
-    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return ImuObsWDelta::GetStaticDescriptorCount() + 12; }
+    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return ImuObsWDelta::GetStaticDescriptorCount() + 18; }
 
     /// @brief Returns a vector of data descriptors
     [[nodiscard]] std::vector<std::string> staticDataDescriptors() const override { return GetStaticDataDescriptors(); }
@@ -107,6 +113,18 @@ class ImuObsSimulated final : public ImuObsWDelta
             return e_angularRateDynamics.y();
         case ImuObsWDelta::GetStaticDescriptorCount() + 11: // AngularRateZ ECEF (ω_nb_e) [rad/s]
             return e_angularRateDynamics.z();
+        case ImuObsWDelta::GetStaticDescriptorCount() + 12: // AccelBiasX [m/s^2]
+            return p_accelBias.x();
+        case ImuObsWDelta::GetStaticDescriptorCount() + 13: // AccelBiasY [m/s^2]
+            return p_accelBias.y();
+        case ImuObsWDelta::GetStaticDescriptorCount() + 14: // AccelBiasZ [m/s^2]
+            return p_accelBias.z();
+        case ImuObsWDelta::GetStaticDescriptorCount() + 15: // GyroBiasX [rad/s]
+            return p_gyroBias.x();
+        case ImuObsWDelta::GetStaticDescriptorCount() + 16: // GyroBiasY [rad/s]
+            return p_gyroBias.y();
+        case ImuObsWDelta::GetStaticDescriptorCount() + 17: // GyroBiasZ [rad/s]
+            return p_gyroBias.z();
         default:
             return std::nullopt;
         }
@@ -158,6 +176,24 @@ class ImuObsSimulated final : public ImuObsWDelta
         case ImuObsWDelta::GetStaticDescriptorCount() + 11: // AngularRateZ ECEF (ω_nb_e) [rad/s]
             e_angularRateDynamics.z() = value;
             break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 12: // AccelBiasX [m/s^2]
+            p_accelBias.x() = value;
+            break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 13: // AccelBiasY [m/s^2]
+            p_accelBias.y() = value;
+            break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 14: // AccelBiasZ [m/s^2]
+            p_accelBias.z() = value;
+            break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 15: // GyroBiasX [rad/s]
+            p_gyroBias.x() = value;
+            break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 16: // GyroBiasY [rad/s]
+            p_gyroBias.y() = value;
+            break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 17: // GyroBiasZ [rad/s]
+            p_gyroBias.z() = value;
+            break;
         default:
             return false;
         }
@@ -174,6 +210,11 @@ class ImuObsSimulated final : public ImuObsWDelta
     Eigen::Vector3d e_accelDynamics;
     /// The angular rate ω_nb_e derived from the trajectory in [rad/s], given in the ECEF frame.
     Eigen::Vector3d e_angularRateDynamics;
+
+    /// The simulated accelerometer bias in [m/s^2], given in the p frame.
+    Eigen::Vector3d p_accelBias = Eigen::Vector3d::Zero();
+    /// The simulated gyroscope bias [rad/s], given in the p frame.
+    Eigen::Vector3d p_gyroBias = Eigen::Vector3d::Zero();
 };
 
 } // namespace NAV

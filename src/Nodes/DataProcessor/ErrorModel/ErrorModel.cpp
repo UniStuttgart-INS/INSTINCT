@@ -9,10 +9,12 @@
 #include "ErrorModel.hpp"
 
 #include <algorithm>
+#include <cstddef>
 #include <cstdint>
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <limits>
+#include <memory>
 #include <set>
 #include <type_traits>
 
@@ -912,13 +914,23 @@ std::shared_ptr<NAV::ImuObs> NAV::ErrorModel::receiveImuObs(const std::shared_pt
 
     // #########################################################################################################################################
 
-    imuObs->p_acceleration += accelerometerBias_p
-                              + _randomWalkAccelerometer
-                              + _integratedRandomWalkAccelerometer;
+    Eigen::Vector3d p_accelBias = accelerometerBias_p
+                                  + _randomWalkAccelerometer
+                                  + _integratedRandomWalkAccelerometer;
+    imuObs->p_acceleration += p_accelBias;
 
-    imuObs->p_angularRate += gyroscopeBias_p
-                             + _randomWalkGyroscope
-                             + _integratedRandomWalkGyroscope;
+    Eigen::Vector3d p_gyroBias = gyroscopeBias_p
+                                 + _randomWalkGyroscope
+                                 + _integratedRandomWalkGyroscope;
+    imuObs->p_angularRate += p_gyroBias;
+
+    if (auto imuObsSimulated = std::dynamic_pointer_cast<ImuObsSimulated>(imuObs);
+        imuObsSimulated != nullptr)
+    {
+        imuObsSimulated->p_accelBias = p_accelBias;
+        imuObsSimulated->p_gyroBias = p_gyroBias;
+    }
+
     if (_dt > 1e-9)
     {
         imuObs->p_acceleration += Eigen::Vector3d{ _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(0)),
