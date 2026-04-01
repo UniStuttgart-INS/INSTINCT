@@ -375,6 +375,9 @@ class Plot : public Node, public CommonLog
     /// Flag, whether to override the North/East startValues in the GUI
     bool _overridePositionStartValues = false;
 
+    /// Flag, whether to save the raw data pointers
+    bool _saveRawPointers = true;
+
     /// @brief Dynamic input pins
     /// @attention This should always be the last variable in the header, because it accesses others through the function callbacks
     gui::widgets::DynamicInputPins _dynamicInputPins{ 0, this, pinAddCallback, pinDeleteCallback, 1 };
