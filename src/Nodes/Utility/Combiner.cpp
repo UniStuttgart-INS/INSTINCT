@@ -6,6 +6,16 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+// <boost/asio.hpp> needs to be included before <winsock.h> (even though not used in this file)
+// https://stackoverflow.com/questions/9750344/boostasio-winsock-and-winsock-2-compatibility-issue
+#include "Navigation/Transformations/Units.hpp"
+#ifdef _WIN32
+    // Set the proper SDK version before including boost/Asio
+    #include <SDKDDKVer.h>
+    // Note boost/ASIO includes Windows.h.
+    #include <boost/asio.hpp>
+#endif //_WIN32
+
 #include "Combiner.hpp"
 #include "NodeRegistry.hpp"
 #include "Navigation/Time/InsTime.hpp"
@@ -608,8 +618,21 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
             if (auto value = std::holds_alternative<size_t>(term.dataSelection) ? nodeData->getValueAt(std::get<size_t>(term.dataSelection))
                                                                                 : nodeData->getDynamicDataAt(std::get<std::string>(term.dataSelection)))
             {
-                LOG_DATA("{}:       Term '{}': {:.3g}", nameId(), term.description(this), *value);
-                term.polyReg.push_back(std::make_pair(nodeDataTimeIntoRun, *value));
+                double val = *value;
+                LOG_DATA("{}:       Term '{}': {:.3g}", nameId(), term.description(this), val);
+                if (term.dataDescription(this) == "Roll [deg]")
+                {
+                    val = term.polyReg.empty() ? val : math::unwrapAngle(val, term.polyReg.data().back().second, rad2deg(M_PI));
+                }
+                else if (term.dataDescription(this) == "Pitch [deg]")
+                {
+                    val = term.polyReg.empty() ? val : math::unwrapAngle(val, term.polyReg.data().back().second, rad2deg(M_PI_2));
+                }
+                else if (term.dataDescription(this) == "Yaw [deg]")
+                {
+                    val = term.polyReg.empty() ? val : math::unwrapAngle(val, term.polyReg.data().back().second, rad2deg(M_PI));
+                }
+                term.polyReg.push_back(std::make_pair(nodeDataTimeIntoRun, val));
             }
             else
             {

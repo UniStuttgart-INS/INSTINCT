@@ -118,7 +118,7 @@ class Combiner : public Node, public CommonLog
             PolynomialRegressor<double> polyReg{ 1, 2 };                   ///< Polynomial Regressor to interpolate data
             ScrollingBuffer<std::shared_ptr<const NodeData>> rawData{ 2 }; ///< Last raw data to add if we send
 
-            /// @brief Get a string description of the combination
+            /// @brief Get a string description of the term
             /// @param node Combiner node pointer
             [[nodiscard]] std::string description(const Combiner* node) const
             {
@@ -134,6 +134,22 @@ class Combiner : public Node, public CommonLog
                                        std::get<std::string>(dataSelection), node->inputPins.at(pinIndex).name);
                 }
                 return fmt::format("N/A ({})", node->inputPins.at(pinIndex).name);
+            }
+
+            /// @brief Get a string description of the data in the term
+            /// @param node Combiner node pointer
+            [[nodiscard]] std::string dataDescription(const Combiner* node) const
+            {
+                const auto& descriptors = node->getDataDescriptors(pinIndex);
+                if (std::holds_alternative<size_t>(dataSelection) && std::get<size_t>(dataSelection) < descriptors.size())
+                {
+                    return descriptors.at(std::get<size_t>(dataSelection));
+                }
+                if (std::holds_alternative<std::string>(dataSelection))
+                {
+                    return std::get<std::string>(dataSelection);
+                }
+                return "N/A";
             }
         };
 

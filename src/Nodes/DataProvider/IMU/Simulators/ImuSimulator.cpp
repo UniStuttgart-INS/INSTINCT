@@ -1291,10 +1291,11 @@ std::optional<InsTime> ImuSimulator::getTimeFromCsvLine(const CsvData::CsvLine& 
 std::optional<Eigen::Vector3d> ImuSimulator::e_getPositionFromCsvLine(const CsvData::CsvLine& line, const std::vector<std::string>& description) const // NOLINT(readability-convert-member-functions-to-static)
 {
     auto IdxIfExists = [](const std::vector<std::string>& description, const std::vector<const char*>& searchText) {
-        std::ranges::borrowed_iterator_t<decltype(description)> idx = description.begin();
+        auto idx = description.begin();
         for (const char* searchIdx : searchText)
         {
             idx = std::ranges::find(description, searchIdx);
+            if (idx != description.end()) { break; }
         }
         return idx;
     };
@@ -1463,18 +1464,6 @@ bool ImuSimulator::initializeSplines()
         }
 
         return smoothed;
-    };
-
-    auto unwrapAngle = [](auto angle, auto prevAngle, auto rangeMax) {
-        auto x = angle - prevAngle;
-        x = std::fmod(x + rangeMax, 2 * rangeMax);
-        if (x < 0)
-        {
-            x += 2 * rangeMax;
-        }
-        x -= rangeMax;
-
-        return prevAngle + x;
     };
 
     const double OFFSET = _startupEnabled ? 0.0 : 100.0; // [s]
@@ -1887,9 +1876,9 @@ bool ImuSimulator::initializeSplines()
 
                 auto rpy = trafo::quat2eulerZYX(*n_Quat_b);
                 // LOG_DATA("{}: RPY {} [deg] (from CSV)", nameId(), rad2deg(rpy).transpose());
-                splineRoll.push_back(i > 0 ? unwrapAngle(rpy(0), splineRoll.back(), M_PI) : rpy(0));
-                splinePitch.push_back(i > 0 ? unwrapAngle(rpy(1), splinePitch.back(), M_PI_2) : rpy(1));
-                splineYaw.push_back(i > 0 ? unwrapAngle(rpy(2), splineYaw.back(), M_PI) : rpy(2));
+                splineRoll.push_back(i > 0 ? math::unwrapAngle(rpy(0), static_cast<double>(splineRoll.back()), M_PI) : rpy(0));
+                splinePitch.push_back(i > 0 ? math::unwrapAngle(rpy(1), static_cast<double>(splinePitch.back()), M_PI_2) : rpy(1));
+                splineYaw.push_back(i > 0 ? math::unwrapAngle(rpy(2), static_cast<double>(splineYaw.back()), M_PI) : rpy(2));
                 // LOG_DATA("{}: R {}, P {}, Y {} [deg] (in Spline)", nameId(), rad2deg(splineRoll.back()), rad2deg(splinePitch.back()), rad2deg(splineYaw.back()));
             }
             _csvDuration = static_cast<double>(splineTime.back());
@@ -2026,7 +2015,7 @@ bool ImuSimulator::initializeSplines()
     LOG_DATA("{}: Unwrapping Yaw", nameId());
     for (size_t i = 0; i < splineTime.size(); i++)
     {
-        splineYaw[i] = i > 0 ? unwrapAngle(splineYaw[i], splineYaw[i - 1], M_PI) : splineYaw[i];
+        splineYaw[i] = i > 0 ? math::unwrapAngle(splineYaw[i], splineYaw[i - 1], std::numbers::pi_v<long double>) : splineYaw[i];
         // LOG_DATA("{}: [t={:.3f}] yaw = {:.3f}°", nameId(), static_cast<double>(splineTime.at(i)), static_cast<double>(rad2deg(splineYaw[i])));
     }
 

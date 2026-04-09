@@ -477,4 +477,23 @@ auto bilinearInterpolation(const auto& tx, const auto& ty,
 /// @note See http://www2.iap.fr/users/pichon/doc/html_xref/elliptic-es.html
 double calcEllipticalIntegral(double phi, double m);
 
+/// @brief Unwraps the angle into the range
+/// @param[in] angle Angle in radian or degree
+/// @param[in] prevAngle Previous angle in radian or degree
+/// @param[in] rangeMax Range, e.g. pi or 180°
+/// @return Unwrapped angle
+template<typename T>
+T unwrapAngle(T angle, T prevAngle, T rangeMax)
+{
+    auto x = angle - prevAngle;
+    x = std::fmod(x + rangeMax, 2 * rangeMax);
+    if (x < 0)
+    {
+        x += 2 * rangeMax;
+    }
+    x -= rangeMax;
+
+    return prevAngle + x;
+}
+
 } // namespace NAV::math
