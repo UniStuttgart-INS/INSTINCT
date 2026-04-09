@@ -17,6 +17,7 @@
 #include <vector>
 #include <optional>
 
+#include "internal/gui/widgets/TimeEdit.hpp"
 #include <nlohmann/json.hpp>
 using json = nlohmann::json; ///< json namespace
 
@@ -82,6 +83,10 @@ class CommonLog
     static inline std::optional<gui::widgets::PositionWithFrame> _originPosition;
     /// Use GUI inputs
     static inline bool _useGuiInputs = false;
+    /// Use GUI inputs
+    static inline bool _overrideStartTime = false;
+    /// Start time format
+    static inline gui::widgets::TimeEditFormat _startTimeFormat;
 
   private:
     /// Mutex to lock before writing

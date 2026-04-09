@@ -1570,7 +1570,6 @@ bool NAV::Plot::initialize()
 
     CommonLog::initialize();
 
-    _startTime.reset();
     if (!_overridePositionStartValues) { _originPosition.reset(); }
 
     for (auto& plot : _plots)

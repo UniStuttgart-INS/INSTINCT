@@ -13,6 +13,7 @@
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
 #include "Navigation/Transformations/Units.hpp"
 
+#include "internal/gui/widgets/TimeEdit.hpp"
 #include "util/Logger.hpp"
 
 namespace NAV
@@ -20,8 +21,12 @@ namespace NAV
 
 json CommonLog::save()
 {
+    std::scoped_lock lk(_mutex);
     json j;
     j["useGuiInputs"] = _useGuiInputs;
+    j["overrideStartTime"] = _overrideStartTime;
+    if (_overrideStartTime && !_startTime.empty()) { j["startTime"] = _startTime; }
+    j["startTimeFormat"] = _startTimeFormat;
     if (_originPosition) { j["originPosition"] = *_originPosition; }
 
     return j;
@@ -29,10 +34,31 @@ json CommonLog::save()
 
 void CommonLog::restore(const json& j)
 {
+    std::scoped_lock lk(_mutex);
     if (j.contains("useGuiInputs")) { j.at("useGuiInputs").get_to(_useGuiInputs); }
-    else { _useGuiInputs = false; }
+    else
+    {
+        _useGuiInputs = false;
+    }
     if (j.contains("originPosition")) { _originPosition = j.at("originPosition").get<gui::widgets::PositionWithFrame>(); }
-    else { _originPosition.reset(); }
+    else
+    {
+        _originPosition.reset();
+    }
+
+    if (j.contains("overrideStartTime")) { j.at("overrideStartTime").get_to(_overrideStartTime); }
+    else
+    {
+        _overrideStartTime = false;
+    }
+
+    if (j.contains("startTime")) { j.at("startTime").get_to(_startTime); }
+    else
+    {
+        _startTime.reset();
+    }
+
+    if (j.contains("startTimeFormat")) { j.at("startTimeFormat").get_to(_startTimeFormat); }
 }
 
 CommonLog::CommonLog()
@@ -51,17 +77,14 @@ CommonLog::~CommonLog()
 void CommonLog::initialize() const
 {
     std::scoped_lock lk(_mutex);
-    if (_useGuiInputs) { return; }
+    if (_useGuiInputs && _overrideStartTime) { return; }
     _wantsInit.at(_index) = true;
 
     if (std::ranges::all_of(_wantsInit, [](bool val) { return val; }))
     {
         LOG_DEBUG("Resetting common log variables.");
-        _startTime.reset();
-        if (!_useGuiInputs)
-        {
-            _originPosition.reset();
-        }
+        if (!_overrideStartTime) { _startTime.reset(); }
+        if (!_useGuiInputs) { _originPosition.reset(); }
 
         std::ranges::fill(_wantsInit, false);
     }
@@ -126,6 +149,21 @@ bool CommonLog::ShowOriginInput(const char* id)
         ImGui::Indent();
         std::scoped_lock lk(_mutex);
         if (gui::widgets::PositionInput(fmt::format("Origin##{}", id).c_str(), _originPosition.value(), gui::widgets::PositionInputLayout::SINGLE_ROW))
+        {
+            changed = true;
+        }
+        ImGui::Unindent();
+    }
+    if (ImGui::Checkbox(fmt::format("Override start time (for all common logging)##{}", id).c_str(), &_overrideStartTime))
+    {
+        LOG_DEBUG("{}: overrideStartTime changed to {}", id, _overrideStartTime);
+        changed = true;
+    }
+    if (_overrideStartTime)
+    {
+        ImGui::Indent();
+        std::scoped_lock lk(_mutex);
+        if (gui::widgets::TimeEdit(fmt::format("Start time##{}", id).c_str(), _startTime, _startTimeFormat, 170.0F, 2))
         {
             changed = true;
         }
