@@ -590,6 +590,17 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
     }
     _pinData.at(pinIdx).lastTime = nodeData->insTime;
 
+    size_t pinsWithoutData = 0;
+    for (size_t i = 0; i < _pinData.size(); i++)
+    {
+        if (inputPins.at(i).isPinLinked() && inputPins.at(i).link.getConnectedPin()->noMoreDataAvailable
+            && _pinData.at(i).lastTime.empty())
+        {
+            pinsWithoutData++;
+        }
+    }
+    if (_pinData.size() > 1 && _pinData.size() - pinsWithoutData == 1) { return; }
+
     // Add dynamic data descriptors to display in GUI
     auto& dataDescriptors = _pinData.at(pinIdx).dynDataDescriptors;
     const std::vector<std::string> nodeDataDescriptors = nodeData->dynamicDataDescriptors();
