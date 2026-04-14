@@ -593,7 +593,7 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
     size_t pinsWithoutData = 0;
     for (size_t i = 0; i < _pinData.size(); i++)
     {
-        if (inputPins.at(i).isPinLinked() && inputPins.at(i).link.getConnectedPin()->noMoreDataAvailable
+        if (inputPins.at(i).isPinLinked() && inputPins.at(i).link.getConnectedPin()->noMoreDataAvailable && inputPins.at(i).queue.empty()
             && _pinData.at(i).lastTime.empty())
         {
             pinsWithoutData++;
