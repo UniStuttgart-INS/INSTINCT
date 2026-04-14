@@ -65,13 +65,13 @@ CommonLog::CommonLog()
 {
     std::scoped_lock lk(_mutex);
     _index = _wantsInit.size(); // NOLINT(cppcoreguidelines-prefer-member-initializer)
-    _wantsInit.push_back(false);
+    _wantsInit.emplace_back(false);
 }
 
 CommonLog::~CommonLog()
 {
     std::scoped_lock lk(_mutex);
-    _wantsInit.erase(_wantsInit.begin() + static_cast<int64_t>(_index));
+    _wantsInit.at(_index).reset();
 }
 
 void CommonLog::initialize() const
@@ -80,13 +80,16 @@ void CommonLog::initialize() const
     if (_useGuiInputs && _overrideStartTime) { return; }
     _wantsInit.at(_index) = true;
 
-    if (std::ranges::all_of(_wantsInit, [](bool val) { return val; }))
+    if (std::ranges::all_of(_wantsInit, [](std::optional<bool> val) { return !val.has_value() || (*val); }))
     {
         LOG_DEBUG("Resetting common log variables.");
         if (!_overrideStartTime) { _startTime.reset(); }
         if (!_useGuiInputs) { _originPosition.reset(); }
 
-        std::ranges::fill(_wantsInit, false);
+        for (auto& init : _wantsInit)
+        {
+            if (init) { init = false; }
+        }
     }
 }
 

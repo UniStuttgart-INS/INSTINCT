@@ -92,7 +92,7 @@ class CommonLog
     /// Mutex to lock before writing
     static inline std::mutex _mutex;
     /// Vector on which nodes want to initialize
-    static inline std::vector<bool> _wantsInit;
+    static inline std::vector<std::optional<bool>> _wantsInit;
     /// Index which common log node this is
     size_t _index = 0;
 };
