@@ -861,14 +861,17 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
             }
         }
 
-        if (_outlierMaxPosVarStartupTriggered) { startupPhase = false; }
-        else if (startupPhase)
+        if (_kalmanFilter.isNISenabled())
         {
-            if (double posVar = _kalmanFilter.P(States::Pos, States::Pos).diagonal().sum() / 3.0;
-                posVar < _outlierMaxPosVarStartup)
+            if (_outlierMaxPosVarStartupTriggered) { startupPhase = false; }
+            else if (startupPhase)
             {
-                _outlierMaxPosVarStartupTriggered = true;
-                addEventToGui(rtkSol, fmt::format("Doing NIS check from now on because\nposition variance is below {:.4f}m^2", _outlierMaxPosVarStartup));
+                if (double posVar = _kalmanFilter.P(States::Pos, States::Pos).diagonal().sum() / 3.0;
+                    posVar < _outlierMaxPosVarStartup)
+                {
+                    _outlierMaxPosVarStartupTriggered = true;
+                    addEventToGui(rtkSol, fmt::format("Doing NIS check from now on because\nposition variance is below {:.4f}m^2", _outlierMaxPosVarStartup));
+                }
             }
         }
 
@@ -925,12 +928,14 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
 
         Observations observations;
         ObservationFilter::Filtered filtered;
+        LOG_DATA("{}: Rover obs filter:", nameId());
         _obsFilter.selectObservationsForCalculation(Rover,
                                                     _receiver[Rover].e_posMarker,
                                                     _receiver[Rover].lla_posMarker,
                                                     _receiver[Rover].gnssObs,
                                                     gnssNavInfos,
                                                     observations, &filtered, nameId());
+        LOG_DATA("{}: Base obs filter:", nameId());
         _obsFilter.selectObservationsForCalculation(Base,
                                                     _receiver[Base].e_posMarker,
                                                     _receiver[Base].lla_posMarker,

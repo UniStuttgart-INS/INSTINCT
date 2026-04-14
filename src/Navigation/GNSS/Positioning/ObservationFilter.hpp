@@ -224,28 +224,13 @@ class ObservationFilter
                 continue;
             }
 
-            if (!firstReceiver && !observations.signals.contains(satSigId)) // TODO:
+            if (!firstReceiver && !observations.signals.contains(satSigId))
             {
-                bool signalWithSameFrequencyFound = false;
-                for (const auto& signals : observations.signals)
-                {
-                    if (signals.first.toSatId() == satId && signals.first.freq() == satSigId.freq() // e.g. Rover has [G5Q], but Base has [G5X]
-                        && signals.second.recvObs.size() != observations.receivers.size())          // But not: Rover has [G5Q], but Base has [G5Q] and [G5X]
-                    {
-                        // LOG_DATA("{}:  [{}] Not observed by all receivers, but other receivers have [{}]. Treating as such.",
-                        //          nameId, satSigId, signals.first);
-                        satSigId = signals.first;
-                        satId = satSigId.toSatId();
-                        signalWithSameFrequencyFound = true;
-                        break;
-                    }
-                }
-                if (!signalWithSameFrequencyFound)
-                {
-                    // LOG_DATA("{}:  [{}] Skipping obs because not observed by all receivers", nameId, satSigId);
-                    if (filtered) { filtered->notAllReceiversObserved.push_back((satSigId)); }
-                    continue;
-                }
+                // TODO: This can be problematic if e.g. Rover has [G5Q], but Base has [G5X]
+                //       We could introduce a manual mapping in the RinexObsFile Node where the user sees all the Codes and can specify which one to map to another
+                // LOG_DATA("{}:  [{}] Skipping obs because not observed by all receivers", nameId, satSigId);
+                if (filtered) { filtered->notAllReceiversObserved.push_back((satSigId)); }
+                continue;
             }
 
             std::shared_ptr<NAV::SatNavData> satNavData = nullptr;
@@ -340,7 +325,10 @@ class ObservationFilter
                         // LOG_DATA("{}:  [{}] Taking {:11} observation into account on {:5} receiver ({:.3f} [m])", nameId, satSigId,
                         //          obsType, receiverType, recvData->obs[obsType].measurement);
                     }
-                    else { removeObsTypeIfExist(); }
+                    else
+                    {
+                        removeObsTypeIfExist();
+                    }
                     break;
                 case GnssObs::Carrier:
                     if (recvData->gnssObsData().carrierPhase)
@@ -350,7 +338,10 @@ class ObservationFilter
                         // LOG_DATA("{}:  [{}] Taking {:11} observation into account on {:5} receiver ({:.3f} [m] = {:.3f} [cycles])", nameId, satSigId,
                         //          obsType, receiverType, recvData->obs[obsType].measurement, recvData->gnssObsData().carrierPhase->value);
                     }
-                    else { removeObsTypeIfExist(); }
+                    else
+                    {
+                        removeObsTypeIfExist();
+                    }
                     break;
                 case GnssObs::Doppler:
                     if (recvData->gnssObsData().doppler)
@@ -361,7 +352,10 @@ class ObservationFilter
                         // LOG_DATA("{}:  [{}] Taking {:11} observation into account on {:5} receiver ({:.3f} [m/s] = {:.3f} [Hz])", nameId, satSigId,
                         //          obsType, receiverType, recvData->obs[obsType].measurement, recvData->gnssObsData().doppler.value());
                     }
-                    else { removeObsTypeIfExist(); }
+                    else
+                    {
+                        removeObsTypeIfExist();
+                    }
                     break;
                 case GnssObs::ObservationType_COUNT:
                     break;
@@ -522,7 +516,10 @@ class ObservationFilter
             {
                 LOG_DEBUG("{}: Using {}: {}", id, obsType, enabled);
                 if (enabled) { _usedObsTypes.insert(obsType); }
-                else { _usedObsTypes.erase(obsType); }
+                else
+                {
+                    _usedObsTypes.erase(obsType);
+                }
                 changed = true;
             }
             if (_neededObsTypes.contains(obsType)) { ImGui::EndDisabled(); }

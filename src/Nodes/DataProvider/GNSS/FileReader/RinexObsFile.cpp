@@ -714,15 +714,15 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
         {
             if (!gnssObs->data.back().carrierPhase)
             {
-                LOG_DATA("{}: A data record at epoch {} (plus leap seconds) contains Pseudorange, but is missing carrier phase.", nameId(), epochTime.toYMDHMS());
+                LOG_DATA("{}: A data record at epoch {} (GPST) contains Pseudorange, but is missing carrier phase.", nameId(), epochTime.toYMDHMS(GPST));
             }
             if (!gnssObs->data.back().doppler)
             {
-                LOG_DATA("{}: A data record at epoch {} (plus leap seconds) contains Pseudorange, but is missing doppler.", nameId(), epochTime.toYMDHMS());
+                LOG_DATA("{}: A data record at epoch {} (GPST) contains Pseudorange, but is missing doppler.", nameId(), epochTime.toYMDHMS(GPST));
             }
             if (!gnssObs->data.back().CN0)
             {
-                LOG_DATA("{}: A data record at epoch {} (plus leap seconds) contains Pseudorange, but is missing raw signal strength(carrier to noise ratio).", nameId(), epochTime.toYMDHMS());
+                LOG_DATA("{}: A data record at epoch {} (GPST) contains Pseudorange, but is missing raw signal strength(carrier to noise ratio).", nameId(), epochTime.toYMDHMS(GPST));
             }
         }
         satCnt++;
