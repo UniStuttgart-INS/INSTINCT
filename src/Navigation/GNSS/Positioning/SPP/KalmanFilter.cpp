@@ -24,13 +24,14 @@
 #include "Navigation/GNSS/SystemModel/SystemModel.hpp"
 #include "internal/gui/widgets/InputWithUnit.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
+#include "util/Container/KeyedMatrix.hpp"
 #include "util/Logger.hpp"
 #include <Eigen/src/Core/Matrix.h>
 #include <fmt/format.h>
 
 namespace NAV::SPP
 {
-void KalmanFilter::reset(const std::vector<SatelliteSystem>& satelliteSystems)
+void KalmanFilter::reset()
 {
     // Covariance of the P matrix initialization velocity uncertainty [m²/s²]
     switch (_gui_initCovarianceVelocityUnit)
@@ -68,10 +69,6 @@ void KalmanFilter::reset(const std::vector<SatelliteSystem>& satelliteSystems)
 
     _motionModel.initialize(_kalmanFilter.F, _kalmanFilter.W);
 
-    for (const auto& satSys : satelliteSystems)
-    {
-        _kalmanFilter.addState(Keys::RecvClkBias{ satSys });
-    }
     _kalmanFilter.addState(Keys::RecvClkDrift{});
     _receiverClockModel.initialize(_kalmanFilter.F, _kalmanFilter.G, _kalmanFilter.W);
 
@@ -81,11 +78,12 @@ void KalmanFilter::reset(const std::vector<SatelliteSystem>& satelliteSystems)
     _initialized = false;
 }
 
-void KalmanFilter::initialize(const KeyedVectorXd<States::StateKeyType>& states, const KeyedMatrixXd<States::StateKeyType, States::StateKeyType>& variance)
+void KalmanFilter::initialize(const KeyedVectorXd<States::StateKeyType>& states, const KeyedMatrixXd<States::StateKeyType, States::StateKeyType>& variance, const std::string& nameId)
 {
-    LOG_DATA("x_KF(pre-init) = \n{}", _kalmanFilter.x.transposed());
+    LOG_DATA("{}: x_KF(pre-init) = \n{}", nameId, _kalmanFilter.x.transposed());
+
     _kalmanFilter.x(states.rowKeys()) = states(all);
-    _kalmanFilter.P(variance.rowKeys(), variance.colKeys()) = variance(all, all); // LSQ variance is very small. So make bigger
+    _kalmanFilter.P(variance.rowKeys(), variance.colKeys()) = variance(all, all);
 
     // We always estimate velocity in the KF, but LSQ could not, so set a default value
     if (!states.hasAnyRows(VelKey))
@@ -140,10 +138,12 @@ void KalmanFilter::predict(const double& dt, const Eigen::Vector3d& lla_pos, [[m
     LOG_DATA("{}: Q =\n{}", nameId, _kalmanFilter.Q);
 
     LOG_DATA("{}: P (a posteriori) =\n{}", nameId, _kalmanFilter.P);
+    LOG_DATA("{}: rank(P) = {}", nameId, Eigen::FullPivLU<Eigen::MatrixXd>(_kalmanFilter.P(all, all)).rank());
     LOG_DATA("{}: x (a posteriori) =\n{}", nameId, _kalmanFilter.x.transposed());
     _kalmanFilter.predict();
     LOG_DATA("{}: x (a priori    ) =\n{}", nameId, _kalmanFilter.x.transposed());
     LOG_DATA("{}: P (a priori    ) =\n{}", nameId, _kalmanFilter.P);
+    LOG_DATA("{}: rank(P) = {}", nameId, Eigen::FullPivLU<Eigen::MatrixXd>(_kalmanFilter.P(all, all)).rank());
 }
 
 void KalmanFilter::update(const std::vector<Meas::MeasKeyTypes>& measKeys,
@@ -161,6 +161,19 @@ void KalmanFilter::update(const std::vector<Meas::MeasKeyTypes>& measKeys,
     _kalmanFilter.z = dz;
 
     _kalmanFilter.correctWithMeasurementInnovation();
+    LOG_DATA("{}: P (a posteriori) =\n{}", nameId, _kalmanFilter.P);
+    LOG_DATA("{}: rank(P) = {}", nameId, Eigen::FullPivLU<Eigen::MatrixXd>(_kalmanFilter.P(all, all)).rank());
+    LOG_DATA("{}: x (a posteriori) =\n{}", nameId, _kalmanFilter.x.transposed());
+}
+
+void KalmanFilter::addSystemBias(const SatelliteSystem& satSys)
+{
+    auto bias = Keys::RecvClkBias{ satSys };
+    _kalmanFilter.addState(bias);
+
+    _receiverClockModel.initialize(_kalmanFilter.F,
+                                   _kalmanFilter.G,
+                                   _kalmanFilter.W);
 }
 
 void KalmanFilter::addInterFrequencyBias(const Frequency& freq)

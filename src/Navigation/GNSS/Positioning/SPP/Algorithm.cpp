@@ -20,6 +20,7 @@
 #include "Navigation/GNSS/Core/Frequency.hpp"
 #include "Navigation/GNSS/Positioning/Observation.hpp"
 #include "Navigation/GNSS/Positioning/SPP/Keys.hpp"
+#include "Navigation/GNSS/SystemModel/ReceiverClockModel.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "util/Logger.hpp"
 #include <fmt/format.h>
@@ -64,9 +65,9 @@ bool Algorithm::ShowGuiWidgets(const char* id, float itemWidth, float unitWidth)
 
 void Algorithm::reset()
 {
-    _receiver = Receiver(Rover, _obsFilter.getSystemFilter().toVector());
+    _receiver = Receiver(Rover, {});
     _obsFilter.reset();
-    _kalmanFilter.reset(_obsFilter.getSystemFilter().toVector());
+    _kalmanFilter.reset();
     _lastUpdate.reset();
 }
 
@@ -81,7 +82,8 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
         LOG_ERROR("{}: [{}] SPP cannot calculate position because no navigation data provided.", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST));
         return nullptr;
     }
-    LOG_DATA("{}: [{}] Calculating SPP", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST));
+    LOG_DATA("{}: [{}] Calculating SPP ({:8f}, {:8f}, {:2f})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
+             rad2deg(_receiver.lla_posMarker.x()), rad2deg(_receiver.lla_posMarker.y()), _receiver.lla_posMarker.z());
 
     // Collection of all connected Ionospheric Corrections
     auto ionosphericCorrections = std::make_shared<const IonosphericCorrections>(gnssNavInfos);
@@ -106,6 +108,7 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
 
     KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyType> H;
 
+    LOG_DATA("{}: nIter = {}", nameId, nIter);
     for (size_t iteration = 0; iteration < nIter; iteration++)
     {
         LOG_DATA("{}: [{}] iteration {}/{}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), iteration + 1, nIter);
@@ -144,6 +147,15 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
             LOG_TRACE("{}: [{}] SPP cannot calculate position because no valid observations. Try changing filter settings or reposition your antenna.",
                       nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST));
             return nullptr;
+        }
+
+        for (const auto& satSys : observations.systems)
+        {
+            _receiver.recvClk.addSystem(satSys);
+            if (_estimatorType == EstimatorType::KalmanFilter && !_kalmanFilter.getState().hasRow(Keys::RecvClkBias{ satSys }))
+            {
+                _kalmanFilter.addSystemBias(satSys);
+            }
         }
 
         size_t nParams = SPP::States::POS_STATE_COUNT + observations.systems.size() - 1;
@@ -241,12 +253,16 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
                 {
                     LOG_TRACE("{}: [{}] Initializing KF with LSQ solution", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST));
                     KeyedVectorXd<States::StateKeyType> x(Eigen::VectorXd::Zero(lsq.solution.rows()), lsq.solution.rowKeys());
+
                     x.segment<3>(PosKey) = _receiver.e_posMarker;
                     if (x.hasAnyRows(VelKey)) { x.segment<3>(VelKey) = _receiver.e_vel; }
-                    for (size_t i = 0; i < _receiver.recvClk.satelliteSystems.size(); i++)
+                    for (const auto& s : lsq.solution.rowKeys())
                     {
-                        auto satSys = _receiver.recvClk.satelliteSystems.at(i);
-                        x(Keys::RecvClkBias{ satSys }) = _receiver.recvClk.bias.at(i) * InsConst::C;
+                        if (const auto* bias = std::get_if<Keys::RecvClkBias>(&s))
+                        {
+                            size_t idx = _receiver.recvClk.getIdx(bias->satSys).value();
+                            x(*bias) = _receiver.recvClk.bias.at(idx) * InsConst::C;
+                        }
                     }
                     if (x.hasRow(Keys::RecvClkDrift{}))
                     {
@@ -259,8 +275,7 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
                             x(*bias) = _receiver.interFrequencyBias.at(bias->freq).value * InsConst::C;
                         }
                     }
-
-                    _kalmanFilter.initialize(x, lsq.variance);
+                    _kalmanFilter.initialize(x, lsq.variance, nameId);
                     LOG_DATA("{}: x =\n{}", nameId, _kalmanFilter.getState().transposed());
                     LOG_DATA("{}: P =\n{}", nameId, _kalmanFilter.getErrorCovarianceMatrix());
                 }
@@ -678,10 +693,10 @@ void Algorithm::assignLeastSquaresResult(const KeyedVectorXd<States::StateKeyTyp
              rad2deg(_receiver.lla_posMarker.x()), rad2deg(_receiver.lla_posMarker.y()), _receiver.lla_posMarker.z());
     for ([[maybe_unused]] const auto& satSys : _receiver.recvClk.satelliteSystems)
     {
-        LOG_DATA("{}: [{}]     clkBias  = {} [s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
+        LOG_DATA("{}: [{}]     clkBias({})  = {} [s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), satSys,
                  *_receiver.recvClk.biasFor(satSys), *_receiver.recvClk.biasStdDevFor(satSys));
     }
-    LOG_DATA("{}: [{}]     clkDrift = {} [s/s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
+    LOG_DATA("{}: [{}]   clkDrift = {} [s/s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
              _receiver.recvClk.drift, _receiver.recvClk.driftStdDev);
 
     for ([[maybe_unused]] const auto& freq : _receiver.interFrequencyBias)
@@ -706,8 +721,9 @@ void Algorithm::assignKalmanFilterResult(const KeyedVectorXd<States::StateKeyTyp
             _receiver.recvClk.bias.at(idx) = state(*bias) / InsConst::C;
             if (variance(*bias, *bias) < 0)
             {
+                LOG_WARN("{}: [{}] Negative variance of {:3g} for {}. Defauting to 1000 [m]", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
+                         variance(*bias, *bias), *bias);
                 _receiver.recvClk.biasStdDev.at(idx) = 1000 / InsConst::C;
-                LOG_WARN("{}: Negative variance for {}. Defauting to {:.0f} [m]", nameId, *bias, _receiver.recvClk.biasStdDev.at(idx) * InsConst::C);
             }
             else
             {

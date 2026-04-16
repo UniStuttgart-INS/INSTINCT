@@ -38,13 +38,13 @@ class KalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
 {
   public:
     /// @brief Resets the filter
-    /// @param satelliteSystems Satellite systems to consider
-    void reset(const std::vector<SatelliteSystem>& satelliteSystems);
+    void reset();
 
     /// @brief Initialize the filter
     /// @param states States to initialize with
     /// @param variance Variance of the state
-    void initialize(const KeyedVectorXd<States::StateKeyType>& states, const KeyedMatrixXd<States::StateKeyType, States::StateKeyType>& variance);
+    /// @param[in] nameId Name and id of the node calling this (only used for logging purposes)
+    void initialize(const KeyedVectorXd<States::StateKeyType>& states, const KeyedMatrixXd<States::StateKeyType, States::StateKeyType>& variance, const std::string& nameId);
 
     /// @brief Deinitialize the KF (can be used to reinitialize the Filter when results seem strange)
     void deinitialize();
@@ -69,6 +69,10 @@ class KalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
                 const KeyedMatrixXd<Meas::MeasKeyTypes, Meas::MeasKeyTypes>& R,
                 const KeyedVectorXd<Meas::MeasKeyTypes>& dz,
                 const std::string& nameId);
+
+    /// @brief Adds the system bias state
+    /// @param[in] satSys Satellite system
+    void addSystemBias(const SatelliteSystem& satSys);
 
     /// @brief Adds the frequency as inter-frequency bias state
     /// @param[in] freq Frequency to estimate the inter-frequency bias for

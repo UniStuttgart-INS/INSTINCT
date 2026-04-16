@@ -158,15 +158,17 @@ class MotionModel
                        const double& longitude,
                        SystemModelCalcAlgorithm algorithm)
     {
+        auto e_quat_n = trafo::e_Quat_n(latitude, longitude).toRotationMatrix();
+        G.template block<3>(Vel, Vel) = e_quat_n;
+        if (G.hasRows(Accel))
+        {
+            G.template block<3>(Accel, Accel) = e_quat_n;
+        }
         if (algorithm == SystemModelCalcAlgorithm::VanLoan)
         {
-            auto e_quat_n = trafo::e_Quat_n(latitude, longitude).toRotationMatrix();
-            G.template block<3>(Vel, Vel) = e_quat_n;
-
             std::vector<StateKeyType> states;
             if (G.hasRows(Accel))
             {
-                G.template block<3>(Accel, Accel) = e_quat_n;
                 std::ranges::copy(PosVelAccel, std::back_inserter(states));
             }
             else
