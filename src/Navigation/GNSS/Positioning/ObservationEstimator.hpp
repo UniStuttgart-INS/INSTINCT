@@ -164,7 +164,9 @@ class ObservationEstimator
                                    + dpsr_T_r_s
                                    + dpsr_I_r_s
                                    + InsConst::C
-                                         * (*receiver.recvClk.biasFor(satSys) - recvObs->satClock().bias
+                                         * (receiver.recvClk.bias.second.value
+                                            + (satSys != receiver.recvClk.bias.first && receiver.recvClk.interSystemBiases.contains(satSys) ? receiver.recvClk.interSystemBiases.at(satSys).value : 0.0)
+                                            - recvObs->satClock().bias
                                             // + dt_rel_stc
                                             + (receiver.interFrequencyBias.contains(freq) ? receiver.interFrequencyBias.at(freq).value : 0.0))
                                    + pcv;
@@ -187,7 +189,9 @@ class ObservationEstimator
                                    + dpsr_T_r_s
                                    - dpsr_I_r_s
                                    + InsConst::C
-                                         * (*receiver.recvClk.biasFor(satSys) - recvObs->satClock().bias
+                                         * (receiver.recvClk.bias.second.value
+                                            + (satSys != receiver.recvClk.bias.first && receiver.recvClk.interSystemBiases.contains(satSys) ? receiver.recvClk.interSystemBiases.at(satSys).value : 0.0)
+                                            - recvObs->satClock().bias
                                             // + dt_rel_stc
                                             )
                                    + pcv;
@@ -207,7 +211,7 @@ class ObservationEstimator
                 obsData.estimate = e_pLOS.dot(recvObs->e_satVel() - receiver.e_vel)
                                    - calcSagnacRateCorrection(e_recvPosAPC, recvObs->e_satPos(), receiver.e_vel, recvObs->e_satVel())
                                    + InsConst::C
-                                         * (receiver.recvClk.drift
+                                         * (receiver.recvClk.drift.value
                                             - recvObs->satClock().drift);
                 obsData.measVar = _gnssMeasurementErrorModel.psrRateMeasErrorVar(freq, observation.freqNum(), elevation, cn0);
                 // LOG_DATA("{}:   [{}][{:11}][{:5}]     {:.4f} [m/s] ", nameId, satSigId, obsType, receiver.type, e_pLOS.dot(recvObs->e_satVel() - receiver.e_vel));
@@ -269,6 +273,7 @@ class ObservationEstimator
     /// @param[in] receiverType Receiver type to select the correct antenna
     /// @param[in] e_recvPosAPC Receiver antenna phase center position in ECEF coordinates [m]
     /// @param[in] recvClockBias Receiver clock bias [s]
+    /// @param[in] interSysClockBias Inter-system clock bias [s]
     /// @param[in] interFreqBias Receiver inter-frequency bias [s]
     /// @param[in] dpsr_T_r_s Estimated troposphere propagation error [m]
     /// @param[in] dpsr_I_r_s Estimated ionosphere propagation error [m]
@@ -282,6 +287,7 @@ class ObservationEstimator
                                  size_t receiverType,
                                  const Eigen::MatrixBase<Derived>& e_recvPosAPC,
                                  const auto& recvClockBias,
+                                 const auto& interSysClockBias,
                                  const auto& interFreqBias,
                                  const auto& dpsr_T_r_s,
                                  const auto& dpsr_I_r_s,
@@ -307,7 +313,7 @@ class ObservationEstimator
                + dpsr_ie_r_s
                + dpsr_T_r_s
                + dpsr_I_r_s
-               + InsConst::C * (recvClockBias - satInfo->satClockBias /* + dt_rel_stc */ + interFreqBias)
+               + InsConst::C * (recvClockBias + interSysClockBias - satInfo->satClockBias /* + dt_rel_stc */ + interFreqBias)
                + pcv;
     }
 
@@ -317,6 +323,7 @@ class ObservationEstimator
     /// @param[in] receiverType Receiver type to select the correct antenna
     /// @param[in] e_recvPosMarker Receiver marker position in ECEF coordinates [m]
     /// @param[in] recvClockBias Receiver clock bias [s]
+    /// @param[in] interSysClockBias Inter-system clock bias [s]
     /// @param[in] satInfo Satellite Information (pos, vel, clock)
     /// @param[in] gnssObs GNSS observation
     /// @param[in] ionosphericCorrections Ionospheric correction parameters collected from the Nav data
@@ -329,6 +336,7 @@ class ObservationEstimator
                             size_t receiverType,
                             const Eigen::MatrixBase<Derived>& e_recvPosMarker,
                             double recvClockBias,
+                            const auto& interSysClockBias,
                             const std::shared_ptr<const SatelliteInfo>& satInfo,
                             const std::shared_ptr<const GnssObs>& gnssObs,
                             const std::shared_ptr<const IonosphericCorrections>& ionosphericCorrections,
@@ -362,7 +370,7 @@ class ObservationEstimator
                           + dpsr_ie_r_s
                           + dpsr_T_r_s
                           - dpsr_I_r_s
-                          + InsConst::C * (recvClockBias - satInfo->satClockBias /* + dt_rel_stc */)
+                          + InsConst::C * (recvClockBias + interSysClockBias - satInfo->satClockBias /* + dt_rel_stc */)
                           + pcv;
 
         return { estimate, e_pLOS };

@@ -34,9 +34,8 @@ struct Receiver
 {
     /// @brief Constructor
     /// @param type Receiver enum type
-    /// @param satelliteSystems Satellite systems to use
-    explicit Receiver(ReceiverType type, const std::vector<SatelliteSystem>& satelliteSystems)
-        : type(type), recvClk(satelliteSystems) {}
+    explicit Receiver(ReceiverType type)
+        : type(type) {}
 
     /// Receiver Type
     ReceiverType type;

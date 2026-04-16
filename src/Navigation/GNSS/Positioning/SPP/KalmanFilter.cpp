@@ -70,7 +70,8 @@ void KalmanFilter::reset()
     _motionModel.initialize(_kalmanFilter.F, _kalmanFilter.W);
 
     _kalmanFilter.addState(Keys::RecvClkDrift{});
-    _receiverClockModel.initialize(_kalmanFilter.F, _kalmanFilter.G, _kalmanFilter.W);
+    _receiverClockModel.initialize();
+    _receiverClockModel.initializeSystem(_kalmanFilter.F, _kalmanFilter.G, _kalmanFilter.W);
 
     LOG_DATA("F = \n{}", _kalmanFilter.F);
     LOG_DATA("G = \n{}", _kalmanFilter.G);
@@ -78,7 +79,7 @@ void KalmanFilter::reset()
     _initialized = false;
 }
 
-void KalmanFilter::initialize(const KeyedVectorXd<States::StateKeyType>& states, const KeyedMatrixXd<States::StateKeyType, States::StateKeyType>& variance, const std::string& nameId)
+void KalmanFilter::initialize(const KeyedVectorXd<States::StateKeyType>& states, const KeyedMatrixXd<States::StateKeyType, States::StateKeyType>& variance, [[maybe_unused]] const std::string& nameId)
 {
     LOG_DATA("{}: x_KF(pre-init) = \n{}", nameId, _kalmanFilter.x.transposed());
 
@@ -166,22 +167,50 @@ void KalmanFilter::update(const std::vector<Meas::MeasKeyTypes>& measKeys,
     LOG_DATA("{}: x (a posteriori) =\n{}", nameId, _kalmanFilter.x.transposed());
 }
 
-void KalmanFilter::addSystemBias(const SatelliteSystem& satSys)
+void KalmanFilter::addSystemBias(const SatelliteSystem& satSys, double initialValue)
 {
     auto bias = Keys::RecvClkBias{ satSys };
-    _kalmanFilter.addState(bias);
+    if (!_kalmanFilter.hasState(bias))
+    {
+        _kalmanFilter.addState(bias);
+        _kalmanFilter.x(bias) = initialValue;
+    }
 
-    _receiverClockModel.initialize(_kalmanFilter.F,
-                                   _kalmanFilter.G,
-                                   _kalmanFilter.W);
+    _receiverClockModel.initializeSystem(_kalmanFilter.F, _kalmanFilter.G, _kalmanFilter.W);
+}
+
+void KalmanFilter::addInterSystemBias(const SatelliteSystem& satSys, double initialValue, double initialVar)
+{
+    auto bias = Keys::InterSysClkBias{ satSys };
+    if (!_kalmanFilter.hasState(bias))
+    {
+        _kalmanFilter.addState(bias);
+        _kalmanFilter.x(bias) = initialValue;
+        _kalmanFilter.P(bias, bias) = initialVar;
+    }
+
+    _receiverClockModel.initializeSystem(_kalmanFilter.F, _kalmanFilter.G, _kalmanFilter.W);
 }
 
 void KalmanFilter::addInterFrequencyBias(const Frequency& freq)
 {
     auto bias = Keys::InterFreqBias{ freq };
     _kalmanFilter.addState(bias);
-    _kalmanFilter.P(bias, bias) = _kalmanFilter.P(Keys::RecvClkBias{ freq.getSatSys() },
-                                                  Keys::RecvClkBias{ freq.getSatSys() });
+
+    Keys::RecvClkBias clkBiasKey{ .satSys = SatSys_None };
+    for (const auto& key : _kalmanFilter.x.rowKeys())
+    {
+        if (const auto* bias = std::get_if<Keys::RecvClkBias>(&key))
+        {
+            clkBiasKey = *bias;
+            break;
+        }
+    }
+
+    _kalmanFilter.P(bias, bias) = clkBiasKey.satSys != SatSys_None
+                                      ? _kalmanFilter.P(clkBiasKey, clkBiasKey)
+                                      : 1e-8;
+
     _interFrequencyBiasModel.initialize(bias,
                                         _kalmanFilter.F,
                                         _kalmanFilter.G,

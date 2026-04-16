@@ -34,7 +34,7 @@ constexpr size_t VEL_STATE_COUNT = 4; ///< Amount of states to estimate for the 
 constexpr size_t POS_VEL_STATE_COUNT = 6; ///< Amount of states
 
 /// Alias for the state key type
-using StateKeyType = std::variant<Keys::MotionModelKey, Keys::RecvClkBias, Keys::RecvClkDrift, Keys::InterFreqBias>;
+using StateKeyType = std::variant<Keys::MotionModelKey, Keys::RecvClkBias, Keys::RecvClkDrift, Keys::InterSysClkBias, Keys::InterFreqBias>;
 
 } // namespace States
 
@@ -173,6 +173,10 @@ struct fmt::formatter<NAV::SPP::States::StateKeyType> : fmt::formatter<std::stri
         if (const auto* recvClkDrift = std::get_if<RecvClkDrift>(&state))
         {
             return fmt::formatter<std::string>::format(fmt::format("{}", *recvClkDrift), ctx);
+        }
+        if (const auto* interSysClkErr = std::get_if<InterSysClkBias>(&state))
+        {
+            return fmt::formatter<std::string>::format(fmt::format("{}", *interSysClkErr), ctx);
         }
         if (const auto* interFreqBias = std::get_if<NAV::Keys::InterFreqBias>(&state))
         {

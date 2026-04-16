@@ -556,8 +556,8 @@ bool RealTimeKinematic::initialize()
     _pivotSatellites.clear();
     _lastUpdate.reset();
     _dataInterval = 1;
-    _receiver = { { Receiver(static_cast<ReceiverType>(0), _obsFilter.getSystemFilter().toVector()),
-                    Receiver(static_cast<ReceiverType>(1), _obsFilter.getSystemFilter().toVector()) } };
+    _receiver = { { Receiver(static_cast<ReceiverType>(0)),
+                    Receiver(static_cast<ReceiverType>(1)) } };
     _lastSolutionStatus = RtkSolution::SolutionType::RTK_Float;
     _ambiguitiesHold.clear();
     nFixSolutions = 0;

@@ -46,6 +46,10 @@ std::ostream& operator<<(std::ostream& os, const NAV::Keys::RecvClkDrift& obj)
 {
     return os << fmt::format("{}", obj);
 }
+std::ostream& operator<<(std::ostream& os, const NAV::Keys::InterSysClkBias& obj)
+{
+    return os << fmt::format("{}", obj);
+}
 std::ostream& operator<<(std::ostream& os, const NAV::Keys::InterFreqBias& obj)
 {
     return os << fmt::format("{}", obj);

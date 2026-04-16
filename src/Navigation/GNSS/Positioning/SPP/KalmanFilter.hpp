@@ -72,7 +72,14 @@ class KalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
 
     /// @brief Adds the system bias state
     /// @param[in] satSys Satellite system
-    void addSystemBias(const SatelliteSystem& satSys);
+    /// @param[in] initialValue Initial value
+    void addSystemBias(const SatelliteSystem& satSys, double initialValue = 0.0);
+
+    /// @brief Adds the inter-system bias state
+    /// @param[in] satSys Satellite system
+    /// @param[in] initialValue Initial value [m]
+    /// @param[in] initialVar Initial variance [m^2]
+    void addInterSystemBias(const SatelliteSystem& satSys, double initialValue = 0.0, double initialVar = 1.0);
 
     /// @brief Adds the frequency as inter-frequency bias state
     /// @param[in] freq Frequency to estimate the inter-frequency bias for

@@ -47,6 +47,15 @@ struct RecvClkDrift
     /// @brief Equal comparison operator
     bool operator==(const RecvClkDrift& /* rhs */) const { return true; }
 };
+/// @brief Inter-system clock error [m]
+struct InterSysClkBias
+{
+    /// @brief Equal comparison operator
+    /// @param rhs Right-hand side
+    bool operator==(const InterSysClkBias& rhs) const { return satSys == rhs.satSys; }
+    /// @brief Satellite system
+    SatelliteSystem satSys;
+};
 
 } // namespace Keys
 
@@ -69,12 +78,10 @@ class ReceiverClockModel
     /// @param[in, out] G Noise input matrix
     /// @param[in, out] W Noise scale matrix
     template<typename Scalar, int Size>
-    void initialize(KeyedMatrix<Scalar, StateKeyType, StateKeyType, Size, Size>& F,
-                    KeyedMatrix<Scalar, StateKeyType, StateKeyType, Size, Size>& G,
-                    KeyedMatrix<Scalar, StateKeyType, StateKeyType, Size, Size>& W)
+    void initializeSystem(KeyedMatrix<Scalar, StateKeyType, StateKeyType, Size, Size>& F,
+                          KeyedMatrix<Scalar, StateKeyType, StateKeyType, Size, Size>& G,
+                          KeyedMatrix<Scalar, StateKeyType, StateKeyType, Size, Size>& W) const
     {
-        initialize();
-
         for (const auto& key : F.rowKeys())
         {
             if (const auto* biasKey = std::get_if<Keys::RecvClkBias>(&key))
@@ -87,6 +94,11 @@ class ReceiverClockModel
                 G(driftKey, driftKey) = 1;
                 W(*biasKey, *biasKey) = _covarianceClkPhaseDrift;
                 W(driftKey, driftKey) = _covarianceClkFrequencyDrift;
+            }
+            if (const auto* biasKey = std::get_if<Keys::InterSysClkBias>(&key))
+            {
+                G(*biasKey, *biasKey) = 1;
+                W(*biasKey, *biasKey) = 1e-8;
             }
         }
     }
@@ -134,32 +146,71 @@ class ReceiverClockModel
                     Q(*bias, *bias) = _covarianceClkPhaseDrift * dt;
                 }
             }
+            if (const auto* bias = std::get_if<Keys::InterSysClkBias>(&key))
+            {
+                Phi(*bias, *bias) = 1;
+                Q(*bias, *bias) = 1e-8 * dt;
+            }
+        }
+    }
+
+    /// @brief Updates the provided Phi and Q matrix
+    /// @param[in, out] Phi State transition matrix
+    /// @param[in, out] Q System/Process noise covariance matrix
+    /// @param[in] dt Time step size in [s]
+    template<typename Scalar, int Size>
+    void updatePhiAndQ(KeyedMatrix<Scalar, StateKeyType, StateKeyType, Size, Size>& Phi,
+                       KeyedMatrix<Scalar, StateKeyType, StateKeyType, Size, Size>& Q,
+                       double dt)
+    {
+        for (const auto& key : Phi.rowKeys())
+        {
+            if (const auto* bias = std::get_if<Keys::InterSysClkBias>(&key))
+            {
+                Phi(*bias, *bias) = 1;
+                Q(*bias, *bias) = 1e-8 * dt;
+            }
         }
     }
 
     /// @brief Calculates the state transition matrix (𝚽) and the process noise covariance matrix (𝐐)
     /// @param[in] dt Time step size in [s]
-    /// @param[in] satSys Satellite systems to use as keys
+    /// @param[in] bias Bias key
     /// @param[in] algorithm Algorithm to use for the calculation
     /// @return Phi and Q matrix
     [[nodiscard]] std::pair<KeyedMatrix2d<StateKeyType>, KeyedMatrix2d<StateKeyType>>
-        calcPhiAndQ(double dt, SatelliteSystem satSys, SystemModelCalcAlgorithm algorithm)
+        calcPhiAndQ(double dt, Keys::RecvClkBias bias, SystemModelCalcAlgorithm algorithm)
     {
         std::vector<StateKeyType> keys = {
-            Keys::RecvClkBias{ satSys },
+            bias,
             Keys::RecvClkDrift{},
         };
 
         KeyedMatrix2d<StateKeyType> F(Eigen::Matrix2d::Zero(), keys, keys);
         KeyedMatrix2d<StateKeyType> G(Eigen::Matrix2d::Zero(), keys, keys);
         KeyedMatrix2d<StateKeyType> W(Eigen::Matrix2d::Zero(), keys, keys);
-        initialize(F, G, W);
+        initializeSystem(F, G, W);
 
         KeyedMatrix2d<StateKeyType> Phi(Eigen::Matrix2d::Zero(), keys, keys);
         KeyedMatrix2d<StateKeyType> Q(Eigen::Matrix2d::Zero(), keys, keys);
         updatePhiAndQ(Phi, Q, F, G, W, dt, algorithm);
 
         return { Phi, Q };
+    }
+
+    /// @brief Calculates the state transition matrix (𝚽) and the process noise covariance matrix (𝐐)
+    /// @param[in] dt Time step size in [s]
+    /// @param[in] bias Bias key
+    /// @return Phi and Q matrix
+    [[nodiscard]] std::pair<double, double> calcPhiAndQ(double dt, const Keys::InterSysClkBias& bias)
+    {
+        std::vector<StateKeyType> key = { bias };
+
+        KeyedMatrix<double, StateKeyType, StateKeyType, 1, 1> Phi(Eigen::Matrix<double, 1, 1>::Zero(), key, key);
+        KeyedMatrix<double, StateKeyType, StateKeyType, 1, 1> Q(Eigen::Matrix<double, 1, 1>::Zero(), key, key);
+        updatePhiAndQ(Phi, Q, dt);
+
+        return { Phi(all, all)(0), Q(all, all)(0) };
     }
 
     /// @brief Shows a GUI
@@ -293,6 +344,12 @@ std::ostream& operator<<(std::ostream& os, const NAV::Keys::RecvClkBias& obj);
 /// @return Returns the output stream object in order to chain stream insertions
 std::ostream& operator<<(std::ostream& os, const NAV::Keys::RecvClkDrift& obj);
 
+/// @brief Stream insertion operator overload
+/// @param[in, out] os Output stream object to stream the time into
+/// @param[in] obj Object to print
+/// @return Returns the output stream object in order to chain stream insertions
+std::ostream& operator<<(std::ostream& os, const NAV::Keys::InterSysClkBias& obj);
+
 namespace std
 {
 
@@ -315,6 +372,17 @@ struct hash<NAV::Keys::RecvClkDrift>
     size_t operator()(const NAV::Keys::RecvClkDrift& /* recvClkDrift */) const
     {
         return 0;
+    }
+};
+/// @brief Hash function (needed for unordered_map)
+template<>
+struct hash<NAV::Keys::InterSysClkBias>
+{
+    /// @brief Hash function
+    /// @param[in] interSysClkErr Inter-system clock error
+    size_t operator()(const NAV::Keys::InterSysClkBias& interSysClkErr) const
+    {
+        return std::hash<NAV::SatelliteSystem>()(interSysClkErr.satSys);
     }
 };
 
@@ -348,6 +416,21 @@ struct fmt::formatter<NAV::Keys::RecvClkDrift> : fmt::formatter<std::string>
     auto format(const NAV::Keys::RecvClkDrift& /* recvClkDrift */, FormatContext& ctx) const
     {
         return fmt::formatter<std::string>::format("RecvClkDrift", ctx);
+    }
+};
+
+/// @brief Formatter
+template<>
+struct fmt::formatter<NAV::Keys::InterSysClkBias> : fmt::formatter<std::string>
+{
+    /// @brief Defines how to format structs
+    /// @param[in] interSysClkBias Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::Keys::InterSysClkBias& interSysClkBias, FormatContext& ctx) const
+    {
+        return fmt::formatter<std::string>::format(fmt::format("InterSysClkBias({})", interSysClkBias.satSys), ctx);
     }
 };
 

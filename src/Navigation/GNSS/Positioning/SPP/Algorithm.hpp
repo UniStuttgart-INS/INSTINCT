@@ -13,7 +13,11 @@
 
 #pragma once
 
+#include "Navigation/GNSS/Core/SatelliteSystem.hpp"
+#include "Navigation/GNSS/Positioning/ReceiverClock.hpp"
+#include "util/Assert.h"
 #include <fmt/format.h>
+#include <algorithm>
 #include <cstdint>
 #include <set>
 
@@ -88,6 +92,131 @@ class Algorithm
     /// Estimate Inter-frequency biases
     bool _estimateInterFreqBiases = true;
 
+    /// @brief Set the Position
+    /// @param[in] e_position ECEF position in [m]
+    void setPosition(const Eigen::Vector3d& e_position);
+
+    /// @brief Calculates the new satellite systems after the change of the reference system
+    /// @param[out] newRef New reference system
+    /// @param[out] oldRef Old reference system
+    /// @param[out] oldInterSysSatSystems Old inter-system bias satellite systems
+    /// @return List with the new systems
+    static std::vector<SatelliteSystem> calcInterSystemChangeNewInterSysSatSystem(const SatelliteSystem& newRef,
+                                                                                  const SatelliteSystem& oldRef,
+                                                                                  const std::vector<SatelliteSystem>& oldInterSysSatSystems)
+    {
+        bool higherPrio = newRef < oldRef;
+        INS_ASSERT_USER_ERROR(!higherPrio || std::ranges::contains(oldInterSysSatSystems, newRef), "The new reference has to be estimated before as inter-system bias before doing a reference switch.");
+
+        std::vector<SatelliteSystem> newInterSysSatSystems = oldInterSysSatSystems;
+        if (higherPrio)
+        {
+            for (auto& s : newInterSysSatSystems)
+            {
+                if (s == newRef)
+                {
+                    s = oldRef;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            std::erase(newInterSysSatSystems, newRef);
+        }
+        return newInterSysSatSystems;
+    }
+
+    /// @brief Calculates the transformation matrix D for the reference system change
+    /// @param[in] newRef New reference system
+    /// @param[in] oldRef Old reference system
+    /// @param[in] oldStateKeys Old inter-system bias satellite systems
+    /// @param[in] nameId Name and id of the calling node for logging
+    /// @return Transformation matrix D
+    template<typename StateKeyType>
+    static KeyedMatrixXd<StateKeyType> calcInterSystemChangeMatrix(const SatelliteSystem& newRef,
+                                                                   const SatelliteSystem& oldRef,
+                                                                   const std::vector<StateKeyType>& oldStateKeys,
+                                                                   [[maybe_unused]] const std::string& nameId)
+    {
+        bool higherPrio = newRef < oldRef;
+        INS_ASSERT_USER_ERROR(!higherPrio || std::ranges::contains(oldStateKeys, StateKeyType{ Keys::InterSysClkBias{ newRef } }), "The new reference has to be estimated before as inter-system bias before doing a reference switch.");
+
+        std::vector<StateKeyType> newStateKeys = oldStateKeys;
+        for (auto& s : newStateKeys)
+        {
+            if (auto* bias = std::get_if<Keys::RecvClkBias>(&s))
+            {
+                *bias = Keys::RecvClkBias{ newRef };
+            }
+            else if (auto* bias = std::get_if<Keys::InterSysClkBias>(&s))
+            {
+                if (higherPrio && bias->satSys == newRef)
+                {
+                    *bias = Keys::InterSysClkBias{ oldRef };
+                }
+            }
+        }
+        if (!higherPrio)
+        {
+            std::erase(newStateKeys, StateKeyType{ Keys::InterSysClkBias{ newRef } });
+        }
+
+        KeyedMatrixXd<StateKeyType> D(Eigen::MatrixXd::Zero(static_cast<int>(newStateKeys.size()), static_cast<int>(oldStateKeys.size())),
+                                      newStateKeys, oldStateKeys);
+        LOG_DATA("{}: [{}] -> [{}]: D = \n{}", nameId, oldRef, newRef, D);
+
+        if (D.hasAnyRows(Keys::Pos<StateKeyType>))
+        {
+            D.template block<3>(Keys::Pos<StateKeyType>, Keys::Pos<StateKeyType>).setIdentity();
+        }
+        if (D.hasAnyRows(Keys::Vel<StateKeyType>))
+        {
+            D.template block<3>(Keys::Vel<StateKeyType>, Keys::Vel<StateKeyType>).setIdentity();
+        }
+        for (const auto& s : oldStateKeys)
+        {
+            if (const auto* bias = std::get_if<Keys::RecvClkBias>(&s))
+            {
+                D(Keys::RecvClkBias{ newRef }, *bias) = higherPrio ? -1.0 : 1.0;
+                if (!higherPrio)
+                {
+                    D(Keys::RecvClkBias{ newRef }, Keys::InterSysClkBias{ newRef }) = 1.0;
+                }
+            }
+            else if (const auto* bias = std::get_if<Keys::InterSysClkBias>(&s))
+            {
+                if (higherPrio)
+                {
+                    if (bias->satSys != newRef)
+                    {
+                        D(*bias, *bias) = 1.0;
+                    }
+                    D(Keys::InterSysClkBias{ oldRef }, *bias) = -1.0;
+                }
+                else
+                {
+                    if (bias->satSys != newRef)
+                    {
+                        D(*bias, *bias) = 1.0;
+                        D(*bias, Keys::InterSysClkBias{ newRef }) = -1.0;
+                    }
+                }
+            }
+            else if (const auto* bias = std::get_if<Keys::InterFreqBias>(&s))
+            {
+                D(*bias, *bias) = 1.0;
+            }
+        }
+        if (auto drift = Keys::RecvClkDrift{};
+            D.hasRow(drift))
+        {
+            D(drift, drift) = 1.0;
+        }
+
+        return D;
+    }
+
   private:
     using Receiver = NAV::Receiver<ReceiverType>; ///< Receiver
 
@@ -111,10 +240,9 @@ class Algorithm
     void updateInterFrequencyBiases(const Observations& observations, const std::string& nameId);
 
     /// @brief Returns a list of state keys
-    /// @param[in] usedSatSystems Used Satellite systems this epoch
     /// @param[in] nDoppMeas Amount of Doppler measurements
     /// @param[in] nameId Name and id of the node calling this (only used for logging purposes)
-    std::vector<States::StateKeyType> determineStateKeys(const std::set<SatelliteSystem>& usedSatSystems, size_t nDoppMeas, const std::string& nameId) const;
+    std::vector<States::StateKeyType> determineStateKeys(size_t nDoppMeas, const std::string& nameId) const;
 
     /// @brief Returns a list of measurement keys
     /// @param[in] observations List of GNSS observation data used for the calculation
@@ -181,8 +309,14 @@ class Algorithm
                      const KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyType>& H,
                      const std::string& nameId);
 
+    /// @brief Transforms the Kalman filter and receiver clock object for a reference change
+    /// @param[in] newRef New reference system
+    /// @param[in] nDoppMeas Amount of Doppler measurements
+    /// @param[in] nameId Name and id of the node calling this (only used for logging purposes)
+    void switchInterSysClkBiasReference(const SatelliteSystem& newRef, size_t nDoppMeas, const std::string& nameId);
+
     /// Receiver
-    Receiver _receiver{ Rover, _obsFilter.getSystemFilter().toVector() };
+    Receiver _receiver{ Rover };
 
     /// Estimator type used for the calculations
     EstimatorType _estimatorType = EstimatorType::WeightedLeastSquares;

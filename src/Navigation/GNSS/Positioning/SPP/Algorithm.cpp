@@ -13,15 +13,19 @@
 
 #include "Algorithm.hpp"
 #include <algorithm>
+#include <variant>
 #include <spdlog/common.h>
 #include <spdlog/spdlog.h>
 
 #include "Navigation/Constants.hpp"
 #include "Navigation/GNSS/Core/Frequency.hpp"
+#include "Navigation/GNSS/Core/SatelliteSystem.hpp"
 #include "Navigation/GNSS/Positioning/Observation.hpp"
 #include "Navigation/GNSS/Positioning/SPP/Keys.hpp"
 #include "Navigation/GNSS/SystemModel/ReceiverClockModel.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
+#include "util/Assert.h"
+#include "util/Container/KeyedMatrix.hpp"
 #include "util/Logger.hpp"
 #include <fmt/format.h>
 
@@ -65,7 +69,7 @@ bool Algorithm::ShowGuiWidgets(const char* id, float itemWidth, float unitWidth)
 
 void Algorithm::reset()
 {
-    _receiver = Receiver(Rover, {});
+    _receiver = Receiver(Rover);
     _obsFilter.reset();
     _kalmanFilter.reset();
     _lastUpdate.reset();
@@ -116,12 +120,14 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
         LOG_DATA("{}: [{}]   e_vel    = {}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), _receiver.e_vel.transpose());
         LOG_DATA("{}: [{}] lla_pos    = {:.6f}°, {:.6f}°, {:.3f}m", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
                  rad2deg(_receiver.lla_posMarker.x()), rad2deg(_receiver.lla_posMarker.y()), _receiver.lla_posMarker.z());
-        for ([[maybe_unused]] const auto& satSys : _receiver.recvClk.satelliteSystems)
+        LOG_DATA("{}: [{}] clkBias({}) = {} [s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), _receiver.recvClk.bias.first,
+                 _receiver.recvClk.bias.second.value, _receiver.recvClk.bias.second.stdDev);
+        for ([[maybe_unused]] const auto& [satSys, interSysClockBias] : _receiver.recvClk.interSystemBiases)
         {
-            LOG_DATA("{}: [{}] {}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), satSys);
-            LOG_DATA("{}: [{}]   clkBias  = {} [s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), *_receiver.recvClk.biasFor(satSys), *_receiver.recvClk.biasStdDevFor(satSys));
+            LOG_DATA("{}: [{}] interSysClockBias({}) = {} [s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
+                     satSys, interSysClockBias.value, interSysClockBias.stdDev);
         }
-        LOG_DATA("{}: [{}]   clkDrift = {} [s/s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), _receiver.recvClk.drift, _receiver.recvClk.driftStdDev);
+        LOG_DATA("{}: [{}]   clkDrift = {} [s/s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), _receiver.recvClk.drift.value, _receiver.recvClk.drift.stdDev);
         for ([[maybe_unused]] const auto& freq : _receiver.interFrequencyBias)
         {
             LOG_DATA("{}: [{}]   IFBBias [{:3}] = {} [s] (StdDev = {})", nameId,
@@ -149,13 +155,28 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
             return nullptr;
         }
 
+        switchInterSysClkBiasReference(*observations.systems.begin(), observations.nObservables[GnssObs::Doppler], nameId);
+
         for (const auto& satSys : observations.systems)
         {
-            _receiver.recvClk.addSystem(satSys);
             if (_estimatorType == EstimatorType::KalmanFilter && !_kalmanFilter.getState().hasRow(Keys::RecvClkBias{ satSys }))
             {
-                _kalmanFilter.addSystemBias(satSys);
+                if (_receiver.recvClk.bias.first == SatSys_None)
+                {
+                    _kalmanFilter.addSystemBias(satSys);
+                }
+                else
+                {
+                    _kalmanFilter.addInterSystemBias(satSys,
+                                                     _receiver.recvClk.interSystemBiases.contains(satSys)
+                                                         ? _receiver.recvClk.interSystemBiases.at(satSys).stdDev
+                                                         : 0.0,
+                                                     _receiver.recvClk.interSystemBiases.contains(satSys)
+                                                         ? std::pow(_receiver.recvClk.interSystemBiases.at(satSys).stdDev, 2)
+                                                         : 1.0);
+                }
             }
+            _receiver.recvClk.addSystem(satSys);
         }
 
         size_t nParams = SPP::States::POS_STATE_COUNT + observations.systems.size() - 1;
@@ -188,7 +209,7 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
 
         _obsEstimator.calcObservationEstimates(observations, _receiver, ionosphericCorrections, nameId, ObservationEstimator::NoDifference);
 
-        auto stateKeys = determineStateKeys(observations.systems, observations.nObservables[GnssObs::Doppler], nameId);
+        auto stateKeys = determineStateKeys(observations.nObservables[GnssObs::Doppler], nameId);
         auto measKeys = determineMeasKeys(observations, sppSol->nMeasPsr, sppSol->nMeasDopp, nameId);
 
         sppSol->nParam = stateKeys.size();
@@ -260,20 +281,20 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
                     {
                         if (const auto* bias = std::get_if<Keys::RecvClkBias>(&s))
                         {
-                            size_t idx = _receiver.recvClk.getIdx(bias->satSys).value();
-                            x(*bias) = _receiver.recvClk.bias.at(idx) * InsConst::C;
+                            x(*bias) = _receiver.recvClk.bias.second.value * InsConst::C;
+                        }
+                        else if (const auto* bias = std::get_if<Keys::InterSysClkBias>(&s))
+                        {
+                            x(*bias) = _receiver.recvClk.interSystemBiases.at(bias->satSys).value * InsConst::C;
+                        }
+                        else if (const auto* bias = std::get_if<Keys::InterFreqBias>(&s))
+                        {
+                            x(*bias) = _receiver.interFrequencyBias.at(bias->freq).value * InsConst::C;
                         }
                     }
                     if (x.hasRow(Keys::RecvClkDrift{}))
                     {
-                        x(Keys::RecvClkDrift{}) = _receiver.recvClk.drift * InsConst::C;
-                    }
-                    for (const auto& state : x.rowKeys())
-                    {
-                        if (const auto* bias = std::get_if<Keys::InterFreqBias>(&state))
-                        {
-                            x(*bias) = _receiver.interFrequencyBias.at(bias->freq).value * InsConst::C;
-                        }
+                        x(Keys::RecvClkDrift{}) = _receiver.recvClk.drift.value * InsConst::C;
                     }
                     _kalmanFilter.initialize(x, lsq.variance, nameId);
                     LOG_DATA("{}: x =\n{}", nameId, _kalmanFilter.getState().transposed());
@@ -345,42 +366,20 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
     sppSol->recvClk = _receiver.recvClk;
     sppSol->interFrequencyBias = _receiver.interFrequencyBias;
 
-#if LOG_LEVEL <= LOG_LEVEL_DATA
-    if (sppSol->e_position() != _receiver.e_posMarker)
-    {
-        LOG_DATA("{}: [{}] Receiver:   e_pos    = {:.6f}m, {:.6f}m, {:.6f}m", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
-                 _receiver.e_posMarker(0), _receiver.e_posMarker(1), _receiver.e_posMarker(2));
-        LOG_DATA("{}: [{}] Receiver: lla_pos    = {:.6f}°, {:.6f}°, {:.3f}m", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
-                 rad2deg(_receiver.lla_posMarker.x()), rad2deg(_receiver.lla_posMarker.y()), _receiver.lla_posMarker.z());
-    }
-    if (sppSol->e_velocity() != _receiver.e_vel)
-    {
-        LOG_DATA("{}: [{}] Receiver:   e_vel    = {}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), _receiver.e_vel.transpose());
-    }
-    for (const auto& satSys : _receiver.recvClk.satelliteSystems)
-    {
-        if (*sppSol->recvClk.biasFor(satSys) != *_receiver.recvClk.biasFor(satSys))
-        {
-            LOG_DATA("{}: [{}] Receiver:   clkBias  = {} s", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), *_receiver.recvClk.biasFor(satSys));
-        }
-    }
-    if (sppSol->recvClk.drift != _receiver.recvClk.drift)
-    {
-        LOG_DATA("{}: [{}] Receiver:   clkDrift = {} s/s", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), _receiver.recvClk.drift);
-    }
-#endif
-
     LOG_DATA("{}: [{}] Solution:   e_pos    = {:.6f}m, {:.6f}m, {:.6f}m", nameId, sppSol->insTime.toYMDHMS(GPST),
              sppSol->e_position()(0), sppSol->e_position()(1), sppSol->e_position()(2));
     LOG_DATA("{}: [{}] Solution: lla_pos    = {:.6f}°, {:.6f}°, {:.3f}m", nameId, sppSol->insTime.toYMDHMS(GPST),
              rad2deg(sppSol->latitude()), rad2deg(sppSol->longitude()), sppSol->altitude());
     LOG_DATA("{}: [{}] Solution:   e_vel    = {}", nameId, sppSol->insTime.toYMDHMS(GPST), sppSol->e_velocity().transpose());
-    for (size_t i = 0; i < sppSol->recvClk.satelliteSystems.size(); i++) // NOLINT
+
+    LOG_DATA("{}: [{}] Solution: clkBias({}) = {} [s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), sppSol->recvClk.bias.first,
+             sppSol->recvClk.bias.second.value, sppSol->recvClk.bias.second.stdDev);
+    for ([[maybe_unused]] const auto& [satSys, interSysClockBias] : sppSol->recvClk.interSystemBiases)
     {
-        LOG_DATA("{}: [{}] Solution:   clkBias  [{:5}] = {} s", nameId, sppSol->insTime.toYMDHMS(GPST),
-                 sppSol->recvClk.satelliteSystems.at(i), sppSol->recvClk.bias.at(i));
+        LOG_DATA("{}: [{}] Solution: interSysClockBias({}) = {} [s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
+                 satSys, interSysClockBias.value, interSysClockBias.stdDev);
     }
-    LOG_DATA("{}: [{}] Solution:   clkDrift = {} s/s", nameId, sppSol->insTime.toYMDHMS(GPST), sppSol->recvClk.drift);
+    LOG_DATA("{}: [{}] Solution:   clkDrift = {} [s/s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), sppSol->recvClk.drift.value, sppSol->recvClk.drift.stdDev);
 
     for ([[maybe_unused]] const auto& freq : sppSol->interFrequencyBias)
     {
@@ -388,6 +387,12 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
     }
 
     return sppSol;
+}
+
+void Algorithm::setPosition(const Eigen::Vector3d& e_position)
+{
+    _receiver.e_posMarker = e_position;
+    _receiver.lla_posMarker = trafo::ecef2lla_WGS84(e_position);
 }
 
 bool Algorithm::canCalculateVelocity(size_t nDoppMeas) const
@@ -433,8 +438,7 @@ void Algorithm::updateInterFrequencyBiases(const Observations& observations, [[m
     }
 }
 
-std::vector<States::StateKeyType> Algorithm::determineStateKeys(const std::set<SatelliteSystem>& usedSatSystems, size_t nDoppMeas,
-                                                                [[maybe_unused]] const std::string& nameId) const
+std::vector<States::StateKeyType> Algorithm::determineStateKeys(size_t nDoppMeas, [[maybe_unused]] const std::string& nameId) const
 {
     if (_estimatorType == EstimatorType::KalmanFilter && _kalmanFilter.isInitialized())
     {
@@ -447,15 +451,16 @@ std::vector<States::StateKeyType> Algorithm::determineStateKeys(const std::set<S
     std::ranges::copy(PosKey, std::back_inserter(stateKeys));
     stateKeys.reserve(stateKeys.size() + 1
                       + canCalculateVelocity(nDoppMeas) * (VelKey.size() + 1)
-                      + usedSatSystems.size() * (1 + canCalculateVelocity(nDoppMeas)));
+                      + (1 + _receiver.recvClk.interSystemBiases.size()) * (1 + canCalculateVelocity(nDoppMeas)));
     if (canCalculateVelocity(nDoppMeas))
     {
         std::ranges::copy(VelKey, std::back_inserter(stateKeys));
     }
 
-    for (const auto& satSys : usedSatSystems)
+    stateKeys.emplace_back(Keys::RecvClkBias{ _receiver.recvClk.bias.first });
+    for (const auto& interSystemBias : _receiver.recvClk.interSystemBiases)
     {
-        stateKeys.emplace_back(Keys::RecvClkBias{ satSys });
+        stateKeys.emplace_back(Keys::InterSysClkBias{ interSystemBias.first });
     }
     if (canCalculateVelocity(nDoppMeas)) { stateKeys.emplace_back(Keys::RecvClkDrift{}); }
     for (const auto& freq : _receiver.interFrequencyBias)
@@ -517,7 +522,11 @@ KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyType> Algorithm::calcMatrixH(c
             {
             case GnssObs::Pseudorange:
                 H.block<3>(Meas::Psr{ satSigId }, PosKey) = -roverObs->e_pLOS(_receiver.e_posMarker).transpose();
-                H(Meas::Psr{ satSigId }, Keys::RecvClkBias{ satId.satSys }) = 1;
+                H(Meas::Psr{ satSigId }, Keys::RecvClkBias{ _receiver.recvClk.bias.first }) = 1;
+                if (_receiver.recvClk.interSystemBiases.contains(satId.satSys))
+                {
+                    H(Meas::Psr{ satSigId }, Keys::InterSysClkBias{ satId.satSys }) = 1;
+                }
                 if (_receiver.interFrequencyBias.contains(satSigId.freq()))
                 {
                     H(Meas::Psr{ satSigId }, Keys::InterFreqBias{ satSigId.freq() }) = 1;
@@ -617,18 +626,32 @@ void Algorithm::assignLeastSquaresResult(const KeyedVectorXd<States::StateKeyTyp
     {
         if (const auto* bias = std::get_if<Keys::RecvClkBias>(&s))
         {
-            size_t idx = _receiver.recvClk.getIdx(bias->satSys).value();
-            _receiver.recvClk.bias.at(idx) += state(*bias) / InsConst::C;
+            _receiver.recvClk.bias.second.value += state(*bias) / InsConst::C;
             if (variance(*bias, *bias) < 0)
             {
-                _receiver.recvClk.biasStdDev.at(idx) = 1000 / InsConst::C;
-                LOG_WARN("{}: Negative variance for {}. Defauting to {:.0f} [m]", nameId, *bias, _receiver.recvClk.biasStdDev.at(idx) * InsConst::C);
+                _receiver.recvClk.bias.second.stdDev = 1000 / InsConst::C;
+                LOG_WARN("{}: Negative variance for {}. Defauting to 1000 [m]", nameId, *bias);
             }
             else
             {
-                _receiver.recvClk.biasStdDev.at(idx) = std::sqrt(variance(*bias, *bias)) / InsConst::C;
+                _receiver.recvClk.bias.second.stdDev = std::sqrt(variance(*bias, *bias)) / InsConst::C;
             }
-            LOG_DATA("{}: Setting Clk Bias  [{}] = {} [s] (StdDev = {})", nameId, bias->satSys, _receiver.recvClk.bias.at(idx), _receiver.recvClk.biasStdDev.at(idx));
+            LOG_DATA("{}: Setting Clk Bias  [{}] = {} [s] (StdDev = {})", nameId, bias->satSys, _receiver.recvClk.bias.second.value, _receiver.recvClk.bias.second.stdDev);
+        }
+        else if (const auto* bias = std::get_if<Keys::InterSysClkBias>(&s))
+        {
+            auto& biasDiff = _receiver.recvClk.interSystemBiases.at(bias->satSys);
+            biasDiff.value += state(*bias) / InsConst::C;
+            if (variance(*bias, *bias) < 0)
+            {
+                biasDiff.stdDev = 1000 / InsConst::C;
+                LOG_WARN("{}: Negative variance for {}. Defauting to {:.0f} [m]", nameId, *bias, biasDiff.stdDev * InsConst::C);
+            }
+            else
+            {
+                biasDiff.stdDev = std::sqrt(variance(*bias, *bias)) / InsConst::C;
+            }
+            LOG_DATA("{}: Setting [{}] = {} [s] (StdDev = {})", nameId, *bias, biasDiff.value, biasDiff.stdDev);
         }
         else if (const auto* bias = std::get_if<Keys::InterFreqBias>(&s))
         {
@@ -654,17 +677,17 @@ void Algorithm::assignLeastSquaresResult(const KeyedVectorXd<States::StateKeyTyp
         {
             if (const auto* drift = std::get_if<Keys::RecvClkDrift>(&s))
             {
-                _receiver.recvClk.drift += state(*drift) / InsConst::C;
+                _receiver.recvClk.drift.value += state(*drift) / InsConst::C;
                 if (variance(*drift, *drift) < 0)
                 {
-                    _receiver.recvClk.driftStdDev = 1000 / InsConst::C;
-                    LOG_WARN("{}: Negative variance for {}. Defauting to {:.0f} [m/s]", nameId, *drift, _receiver.recvClk.driftStdDev * InsConst::C);
+                    _receiver.recvClk.drift.stdDev = 1000 / InsConst::C;
+                    LOG_WARN("{}: Negative variance for {}. Defauting to {:.0f} [m/s]", nameId, *drift, _receiver.recvClk.drift.stdDev * InsConst::C);
                 }
                 else
                 {
-                    _receiver.recvClk.driftStdDev = std::sqrt(variance(*drift, *drift)) / InsConst::C;
+                    _receiver.recvClk.drift.stdDev = std::sqrt(variance(*drift, *drift)) / InsConst::C;
                 }
-                LOG_DATA("{}: Setting Clk Drift = {} [s/s] (StdDev = {})", nameId, _receiver.recvClk.drift, _receiver.recvClk.driftStdDev);
+                LOG_DATA("{}: Setting Clk Drift = {} [s/s] (StdDev = {})", nameId, _receiver.recvClk.drift.value, _receiver.recvClk.drift.stdDev);
                 break;
             }
         }
@@ -691,13 +714,14 @@ void Algorithm::assignLeastSquaresResult(const KeyedVectorXd<States::StateKeyTyp
     LOG_DATA("{}: [{}]     e_vel    = {}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), _receiver.e_vel.transpose());
     LOG_DATA("{}: [{}]   lla_pos    = {:.6f}°, {:.6f}°, {:.3f}m", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
              rad2deg(_receiver.lla_posMarker.x()), rad2deg(_receiver.lla_posMarker.y()), _receiver.lla_posMarker.z());
-    for ([[maybe_unused]] const auto& satSys : _receiver.recvClk.satelliteSystems)
+    LOG_DATA("{}: [{}] clkBias({}) = {} [s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), _receiver.recvClk.bias.first,
+             _receiver.recvClk.bias.second.value, _receiver.recvClk.bias.second.stdDev);
+    for ([[maybe_unused]] const auto& [satSys, interSysClockBias] : _receiver.recvClk.interSystemBiases)
     {
-        LOG_DATA("{}: [{}]     clkBias({})  = {} [s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), satSys,
-                 *_receiver.recvClk.biasFor(satSys), *_receiver.recvClk.biasStdDevFor(satSys));
+        LOG_DATA("{}: [{}] interSysClockBias({}) = {} [s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
+                 satSys, interSysClockBias.value, interSysClockBias.stdDev);
     }
-    LOG_DATA("{}: [{}]   clkDrift = {} [s/s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
-             _receiver.recvClk.drift, _receiver.recvClk.driftStdDev);
+    LOG_DATA("{}: [{}]   clkDrift = {} [s/s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), _receiver.recvClk.drift.value, _receiver.recvClk.drift.stdDev);
 
     for ([[maybe_unused]] const auto& freq : _receiver.interFrequencyBias)
     {
@@ -710,6 +734,9 @@ void Algorithm::assignKalmanFilterResult(const KeyedVectorXd<States::StateKeyTyp
                                          const KeyedMatrixXd<States::StateKeyType, States::StateKeyType>& variance,
                                          [[maybe_unused]] const std::string& nameId)
 {
+    LOG_DATA("{}: [{}] Assigning solution to _receiver", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST));
+    LOG_DATA("{}: [{}]   keys = [{}]", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), fmt::join(state.rowKeys(), ", "));
+
     _receiver.e_posMarker = state(PosKey);
     _receiver.lla_posMarker = trafo::ecef2lla_WGS84(_receiver.e_posMarker);
     _receiver.e_vel = state(VelKey);
@@ -717,33 +744,47 @@ void Algorithm::assignKalmanFilterResult(const KeyedVectorXd<States::StateKeyTyp
     {
         if (const auto* bias = std::get_if<Keys::RecvClkBias>(&s))
         {
-            size_t idx = _receiver.recvClk.getIdx(bias->satSys).value();
-            _receiver.recvClk.bias.at(idx) = state(*bias) / InsConst::C;
+            _receiver.recvClk.bias.second.value = state(*bias) / InsConst::C;
             if (variance(*bias, *bias) < 0)
             {
-                LOG_WARN("{}: [{}] Negative variance of {:3g} for {}. Defauting to 1000 [m]", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
-                         variance(*bias, *bias), *bias);
-                _receiver.recvClk.biasStdDev.at(idx) = 1000 / InsConst::C;
+                _receiver.recvClk.bias.second.stdDev = 1000 / InsConst::C;
+                LOG_WARN("{}: Negative variance for {}. Defauting to 1000 [m]", nameId, *bias);
             }
             else
             {
-                _receiver.recvClk.biasStdDev.at(idx) = std::sqrt(variance(*bias, *bias)) / InsConst::C;
+                _receiver.recvClk.bias.second.stdDev = std::sqrt(variance(*bias, *bias)) / InsConst::C;
             }
-            LOG_DATA("{}: Setting Clock Bias  [{}] = {}", nameId, bias->satSys, _receiver.recvClk.bias.at(idx));
+            LOG_DATA("{}: Setting Clk Bias  [{}] = {} [s] (StdDev = {})", nameId, bias->satSys, _receiver.recvClk.bias.second.value, _receiver.recvClk.bias.second.stdDev);
+        }
+        else if (const auto* bias = std::get_if<Keys::InterSysClkBias>(&s))
+        {
+            LOG_DATA("{}: Setting {}", nameId, *bias);
+            auto& biasDiff = _receiver.recvClk.interSystemBiases.at(bias->satSys);
+            biasDiff.value = state(*bias) / InsConst::C;
+            if (variance(*bias, *bias) < 0)
+            {
+                biasDiff.stdDev = 1000 / InsConst::C;
+                LOG_WARN("{}: Negative variance for {}. Defauting to {:.0f} [m]", nameId, *bias, biasDiff.stdDev * InsConst::C);
+            }
+            else
+            {
+                biasDiff.stdDev = std::sqrt(variance(*bias, *bias)) / InsConst::C;
+            }
+            LOG_DATA("{}: Setting [{}] = {} [s] (StdDev = {})", nameId, *bias, biasDiff.value, biasDiff.stdDev);
         }
         else if (const auto* drift = std::get_if<Keys::RecvClkDrift>(&s))
         {
-            _receiver.recvClk.drift = state(*drift) / InsConst::C;
+            _receiver.recvClk.drift.value = state(*drift) / InsConst::C;
             if (variance(*drift, *drift) < 0)
             {
-                _receiver.recvClk.driftStdDev = 1000 / InsConst::C;
-                LOG_WARN("{}: Negative variance for {}. Defauting to {:.0f} [m/s]", nameId, *drift, _receiver.recvClk.driftStdDev * InsConst::C);
+                _receiver.recvClk.drift.stdDev = 1000 / InsConst::C;
+                LOG_WARN("{}: Negative variance for {}. Defauting to {:.0f} [m/s]", nameId, *drift, _receiver.recvClk.drift.stdDev * InsConst::C);
             }
             else
             {
-                _receiver.recvClk.driftStdDev = std::sqrt(variance(*drift, *drift)) / InsConst::C;
+                _receiver.recvClk.drift.stdDev = std::sqrt(variance(*drift, *drift)) / InsConst::C;
             }
-            LOG_DATA("{}: Setting Clock Drift = {}", nameId, _receiver.recvClk.drift);
+            LOG_DATA("{}: Setting Clk Drift = {} [s/s] (StdDev = {})", nameId, _receiver.recvClk.drift.value, _receiver.recvClk.drift.stdDev);
         }
         else if (const auto* bias = std::get_if<Keys::InterFreqBias>(&s))
         {
@@ -758,26 +799,23 @@ void Algorithm::assignKalmanFilterResult(const KeyedVectorXd<States::StateKeyTyp
             {
                 freqDiff.stdDev = std::sqrt(variance(*bias, *bias)) / InsConst::C;
             }
-            LOG_DATA("{}: Setting Inter-Freq Bias [{}] = {}", nameId, bias->freq, freqDiff.value);
+            LOG_DATA("{}: Setting [{}] = {}", nameId, *bias, freqDiff.value);
         }
     }
 
-    LOG_DATA("{}: [{}] Assigning solution to _receiver", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST));
     LOG_DATA("{}: [{}]     e_pos    = {:.6f}m, {:.6f}m, {:.6f}m", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
              _receiver.e_posMarker(0), _receiver.e_posMarker(1), _receiver.e_posMarker(2));
     LOG_DATA("{}: [{}]     e_vel    = {}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), _receiver.e_vel.transpose());
     LOG_DATA("{}: [{}]   lla_pos    = {:.6f}°, {:.6f}°, {:.3f}m", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
              rad2deg(_receiver.lla_posMarker.x()), rad2deg(_receiver.lla_posMarker.y()), _receiver.lla_posMarker.z());
-    for ([[maybe_unused]] const auto& satSys : _receiver.recvClk.satelliteSystems)
+    LOG_DATA("{}: [{}] clkBias({}) = {} [s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), _receiver.recvClk.bias.first,
+             _receiver.recvClk.bias.second.value, _receiver.recvClk.bias.second.stdDev);
+    for ([[maybe_unused]] const auto& [satSys, interSysClockBias] : _receiver.recvClk.interSystemBiases)
     {
-        LOG_DATA("{}: [{}]     clkBias  = {} s", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), *_receiver.recvClk.biasFor(satSys));
+        LOG_DATA("{}: [{}] interSysClockBias({}) = {} [s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
+                 satSys, interSysClockBias.value, interSysClockBias.stdDev);
     }
-    LOG_DATA("{}: [{}]     clkDrift = {} s/s", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), _receiver.recvClk.drift);
-
-    for ([[maybe_unused]] const auto& freq : _receiver.interFrequencyBias)
-    {
-        LOG_DATA("{}: [{}]     IFBBias [{:3}] = {} s", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), freq.first, freq.second.value);
-    }
+    LOG_DATA("{}: [{}]   clkDrift = {} [s/s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), _receiver.recvClk.drift.value, _receiver.recvClk.drift.stdDev);
 }
 
 void Algorithm::computeDOPs(const std::shared_ptr<SppSolution>& sppSol,
@@ -799,6 +837,134 @@ void Algorithm::computeDOPs(const std::shared_ptr<SppSolution>& sppSol,
     LOG_DATA("{}: HDOP   = {}", nameId, sppSol->HDOP);
     LOG_DATA("{}: VDOP   = {}", nameId, sppSol->VDOP);
     LOG_DATA("{}: PDOP   = {}", nameId, sppSol->PDOP);
+}
+
+void Algorithm::switchInterSysClkBiasReference(const SatelliteSystem& newRef, size_t nDoppMeas, const std::string& nameId)
+{
+    SatelliteSystem oldRef = _receiver.recvClk.bias.first;
+    bool higherPrio = newRef < oldRef;
+
+    LOG_DATA("{}: Checking if reference system switch necessary: [{}] -> [{}]", nameId, oldRef, newRef);
+
+    std::vector<SatelliteSystem> interSystemBiasKeys;
+    interSystemBiasKeys.reserve(_receiver.recvClk.interSystemBiases.size());
+    for (const auto& interSys : _receiver.recvClk.interSystemBiases)
+    {
+        interSystemBiasKeys.push_back(interSys.first);
+    }
+
+    if (oldRef == SatSys_None // is not initialized
+        || oldRef == newRef)  // is already the reference system
+
+    {
+        LOG_DATA("{}:   Not switching reference system because either not initialized yet or the new system is already the reference.", nameId);
+        return;
+    }
+    if (higherPrio &&                                          // The old reference is obverved, but new reference has higher priority GAL -> GPS
+        !_receiver.recvClk.interSystemBiases.contains(newRef)) // The new reference must be estimated once
+    {
+        LOG_DATA("{}:   Not switching reference system because new system is higher priority but needs to be observed at least one epoch.", nameId);
+        return;
+    }
+    LOG_DEBUG("{}: Switching reference system: [{}] -> [{}] (reason: {})", nameId, oldRef, newRef,
+              higherPrio ? "higher priority system found" : "old reference system not observed anymore");
+
+    std::vector<States::StateKeyType> oldStateKeys = determineStateKeys(nDoppMeas, nameId);
+
+    auto oldSize = static_cast<int>(oldStateKeys.size());
+    KeyedVectorXd<States::StateKeyType> x(Eigen::VectorXd::Zero(oldSize), oldStateKeys);
+    KeyedMatrixXd<States::StateKeyType> D = calcInterSystemChangeMatrix(newRef, oldRef, oldStateKeys, nameId);
+
+    LOG_DATA("{}: old state keys = {}", nameId, fmt::join(D.colKeys(), ", "));
+    LOG_DATA("{}: new state keys = {}", nameId, fmt::join(D.rowKeys(), ", "));
+
+    x.segment<3>(PosKey) = _receiver.e_posMarker;
+    if (x.hasAnyRows(VelKey))
+    {
+        x.segment<3>(VelKey) = _receiver.e_vel;
+    }
+    for (const auto& s : oldStateKeys)
+    {
+        if (const auto* bias = std::get_if<Keys::RecvClkBias>(&s))
+        {
+            x(*bias) = _receiver.recvClk.bias.second.value * InsConst::C;
+        }
+        else if (const auto* bias = std::get_if<Keys::InterSysClkBias>(&s))
+        {
+            x(*bias) = _receiver.recvClk.interSystemBiases.at(bias->satSys).value * InsConst::C;
+        }
+        else if (const auto* bias = std::get_if<Keys::InterFreqBias>(&s))
+        {
+            x(*bias) = _receiver.interFrequencyBias.at(bias->freq).value * InsConst::C;
+        }
+    }
+    if (auto drift = Keys::RecvClkDrift{};
+        x.hasRow(drift))
+    {
+        x(drift) = _receiver.recvClk.drift.value * InsConst::C;
+    }
+    LOG_DATA("{}: x = \n{}", nameId, x.transposed());
+    LOG_DATA("{}: D = \n{}", nameId, D);
+
+    KeyedMatrixXd<States::StateKeyType> P(Eigen::MatrixXd::Zero(oldSize, oldSize), oldStateKeys, oldStateKeys);
+    if (_estimatorType == EstimatorType::KalmanFilter && _kalmanFilter.isInitialized())
+    {
+        P = _kalmanFilter.getErrorCovarianceMatrix();
+    }
+    else
+    {
+        // The WLSQ does not save the uncertainty of position and velocity
+        P(PosKey, PosKey).diagonal().setIdentity();
+        P(VelKey, VelKey).diagonal().setIdentity();
+        for (const auto& state : oldStateKeys)
+        {
+            if (std::holds_alternative<Keys::RecvClkBias>(state))
+            {
+                P(state, state) = std::pow(_receiver.recvClk.bias.second.stdDev, 2);
+            }
+            else if (const auto* bias = std::get_if<Keys::InterSysClkBias>(&state))
+            {
+                P(state, state) = std::pow(_receiver.recvClk.interSystemBiases.at(bias->satSys).stdDev, 2);
+            }
+            else if (const auto* bias = std::get_if<Keys::InterFreqBias>(&state))
+            {
+                P(state, state) = std::pow(_receiver.interFrequencyBias.at(bias->freq).stdDev, 2);
+            }
+        }
+    }
+    LOG_DATA("{}: P = \n{}", nameId, P);
+
+    KeyedVectorXd<States::StateKeyType> xNew(D(all, all) * x(all), D.rowKeys());
+    KeyedMatrixXd<States::StateKeyType> PNew(D(all, all) * P(all, all) * D(all, all).transpose(), D.rowKeys());
+    LOG_DATA("{}: x_new = \n{}", nameId, xNew.transposed());
+    LOG_DATA("{}: P_new = \n{}", nameId, PNew);
+    if (_estimatorType == EstimatorType::KalmanFilter && _kalmanFilter.isInitialized())
+    {
+        _kalmanFilter.reset();
+        for (const auto& state : D.rowKeys())
+        {
+            if (const auto* bias = std::get_if<Keys::RecvClkBias>(&state))
+            {
+                _kalmanFilter.addSystemBias(bias->satSys);
+            }
+            else if (const auto* bias = std::get_if<Keys::InterSysClkBias>(&state))
+            {
+                _kalmanFilter.addInterSystemBias(bias->satSys);
+            }
+            else if (const auto* bias = std::get_if<Keys::InterFreqBias>(&state))
+            {
+                _kalmanFilter.addInterFrequencyBias(bias->freq);
+            }
+        }
+        _kalmanFilter.initialize(xNew, PNew, nameId);
+    }
+    _receiver.recvClk.bias.first = newRef;
+    _receiver.recvClk.interSystemBiases.erase(newRef);
+    if (higherPrio)
+    {
+        _receiver.recvClk.interSystemBiases.emplace(oldRef, UncertainValue<double>{});
+    }
+    assignKalmanFilterResult(xNew, PNew, nameId);
 }
 
 /// @brief Converts the provided object into json

@@ -199,7 +199,7 @@ class RealTimeKinematic : public Node
     SPP::Algorithm _sppAlgorithm;
 
     /// @brief Receivers
-    std::array<Receiver, ReceiverType::ReceiverType_COUNT> _receiver = { { Receiver(Base, {}), Receiver(Rover, {}) } };
+    std::array<Receiver, ReceiverType::ReceiverType_COUNT> _receiver = { { Receiver(Base), Receiver(Rover) } };
 
     /// Flag, whether the observation was received this epoch
     bool _baseObsReceivedThisEpoch = true;

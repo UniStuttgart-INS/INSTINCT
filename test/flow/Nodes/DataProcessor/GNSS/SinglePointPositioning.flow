@@ -1,5 +1,50 @@
 {
+    "bottomViewHeight": 505.0,
     "colormaps": [],
+    "commonLog": {
+        "overrideStartTime": false,
+        "startTimeFormat": {
+            "format": 0,
+            "system": "GPST"
+        },
+        "useGuiInputs": false
+    },
+    "fonts": {
+        "useBigDefaultFont": false,
+        "useBigMonoFont": false,
+        "useBigPanelFont": false,
+        "useBigWindowFont": false
+    },
+    "gridLinesEnabled": 0.1568627506494522,
+    "header": {
+        "colors": {
+            "deinitialized": {
+                "a": 255,
+                "b": 128,
+                "g": 128,
+                "r": 255
+            },
+            "disabled": {
+                "a": 255,
+                "b": 192,
+                "g": 192,
+                "r": 192
+            },
+            "initialized": {
+                "a": 255,
+                "b": 128,
+                "g": 255,
+                "r": 128
+            }
+        }
+    },
+    "hideFPS": false,
+    "leftPane": {
+        "hide": false,
+        "leftWidth": 301.0,
+        "rightWidth": 899.0
+    },
+    "lightMode": false,
     "links": {
         "link-92": {
             "endPinId": 88,
@@ -22,7 +67,8 @@
             "data": {
                 "FileReader": {
                     "path": "GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Spirent_RINEX_GN.23N"
-                }
+                },
+                "allowMissingHeaderLines": false
             },
             "enabled": true,
             "id": 54,
@@ -50,6 +96,7 @@
                 "FileReader": {
                     "path": "GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Iono-none_tropo-none/Spirent_RINEX_MO.obs"
                 },
+                "allowMissingHeaderLines": false,
                 "eraseLessPreciseCodes": true
             },
             "enabled": true,
@@ -79,6 +126,28 @@
                     "estimateInterFrequencyBiases": true,
                     "estimatorType": 1,
                     "kalmanFilter": {
+                        "interFrequencyBiasModel": {
+                            "covarianceInterFrequencyBias": 1e-06,
+                            "covarianceInterFrequencyBiasUnit": "m^2/s"
+                        },
+                        "motionModel": {
+                            "covarianceAccel": [
+                                3.0,
+                                1.5
+                            ],
+                            "covarianceAccelUnit": "m/√(s^3)",
+                            "covarianceJerk": [
+                                0.0,
+                                0.0
+                            ],
+                            "covarianceJerkUnit": "m/√(s^5)"
+                        },
+                        "receiverClockModel": {
+                            "covarianceClkFrequencyDrift": 0.04,
+                            "covarianceClkFrequencyDriftUnit": "m^2/s^3",
+                            "covarianceClkPhaseDrift": 0.01,
+                            "covarianceClkPhaseDriftUnit": "m^2/s"
+                        },
                         "systemModelCalcAlgorithm": 1
                     },
                     "obsEstimator": {
@@ -87,7 +156,8 @@
                                 0,
                                 {
                                     "autoDetermine": true,
-                                    "enabled": true,
+                                    "correctPCO": true,
+                                    "correctPCV": true,
                                     "hen_delta": {
                                         "0": {
                                             "0": 0.0
@@ -138,10 +208,6 @@
                                 "a": 0.3,
                                 "b": 0.5
                             },
-                            "modelParametersSineType": {
-                                "a": 0.64,
-                                "b": 0.36
-                            },
                             "plotCN0": 30.0
                         },
                         "ionosphereModel": 0,
@@ -150,7 +216,10 @@
                                 0,
                                 {
                                     "pressureModel": 0,
-                                    "temperatureModel": 0,
+                                    "temperatureModel": {
+                                        "constantTemperature": 290.0,
+                                        "model": "ISA"
+                                    },
                                     "waterVaporModel": 0
                                 }
                             ],
@@ -158,7 +227,10 @@
                                 0,
                                 {
                                     "pressureModel": 0,
-                                    "temperatureModel": 0,
+                                    "temperatureModel": {
+                                        "constantTemperature": 290.0,
+                                        "model": "ISA"
+                                    },
                                     "waterVaporModel": 0
                                 }
                             ],
@@ -166,7 +238,10 @@
                                 0,
                                 {
                                     "pressureModel": 0,
-                                    "temperatureModel": 0,
+                                    "temperatureModel": {
+                                        "constantTemperature": 290.0,
+                                        "model": "ISA"
+                                    },
                                     "waterVaporModel": 0
                                 }
                             ],
@@ -174,7 +249,10 @@
                                 0,
                                 {
                                     "pressureModel": 0,
-                                    "temperatureModel": 0,
+                                    "temperatureModel": {
+                                        "constantTemperature": 290.0,
+                                        "model": "ISA"
+                                    },
                                     "waterVaporModel": 0
                                 }
                             ]
@@ -750,8 +828,8 @@
                             }
                         ],
                         "usedObsTypes": [
-                            0,
-                            2
+                            2,
+                            0
                         ]
                     }
                 },
@@ -812,5 +890,6 @@
             },
             "type": "Terminator"
         }
-    }
+    },
+    "transparentWindows": 1.0
 }
