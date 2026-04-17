@@ -107,6 +107,29 @@ void from_json(const json& j, VelocityUnits& data)
     }
 }
 
+void to_json(json& j, const AccelerationUnits& data)
+{
+    j = to_string(data);
+}
+void from_json(const json& j, AccelerationUnits& data)
+{
+    if (!j.is_string())
+    {
+        LOG_WARN("Could not parse '{}' into AccelerationUnits. Consider resaving the flow", j.dump());
+        return;
+    }
+    std::string str = j.get<std::string>();
+    for (size_t i = 0; i < static_cast<size_t>(AccelerationUnits::COUNT); i++)
+    {
+        auto enumItem = static_cast<AccelerationUnits>(i);
+        if (str == to_string(enumItem))
+        {
+            data = enumItem;
+            return;
+        }
+    }
+}
+
 void to_json(json& j, const AttitudeUnits& data)
 {
     j = to_string(data);
@@ -244,6 +267,29 @@ Eigen::Vector3d NAV::convertUnit(const Eigen::Vector3d& value, Units::VelocityUn
     return value; // [m/s]
 }
 
+double NAV::convertUnit(const double& value, Units::AccelerationUnits unit)
+{
+    switch (unit)
+    {
+    case Units::AccelerationUnits::m_s2:
+        return value;
+    case Units::AccelerationUnits::COUNT:
+        break;
+    }
+    return value; // [m/s^2]
+}
+Eigen::Vector3d NAV::convertUnit(const Eigen::Vector3d& value, Units::AccelerationUnits unit)
+{
+    switch (unit)
+    {
+    case Units::AccelerationUnits::m_s2:
+        return value;
+    case Units::AccelerationUnits::COUNT:
+        break;
+    }
+    return value; // [m/s^2]
+}
+
 double NAV::convertUnit(const double& value, Units::AttitudeUnits unit)
 {
     switch (unit)
@@ -324,6 +370,18 @@ std::string NAV::to_string(Units::VelocityUnits unit)
     case Units::VelocityUnits::m_s:
         return "m/s";
     case Units::VelocityUnits::COUNT:
+        break;
+    }
+    return "";
+}
+
+std::string NAV::to_string(Units::AccelerationUnits unit)
+{
+    switch (unit)
+    {
+    case Units::AccelerationUnits::m_s2:
+        return "m/s^2";
+    case Units::AccelerationUnits::COUNT:
         break;
     }
     return "";

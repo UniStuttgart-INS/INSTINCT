@@ -38,6 +38,29 @@ void from_json(const json& j, CovarianceAccelUnits& data)
     }
 }
 
+void to_json(json& j, const CovarianceJerkUnits& data)
+{
+    j = to_string(data);
+}
+void from_json(const json& j, CovarianceJerkUnits& data)
+{
+    if (!j.is_string())
+    {
+        LOG_WARN("Could not parse '{}' into CovarianceJerkUnits. Consider resaving the flow", j.dump());
+        return;
+    }
+    std::string str = j.get<std::string>();
+    for (size_t i = 0; i < static_cast<size_t>(CovarianceJerkUnits::COUNT); i++)
+    {
+        auto enumItem = static_cast<CovarianceJerkUnits>(i);
+        if (str == to_string(enumItem))
+        {
+            data = enumItem;
+            return;
+        }
+    }
+}
+
 void to_json(json& j, const CovarianceAngularVelocityUnits& data)
 {
     j = to_string(data);
@@ -123,6 +146,20 @@ double NAV::convertUnit(const double& value, Units::CovarianceAccelUnits unit)
     return value; // Covariance of the acceleration 𝜎_a due to user motion in horizontal and vertical component [m²/s³]
 }
 
+double NAV::convertUnit(const double& value, Units::CovarianceJerkUnits unit)
+{
+    switch (unit)
+    {
+    case Units::CovarianceJerkUnits::m2_s5:
+        return value;
+    case Units::CovarianceJerkUnits::m_sqrts5:
+        return std::pow(value, 2);
+    case Units::CovarianceJerkUnits::COUNT:
+        break;
+    }
+    return value; // Covariance of the jerk 𝜎_j due to user motion in horizontal and vertical component [m^2/s^5]
+}
+
 double NAV::convertUnit(const double& value, Units::CovarianceAngularVelocityUnits unit)
 {
     switch (unit)
@@ -182,6 +219,20 @@ std::string NAV::to_string(Units::CovarianceAccelUnits unit)
     case Units::CovarianceAccelUnits::m_sqrts3:
         return "m/√(s^3)";
     case Units::CovarianceAccelUnits::COUNT:
+        break;
+    }
+    return "";
+}
+
+std::string NAV::to_string(Units::CovarianceJerkUnits unit)
+{
+    switch (unit)
+    {
+    case Units::CovarianceJerkUnits::m2_s5:
+        return "m^2/s^5";
+    case Units::CovarianceJerkUnits::m_sqrts5:
+        return "m/√(s^5)";
+    case Units::CovarianceJerkUnits::COUNT:
         break;
     }
     return "";

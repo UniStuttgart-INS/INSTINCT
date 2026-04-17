@@ -2336,6 +2336,21 @@ using KeyedMatrix5d = KeyedMatrix<double, RowKeyType, ColKeyType, 5, 5>;
 /// @tparam ColKeyType Type of the key used for col lookup
 template<typename RowKeyType, typename ColKeyType = RowKeyType>
 using KeyedMatrix6d = KeyedMatrix<double, RowKeyType, ColKeyType, 6, 6>;
+/// @brief Static 7x7 squared size KeyedMatrix with double types
+/// @tparam RowKeyType Type of the key used for row lookup
+/// @tparam ColKeyType Type of the key used for col lookup
+template<typename RowKeyType, typename ColKeyType = RowKeyType>
+using KeyedMatrix7d = KeyedMatrix<double, RowKeyType, ColKeyType, 7, 7>;
+/// @brief Static 8x8 squared size KeyedMatrix with double types
+/// @tparam RowKeyType Type of the key used for row lookup
+/// @tparam ColKeyType Type of the key used for col lookup
+template<typename RowKeyType, typename ColKeyType = RowKeyType>
+using KeyedMatrix8d = KeyedMatrix<double, RowKeyType, ColKeyType, 8, 8>;
+/// @brief Static 9x9 squared size KeyedMatrix with double types
+/// @tparam RowKeyType Type of the key used for row lookup
+/// @tparam ColKeyType Type of the key used for col lookup
+template<typename RowKeyType, typename ColKeyType = RowKeyType>
+using KeyedMatrix9d = KeyedMatrix<double, RowKeyType, ColKeyType, 9, 9>;
 
 /// @brief Dynamic size KeyedVector
 /// @tparam Scalar Numeric type, e.g. float, double, int or std::complex<float>.
@@ -2366,6 +2381,18 @@ using KeyedVector5d = KeyedVector<double, RowKeyType, 5>;
 /// @tparam RowKeyType Type of the key used for row lookup
 template<typename RowKeyType>
 using KeyedVector6d = KeyedVector<double, RowKeyType, 6>;
+/// @brief Static 7 row KeyedVector with double types
+/// @tparam RowKeyType Type of the key used for row lookup
+template<typename RowKeyType>
+using KeyedVector7d = KeyedVector<double, RowKeyType, 7>;
+/// @brief Static 8 row KeyedVector with double types
+/// @tparam RowKeyType Type of the key used for row lookup
+template<typename RowKeyType>
+using KeyedVector8d = KeyedVector<double, RowKeyType, 8>;
+/// @brief Static 9 row KeyedVector with double types
+/// @tparam RowKeyType Type of the key used for row lookup
+template<typename RowKeyType>
+using KeyedVector9d = KeyedVector<double, RowKeyType, 9>;
 
 /// @brief Dynamic size KeyedRowVector
 /// @tparam ColKeyType Type of the key used for col lookup
@@ -2395,6 +2422,18 @@ using KeyedRowVector5d = KeyedRowVector<double, ColKeyType, 5>;
 /// @tparam ColKeyType Type of the key used for col lookup
 template<typename ColKeyType>
 using KeyedRowVector6d = KeyedRowVector<double, ColKeyType, 6>;
+/// @brief Static 7 col KeyedRowVector with double types
+/// @tparam ColKeyType Type of the key used for col lookup
+template<typename ColKeyType>
+using KeyedRowVector7d = KeyedRowVector<double, ColKeyType, 7>;
+/// @brief Static 8 col KeyedRowVector with double types
+/// @tparam ColKeyType Type of the key used for col lookup
+template<typename ColKeyType>
+using KeyedRowVector8d = KeyedRowVector<double, ColKeyType, 8>;
+/// @brief Static 9 col KeyedRowVector with double types
+/// @tparam ColKeyType Type of the key used for col lookup
+template<typename ColKeyType>
+using KeyedRowVector9d = KeyedRowVector<double, ColKeyType, 9>;
 
 } // namespace NAV
 

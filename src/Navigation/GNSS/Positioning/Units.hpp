@@ -58,6 +58,13 @@ enum class VelocityUnits : uint8_t
     COUNT, ///< Amount of items in the enum
 };
 
+/// Possible units for the acceleration
+enum class AccelerationUnits : uint8_t
+{
+    m_s2,  ///< [m/s^2]
+    COUNT, ///< Amount of items in the enum
+};
+
 /// Possible units for the attitude
 enum class AttitudeUnits : uint8_t
 {
@@ -101,6 +108,15 @@ void to_json(json& j, const VelocityUnits& data);
 /// @param[in] j Json object with the needed values
 /// @param[out] data Object to fill from the json
 void from_json(const json& j, VelocityUnits& data);
+
+/// @brief Converts the provided data into a json object
+/// @param[out] j Json object which gets filled with the info
+/// @param[in] data Data to convert into json
+void to_json(json& j, const AccelerationUnits& data);
+/// @brief Converts the provided json object into the data object
+/// @param[in] j Json object with the needed values
+/// @param[out] data Object to fill from the json
+void from_json(const json& j, AccelerationUnits& data);
 
 /// @brief Converts the provided data into a json object
 /// @param[out] j Json object which gets filled with the info
@@ -161,6 +177,17 @@ void from_json(const json& j, AttitudeUnits& data);
 /// @param[in] value Value to convert
 /// @param[in] unit Unit the value is in
 /// @return Value in unit of the first item in the Unit enum
+[[nodiscard]] double convertUnit(const double& value, Units::AccelerationUnits unit);
+/// @brief Converts the value depending on the unit provided
+/// @param[in] value Value to convert
+/// @param[in] unit Unit the value is in
+/// @return Value in unit of the first item in the Unit enum
+[[nodiscard]] Eigen::Vector3d convertUnit(const Eigen::Vector3d& value, Units::AccelerationUnits unit);
+
+/// @brief Converts the value depending on the unit provided
+/// @param[in] value Value to convert
+/// @param[in] unit Unit the value is in
+/// @return Value in unit of the first item in the Unit enum
 [[nodiscard]] double convertUnit(const double& value, Units::AttitudeUnits unit);
 /// @brief Converts the value depending on the unit provided
 /// @param[in] value Value to convert
@@ -181,6 +208,9 @@ void from_json(const json& j, AttitudeUnits& data);
 /// @brief Converts the unit into a string
 /// @param[in] unit Unit
 [[nodiscard]] std::string to_string(Units::VelocityUnits unit);
+/// @brief Converts the unit into a string
+/// @param[in] unit Unit
+[[nodiscard]] std::string to_string(Units::AccelerationUnits unit);
 /// @brief Converts the unit into a string
 /// @param[in] unit Unit
 [[nodiscard]] std::string to_string(Units::AttitudeUnits unit);
