@@ -217,13 +217,17 @@ void NAV::CsvLogger::flush()
 bool NAV::CsvLogger::onCreateLink([[maybe_unused]] OutputPin& startPin, [[maybe_unused]] InputPin& endPin)
 {
     LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin.id), size_t(endPin.id));
-
-    if (_lastConnectedType != startPin.dataIdentifier.front())
+    if (startPin.parentNode->isInitialized())
     {
-        LOG_DEBUG("{}: [{} ==> {}] Dropping headers because last type [{}] and new type [{}]", nameId(), size_t(startPin.id), size_t(endPin.id), _lastConnectedType, startPin.dataIdentifier.front());
-        _headerLogging.clear();
+        if (_lastConnectedType != startPin.dataIdentifier.front())
+        {
+            LOG_DEBUG("{}: [{} ==> {}] Dropping headers because last type [{}] and new type [{}] are different.", nameId(),
+                      size_t(startPin.id), size_t(endPin.id), _lastConnectedType, startPin.dataIdentifier.front());
+            _headerLogging.clear();
+            flow::ApplyChanges();
+        }
+        _lastConnectedType = startPin.dataIdentifier.front();
     }
-    _lastConnectedType = startPin.dataIdentifier.front();
 
     return true;
 }
@@ -232,6 +236,20 @@ bool NAV::CsvLogger::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
+    if (inputPins.front().isPinLinked())
+    {
+        auto connectedType = inputPins.front().link.getConnectedPin()->dataIdentifier.front();
+        if (_lastConnectedType.empty())
+        {
+            _lastConnectedType = connectedType;
+            flow::ApplyChanges();
+        }
+        if (_lastConnectedType != connectedType)
+        {
+            LOG_DEBUG("{}: Dropping headers because last connected type [{}] and new type [{}] are different.", nameId(), _lastConnectedType, connectedType);
+            _headerLogging.clear();
+        }
+    }
     if (!FileWriter::initialize())
     {
         return false;
