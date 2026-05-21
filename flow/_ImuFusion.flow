@@ -2,6 +2,11 @@
     "bottomViewHeight": 200.0,
     "colormaps": [],
     "commonLog": {
+        "overrideStartTime": false,
+        "startTimeFormat": {
+            "format": 0,
+            "system": "GPST"
+        },
         "useGuiInputs": false
     },
     "fonts": {
@@ -11,6 +16,28 @@
         "useBigWindowFont": false
     },
     "gridLinesEnabled": 0.1568627506494522,
+    "header": {
+        "colors": {
+            "deinitialized": {
+                "a": 255,
+                "b": 128,
+                "g": 128,
+                "r": 255
+            },
+            "disabled": {
+                "a": 255,
+                "b": 192,
+                "g": 192,
+                "r": 192
+            },
+            "initialized": {
+                "a": 255,
+                "b": 128,
+                "g": 255,
+                "r": 128
+            }
+        }
+    },
     "hideFPS": false,
     "leftPane": {
         "hide": false,
@@ -2298,7 +2325,8 @@
                         ],
                         "yAxisFlags": 2048
                     }
-                ]
+                ],
+                "saveRawPointers": true
             },
             "enabled": true,
             "id": 100,
@@ -2333,7 +2361,7 @@
             "data": {
                 "Imu": {
                     "imuPos": {
-                        "b_positionAccel": {
+                        "b_positionIMU_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -2344,57 +2372,7 @@
                                 "0": 0.0
                             }
                         },
-                        "b_positionGyro": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            }
-                        },
-                        "b_positionMag": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            }
-                        },
-                        "b_quatAccel_p": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "b_quatGyro_p": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "b_quatMag_p": {
+                        "b_quat_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -2412,6 +2390,7 @@
                 },
                 "angularRateEarthRotationEnabled": true,
                 "angularRateTransportRateEnabled": true,
+                "baseTrajectoryWithoutHeightChange": false,
                 "centrifgalAccelerationEnabled": true,
                 "circularHarmonicAmplitudeFactor": 0.1,
                 "circularHarmonicFrequency": 0,
@@ -2444,12 +2423,19 @@
                         "0": 0.0
                     }
                 },
+                "oscillations": [],
+                "pitchByVelocity": true,
+                "pitchMultiplier": 1.0,
+                "reorderInput": "",
+                "rollByAcceleration": true,
+                "rollMultiplier": 1.0,
                 "rosePetDenom": 1,
                 "rosePetNum": 2,
                 "roseStepLengthMax": 0.1,
                 "roseTrajectoryCountForStop": 1.0,
                 "simulationDuration": 100.0,
                 "simulationStopCondition": 0,
+                "smoothings": [],
                 "splineSampleInterval": 0.1,
                 "startPosition": {
                     "frame": "LLA",
@@ -2474,12 +2460,27 @@
                     "system": "GPST"
                 },
                 "startTimeSource": 0,
+                "startupEnabled": false,
+                "startupLocationDelta": {
+                    "0": {
+                        "0": 4.6344474907811e-310
+                    },
+                    "1": {
+                        "0": 4.635578694468e-310
+                    },
+                    "2": {
+                        "0": 4.63557869442687e-310
+                    }
+                },
+                "startupStaticDuration": 300.0,
                 "trajectoryDirection": 1,
                 "trajectoryHorizontalSpeed": 10.0,
                 "trajectoryRadius": 50.0,
                 "trajectoryRotationAngle": 0.0,
                 "trajectoryType": 0,
-                "trajectoryVerticalSpeed": 0.0
+                "trajectoryVerticalSpeed": 0.0,
+                "writeSplineCsvFilepath": "spline.csv",
+                "writeSplineLimitToSimDuration": true
             },
             "enabled": true,
             "id": 18,
@@ -2510,7 +2511,7 @@
             "data": {
                 "Imu": {
                     "imuPos": {
-                        "b_positionAccel": {
+                        "b_positionIMU_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -2521,57 +2522,7 @@
                                 "0": 0.0
                             }
                         },
-                        "b_positionGyro": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            }
-                        },
-                        "b_positionMag": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            }
-                        },
-                        "b_quatAccel_p": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "b_quatGyro_p": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "b_quatMag_p": {
+                        "b_quat_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -2589,6 +2540,7 @@
                 },
                 "angularRateEarthRotationEnabled": true,
                 "angularRateTransportRateEnabled": true,
+                "baseTrajectoryWithoutHeightChange": false,
                 "centrifgalAccelerationEnabled": true,
                 "circularHarmonicAmplitudeFactor": 0.1,
                 "circularHarmonicFrequency": 0,
@@ -2621,12 +2573,19 @@
                         "0": 0.0
                     }
                 },
+                "oscillations": [],
+                "pitchByVelocity": true,
+                "pitchMultiplier": 1.0,
+                "reorderInput": "",
+                "rollByAcceleration": true,
+                "rollMultiplier": 1.0,
                 "rosePetDenom": 1,
                 "rosePetNum": 2,
                 "roseStepLengthMax": 0.1,
                 "roseTrajectoryCountForStop": 1.0,
                 "simulationDuration": 100.0,
                 "simulationStopCondition": 0,
+                "smoothings": [],
                 "splineSampleInterval": 0.1,
                 "startPosition": {
                     "frame": "LLA",
@@ -2651,12 +2610,27 @@
                     "system": "GPST"
                 },
                 "startTimeSource": 0,
+                "startupEnabled": false,
+                "startupLocationDelta": {
+                    "0": {
+                        "0": 4.63444749056215e-310
+                    },
+                    "1": {
+                        "0": 4.63557869457944e-310
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "startupStaticDuration": 300.0,
                 "trajectoryDirection": 1,
                 "trajectoryHorizontalSpeed": 10.0,
                 "trajectoryRadius": 50.0,
                 "trajectoryRotationAngle": 0.0,
                 "trajectoryType": 0,
-                "trajectoryVerticalSpeed": 0.0
+                "trajectoryVerticalSpeed": 0.0,
+                "writeSplineCsvFilepath": "spline.csv",
+                "writeSplineLimitToSimDuration": true
             },
             "enabled": true,
             "id": 21,
@@ -2687,7 +2661,7 @@
             "data": {
                 "Imu": {
                     "imuPos": {
-                        "b_positionAccel": {
+                        "b_positionIMU_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -2698,57 +2672,7 @@
                                 "0": 0.0
                             }
                         },
-                        "b_positionGyro": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            }
-                        },
-                        "b_positionMag": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            }
-                        },
-                        "b_quatAccel_p": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "b_quatGyro_p": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "b_quatMag_p": {
+                        "b_quat_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -2766,6 +2690,7 @@
                 },
                 "angularRateEarthRotationEnabled": true,
                 "angularRateTransportRateEnabled": true,
+                "baseTrajectoryWithoutHeightChange": false,
                 "centrifgalAccelerationEnabled": true,
                 "circularHarmonicAmplitudeFactor": 0.1,
                 "circularHarmonicFrequency": 0,
@@ -2798,12 +2723,19 @@
                         "0": 0.0
                     }
                 },
+                "oscillations": [],
+                "pitchByVelocity": true,
+                "pitchMultiplier": 1.0,
+                "reorderInput": "",
+                "rollByAcceleration": true,
+                "rollMultiplier": 1.0,
                 "rosePetDenom": 1,
                 "rosePetNum": 2,
                 "roseStepLengthMax": 0.1,
                 "roseTrajectoryCountForStop": 1.0,
                 "simulationDuration": 100.0,
                 "simulationStopCondition": 0,
+                "smoothings": [],
                 "splineSampleInterval": 0.1,
                 "startPosition": {
                     "frame": "LLA",
@@ -2828,12 +2760,27 @@
                     "system": "GPST"
                 },
                 "startTimeSource": 0,
+                "startupEnabled": false,
+                "startupLocationDelta": {
+                    "0": {
+                        "0": 2.648e-320
+                    },
+                    "1": {
+                        "0": 4.74e-322
+                    },
+                    "2": {
+                        "0": 4.63444749067603e-310
+                    }
+                },
+                "startupStaticDuration": 300.0,
                 "trajectoryDirection": 1,
                 "trajectoryHorizontalSpeed": 10.0,
                 "trajectoryRadius": 50.0,
                 "trajectoryRotationAngle": 0.0,
                 "trajectoryType": 0,
-                "trajectoryVerticalSpeed": 0.0
+                "trajectoryVerticalSpeed": 0.0,
+                "writeSplineCsvFilepath": "spline.csv",
+                "writeSplineLimitToSimDuration": true
             },
             "enabled": true,
             "id": 26,
@@ -2864,7 +2811,7 @@
             "data": {
                 "Imu": {
                     "imuPos": {
-                        "b_positionAccel": {
+                        "b_positionIMU_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -2875,57 +2822,7 @@
                                 "0": 0.0
                             }
                         },
-                        "b_positionGyro": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            }
-                        },
-                        "b_positionMag": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            }
-                        },
-                        "b_quatAccel_p": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "b_quatGyro_p": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "b_quatMag_p": {
+                        "b_quat_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -2943,6 +2840,7 @@
                 },
                 "angularRateEarthRotationEnabled": true,
                 "angularRateTransportRateEnabled": true,
+                "baseTrajectoryWithoutHeightChange": false,
                 "centrifgalAccelerationEnabled": true,
                 "circularHarmonicAmplitudeFactor": 0.1,
                 "circularHarmonicFrequency": 0,
@@ -2975,12 +2873,19 @@
                         "0": 0.0
                     }
                 },
+                "oscillations": [],
+                "pitchByVelocity": true,
+                "pitchMultiplier": 1.0,
+                "reorderInput": "",
+                "rollByAcceleration": true,
+                "rollMultiplier": 1.0,
                 "rosePetDenom": 1,
                 "rosePetNum": 2,
                 "roseStepLengthMax": 0.1,
                 "roseTrajectoryCountForStop": 1.0,
                 "simulationDuration": 100.0,
                 "simulationStopCondition": 0,
+                "smoothings": [],
                 "splineSampleInterval": 0.1,
                 "startPosition": {
                     "frame": "LLA",
@@ -3005,12 +2910,27 @@
                     "system": "GPST"
                 },
                 "startTimeSource": 0,
+                "startupEnabled": false,
+                "startupLocationDelta": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 7.115e-321
+                    }
+                },
+                "startupStaticDuration": 300.0,
                 "trajectoryDirection": 1,
                 "trajectoryHorizontalSpeed": 10.0,
                 "trajectoryRadius": 50.0,
                 "trajectoryRotationAngle": 0.0,
                 "trajectoryType": 0,
-                "trajectoryVerticalSpeed": 0.0
+                "trajectoryVerticalSpeed": 0.0,
+                "writeSplineCsvFilepath": "spline.csv",
+                "writeSplineLimitToSimDuration": true
             },
             "enabled": true,
             "id": 31,
@@ -3090,6 +3010,7 @@
                     "seed": 6001689825031966253,
                     "useSeed": true
                 },
+                "disableErrors": false,
                 "dopplerNoise": 0.05,
                 "dopplerNoiseUnit": 0,
                 "dopplerRng": {
@@ -3137,7 +3058,7 @@
                         "0": 0.02
                     }
                 },
-                "imuAccelerometerNoiseUnit": "m/s^2/√(s)",
+                "imuAccelerometerNoiseUnit": "m/s/√(s)",
                 "imuAccelerometerRW": {
                     "0": {
                         "0": 0.0
@@ -3197,7 +3118,7 @@
                         "0": 0.02
                     }
                 },
-                "imuGyroscopeNoiseUnit": "rad/s/√(s)",
+                "imuGyroscopeNoiseUnit": "rad/√(s)",
                 "imuGyroscopeRW": {
                     "0": {
                         "0": 0.0
@@ -3217,6 +3138,21 @@
                 "imuGyroscopeRng": {
                     "seed": 6612612014885880588,
                     "useSeed": true
+                },
+                "manualAmbiguities": [],
+                "manualCycleSlipAmbiguity": 0,
+                "manualCycleSlipSetLLI": true,
+                "manualCycleSlipSignal": {
+                    "code": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010",
+                    "num": 1
+                },
+                "manualCycleSlipTime": {
+                    "mjd_day": 0,
+                    "mjd_frac": 0.0
+                },
+                "manualCycleSlipTimeEditFormat": {
+                    "format": 0,
+                    "system": "GPST"
                 },
                 "positionBias": {
                     "0": {
@@ -3360,6 +3296,7 @@
                     "seed": 7291775973112037835,
                     "useSeed": true
                 },
+                "disableErrors": false,
                 "dopplerNoise": 0.05,
                 "dopplerNoiseUnit": 0,
                 "dopplerRng": {
@@ -3407,7 +3344,7 @@
                         "0": 0.03
                     }
                 },
-                "imuAccelerometerNoiseUnit": "m/s^2/√(s)",
+                "imuAccelerometerNoiseUnit": "m/s/√(s)",
                 "imuAccelerometerRW": {
                     "0": {
                         "0": 0.0
@@ -3467,7 +3404,7 @@
                         "0": 0.03
                     }
                 },
-                "imuGyroscopeNoiseUnit": "rad/s/√(s)",
+                "imuGyroscopeNoiseUnit": "rad/√(s)",
                 "imuGyroscopeRW": {
                     "0": {
                         "0": 0.0
@@ -3487,6 +3424,21 @@
                 "imuGyroscopeRng": {
                     "seed": 1066594869782810031,
                     "useSeed": true
+                },
+                "manualAmbiguities": [],
+                "manualCycleSlipAmbiguity": 0,
+                "manualCycleSlipSetLLI": true,
+                "manualCycleSlipSignal": {
+                    "code": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010",
+                    "num": 1
+                },
+                "manualCycleSlipTime": {
+                    "mjd_day": 0,
+                    "mjd_frac": 0.0
+                },
+                "manualCycleSlipTimeEditFormat": {
+                    "format": 0,
+                    "system": "GPST"
                 },
                 "positionBias": {
                     "0": {
@@ -4529,6 +4481,7 @@
                     "seed": 6001932831729482287,
                     "useSeed": true
                 },
+                "disableErrors": false,
                 "dopplerNoise": 0.05,
                 "dopplerNoiseUnit": 0,
                 "dopplerRng": {
@@ -4576,7 +4529,7 @@
                         "0": 0.01
                     }
                 },
-                "imuAccelerometerNoiseUnit": "m/s^2/√(s)",
+                "imuAccelerometerNoiseUnit": "m/s/√(s)",
                 "imuAccelerometerRW": {
                     "0": {
                         "0": 0.0
@@ -4636,7 +4589,7 @@
                         "0": 0.01
                     }
                 },
-                "imuGyroscopeNoiseUnit": "rad/s/√(s)",
+                "imuGyroscopeNoiseUnit": "rad/√(s)",
                 "imuGyroscopeRW": {
                     "0": {
                         "0": 0.0
@@ -4656,6 +4609,21 @@
                 "imuGyroscopeRng": {
                     "seed": 2156477401873728386,
                     "useSeed": true
+                },
+                "manualAmbiguities": [],
+                "manualCycleSlipAmbiguity": 0,
+                "manualCycleSlipSetLLI": true,
+                "manualCycleSlipSignal": {
+                    "code": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010",
+                    "num": 1
+                },
+                "manualCycleSlipTime": {
+                    "mjd_day": 0,
+                    "mjd_frac": 0.0
+                },
+                "manualCycleSlipTimeEditFormat": {
+                    "format": 0,
+                    "system": "GPST"
                 },
                 "positionBias": {
                     "0": {
@@ -4799,6 +4767,7 @@
                     "seed": 6301538547068749490,
                     "useSeed": true
                 },
+                "disableErrors": false,
                 "dopplerNoise": 0.05,
                 "dopplerNoiseUnit": 0,
                 "dopplerRng": {
@@ -4846,7 +4815,7 @@
                         "0": 0.04
                     }
                 },
-                "imuAccelerometerNoiseUnit": "m/s^2/√(s)",
+                "imuAccelerometerNoiseUnit": "m/s/√(s)",
                 "imuAccelerometerRW": {
                     "0": {
                         "0": 0.0
@@ -4906,7 +4875,7 @@
                         "0": 0.04
                     }
                 },
-                "imuGyroscopeNoiseUnit": "rad/s/√(s)",
+                "imuGyroscopeNoiseUnit": "rad/√(s)",
                 "imuGyroscopeRW": {
                     "0": {
                         "0": 0.0
@@ -4926,6 +4895,21 @@
                 "imuGyroscopeRng": {
                     "seed": 2959605910079145024,
                     "useSeed": true
+                },
+                "manualAmbiguities": [],
+                "manualCycleSlipAmbiguity": 0,
+                "manualCycleSlipSetLLI": true,
+                "manualCycleSlipSignal": {
+                    "code": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010",
+                    "num": 1
+                },
+                "manualCycleSlipTime": {
+                    "mjd_day": 0,
+                    "mjd_frac": 0.0
+                },
+                "manualCycleSlipTimeEditFormat": {
+                    "format": 0,
+                    "system": "GPST"
                 },
                 "positionBias": {
                     "0": {
@@ -5125,7 +5109,22 @@
                                 "displayName": "AngularRateZ ECEF (ω_nb_e) [rad/s]"
                             },
                             {
-                                "displayName": "Time since startup [ns]"
+                                "displayName": "AccelBiasX [m/s^2]"
+                            },
+                            {
+                                "displayName": "AccelBiasY [m/s^2]"
+                            },
+                            {
+                                "displayName": "AccelBiasZ [m/s^2]"
+                            },
+                            {
+                                "displayName": "GyroBiasX [rad/s]"
+                            },
+                            {
+                                "displayName": "GyroBiasY [rad/s]"
+                            },
+                            {
+                                "displayName": "GyroBiasZ [rad/s]"
                             }
                         ],
                         "size": 0,
@@ -5173,9 +5172,6 @@
                             },
                             {
                                 "displayName": "Temperature [°C]"
-                            },
-                            {
-                                "displayName": "Time since startup [ns]"
                             }
                         ],
                         "size": 0,
@@ -6155,7 +6151,8 @@
                         ],
                         "yAxisFlags": 2048
                     }
-                ]
+                ],
+                "saveRawPointers": true
             },
             "enabled": true,
             "id": 92,

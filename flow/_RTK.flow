@@ -6,15 +6,20 @@
             "frame": "LLA",
             "position": {
                 "0": {
-                    "0": 48.780734732520486
+                    "0": 48.7807347734197
                 },
                 "1": {
-                    "0": 9.17335665858705
+                    "0": 9.173356597089986
                 },
                 "2": {
-                    "0": 318.7175084498122
+                    "0": 318.7265403788456
                 }
             }
+        },
+        "overrideStartTime": false,
+        "startTimeFormat": {
+            "format": 0,
+            "system": "GPST"
         },
         "useGuiInputs": false
     },
@@ -135,14 +140,14 @@
             "id": 512,
             "startPinId": 433
         },
-        "link-528": {
-            "endPinId": 218,
-            "id": 528,
+        "link-534": {
+            "endPinId": 462,
+            "id": 534,
             "startPinId": 215
         },
-        "link-530": {
-            "endPinId": 462,
-            "id": 530,
+        "link-536": {
+            "endPinId": 218,
+            "id": 536,
             "startPinId": 215
         }
     },
@@ -162,7 +167,12 @@
                                 3.0,
                                 1.5
                             ],
-                            "covarianceAccelUnit": "m/√(s^3)"
+                            "covarianceAccelUnit": "m/√(s^3)",
+                            "covarianceJerk": [
+                                0.0,
+                                0.0
+                            ],
+                            "covarianceJerkUnit": "m/√(s^5)"
                         },
                         "receiverClockModel": {
                             "covarianceClkFrequencyDrift": 0.04,
@@ -850,8 +860,8 @@
                             }
                         ],
                         "usedObsTypes": [
-                            2,
-                            0
+                            0,
+                            2
                         ]
                     }
                 },
@@ -965,7 +975,7 @@
                 "obsEstimator": {
                     "antenna": [
                         [
-                            1,
+                            0,
                             {
                                 "autoDetermine": true,
                                 "correctPCO": false,
@@ -985,7 +995,7 @@
                             }
                         ],
                         [
-                            0,
+                            1,
                             {
                                 "autoDetermine": true,
                                 "correctPCO": false,
@@ -2163,9 +2173,9 @@
                         }
                     ],
                     "usedObsTypes": [
-                        2,
+                        0,
                         1,
-                        0
+                        2
                     ]
                 },
                 "outlierMaxPosVarStartup": 0.1,
@@ -2438,48 +2448,6 @@
                             },
                             {
                                 "displayName": "Number satellites"
-                            },
-                            {
-                                "displayName": "Receiver clock bias GPS [s]"
-                            },
-                            {
-                                "displayName": "Receiver clock bias StDev GPS [s]"
-                            },
-                            {
-                                "displayName": "Receiver clock bias GAL [s]"
-                            },
-                            {
-                                "displayName": "Receiver clock bias StDev GAL [s]"
-                            },
-                            {
-                                "displayName": "Receiver clock bias GLO [s]"
-                            },
-                            {
-                                "displayName": "Receiver clock bias StDev GLO [s]"
-                            },
-                            {
-                                "displayName": "Receiver clock bias BDS [s]"
-                            },
-                            {
-                                "displayName": "Receiver clock bias StDev BDS [s]"
-                            },
-                            {
-                                "displayName": "Receiver clock bias QZSS [s]"
-                            },
-                            {
-                                "displayName": "Receiver clock bias StDev QZSS [s]"
-                            },
-                            {
-                                "displayName": "Receiver clock bias IRNSS [s]"
-                            },
-                            {
-                                "displayName": "Receiver clock bias StDev IRNSS [s]"
-                            },
-                            {
-                                "displayName": "Receiver clock bias SBAS [s]"
-                            },
-                            {
-                                "displayName": "Receiver clock bias StDev SBAS [s]"
                             },
                             {
                                 "displayName": "Receiver clock drift [s/s]"
@@ -3219,136 +3187,6 @@
                                 "axis": 3,
                                 "dataIndex": 6,
                                 "displayName": "North/South [m]",
-                                "pinIndex": 4,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "colormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "colormapMaskDataCmpIdx": 6,
-                                    "errorBoundsAlpha": 0.25,
-                                    "errorBoundsDataIdx": 0,
-                                    "errorBoundsEnabled": false,
-                                    "errorBoundsModifierExpression": "",
-                                    "eventMarkerFillColor": {
-                                        "w": 1.0,
-                                        "x": 1.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "eventMarkerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 1.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "eventMarkerSize": 6.0,
-                                    "eventMarkerStyle": 7,
-                                    "eventMarkerWeight": 2.0,
-                                    "eventTooltipFilterRegex": "",
-                                    "eventsEnabled": false,
-                                    "legendName": "Rtklib",
-                                    "lineType": 1,
-                                    "markerColormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "markerColormapMaskDataCmpIdx": 6,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 6,
-                                "displayName": "North/South [m]",
-                                "pinIndex": 1,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "colormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "colormapMaskDataCmpIdx": 6,
-                                    "errorBoundsAlpha": 0.25,
-                                    "errorBoundsDataIdx": 0,
-                                    "errorBoundsEnabled": false,
-                                    "errorBoundsModifierExpression": "",
-                                    "eventMarkerFillColor": {
-                                        "w": 1.0,
-                                        "x": 1.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "eventMarkerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 1.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "eventMarkerSize": 6.0,
-                                    "eventMarkerStyle": 7,
-                                    "eventMarkerWeight": 2.0,
-                                    "eventTooltipFilterRegex": "",
-                                    "eventsEnabled": false,
-                                    "legendName": "RTK",
-                                    "lineType": 1,
-                                    "markerColormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "markerColormapMaskDataCmpIdx": 6,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 6,
-                                "displayName": "North/South [m]",
                                 "pinIndex": 3,
                                 "style": {
                                     "color": {
@@ -3479,6 +3317,136 @@
                                 "axis": 3,
                                 "dataIndex": 6,
                                 "displayName": "North/South [m]",
+                                "pinIndex": 4,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 6,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "Rtklib",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 6,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 6,
+                                "displayName": "North/South [m]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 6,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "RTK",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 6,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 6,
+                                "displayName": "North/South [m]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -3514,7 +3482,7 @@
                                     "eventTooltipFilterRegex": "",
                                     "eventsEnabled": false,
                                     "legendName": "Base",
-                                    "lineType": 0,
+                                    "lineType": 1,
                                     "markerColormapMask": [
                                         0,
                                         -1
@@ -3534,8 +3502,8 @@
                                     },
                                     "markerSize": 10.0,
                                     "markerStyle": 7,
-                                    "markerWeight": 2.0,
-                                    "markers": false,
+                                    "markerWeight": 1.0,
+                                    "markers": true,
                                     "stride": 0,
                                     "thickness": 1.0
                                 }
@@ -3576,6 +3544,136 @@
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 5,
+                                "displayName": "Altitude [m]",
+                                "pinIndex": 3,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 5,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "Nominal",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 5,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 5,
+                                "displayName": "Altitude [m]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 5,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "SPP",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 5,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
                             {
                                 "axis": 3,
                                 "dataIndex": 5,
@@ -3678,73 +3776,8 @@
                                     "eventMarkerStyle": 7,
                                     "eventMarkerWeight": 2.0,
                                     "eventTooltipFilterRegex": "",
-                                    "eventsEnabled": true,
-                                    "legendName": "RTK",
-                                    "lineType": 1,
-                                    "markerColormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "markerColormapMaskDataCmpIdx": 5,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 5,
-                                "displayName": "Altitude [m]",
-                                "pinIndex": 3,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "colormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "colormapMaskDataCmpIdx": 5,
-                                    "errorBoundsAlpha": 0.25,
-                                    "errorBoundsDataIdx": 0,
-                                    "errorBoundsEnabled": false,
-                                    "errorBoundsModifierExpression": "",
-                                    "eventMarkerFillColor": {
-                                        "w": 1.0,
-                                        "x": 1.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "eventMarkerOutlineColor": {
-                                        "w": 1.0,
-                                        "x": 1.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "eventMarkerSize": 6.0,
-                                    "eventMarkerStyle": 7,
-                                    "eventMarkerWeight": 2.0,
-                                    "eventTooltipFilterRegex": "",
                                     "eventsEnabled": false,
-                                    "legendName": "Nominal",
+                                    "legendName": "RTK",
                                     "lineType": 1,
                                     "markerColormapMask": [
                                         0,
@@ -3773,7 +3806,7 @@
                             }
                         ],
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 0,
+                        "selectedPin": 2,
                         "selectedXdata": [
                             1,
                             1,
@@ -3807,6 +3840,71 @@
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 3,
+                                "displayName": "+ North/South [m] (SPP) - North/South [m] (Nominal)",
+                                "pinIndex": 5,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 3,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "SPP",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 3,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
                             {
                                 "axis": 3,
                                 "dataIndex": 15,
@@ -3975,6 +4073,71 @@
                         "plotItems": [
                             {
                                 "axis": 3,
+                                "dataIndex": 4,
+                                "displayName": "+ East/West [m] (SPP) - East/West [m] (Nominal)",
+                                "pinIndex": 5,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 4,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "SPP",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 4,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
                                 "dataIndex": 16,
                                 "displayName": "+ East/West [m] (Rtklib) - East/West [m] (Nominal)",
                                 "pinIndex": 5,
@@ -4141,6 +4304,71 @@
                         "plotItems": [
                             {
                                 "axis": 3,
+                                "dataIndex": 5,
+                                "displayName": "+ Altitude [m] (SPP) - Altitude [m] (Nominal)",
+                                "pinIndex": 5,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 5,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "SPP",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 5,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
                                 "dataIndex": 17,
                                 "displayName": "+ Altitude [m] (Rtklib) - Altitude [m] (Nominal)",
                                 "pinIndex": 5,
@@ -4304,7 +4532,203 @@
                         "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
-                        "plotItems": [],
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 6,
+                                "displayName": "+ North velocity [m/s] (SPP) - North velocity [m/s] (Nominal)",
+                                "pinIndex": 5,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 6,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "SPP",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 6,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 18,
+                                "displayName": "+ North velocity [m/s] (Rtklib) - North velocity [m/s] (Nominal)",
+                                "pinIndex": 5,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 18,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "Rtklib",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 18,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 12,
+                                "displayName": "+ North velocity [m/s] (RTK) - North velocity [m/s] (Nominal)",
+                                "pinIndex": 5,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 12,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "RTK",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 12,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
                         "rightPaneWidth": 400.0,
                         "selectedPin": 5,
                         "selectedXdata": [
@@ -4339,7 +4763,203 @@
                         "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
-                        "plotItems": [],
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 7,
+                                "displayName": "+ East velocity [m/s] (SPP) - East velocity [m/s] (Nominal)",
+                                "pinIndex": 5,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 7,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "SPP",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 7,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 19,
+                                "displayName": "+ East velocity [m/s] (Rtklib) - East velocity [m/s] (Nominal)",
+                                "pinIndex": 5,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 19,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "Rtklib",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 19,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 13,
+                                "displayName": "+ East velocity [m/s] (RTK) - East velocity [m/s] (Nominal)",
+                                "pinIndex": 5,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 13,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "RTK",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 13,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
                         "rightPaneWidth": 401.0,
                         "selectedPin": 5,
                         "selectedXdata": [
@@ -4375,6 +4995,71 @@
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 8,
+                                "displayName": "+ Down velocity [m/s] (SPP) - Down velocity [m/s] (Nominal)",
+                                "pinIndex": 5,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 8,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "SPP",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 8,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
                             {
                                 "axis": 3,
                                 "dataIndex": 20,
@@ -4439,6 +5124,71 @@
                                     "stride": 0,
                                     "thickness": 1.0
                                 }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 14,
+                                "displayName": "+ Down velocity [m/s] (RTK) - Down velocity [m/s] (Nominal)",
+                                "pinIndex": 5,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 14,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "RTK",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 14,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
                             }
                         ],
                         "rightPaneWidth": 400.0,
@@ -4478,9 +5228,9 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 43,
-                                "displayName": "ns [-]",
-                                "pinIndex": 4,
+                                "dataIndex": 42,
+                                "displayName": "Number satellites",
+                                "pinIndex": 0,
                                 "style": {
                                     "color": {
                                         "w": -1.0,
@@ -4492,7 +5242,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 43,
+                                    "colormapMaskDataCmpIdx": 42,
                                     "errorBoundsAlpha": 0.25,
                                     "errorBoundsDataIdx": 0,
                                     "errorBoundsEnabled": false,
@@ -4514,13 +5264,13 @@
                                     "eventMarkerWeight": 2.0,
                                     "eventTooltipFilterRegex": "",
                                     "eventsEnabled": false,
-                                    "legendName": "Rtklib",
+                                    "legendName": "Number satellites (SPP)",
                                     "lineType": 1,
                                     "markerColormapMask": [
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 43,
+                                    "markerColormapMaskDataCmpIdx": 42,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4579,7 +5329,7 @@
                                     "eventMarkerWeight": 2.0,
                                     "eventTooltipFilterRegex": "",
                                     "eventsEnabled": false,
-                                    "legendName": "RTK",
+                                    "legendName": "Number satellites (RTK)",
                                     "lineType": 1,
                                     "markerColormapMask": [
                                         0,
@@ -4641,7 +5391,788 @@
                         "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
-                        "plotItems": [],
+                        "plotItems": [
+                            {
+                                "axis": 3,
+                                "dataIndex": 267,
+                                "displayName": "G15 Elevation [deg]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 267,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "G15",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 267,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 269,
+                                "displayName": "G30 Elevation [deg]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 269,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "G30",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 269,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 271,
+                                "displayName": "G05 Elevation [deg]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 271,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "G05",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 271,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 273,
+                                "displayName": "G23 Elevation [deg]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 273,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "G23",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 273,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 275,
+                                "displayName": "G14 Elevation [deg]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 275,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "G14",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 275,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 277,
+                                "displayName": "G20 Elevation [deg]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 277,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "G20",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 277,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 279,
+                                "displayName": "G18 Elevation [deg]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 279,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "G18",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 279,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 281,
+                                "displayName": "G07 Elevation [deg]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 281,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "G07",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 281,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 283,
+                                "displayName": "G24 Elevation [deg]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 283,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "G24",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 283,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 285,
+                                "displayName": "G17 Elevation [deg]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 285,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "G17",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 285,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 287,
+                                "displayName": "G13 Elevation [deg]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 287,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "G13",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 287,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 289,
+                                "displayName": "G08 Elevation [deg]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 289,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "G08",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 289,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            }
+                        ],
                         "rightPaneWidth": 393.0,
                         "selectedPin": 1,
                         "selectedXdata": [
@@ -4670,7 +6201,8 @@
                         ],
                         "yAxisFlags": 2048
                     }
-                ]
+                ],
+                "saveRawPointers": true
             },
             "enabled": true,
             "id": 137,

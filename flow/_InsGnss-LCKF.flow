@@ -2,6 +2,25 @@
     "bottomViewHeight": 200.0,
     "colormaps": [],
     "commonLog": {
+        "originPosition": {
+            "frame": "LLA",
+            "position": {
+                "0": {
+                    "0": 2.9086740704441076e-18
+                },
+                "1": {
+                    "0": 0.004491576411396717
+                },
+                "2": {
+                    "0": 0.019598199178490924
+                }
+            }
+        },
+        "overrideStartTime": false,
+        "startTimeFormat": {
+            "format": 0,
+            "system": "GPST"
+        },
         "useGuiInputs": false
     },
     "fonts": {
@@ -11,6 +30,28 @@
         "useBigWindowFont": false
     },
     "gridLinesEnabled": 0.1568627506494522,
+    "header": {
+        "colors": {
+            "deinitialized": {
+                "a": 255,
+                "b": 128,
+                "g": 128,
+                "r": 255
+            },
+            "disabled": {
+                "a": 255,
+                "b": 192,
+                "g": 192,
+                "r": 192
+            },
+            "initialized": {
+                "a": 255,
+                "b": 128,
+                "g": 255,
+                "r": 128
+            }
+        }
+    },
     "hideFPS": false,
     "leftPane": {
         "hide": false,
@@ -24,9 +65,9 @@
             "id": 113,
             "startPinId": 6
         },
-        "link-114": {
+        "link-131": {
             "endPinId": 111,
-            "id": 114,
+            "id": 131,
             "startPinId": 72
         },
         "link-16": {
@@ -555,6 +596,24 @@
                             },
                             {
                                 "displayName": "AngularRateZ ECEF (ω_nb_e) [rad/s]"
+                            },
+                            {
+                                "displayName": "AccelBiasX [m/s^2]"
+                            },
+                            {
+                                "displayName": "AccelBiasY [m/s^2]"
+                            },
+                            {
+                                "displayName": "AccelBiasZ [m/s^2]"
+                            },
+                            {
+                                "displayName": "GyroBiasX [rad/s]"
+                            },
+                            {
+                                "displayName": "GyroBiasY [rad/s]"
+                            },
+                            {
+                                "displayName": "GyroBiasZ [rad/s]"
                             }
                         ],
                         "size": 0,
@@ -1667,7 +1726,7 @@
                                     "eventMarkerWeight": 2.0,
                                     "eventTooltipFilterRegex": "",
                                     "eventsEnabled": false,
-                                    "legendName": "Accelerometer bias b_X [m/s^2] (LCKF)",
+                                    "legendName": "b_X (LCKF)",
                                     "lineType": 1,
                                     "markerColormapMask": [
                                         0,
@@ -1732,7 +1791,7 @@
                                     "eventMarkerWeight": 2.0,
                                     "eventTooltipFilterRegex": "",
                                     "eventsEnabled": false,
-                                    "legendName": "Accelerometer bias b_Y [m/s^2] (LCKF)",
+                                    "legendName": "b_Y (LCKF)",
                                     "lineType": 1,
                                     "markerColormapMask": [
                                         0,
@@ -1797,7 +1856,7 @@
                                     "eventMarkerWeight": 2.0,
                                     "eventTooltipFilterRegex": "",
                                     "eventsEnabled": false,
-                                    "legendName": "Accelerometer bias b_Z [m/s^2] (LCKF)",
+                                    "legendName": "b_Z (LCKF)",
                                     "lineType": 1,
                                     "markerColormapMask": [
                                         0,
@@ -1861,7 +1920,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 77,
+                                "dataIndex": 80,
                                 "displayName": "Gyroscope bias b_X [rad/s]",
                                 "pinIndex": 3,
                                 "style": {
@@ -1875,7 +1934,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 77,
+                                    "colormapMaskDataCmpIdx": 80,
                                     "errorBoundsAlpha": 0.25,
                                     "errorBoundsDataIdx": 0,
                                     "errorBoundsEnabled": false,
@@ -1897,13 +1956,13 @@
                                     "eventMarkerWeight": 2.0,
                                     "eventTooltipFilterRegex": "",
                                     "eventsEnabled": false,
-                                    "legendName": "Gyroscope bias b_X [rad/s] (LCKF)",
+                                    "legendName": "b_X (LCKF)",
                                     "lineType": 1,
                                     "markerColormapMask": [
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 77,
+                                    "markerColormapMaskDataCmpIdx": 80,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1926,7 +1985,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 78,
+                                "dataIndex": 81,
                                 "displayName": "Gyroscope bias b_Y [rad/s]",
                                 "pinIndex": 3,
                                 "style": {
@@ -1940,7 +1999,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 78,
+                                    "colormapMaskDataCmpIdx": 81,
                                     "errorBoundsAlpha": 0.25,
                                     "errorBoundsDataIdx": 0,
                                     "errorBoundsEnabled": false,
@@ -1962,13 +2021,13 @@
                                     "eventMarkerWeight": 2.0,
                                     "eventTooltipFilterRegex": "",
                                     "eventsEnabled": false,
-                                    "legendName": "Gyroscope bias b_Y [rad/s] (LCKF)",
+                                    "legendName": "b_Y (LCKF)",
                                     "lineType": 1,
                                     "markerColormapMask": [
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 78,
+                                    "markerColormapMaskDataCmpIdx": 81,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1991,7 +2050,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 79,
+                                "dataIndex": 82,
                                 "displayName": "Gyroscope bias b_Z [rad/s]",
                                 "pinIndex": 3,
                                 "style": {
@@ -2005,7 +2064,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 79,
+                                    "colormapMaskDataCmpIdx": 82,
                                     "errorBoundsAlpha": 0.25,
                                     "errorBoundsDataIdx": 0,
                                     "errorBoundsEnabled": false,
@@ -2027,13 +2086,13 @@
                                     "eventMarkerWeight": 2.0,
                                     "eventTooltipFilterRegex": "",
                                     "eventsEnabled": false,
-                                    "legendName": "Gyroscope bias b_Z [rad/s] (LCKF)",
+                                    "legendName": "b_Z (LCKF)",
                                     "lineType": 1,
                                     "markerColormapMask": [
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 79,
+                                    "markerColormapMaskDataCmpIdx": 82,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -2082,7 +2141,8 @@
                         ],
                         "yAxisFlags": 0
                     }
-                ]
+                ],
+                "saveRawPointers": true
             },
             "enabled": true,
             "id": 15,
@@ -2264,6 +2324,7 @@
                     0.0
                 ],
                 "initializeStateOverExternalPin": true,
+                "mmaeAttitudeAveraging": 0,
                 "phiCalculationAlgorithm": 0,
                 "phiCalculationTaylorOrder": 2,
                 "preferAccelerationOverDeltaMeasurements": true,
@@ -2381,6 +2442,7 @@
         },
         "node-4": {
             "data": {
+                "imuPreintegration": false,
                 "inertialIntegrator": {
                     "accelerationsAreAveragedMeasurements": true,
                     "integrationAlgorithm": 3,
@@ -2394,7 +2456,13 @@
                         "gravitationModel": 3
                     }
                 },
-                "preferAccelerationOverDeltaMeasurements": false
+                "inertialPreintegrator": {
+                    "gravitationModel": 5,
+                    "integrationFrame": 0,
+                    "lockIntegrationFrame": false
+                },
+                "preferAccelerationOverDeltaMeasurements": false,
+                "resetPreintegratorEveryEpoch": false
             },
             "enabled": false,
             "id": 4,
@@ -2479,6 +2547,7 @@
                     "seed": 1093987254051775127,
                     "useSeed": true
                 },
+                "disableErrors": false,
                 "dopplerNoise": 0.05,
                 "dopplerNoiseUnit": 0,
                 "dopplerRng": {
@@ -2526,7 +2595,7 @@
                         "0": 0.001
                     }
                 },
-                "imuAccelerometerNoiseUnit": "m/s^2/√(s)",
+                "imuAccelerometerNoiseUnit": "m/s/√(s)",
                 "imuAccelerometerRW": {
                     "0": {
                         "0": 0.0
@@ -2586,7 +2655,7 @@
                         "0": 0.0001
                     }
                 },
-                "imuGyroscopeNoiseUnit": "rad/s/√(s)",
+                "imuGyroscopeNoiseUnit": "rad/√(s)",
                 "imuGyroscopeRW": {
                     "0": {
                         "0": 0.0
@@ -2606,6 +2675,21 @@
                 "imuGyroscopeRng": {
                     "seed": 6526267798094482369,
                     "useSeed": true
+                },
+                "manualAmbiguities": [],
+                "manualCycleSlipAmbiguity": 0,
+                "manualCycleSlipSetLLI": true,
+                "manualCycleSlipSignal": {
+                    "code": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010",
+                    "num": 1
+                },
+                "manualCycleSlipTime": {
+                    "mjd_day": 0,
+                    "mjd_frac": 0.0
+                },
+                "manualCycleSlipTimeEditFormat": {
+                    "format": 0,
+                    "system": "GPST"
                 },
                 "positionBias": {
                     "0": {
@@ -2729,6 +2813,7 @@
                 },
                 "angularRateEarthRotationEnabled": true,
                 "angularRateTransportRateEnabled": true,
+                "baseTrajectoryWithoutHeightChange": false,
                 "centrifgalAccelerationEnabled": true,
                 "circularHarmonicAmplitudeFactor": 0.1,
                 "circularHarmonicFrequency": 0,
@@ -2761,12 +2846,19 @@
                         "0": 0.0
                     }
                 },
+                "oscillations": [],
+                "pitchByVelocity": true,
+                "pitchMultiplier": 1.0,
+                "reorderInput": "",
+                "rollByAcceleration": true,
+                "rollMultiplier": 1.0,
                 "rosePetDenom": 1,
                 "rosePetNum": 2,
                 "roseStepLengthMax": 0.03,
                 "roseTrajectoryCountForStop": 5.0,
                 "simulationDuration": 300.0,
                 "simulationStopCondition": 1,
+                "smoothings": [],
                 "splineSampleInterval": 0.03,
                 "startPosition": {
                     "frame": "LLA",
@@ -2791,12 +2883,27 @@
                     "system": "GPST"
                 },
                 "startTimeSource": 0,
+                "startupEnabled": false,
+                "startupLocationDelta": {
+                    "0": {
+                        "0": 9e-323
+                    },
+                    "1": {
+                        "0": 1.328369365453e-311
+                    },
+                    "2": {
+                        "0": 1.332613356979e-311
+                    }
+                },
+                "startupStaticDuration": 300.0,
                 "trajectoryDirection": 1,
                 "trajectoryHorizontalSpeed": 10.0,
                 "trajectoryRadius": 500.0,
                 "trajectoryRotationAngle": 0.0,
                 "trajectoryType": 4,
-                "trajectoryVerticalSpeed": 0.0
+                "trajectoryVerticalSpeed": 0.0,
+                "writeSplineCsvFilepath": "spline.csv",
+                "writeSplineLimitToSimDuration": true
             },
             "enabled": true,
             "id": 7,
@@ -2876,6 +2983,7 @@
                     "seed": 783264279274782979,
                     "useSeed": true
                 },
+                "disableErrors": false,
                 "dopplerNoise": 0.05,
                 "dopplerNoiseUnit": 0,
                 "dopplerRng": {
@@ -2923,7 +3031,7 @@
                         "0": 0.0
                     }
                 },
-                "imuAccelerometerNoiseUnit": "m/s^2/√(s)",
+                "imuAccelerometerNoiseUnit": "m/s/√(s)",
                 "imuAccelerometerRW": {
                     "0": {
                         "0": 0.0
@@ -2983,7 +3091,7 @@
                         "0": 0.0
                     }
                 },
-                "imuGyroscopeNoiseUnit": "rad/s/√(s)",
+                "imuGyroscopeNoiseUnit": "rad/√(s)",
                 "imuGyroscopeRW": {
                     "0": {
                         "0": 0.0
@@ -3003,6 +3111,21 @@
                 "imuGyroscopeRng": {
                     "seed": 5899941279817296130,
                     "useSeed": true
+                },
+                "manualAmbiguities": [],
+                "manualCycleSlipAmbiguity": 0,
+                "manualCycleSlipSetLLI": true,
+                "manualCycleSlipSignal": {
+                    "code": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010",
+                    "num": 1
+                },
+                "manualCycleSlipTime": {
+                    "mjd_day": 0,
+                    "mjd_frac": 0.0
+                },
+                "manualCycleSlipTimeEditFormat": {
+                    "format": 0,
+                    "system": "GPST"
                 },
                 "positionBias": {
                     "0": {
@@ -3223,9 +3346,7 @@
                 "maxTimeDiffMultiplierFrequency": 2.1,
                 "maxTimeStepMultiplierFrequency": 5.0,
                 "noOutputIfTimeDiffLarge": true,
-                "noOutputIfTimeStepLarge": true,
-                "outputMissingAsNaN": false,
-                "refPinIdx": 0
+                "noOutputIfTimeStepLarge": true
             },
             "enabled": true,
             "id": 82,
