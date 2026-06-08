@@ -1610,13 +1610,32 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         // 5. Calculate the measurement matrix H_k
         _kalmanFilter.H = n_measurementMatrix_H(T_rn_p, n_Dcm_b, b_omega_ip, b_leverArm_InsGnss, n_Omega_ie);
 
+        LOG_DATA("{}:     n_velocity = {} [m/s]", nameId(), posVelObs->n_velocity().transpose());
+
         // 6. Calculate the measurement noise covariance matrix R_k
         _kalmanFilter.R = n_measurementNoiseCovariance_R(posVelObs, lla_position, R_N, R_E);
 
-        // 8. Formulate the measurement z_k
-        _kalmanFilter.z = n_measurementInnovation_dz(posVelObs->lla_position(), _inertialIntegrator.getLatestState().value().get().position,
-                                                     posVelObs->n_velocity(), _inertialIntegrator.getLatestState().value().get().velocity,
-                                                     T_rn_p, _inertialIntegrator.getLatestState().value().get().attitude, b_leverArm_InsGnss, b_omega_ip, n_Omega_ie);
+        // If posVelObs->n_velocity() contains NaN, then the measurement update will be done only with the position part of the measurement.
+        if (posVelObs->n_velocity().hasNaN())
+        {
+            // Pos measurement only
+            // Remove the influence of velocity measurements by zeroing the corresponding rows of H_k.
+            _kalmanFilter.H.block<3>(LckfKeys::dVel, LckfKeys::KFAtt) = Eigen::Matrix3d::Zero();
+            _kalmanFilter.H.block<3>(LckfKeys::dVel, LckfKeys::KFVel) = Eigen::Matrix3d::Zero();
+            _kalmanFilter.H.block<3>(LckfKeys::dVel, LckfKeys::KFGyrBias) = Eigen::Matrix3d::Zero();
+
+            // 8. Formulate the measurement z_k, Insert zero velocity for innovation instead of NaN from posVelObs->n_velocity()
+            _kalmanFilter.z = n_measurementInnovation_dz(posVelObs->lla_position(), _inertialIntegrator.getLatestState().value().get().position,
+                                                         Eigen::Vector3d::Zero(), _inertialIntegrator.getLatestState().value().get().velocity,
+                                                         T_rn_p, _inertialIntegrator.getLatestState().value().get().attitude, b_leverArm_InsGnss, b_omega_ip, n_Omega_ie);
+        }
+        else
+        {
+            // Full measurement: R and z (with Pos and Vel)
+            _kalmanFilter.z = n_measurementInnovation_dz(posVelObs->lla_position(), _inertialIntegrator.getLatestState().value().get().position,
+                                                         posVelObs->n_velocity(), _inertialIntegrator.getLatestState().value().get().velocity,
+                                                         T_rn_p, _inertialIntegrator.getLatestState().value().get().attitude, b_leverArm_InsGnss, b_omega_ip, n_Omega_ie);
+        }
     }
     else // if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::ECEF)
     {
@@ -1631,13 +1650,31 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         // 5. Calculate the measurement matrix H_k
         _kalmanFilter.H = e_measurementMatrix_H(e_Dcm_b, b_omega_ip, b_leverArm_InsGnss, e_Omega_ie);
 
+        LOG_DATA("{}:     e_velocity = {} [m/s]", nameId(), posVelObs->e_velocity().transpose());
+
         // 6. Calculate the measurement noise covariance matrix R_k
         _kalmanFilter.R = e_measurementNoiseCovariance_R(posVelObs);
 
-        // 8. Formulate the measurement z_k
-        _kalmanFilter.z = e_measurementInnovation_dz(posVelObs->e_position(), _inertialIntegrator.getLatestState().value().get().position,
-                                                     posVelObs->e_velocity(), _inertialIntegrator.getLatestState().value().get().velocity,
-                                                     _inertialIntegrator.getLatestState().value().get().attitude, b_leverArm_InsGnss, b_omega_ip, e_Omega_ie);
+        if (posVelObs->e_velocity().hasNaN())
+        {
+            // Pos measurement only
+            // Remove the influence of velocity measurements by zeroing the corresponding rows of H_k.
+            _kalmanFilter.H.block<3>(LckfKeys::dVel, LckfKeys::KFAtt) = Eigen::Matrix3d::Zero();
+            _kalmanFilter.H.block<3>(LckfKeys::dVel, LckfKeys::KFVel) = Eigen::Matrix3d::Zero();
+            _kalmanFilter.H.block<3>(LckfKeys::dVel, LckfKeys::KFGyrBias) = Eigen::Matrix3d::Zero();
+
+            // 8. Formulate the measurement z_k, Insert zero velocity for innovation instead of NaN from posVelObs->n_velocity()
+            _kalmanFilter.z = e_measurementInnovation_dz(posVelObs->e_position(), _inertialIntegrator.getLatestState().value().get().position,
+                                                         Eigen::Vector3d::Zero(), _inertialIntegrator.getLatestState().value().get().velocity,
+                                                         _inertialIntegrator.getLatestState().value().get().attitude, b_leverArm_InsGnss, b_omega_ip, e_Omega_ie);
+        }
+        else
+        {
+            // 8. Formulate the measurement z_k
+            _kalmanFilter.z = e_measurementInnovation_dz(posVelObs->e_position(), _inertialIntegrator.getLatestState().value().get().position,
+                                                         posVelObs->e_velocity(), _inertialIntegrator.getLatestState().value().get().velocity,
+                                                         _inertialIntegrator.getLatestState().value().get().attitude, b_leverArm_InsGnss, b_omega_ip, e_Omega_ie);
+        }
     }
 
     LOG_DATA("{}:     KF.H =\n{}", nameId(), _kalmanFilter.H);
